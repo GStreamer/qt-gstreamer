@@ -23,4 +23,5 @@ private slots:
     void initTestCase();
     void propertyTest();
     void player();
+    void cleanupTestCase();
 };

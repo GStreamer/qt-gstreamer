@@ -62,4 +62,9 @@ void QtGstreamerTest::player()
     QCOMPARE(bin.currentState(), QGstElement::Null);
 }
 
+void QtGstreamerTest::cleanupTestCase()
+{
+    gst_deinit();
+}
+
 QTEST_MAIN(QtGstreamerTest)
