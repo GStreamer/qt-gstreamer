@@ -8,6 +8,7 @@ set(QtGstreamer_SRCS
     qgstbin.cpp
     qgstpipeline.cpp
     qgstelementfactory.cpp
+    qgstpad.cpp
 )
 
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})

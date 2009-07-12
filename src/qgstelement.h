@@ -22,6 +22,8 @@ typedef struct _GstElement GstElement;
 
 namespace QtGstreamer {
 
+class QGstPad;
+
 class QGstElement : public QGstObject
 {
     Q_OBJECT
@@ -35,6 +37,9 @@ public:
     //FIXME those functions need some love to match the gstreamer api
     State currentState() const;
     void setState(State state);
+
+    QGstPad *getStaticPad(const char *name);
+    QGstPad *getRequestPad(const char *name);
 
     static bool link(QGstElement *element1, QGstElement *element2,
                      QGstElement *element3 = NULL, QGstElement *element4 = NULL,

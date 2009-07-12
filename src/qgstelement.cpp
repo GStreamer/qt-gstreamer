@@ -15,8 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgstelement.h"
+#include "qgstpad.h"
+#include <QtCore/QDebug>
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
+#include <gst/gstpad.h>
 
 namespace QtGstreamer {
 
@@ -40,6 +43,27 @@ void QGstElement::setState(State state)
 {
     gst_element_set_state(GST_ELEMENT(m_object), static_cast<GstState>(state));
 }
+
+QGstPad *QGstElement::getStaticPad(const char *name)
+{
+    GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), name);
+    if (!pad) {
+        qWarning() << "Could not get static pad" << name;
+        return NULL;
+    }
+    return new QGstPad(pad, this);
+}
+
+QGstPad *QGstElement::getRequestPad(const char *name)
+{
+    GstPad *pad = gst_element_get_request_pad(GST_ELEMENT(m_object), name);
+    if (!pad) {
+        qWarning() << "Could not get request pad" << name;
+        return NULL;
+    }
+    return new QGstPad(pad, this);
+}
+
 
 //static
 bool QGstElement::link(QGstElement *element1, QGstElement *element2, QGstElement *element3,
