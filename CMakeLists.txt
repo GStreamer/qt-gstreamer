@@ -32,3 +32,4 @@ include(${QT_USE_FILE})
 
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(examples)
