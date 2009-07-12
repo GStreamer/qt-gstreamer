@@ -34,14 +34,13 @@ QGstElement::~QGstElement()
 
 QGstElement::State QGstElement::currentState() const
 {
-    GstState s;
-    gst_element_get_state(GST_ELEMENT(m_object), &s, NULL, 0);
-    return static_cast<State>(s);
+    return static_cast<State>(GST_STATE(m_object));
 }
 
-void QGstElement::setState(State state)
+QGstElement::StateChangeReturn QGstElement::setState(State state)
 {
-    gst_element_set_state(GST_ELEMENT(m_object), static_cast<GstState>(state));
+    return static_cast<StateChangeReturn>(gst_element_set_state(GST_ELEMENT(m_object),
+                                                                static_cast<GstState>(state)));
 }
 
 QGstPad *QGstElement::getStaticPad(const char *name)

@@ -30,13 +30,14 @@ class QGstElement : public QGstObject
     Q_DISABLE_COPY(QGstElement)
 public:
     enum State { VoidPending, Null, Ready, Paused, Playing };
+    enum StateChangeReturn { StateChangeFailure, StateChangeSuccess,
+                             StateChangeAsync, StateChangeNoPreroll };
 
     explicit QGstElement(GstElement *gstElement, QObject *parent = 0);
     virtual ~QGstElement();
 
-    //FIXME those functions need some love to match the gstreamer api
     State currentState() const;
-    void setState(State state);
+    StateChangeReturn setState(State state);
 
     QGstPad *getStaticPad(const char *name);
     QGstPad *getRequestPad(const char *name);
