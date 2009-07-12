@@ -11,6 +11,19 @@ set(QtGstreamer_SRCS
     qgstpad.cpp
 )
 
+set(QtGstreamer_HEADERS
+    qgstglobal.h
+    qgstobject.h
+    qgstelement.h
+    qgstbin.h
+    qgstpipeline.h
+    qgstelementfactory.h
+    qgstpad.h
+) 
+
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
 set_target_properties(QtGstreamer PROPERTIES SOVERSION 0 VERSION 0.0.1)
 target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES} ${GOBJECT_LIBRARIES})
+
+install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(FILES ${QtGstreamer_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGstreamer)

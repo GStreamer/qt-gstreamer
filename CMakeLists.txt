@@ -1,4 +1,5 @@
 project(QtGstreamer)
+cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 set(QT_DONT_USE_QTGUI 1)
