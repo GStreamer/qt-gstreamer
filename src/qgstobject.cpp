@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2009  Collabora Ltd. <http://www.collabora.co.uk/>
+    Copyright (C) 2009  Nokia Corporation
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -38,6 +40,7 @@ QGstObject::~QGstObject()
     gst_object_unref(m_object);
 }
 
+/* These two static functions are based on code from the TelepathyQt4 library */
 static GValue *gValueFromQVariant(const QVariant & variant, GType gType)
 {
     GValue *v = g_slice_new0(GValue);
