@@ -14,34 +14,21 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGSTPAD_H
-#define _QTGSTREAMER_QGSTPAD_H
+#ifndef _QTGSTREAMER_QGSTGHOSTPAD_H
+#define _QTGSTREAMER_QGSTGHOSTPAD_H
 
-#include "qgstobject.h"
-typedef struct _GstPad GstPad;
+#include "qgstpad.h"
 
 namespace QtGstreamer {
 
-class QGstGhostPad;
-class QGstElement;
-
-class QGstPad : public QGstObject
+class QGstGhostPad : public QGstPad
 {
     Q_OBJECT
-    Q_DISABLE_COPY(QGstPad)
-    friend class QGstGhostPad;
-    friend class QGstElement;
+    Q_DISABLE_COPY(QGstGhostPad)
 public:
-    enum LinkReturn { Ok = 0, WrongHierarchy = -1, WasLinked = -2, WrongDirection = -3,
-                      NoFormat = -4, NoSched = -5, Refused = -6 };
-
-    explicit QGstPad(GstPad *gstPad, QObject *parent = 0);
-    virtual ~QGstPad();
-
-    bool isLinked() const;
-    LinkReturn link(QGstPad *other);
-    bool unlink(QGstPad *other);
-    bool canLink(QGstPad *other);
+    explicit QGstGhostPad(QGstPad *target, QObject *parent = 0);
+    explicit QGstGhostPad(const char *name, QGstPad *target, QObject *parent = 0);
+    virtual ~QGstGhostPad();
 };
 
 }

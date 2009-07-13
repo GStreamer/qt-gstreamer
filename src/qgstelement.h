@@ -39,6 +39,7 @@ public:
     State currentState() const;
     StateChangeReturn setState(State state);
 
+    bool addPad(QGstPad *pad);
     QGstPad *getStaticPad(const char *name);
     QGstPad *getRequestPad(const char *name);
 

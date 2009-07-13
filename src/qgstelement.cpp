@@ -43,6 +43,11 @@ QGstElement::StateChangeReturn QGstElement::setState(State state)
                                                                 static_cast<GstState>(state)));
 }
 
+bool QGstElement::addPad(QGstPad *pad)
+{
+    return gst_element_add_pad(GST_ELEMENT(m_object), GST_PAD(pad->m_object));
+}
+
 QGstPad *QGstElement::getStaticPad(const char *name)
 {
     GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), name);

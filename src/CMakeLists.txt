@@ -9,6 +9,7 @@ set(QtGstreamer_SRCS
     qgstpipeline.cpp
     qgstelementfactory.cpp
     qgstpad.cpp
+    qgstghostpad.cpp
 )
 
 set(QtGstreamer_HEADERS
@@ -19,6 +20,7 @@ set(QtGstreamer_HEADERS
     qgstpipeline.h
     qgstelementfactory.h
     qgstpad.h
+    qgstghostpad.h
 ) 
 
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
