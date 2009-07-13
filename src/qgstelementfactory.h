@@ -17,14 +17,22 @@
 #ifndef _QTGSTREAMER_QGSTELEMENTFACTORY_H
 #define _QTGSTREAMER_QGSTELEMENTFACTORY_H
 
+#include "qgstobject.h"
+typedef struct _GstElementFactory GstElementFactory;
+
 namespace QtGstreamer {
 
 class QGstElement;
 
-//TODO this class needs real inheritance, constructors, methods, etc...
-class QGstElementFactory
+class QGstElementFactory : public QGstObject //FIXME public QGstPluginFeature
 {
+    Q_OBJECT
 public:
+    QGstElementFactory(GstElementFactory *factory, QObject *parent = 0);
+    virtual ~QGstElementFactory();
+
+    static bool exists(const char *factoryName);
+    static QGstElementFactory *find(const char *factoryName);
     static QGstElement *make(const char *factoryName, const char *elementName = 0);
 };
 

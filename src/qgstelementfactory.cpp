@@ -22,6 +22,37 @@
 
 namespace QtGstreamer {
 
+QGstElementFactory::QGstElementFactory(GstElementFactory *factory, QObject *parent)
+    : QGstObject(GST_OBJECT(factory), parent)
+{
+}
+
+QGstElementFactory::~QGstElementFactory()
+{
+}
+
+//static
+bool QGstElementFactory::exists(const char *factoryName)
+{
+    QGstElementFactory *factory = find(factoryName);
+    if ( factory ) {
+        delete factory;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//static
+QGstElementFactory *QGstElementFactory::find(const char *factoryName)
+{
+    GstElementFactory *factory = gst_element_factory_find(factoryName);
+    if ( !factory ) {
+        return NULL;
+    }
+    return new QGstElementFactory(factory);
+}
+
 //static
 QGstElement *QGstElementFactory::make(const char *factoryName, const char *elementName)
 {
