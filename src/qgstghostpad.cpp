@@ -19,14 +19,15 @@
 
 namespace QtGstreamer {
 
-QGstGhostPad::QGstGhostPad(QGstPad *target, QObject *parent)
-    : QGstPad(gst_ghost_pad_new(NULL, GST_PAD(target->m_object)), parent)
+QGstGhostPad::QGstGhostPad(const char *name, const QGstPadPtr & target)
+    : QGstPad(gst_ghost_pad_new(name, GST_PAD(target->m_object)))
 {
 }
 
-QGstGhostPad::QGstGhostPad(const char *name, QGstPad *target, QObject *parent)
-    : QGstPad(gst_ghost_pad_new(name, GST_PAD(target->m_object)), parent)
+//static
+QGstGhostPadPtr QGstGhostPad::newGhostPad(const char *name, const QGstPadPtr & target)
 {
+    return QGstGhostPadPtr(new QGstGhostPad(name, target));
 }
 
 QGstGhostPad::~QGstGhostPad()

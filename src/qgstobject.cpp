@@ -22,8 +22,8 @@
 
 namespace QtGstreamer {
 
-QGstObject::QGstObject(GstObject *gstObject, QObject *parent)
-    : QObject(parent), m_object(NULL)
+QGstObject::QGstObject(GstObject *gstObject)
+    : QObject(), m_object(NULL)
 {
     Q_ASSERT(gstObject);
     m_object = gstObject;
@@ -33,6 +33,12 @@ QGstObject::QGstObject(GstObject *gstObject, QObject *parent)
     } else {
         gst_object_ref(m_object);
     }
+}
+
+//static
+QGstObjectPtr QGstObject::fromGstObject(GstObject *gstObject)
+{
+    return QGstObjectPtr(new QGstObject(gstObject));
 }
 
 QGstObject::~QGstObject()

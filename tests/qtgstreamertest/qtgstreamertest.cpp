@@ -32,34 +32,34 @@ void QtGstreamerTest::propertyTest()
     gst_object_ref(foo);
     gst_object_sink(foo);
 
-    QGstElement qgelement(foo);
+    QGstElementPtr qgelement = QGstElement::fromGstElement(foo);
     gst_object_unref(foo);
 
-    QCOMPARE(qgelement.property("name").toByteArray(), QByteArray("test"));
+    QCOMPARE(qgelement->property("name").toByteArray(), QByteArray("test"));
 
-    qgelement.setProperty("name", QByteArray("test2"));
-    QCOMPARE(qgelement.property("name").toByteArray(), QByteArray("test2"));
+    qgelement->setProperty("name", QByteArray("test2"));
+    QCOMPARE(qgelement->property("name").toByteArray(), QByteArray("test2"));
 }
 
 void QtGstreamerTest::player()
 {
-    QGstElement *src = QGstElementFactory::make("audiotestsrc");
+    QGstElementPtr src = QGstElementFactory::make("audiotestsrc");
     src->setProperty("freq", 880);
     QCOMPARE(src->property<double>("freq"), 880.0);
 
-    QGstElement *sink = QGstElementFactory::make("alsasink");
+    QGstElementPtr sink = QGstElementFactory::make("alsasink");
 
-    QGstPipeline bin;
-    bin << src << sink;
+    QGstPipelinePtr bin = QGstPipeline::newPipeline();
+    *bin << src << sink;
     QCOMPARE(QGstElement::link(src, sink), true);
 
-    bin.setState(QGstElement::Playing);
+    bin->setState(QGstElement::Playing);
     QTest::qWait(5000);
-    QCOMPARE(bin.currentState(), QGstElement::Playing);
+    QCOMPARE(bin->currentState(), QGstElement::Playing);
 
-    bin.setState(QGstElement::Null);
+    bin->setState(QGstElement::Null);
     QTest::qWait(2000);
-    QCOMPARE(bin.currentState(), QGstElement::Null);
+    QCOMPARE(bin->currentState(), QGstElement::Null);
 }
 
 void QtGstreamerTest::cleanupTestCase()

@@ -23,19 +23,26 @@ typedef struct _GstElementFactory GstElementFactory;
 namespace QtGstreamer {
 
 class QGstElement;
+typedef QSharedPointer<QGstElement> QGstElementPtr;
+class QGstElementFactory;
+typedef QSharedPointer<QGstElementFactory> QGstElementFactoryPtr;
 
 class QGstElementFactory : public QGstObject //FIXME public QGstPluginFeature
 {
     Q_OBJECT
 public:
-    QGstElementFactory(GstElementFactory *factory, QObject *parent = 0);
+    static QGstElementFactoryPtr fromGstElementFactory(GstElementFactory *factory);
     virtual ~QGstElementFactory();
 
-    static bool exists(const char *factoryName);
-    static QGstElementFactory *find(const char *factoryName);
-    static QGstElement *make(const char *factoryName, const char *elementName = 0);
+    static QGstElementFactoryPtr find(const char *factoryName);
+    static QGstElementPtr make(const char *factoryName, const char *elementName = 0);
+
+protected:
+    QGstElementFactory(GstElementFactory *factory);
 };
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstElementFactoryPtr)
 
 #endif

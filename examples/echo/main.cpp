@@ -34,19 +34,19 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
     qGstInit(&argc, &argv);
 
-    QGstPipeline pipeline;
+    QGstPipelinePtr pipeline = QGstPipeline::newPipeline();
 
-    QGstElement *src = QGstElementFactory::make("autoaudiosrc");
-    QGstElement *sink = QGstElementFactory::make("autoaudiosink");
+    QGstElementPtr src = QGstElementFactory::make("autoaudiosrc");
+    QGstElementPtr sink = QGstElementFactory::make("autoaudiosink");
 
-    pipeline << src << sink;
+    *pipeline << src << sink;
     QGstElement::link(src, sink);
 
-    pipeline.setState(QGstElement::Playing);
+    pipeline->setState(QGstElement::Playing);
 
     signal(SIGINT, sighandler);
     int result = app.exec();
 
-    pipeline.setState(QGstElement::Null);
+    pipeline->setState(QGstElement::Null);
     return result;
 }

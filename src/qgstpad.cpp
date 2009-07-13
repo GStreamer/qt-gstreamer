@@ -19,9 +19,15 @@
 
 namespace QtGstreamer {
 
-QGstPad::QGstPad(GstPad *gstPad, QObject *parent)
-    : QGstObject(GST_OBJECT(gstPad), parent)
+QGstPad::QGstPad(GstPad *gstPad)
+    : QGstObject(GST_OBJECT(gstPad))
 {
+}
+
+//static
+QGstPadPtr QGstPad::fromGstPad(GstPad *gstPad)
+{
+    return QGstPadPtr(new QGstPad(gstPad));
 }
 
 QGstPad::~QGstPad()
@@ -33,17 +39,17 @@ bool QGstPad::isLinked() const
     return gst_pad_is_linked(GST_PAD(m_object));
 }
 
-QGstPad::LinkReturn QGstPad::link(QGstPad *other)
+QGstPad::LinkReturn QGstPad::link(const QGstPadPtr & other)
 {
     return static_cast<LinkReturn>(gst_pad_link(GST_PAD(m_object), GST_PAD(other->m_object)));
 }
 
-bool QGstPad::unlink(QGstPad *other)
+bool QGstPad::unlink(const QGstPadPtr & other)
 {
     return gst_pad_unlink(GST_PAD(m_object), GST_PAD(other->m_object));
 }
 
-bool QGstPad::canLink(QGstPad *other)
+bool QGstPad::canLink(const QGstPadPtr & other)
 {
     return gst_pad_can_link(GST_PAD(m_object), GST_PAD(other->m_object));
 }

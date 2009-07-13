@@ -19,14 +19,26 @@
 
 namespace QtGstreamer {
 
-QGstPipeline::QGstPipeline(const char *name, QObject *parent)
-    : QGstBin(GST_BIN(gst_pipeline_new(name)), parent)
+QGstPipeline::QGstPipeline(const char *name)
+    : QGstBin(GST_BIN(gst_pipeline_new(name)))
 {
 }
 
-QGstPipeline::QGstPipeline(GstPipeline *gstPipeline, QObject *parent)
-    : QGstBin(GST_BIN(gstPipeline), parent)
+//static
+QGstPipelinePtr QGstPipeline::newPipeline(const char *name)
 {
+    return QGstPipelinePtr(new QGstPipeline(name));
+}
+
+QGstPipeline::QGstPipeline(GstPipeline *gstPipeline)
+    : QGstBin(GST_BIN(gstPipeline))
+{
+}
+
+//static
+QGstPipelinePtr QGstPipeline::fromGstPipeline(GstPipeline *gstPipeline)
+{
+    return QGstPipelinePtr(new QGstPipeline(gstPipeline));
 }
 
 QGstPipeline::~QGstPipeline()

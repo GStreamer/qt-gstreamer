@@ -23,39 +23,57 @@ typedef struct _GstElement GstElement;
 namespace QtGstreamer {
 
 class QGstPad;
+typedef QSharedPointer<QGstPad> QGstPadPtr;
+class QGstBin;
+class QGstElement;
+typedef QSharedPointer<QGstElement> QGstElementPtr;
 
 class QGstElement : public QGstObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstElement)
+    friend class QGstBin;
 public:
     enum State { VoidPending, Null, Ready, Paused, Playing };
     enum StateChangeReturn { StateChangeFailure, StateChangeSuccess,
                              StateChangeAsync, StateChangeNoPreroll };
 
-    explicit QGstElement(GstElement *gstElement, QObject *parent = 0);
+    static QGstElementPtr fromGstElement(GstElement *gstElement);
     virtual ~QGstElement();
 
     State currentState() const;
     StateChangeReturn setState(State state);
 
-    bool addPad(QGstPad *pad);
-    QGstPad *getStaticPad(const char *name);
-    QGstPad *getRequestPad(const char *name);
+    bool addPad(const QGstPadPtr & pad);
+    QGstPadPtr getStaticPad(const char *name);
+    QGstPadPtr getRequestPad(const char *name);
 
-    static bool link(QGstElement *element1, QGstElement *element2,
-                     QGstElement *element3 = NULL, QGstElement *element4 = NULL,
-                     QGstElement *element5 = NULL, QGstElement *element6 = NULL,
-                     QGstElement *element7 = NULL, QGstElement *element8 = NULL,
-                     QGstElement *element9 = NULL, QGstElement *element10 = NULL);
+    static bool link(const QGstElementPtr & element1, const QGstElementPtr & element2,
+                     const QGstElementPtr & element3 = QGstElementPtr(),
+                     const QGstElementPtr & element4 = QGstElementPtr(),
+                     const QGstElementPtr & element5 = QGstElementPtr(),
+                     const QGstElementPtr & element6 = QGstElementPtr(),
+                     const QGstElementPtr & element7 = QGstElementPtr(),
+                     const QGstElementPtr & element8 = QGstElementPtr(),
+                     const QGstElementPtr & element9 = QGstElementPtr(),
+                     const QGstElementPtr & element10 = QGstElementPtr());
 
-    static void unlink(QGstElement *element1, QGstElement *element2,
-                       QGstElement *element3 = NULL, QGstElement *element4 = NULL,
-                       QGstElement *element5 = NULL, QGstElement *element6 = NULL,
-                       QGstElement *element7 = NULL, QGstElement *element8 = NULL,
-                       QGstElement *element9 = NULL, QGstElement *element10 = NULL);
+    static void unlink(const QGstElementPtr & element1, const QGstElementPtr & element2,
+                       const QGstElementPtr & element3 = QGstElementPtr(),
+                       const QGstElementPtr & element4 = QGstElementPtr(),
+                       const QGstElementPtr & element5 = QGstElementPtr(),
+                       const QGstElementPtr & element6 = QGstElementPtr(),
+                       const QGstElementPtr & element7 = QGstElementPtr(),
+                       const QGstElementPtr & element8 = QGstElementPtr(),
+                       const QGstElementPtr & element9 = QGstElementPtr(),
+                       const QGstElementPtr & element10 = QGstElementPtr());
+
+protected:
+    QGstElement(GstElement *gstElement);
 };
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstElementPtr)
 
 #endif

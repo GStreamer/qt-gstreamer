@@ -23,9 +23,15 @@
 
 namespace QtGstreamer {
 
-QGstElement::QGstElement(GstElement *gstElement, QObject *parent)
-    : QGstObject(GST_OBJECT(gstElement), parent)
+QGstElement::QGstElement(GstElement *gstElement)
+    : QGstObject(GST_OBJECT(gstElement))
 {
+}
+
+//static
+QGstElementPtr QGstElement::fromGstElement(GstElement *gstElement)
+{
+    return QGstElementPtr(new QGstElement(gstElement));
 }
 
 QGstElement::~QGstElement()
@@ -43,37 +49,37 @@ QGstElement::StateChangeReturn QGstElement::setState(State state)
                                                                 static_cast<GstState>(state)));
 }
 
-bool QGstElement::addPad(QGstPad *pad)
+bool QGstElement::addPad(const QGstPadPtr & pad)
 {
     return gst_element_add_pad(GST_ELEMENT(m_object), GST_PAD(pad->m_object));
 }
 
-QGstPad *QGstElement::getStaticPad(const char *name)
+QGstPadPtr QGstElement::getStaticPad(const char *name)
 {
     GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), name);
     if (!pad) {
         qWarning() << "Could not get static pad" << name;
-        return NULL;
+        return QGstPadPtr();
     }
-    return new QGstPad(pad, this);
+    return QGstPad::fromGstPad(pad);
 }
 
-QGstPad *QGstElement::getRequestPad(const char *name)
+QGstPadPtr QGstElement::getRequestPad(const char *name)
 {
     GstPad *pad = gst_element_get_request_pad(GST_ELEMENT(m_object), name);
     if (!pad) {
         qWarning() << "Could not get request pad" << name;
-        return NULL;
+        return QGstPadPtr();
     }
-    return new QGstPad(pad, this);
+    return QGstPad::fromGstPad(pad);
 }
 
-
 //static
-bool QGstElement::link(QGstElement *element1, QGstElement *element2, QGstElement *element3,
-                       QGstElement *element4, QGstElement *element5 , QGstElement *element6,
-                       QGstElement *element7, QGstElement *element8, QGstElement *element9,
-                       QGstElement *element10)
+bool QGstElement::link(const QGstElementPtr & element1, const QGstElementPtr & element2,
+                       const QGstElementPtr & element3, const QGstElementPtr & element4,
+                       const QGstElementPtr & element5 , const QGstElementPtr & element6,
+                       const QGstElementPtr & element7, const QGstElementPtr & element8,
+                       const QGstElementPtr & element9, const QGstElementPtr & element10)
 {
     return gst_element_link_many(GST_ELEMENT(element1->m_object), GST_ELEMENT(element2->m_object),
                                  element3 ? GST_ELEMENT(element3->m_object) : NULL,
@@ -87,10 +93,11 @@ bool QGstElement::link(QGstElement *element1, QGstElement *element2, QGstElement
 }
 
 //static
-void QGstElement::unlink(QGstElement *element1, QGstElement *element2, QGstElement *element3,
-                         QGstElement *element4, QGstElement *element5 , QGstElement *element6,
-                         QGstElement *element7, QGstElement *element8, QGstElement *element9,
-                         QGstElement *element10)
+void QGstElement::unlink(const QGstElementPtr & element1, const QGstElementPtr & element2,
+                         const QGstElementPtr & element3, const QGstElementPtr & element4,
+                         const QGstElementPtr & element5 , const QGstElementPtr & element6,
+                         const QGstElementPtr & element7, const QGstElementPtr & element8,
+                         const QGstElementPtr & element9, const QGstElementPtr & element10)
 {
     gst_element_unlink_many(GST_ELEMENT(element1->m_object), GST_ELEMENT(element2->m_object),
                             element3 ? GST_ELEMENT(element3->m_object) : NULL,

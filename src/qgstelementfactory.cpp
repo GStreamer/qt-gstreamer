@@ -22,9 +22,15 @@
 
 namespace QtGstreamer {
 
-QGstElementFactory::QGstElementFactory(GstElementFactory *factory, QObject *parent)
-    : QGstObject(GST_OBJECT(factory), parent)
+QGstElementFactory::QGstElementFactory(GstElementFactory *factory)
+    : QGstObject(GST_OBJECT(factory))
 {
+}
+
+//static
+QGstElementFactoryPtr QGstElementFactory::fromGstElementFactory(GstElementFactory *factory)
+{
+    return QGstElementFactoryPtr(new QGstElementFactory(factory));
 }
 
 QGstElementFactory::~QGstElementFactory()
@@ -32,36 +38,26 @@ QGstElementFactory::~QGstElementFactory()
 }
 
 //static
-bool QGstElementFactory::exists(const char *factoryName)
-{
-    QGstElementFactory *factory = find(factoryName);
-    if ( factory ) {
-        delete factory;
-        return true;
-    } else {
-        return false;
-    }
-}
-
-//static
-QGstElementFactory *QGstElementFactory::find(const char *factoryName)
+QGstElementFactoryPtr QGstElementFactory::find(const char *factoryName)
 {
     GstElementFactory *factory = gst_element_factory_find(factoryName);
     if ( !factory ) {
-        return NULL;
+        return QGstElementFactoryPtr();
     }
-    return new QGstElementFactory(factory);
+    return fromGstElementFactory(factory);
 }
 
 //static
-QGstElement *QGstElementFactory::make(const char *factoryName, const char *elementName)
+QGstElementPtr QGstElementFactory::make(const char *factoryName, const char *elementName)
 {
     GstElement *element = gst_element_factory_make(factoryName, elementName);
     if ( !element ) {
         qWarning() << "Unable to construct" << factoryName << "element";
-        return NULL;
+        return QGstElementPtr();
     }
-    return new QGstElement(element);
+    return QGstElement::fromGstElement(element);
 }
 
 }
+
+#include "qgstelementfactory.moc"

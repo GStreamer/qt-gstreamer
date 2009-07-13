@@ -22,22 +22,30 @@ typedef struct _GstBin GstBin;
 
 namespace QtGstreamer {
 
+class QGstBin;
+typedef QSharedPointer<QGstBin> QGstBinPtr;
+
 class QGstBin : public QGstElement
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstBin)
 public:
-    explicit QGstBin(QObject *parent = 0);
-    explicit QGstBin(const char *name, QObject *parent = 0);
-    explicit QGstBin(GstBin *gstBin, QObject *parent = 0);
+    static QGstBinPtr newBin(const char *name = 0);
+    static QGstBinPtr fromGstBin(GstBin *gstBin);
     virtual ~QGstBin();
 
-    bool add(QGstElement *element);
-    QGstBin & operator<<(QGstElement *element);
+    bool add(const QGstElementPtr & element);
+    QGstBin & operator<<(const QGstElementPtr & element);
 
-    bool remove(QGstElement *element);
+    bool remove(const QGstElementPtr & element);
+
+protected:
+    QGstBin(const char *name = 0);
+    QGstBin(GstBin *gstBin);
 };
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstBinPtr)
 
 #endif

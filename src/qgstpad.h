@@ -24,6 +24,8 @@ namespace QtGstreamer {
 
 class QGstGhostPad;
 class QGstElement;
+class QGstPad;
+typedef QSharedPointer<QGstPad> QGstPadPtr;
 
 class QGstPad : public QGstObject
 {
@@ -35,15 +37,20 @@ public:
     enum LinkReturn { Ok = 0, WrongHierarchy = -1, WasLinked = -2, WrongDirection = -3,
                       NoFormat = -4, NoSched = -5, Refused = -6 };
 
-    explicit QGstPad(GstPad *gstPad, QObject *parent = 0);
+    static QGstPadPtr fromGstPad(GstPad *gstPad);
     virtual ~QGstPad();
 
     bool isLinked() const;
-    LinkReturn link(QGstPad *other);
-    bool unlink(QGstPad *other);
-    bool canLink(QGstPad *other);
+    LinkReturn link(const QGstPadPtr &other);
+    bool unlink(const QGstPadPtr & other);
+    bool canLink(const QGstPadPtr & other);
+
+protected:
+    QGstPad(GstPad *gstPad);
 };
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstPadPtr)
 
 #endif

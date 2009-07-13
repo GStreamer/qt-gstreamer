@@ -19,18 +19,20 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QVariant>
+#include <QtCore/QSharedPointer>
 typedef struct _GstObject GstObject;
 
 namespace QtGstreamer {
 
-class QGstBin;
+class QGstObject;
+typedef QSharedPointer<QGstObject> QGstObjectPtr;
 
 class QGstObject : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstObject)
 public:
-    explicit QGstObject(GstObject *gstObject, QObject *parent = 0);
+    static QGstObjectPtr fromGstObject(GstObject *gstObject);
     virtual ~QGstObject();
 
     QVariant property(const char *name) const;
@@ -39,8 +41,8 @@ public:
     template <class T> void setProperty(const char *name, const T & value);
 
 protected:
+    QGstObject(GstObject *gstObject);
     GstObject *m_object;
-    friend class QGstBin;
 };
 
 template <class T>
@@ -56,5 +58,7 @@ void QGstObject::setProperty(const char *name, const T & value)
 }
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstObjectPtr)
 
 #endif

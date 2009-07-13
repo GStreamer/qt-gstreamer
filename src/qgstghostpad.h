@@ -21,16 +21,23 @@
 
 namespace QtGstreamer {
 
+class QGstGhostPad;
+typedef QSharedPointer<QGstGhostPad> QGstGhostPadPtr;
+
 class QGstGhostPad : public QGstPad
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstGhostPad)
 public:
-    explicit QGstGhostPad(QGstPad *target, QObject *parent = 0);
-    explicit QGstGhostPad(const char *name, QGstPad *target, QObject *parent = 0);
+    static QGstGhostPadPtr newGhostPad(const char *name, const QGstPadPtr & target);
     virtual ~QGstGhostPad();
+
+protected:
+    QGstGhostPad(const char *name, const QGstPadPtr & target);
 };
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstGhostPadPtr)
 
 #endif

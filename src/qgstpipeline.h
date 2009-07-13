@@ -22,16 +22,25 @@ typedef struct _GstPipeline GstPipeline;
 
 namespace QtGstreamer {
 
+class QGstPipeline;
+typedef QSharedPointer<QGstPipeline> QGstPipelinePtr;
+
 class QGstPipeline : public QGstBin
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstPipeline)
 public:
-    explicit QGstPipeline(const char *name = 0, QObject *parent = 0);
-    explicit QGstPipeline(GstPipeline *gstPipeline, QObject *parent = 0);
+    static QGstPipelinePtr newPipeline(const char *name = 0);
+    static QGstPipelinePtr fromGstPipeline(GstPipeline *gstPipeline);
     virtual ~QGstPipeline();
+
+protected:
+    QGstPipeline(const char *name = 0);
+    QGstPipeline(GstPipeline *gstPipeline);
 };
 
 }
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstPipelinePtr)
 
 #endif

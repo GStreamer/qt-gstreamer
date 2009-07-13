@@ -19,47 +19,46 @@
 
 namespace QtGstreamer {
 
-QGstBin::QGstBin(QObject *parent)
-    : QGstElement(gst_bin_new(NULL), parent)
+QGstBin::QGstBin(const char *name)
+    : QGstElement(gst_bin_new(name))
 {
 }
 
-QGstBin::QGstBin(const char *name, QObject *parent)
-    : QGstElement(gst_bin_new(name), parent)
+//static
+QGstBinPtr QGstBin::newBin(const char *name)
+{
+    return QGstBinPtr(new QGstBin(name));
+}
+
+QGstBin::QGstBin(GstBin *gstBin)
+    : QGstElement(GST_ELEMENT(gstBin))
 {
 }
 
-QGstBin::QGstBin(GstBin *gstBin, QObject *parent)
-    : QGstElement(GST_ELEMENT(gstBin), parent)
+//static
+QGstBinPtr QGstBin::fromGstBin(GstBin *gstBin)
 {
+    return QGstBinPtr(new QGstBin(gstBin));
 }
 
 QGstBin::~QGstBin()
 {
 }
 
-bool QGstBin::add(QGstElement *element)
+bool QGstBin::add(const QGstElementPtr & element)
 {
-    if ( gst_bin_add(GST_BIN(m_object), GST_ELEMENT(element->m_object)) ) {
-        element->setParent(this);
-        return true;
-    }
-    return false;
+    return gst_bin_add(GST_BIN(m_object), GST_ELEMENT(element->m_object));
 }
 
-QGstBin & QGstBin::operator<<(QGstElement *element)
+QGstBin & QGstBin::operator<<(const QGstElementPtr & element)
 {
     add(element);
     return *this;
 }
 
-bool QGstBin::remove(QGstElement *element)
+bool QGstBin::remove(const QGstElementPtr & element)
 {
-    if ( gst_bin_remove(GST_BIN(m_object), GST_ELEMENT(element->m_object)) ) {
-        element->setParent(NULL);
-        return true;
-    }
-    return false;
+    return gst_bin_remove(GST_BIN(m_object), GST_ELEMENT(element->m_object));
 }
 
 }
