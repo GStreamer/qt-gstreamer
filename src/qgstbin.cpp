@@ -19,6 +19,11 @@
 
 namespace QtGstreamer {
 
+QGstBin::QGstBin(QObject *parent)
+    : QGstElement(gst_bin_new(NULL), parent)
+{
+}
+
 QGstBin::QGstBin(const char *name, QObject *parent)
     : QGstElement(gst_bin_new(name), parent)
 {

@@ -27,7 +27,8 @@ class QGstBin : public QGstElement
     Q_OBJECT
     Q_DISABLE_COPY(QGstBin)
 public:
-    explicit QGstBin(const char *name = 0, QObject *parent = 0);
+    explicit QGstBin(QObject *parent = 0);
+    explicit QGstBin(const char *name, QObject *parent = 0);
     explicit QGstBin(GstBin *gstBin, QObject *parent = 0);
     virtual ~QGstBin();
 
