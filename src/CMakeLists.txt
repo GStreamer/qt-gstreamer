@@ -10,6 +10,7 @@ set(QtGstreamer_SRCS
     qgstelementfactory.cpp
     qgstpad.cpp
     qgstghostpad.cpp
+    qgstbus.cpp
 )
 
 set(QtGstreamer_HEADERS
@@ -21,6 +22,7 @@ set(QtGstreamer_HEADERS
     qgstelementfactory.h
     qgstpad.h
     qgstghostpad.h
+    qgstbus.h
 ) 
 
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})

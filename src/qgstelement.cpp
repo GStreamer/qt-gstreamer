@@ -16,6 +16,7 @@
 */
 #include "qgstelement.h"
 #include "qgstpad.h"
+#include "qgstbus.h"
 #include <QtCore/QDebug>
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
@@ -72,6 +73,11 @@ QGstPadPtr QGstElement::getRequestPad(const char *name)
         return QGstPadPtr();
     }
     return QGstPad::fromGstPad(pad);
+}
+
+QGstBusPtr QGstElement::getBus()
+{
+    return QGstBus::fromGstBus(gst_element_get_bus(GST_ELEMENT(m_object)));
 }
 
 //static

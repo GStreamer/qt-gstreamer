@@ -25,6 +25,8 @@ namespace QtGstreamer {
 class QGstPad;
 typedef QSharedPointer<QGstPad> QGstPadPtr;
 class QGstBin;
+class QGstBus;
+typedef QSharedPointer<QGstBus> QGstBusPtr;
 class QGstElement;
 typedef QSharedPointer<QGstElement> QGstElementPtr;
 
@@ -47,6 +49,8 @@ public:
     bool addPad(const QGstPadPtr & pad);
     QGstPadPtr getStaticPad(const char *name);
     QGstPadPtr getRequestPad(const char *name);
+
+    QGstBusPtr getBus();
 
     static bool link(const QGstElementPtr & element1, const QGstElementPtr & element2,
                      const QGstElementPtr & element3 = QGstElementPtr(),
