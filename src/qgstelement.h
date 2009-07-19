@@ -29,12 +29,14 @@ class QGstBus;
 typedef QSharedPointer<QGstBus> QGstBusPtr;
 class QGstElement;
 typedef QSharedPointer<QGstElement> QGstElementPtr;
+class QGstElementPrivate;
 
 class QGstElement : public QGstObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstElement)
     friend class QGstBin;
+    friend class QGstElementPrivate;
 public:
     enum State { VoidPending, Null, Ready, Paused, Playing };
     enum StateChangeReturn { StateChangeFailure, StateChangeSuccess,
@@ -71,6 +73,11 @@ public:
                        const QGstElementPtr & element8 = QGstElementPtr(),
                        const QGstElementPtr & element9 = QGstElementPtr(),
                        const QGstElementPtr & element10 = QGstElementPtr());
+
+Q_SIGNALS:
+    void noMorePads();
+    void padAdded(QGstPadPtr pad);
+    void padRemoved(QGstPadPtr pad);
 
 protected:
     QGstElement(GstElement *gstElement);
