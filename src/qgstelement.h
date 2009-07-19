@@ -76,8 +76,8 @@ public:
 
 Q_SIGNALS:
     void noMorePads();
-    void padAdded(QGstPadPtr pad);
-    void padRemoved(QGstPadPtr pad);
+    void padAdded(QtGstreamer::QGstPadPtr pad);
+    void padRemoved(QtGstreamer::QGstPadPtr pad);
 
 protected:
     QGstElement(GstElement *gstElement);
