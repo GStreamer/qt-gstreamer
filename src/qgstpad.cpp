@@ -34,6 +34,11 @@ QGstPad::~QGstPad()
 {
 }
 
+QGstPad::Direction QGstPad::direction() const
+{
+    return static_cast<Direction>(gst_pad_get_direction(GST_PAD(m_object)));
+}
+
 bool QGstPad::isLinked() const
 {
     return gst_pad_is_linked(GST_PAD(m_object));

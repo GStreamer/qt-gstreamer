@@ -36,9 +36,12 @@ class QGstPad : public QGstObject
 public:
     enum LinkReturn { Ok = 0, WrongHierarchy = -1, WasLinked = -2, WrongDirection = -3,
                       NoFormat = -4, NoSched = -5, Refused = -6 };
+    enum Direction { Unknown, Src, Sink };
 
     static QGstPadPtr fromGstPad(GstPad *gstPad);
     virtual ~QGstPad();
+
+    Direction direction() const;
 
     bool isLinked() const;
     LinkReturn link(const QGstPadPtr &other);
