@@ -108,6 +108,11 @@ QGstPadPtr QGstElement::getRequestPad(const char *name)
     return QGstPad::fromGstPad(pad);
 }
 
+void QGstElement::releaseRequestPad(const QGstPadPtr & pad)
+{
+    gst_element_release_request_pad(GST_ELEMENT(m_object), GST_PAD(pad->m_object));
+}
+
 QGstBusPtr QGstElement::getBus()
 {
     return QGstBus::fromGstBus(gst_element_get_bus(GST_ELEMENT(m_object)));

@@ -51,6 +51,7 @@ public:
     bool addPad(const QGstPadPtr & pad);
     QGstPadPtr getStaticPad(const char *name);
     QGstPadPtr getRequestPad(const char *name);
+    void releaseRequestPad(const QGstPadPtr & pad);
 
     QGstBusPtr getBus();
 
