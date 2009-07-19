@@ -35,7 +35,7 @@ void QGstBusPrivate::bus_message(GstBus *bus, GstMessage *message, QGstBus *self
 QGstBus::QGstBus(GstBus *gstBus)
     : QGstObject(GST_OBJECT(gstBus))
 {
-    g_signal_connect(gstBus, "message", G_CALLBACK(&QGstBusPrivate::bus_message), this);
+    g_signal_connect(m_object, "message", G_CALLBACK(&QGstBusPrivate::bus_message), this);
 }
 
 //static
@@ -46,6 +46,7 @@ QGstBusPtr QGstBus::fromGstBus(GstBus *gstBus)
 
 QGstBus::~QGstBus()
 {
+    g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstBusPrivate::bus_message, this);
 }
 
 void QGstBus::addSignalWatch()

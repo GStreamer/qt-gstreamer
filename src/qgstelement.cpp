@@ -67,6 +67,9 @@ QGstElementPtr QGstElement::fromGstElement(GstElement *gstElement)
 
 QGstElement::~QGstElement()
 {
+    g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstElementPrivate::no_more_pads, this);
+    g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstElementPrivate::pad_added, this);
+    g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstElementPrivate::pad_removed, this);
 }
 
 QGstElement::State QGstElement::currentState() const
