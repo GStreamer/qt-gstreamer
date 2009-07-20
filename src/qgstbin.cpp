@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgstbin.h"
+#include <QtCore/QDebug>
 #include <gst/gstbin.h>
 
 namespace QtGstreamer {
@@ -59,6 +60,17 @@ QGstBin & QGstBin::operator<<(const QGstElementPtr & element)
 bool QGstBin::remove(const QGstElementPtr & element)
 {
     return gst_bin_remove(GST_BIN(m_object), GST_ELEMENT(element->m_object));
+}
+
+QGstElementPtr QGstBin::getByName(const char *name)
+{
+    GstElement *element;
+    element = gst_bin_get_by_name(GST_BIN(m_object),name);
+    if ( !element ) {
+        qWarning() << "Unable to find " << name << "element";
+        return QGstElementPtr();
+    }
+    return QGstElement::fromGstElement(element);
 }
 
 }

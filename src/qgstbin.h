@@ -36,8 +36,9 @@ public:
 
     bool add(const QGstElementPtr & element);
     QGstBin & operator<<(const QGstElementPtr & element);
-
     bool remove(const QGstElementPtr & element);
+
+    QGstElementPtr getByName(const char *name);
 
 protected:
     QGstBin(const char *name = 0);
