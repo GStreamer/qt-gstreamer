@@ -23,5 +23,6 @@ private slots:
     void initTestCase();
     void propertyTest();
     void player();
+    void gValueTest();
     void cleanupTestCase();
 };

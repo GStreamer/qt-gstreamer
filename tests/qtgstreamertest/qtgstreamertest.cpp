@@ -16,7 +16,9 @@
 */
 #include "../../src/qgstpipeline.h"
 #include "../../src/qgstelementfactory.h"
+#include "../../src/qgvalue.h"
 #include "qtgstreamertest.moc"
+#include <QtCore/QDebug>
 #include <gst/gst.h>
 
 using namespace QtGstreamer;
@@ -35,10 +37,10 @@ void QtGstreamerTest::propertyTest()
     QGstElementPtr qgelement = QGstElement::fromGstElement(foo);
     gst_object_unref(foo);
 
-    QCOMPARE(qgelement->property("name").toByteArray(), QByteArray("test"));
+    QCOMPARE(qgelement->property<QByteArray>("name"), QByteArray("test"));
 
     qgelement->setProperty("name", QByteArray("test2"));
-    QCOMPARE(qgelement->property("name").toByteArray(), QByteArray("test2"));
+    QCOMPARE(qgelement->property<QByteArray>("name"), QByteArray("test2"));
 }
 
 void QtGstreamerTest::player()
@@ -60,6 +62,21 @@ void QtGstreamerTest::player()
     bin->setState(QGstElement::Null);
     QTest::qWait(2000);
     QCOMPARE(bin->currentState(), QGstElement::Null);
+}
+
+void QtGstreamerTest::gValueTest()
+{
+    QGValue v(800);
+    qDebug() << v;
+    QCOMPARE(v.value<int>(), 800);
+
+    v = QGValue::fromValue(123.123);
+    qDebug() << v;
+    QCOMPARE(v.value<double>(), 123.123);
+
+    v = QGValue::fromValue<QByteArray>("hello world");
+    qDebug() << v;
+    QCOMPARE(v.value<QByteArray>(), QByteArray("hello world"));
 }
 
 void QtGstreamerTest::cleanupTestCase()

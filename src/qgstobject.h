@@ -17,9 +17,8 @@
 #ifndef _QTGSTREAMER_QGSTOBJECT_H
 #define _QTGSTREAMER_QGSTOBJECT_H
 
+#include "qgvalue.h"
 #include <QtCore/QObject>
-#include <QtCore/QVariant>
-#include <QtCore/QSharedPointer>
 typedef struct _GstObject GstObject;
 
 namespace QtGstreamer {
@@ -31,14 +30,14 @@ class QGstObject : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstObject)
+    friend class QGValue;
 public:
     static QGstObjectPtr fromGstObject(GstObject *gstObject);
     virtual ~QGstObject();
 
-    QVariant property(const char *name) const;
+    QGValue property(const char *name) const;
     template <class T> T property(const char *name) const;
-    void setProperty(const char *name, const QVariant & value);
-    template <class T> void setProperty(const char *name, const T & value);
+    void setProperty(const char *name, const QGValue & value);
 
 protected:
     QGstObject(GstObject *gstObject);
@@ -49,12 +48,6 @@ template <class T>
 T QGstObject::property(const char *name) const
 {
     return property(name).value<T>();
-}
-
-template <class T>
-void QGstObject::setProperty(const char *name, const T & value)
-{
-    setProperty(name, QVariant::fromValue<T>(value));
 }
 
 }
