@@ -70,6 +70,12 @@ QGstElement::~QGstElement()
     g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstElementPrivate::no_more_pads, this);
     g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstElementPrivate::pad_added, this);
     g_signal_handlers_disconnect_by_func(m_object, (void*) &QGstElementPrivate::pad_removed, this);
+
+    //if this is the last object holding a reference to the element, the element
+    //is now going to be destroyed, so let it cleanup fully by setting its state to NULL
+    if ( GST_OBJECT_REFCOUNT_VALUE(m_object) == 1 ) {
+        setState(Null);
+    }
 }
 
 QGstElement::State QGstElement::currentState() const
