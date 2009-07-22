@@ -29,6 +29,7 @@ set(QtGstreamer_HEADERS
     qgvalue.h
     qgstcaps.h
     qgststructure.h
+    qgstdeclarations.h
 ) 
 
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
