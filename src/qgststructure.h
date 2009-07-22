@@ -14,16 +14,30 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QtTest/QtTest>
+#ifndef _QTGSTREAMER_QGSTSTRUCTURE_H
+#define _QTGSTREAMER_QGSTSTRUCTURE_H
 
-class QtGstreamerTest : public QObject
+#include "qgstdeclarations.h"
+
+namespace QtGstreamer {
+
+class QGstStructure
 {
-    Q_OBJECT
-private slots:
-    void initTestCase();
-    void propertyTest();
-    void player();
-    void gValueTest();
-    void capsTest();
-    void cleanupTestCase();
+    friend class QGstCaps;
+public:
+    QGstStructure(const char *name);
+    QGstStructure(const QGstStructure & other);
+    virtual ~QGstStructure();
+
+    QGstStructure & operator=(const QGstStructure & other);
+
+    QGValue getValue(const char *fieldName) const;
+    void setValue(const char *fieldName, const QGValue & value);
+
+private:
+    GstStructure *m_structure;
 };
+
+}
+
+#endif

@@ -39,6 +39,7 @@ public:
     QGValue(const QGstObjectPtr & val);
     QGValue(const QGstElementPtr & val);
     QGValue(const QGstPadPtr & val);
+    QGValue(const QGstCapsPtr & val);
     QGValue(const QGValue & other);
     ~QGValue();
 

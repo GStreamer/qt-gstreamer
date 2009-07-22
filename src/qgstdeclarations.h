@@ -28,6 +28,8 @@ typedef struct _GstBus GstBus;
 typedef struct _GstMessage GstMessage;
 typedef struct _GValue GValue;
 typedef struct _GstElementFactory GstElementFactory;
+typedef struct _GstCaps GstCaps;
+typedef struct _GstStructure GstStructure;
 
 namespace QtGstreamer {
 
@@ -47,6 +49,10 @@ class QGstGhostPad;
 typedef QSharedPointer<QGstGhostPad> QGstGhostPadPtr;
 class QGstElementFactory;
 typedef QSharedPointer<QGstElementFactory> QGstElementFactoryPtr;
+class QGstCaps;
+typedef QSharedPointer<QGstCaps> QGstCapsPtr;
+class QGstStructure;
+class QGValue;
 
 }
 

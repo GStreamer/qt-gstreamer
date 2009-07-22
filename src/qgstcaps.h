@@ -14,16 +14,39 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QtTest/QtTest>
+#ifndef _QTGSTREAMER_QGSTCAPS_H
+#define _QTGSTREAMER_QGSTCAPS_H
 
-class QtGstreamerTest : public QObject
+#include "qgstdeclarations.h"
+#include <QtCore/QMetaType>
+
+namespace QtGstreamer {
+
+class QGstCaps
 {
-    Q_OBJECT
-private slots:
-    void initTestCase();
-    void propertyTest();
-    void player();
-    void gValueTest();
-    void capsTest();
-    void cleanupTestCase();
+    Q_DISABLE_COPY(QGstCaps)
+    friend class QGValue;
+public:
+    static QGstCapsPtr newEmpty();
+    static QGstCapsPtr newAny();
+    static QGstCapsPtr fromGstCaps(GstCaps *gstCaps);
+    virtual ~QGstCaps();
+
+    void makeWritable();
+    void appendStructure(const QGstStructure & structure);
+
+    static QGstCapsPtr fromString(const char *string);
+    QByteArray toString() const;
+
+protected:
+    QGstCaps(GstCaps *gstCaps);
+
+private:
+    GstCaps *m_caps;
 };
+
+}
+
+Q_DECLARE_METATYPE(QtGstreamer::QGstCapsPtr)
+
+#endif

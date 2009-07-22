@@ -17,6 +17,8 @@
 #include "../../src/qgstpipeline.h"
 #include "../../src/qgstelementfactory.h"
 #include "../../src/qgvalue.h"
+#include "../../src/qgstcaps.h"
+#include "../../src/qgststructure.h"
 #include "qtgstreamertest.moc"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
@@ -77,6 +79,22 @@ void QtGstreamerTest::gValueTest()
     v = QGValue::fromValue<QByteArray>("hello world");
     qDebug() << v;
     QCOMPARE(v.value<QByteArray>(), QByteArray("hello world"));
+}
+
+void QtGstreamerTest::capsTest()
+{
+    QGstCapsPtr caps = QGstCaps::newEmpty();
+    qDebug() << caps->toString();
+
+    QGstStructure s("audio/x-raw-int");
+    s.setValue("rate", 22000);
+    s.setValue("channels", 1);
+    s.setValue("width", 16);
+
+    caps->makeWritable();
+    caps->appendStructure(s);
+    qDebug() << caps->toString();
+    QCOMPARE(caps->toString(), QByteArray("audio/x-raw-int, rate=(int)22000, channels=(int)1, width=(int)16"));
 }
 
 void QtGstreamerTest::cleanupTestCase()

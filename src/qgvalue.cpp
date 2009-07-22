@@ -17,6 +17,7 @@
 #include "qgvalue.h"
 #include "qgstelement.h"
 #include "qgstpad.h"
+#include "qgstcaps.h"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
 
@@ -118,6 +119,13 @@ QGValue::QGValue(const QGstPadPtr & val)
     g_value_set_object(m_value, val->m_object);
 }
 
+QGValue::QGValue(const QGstCapsPtr & val)
+{
+    m_value = g_slice_new0(GValue);
+    g_value_init(m_value, GST_TYPE_CAPS);
+    g_value_set_boxed(m_value, val->m_caps);
+}
+
 QGValue::QGValue(const QGValue & other)
 {
     m_value = g_slice_new0(GValue);
@@ -142,6 +150,7 @@ QGValue & QGValue::operator=(const QGValue & other)
     }
     g_value_init(m_value, G_VALUE_TYPE(other.m_value));
     g_value_copy(other.m_value, m_value);
+    return *this;
 }
 
 bool QGValue::isValid() const
