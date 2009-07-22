@@ -18,13 +18,9 @@
 #define _QTGSTREAMER_QGSTBUS_H
 
 #include "qgstobject.h"
-typedef struct _GstBus GstBus;
-typedef struct _GstMessage GstMessage;
 
 namespace QtGstreamer {
 
-class QGstBus;
-typedef QSharedPointer<QGstBus> QGstBusPtr;
 class QGstBusPrivate;
 
 class QGstBus : public QGstObject

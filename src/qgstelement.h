@@ -18,17 +18,9 @@
 #define _QTGSTREAMER_QGSTELEMENT_H
 
 #include "qgstobject.h"
-typedef struct _GstElement GstElement;
 
 namespace QtGstreamer {
 
-class QGstPad;
-typedef QSharedPointer<QGstPad> QGstPadPtr;
-class QGstBin;
-class QGstBus;
-typedef QSharedPointer<QGstBus> QGstBusPtr;
-class QGstElement;
-typedef QSharedPointer<QGstElement> QGstElementPtr;
 class QGstElementPrivate;
 
 class QGstElement : public QGstObject

@@ -17,18 +17,10 @@
 #ifndef _QTGSTREAMER_QGVALUE_H
 #define _QTGSTREAMER_QGVALUE_H
 
+#include "qgstdeclarations.h"
 #include <QtCore/QVariant>
-#include <QtCore/QSharedPointer>
-typedef struct _GValue GValue;
 
 namespace QtGstreamer {
-
-class QGstObject;
-typedef QSharedPointer<QGstObject> QGstObjectPtr;
-class QGstElement;
-typedef QSharedPointer<QGstElement> QGstElementPtr;
-class QGstPad;
-typedef QSharedPointer<QGstPad> QGstPadPtr;
 
 class QGValue
 {

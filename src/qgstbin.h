@@ -18,12 +18,8 @@
 #define _QTGSTREAMER_QGSTBIN_H
 
 #include "qgstelement.h"
-typedef struct _GstBin GstBin;
 
 namespace QtGstreamer {
-
-class QGstBin;
-typedef QSharedPointer<QGstBin> QGstBinPtr;
 
 class QGstBin : public QGstElement
 {

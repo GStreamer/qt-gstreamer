@@ -19,12 +19,8 @@
 
 #include "qgvalue.h"
 #include <QtCore/QObject>
-typedef struct _GstObject GstObject;
 
 namespace QtGstreamer {
-
-class QGstObject;
-typedef QSharedPointer<QGstObject> QGstObjectPtr;
 
 class QGstObject : public QObject
 {

@@ -21,9 +21,6 @@
 
 namespace QtGstreamer {
 
-class QGstGhostPad;
-typedef QSharedPointer<QGstGhostPad> QGstGhostPadPtr;
-
 class QGstGhostPad : public QGstPad
 {
     Q_OBJECT

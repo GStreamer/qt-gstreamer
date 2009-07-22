@@ -18,12 +18,8 @@
 #define _QTGSTREAMER_QGSTPIPELINE_H
 
 #include "qgstbin.h"
-typedef struct _GstPipeline GstPipeline;
 
 namespace QtGstreamer {
-
-class QGstPipeline;
-typedef QSharedPointer<QGstPipeline> QGstPipelinePtr;
 
 class QGstPipeline : public QGstBin
 {

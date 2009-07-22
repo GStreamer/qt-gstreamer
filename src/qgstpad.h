@@ -18,14 +18,8 @@
 #define _QTGSTREAMER_QGSTPAD_H
 
 #include "qgstobject.h"
-typedef struct _GstPad GstPad;
 
 namespace QtGstreamer {
-
-class QGstGhostPad;
-class QGstElement;
-class QGstPad;
-typedef QSharedPointer<QGstPad> QGstPadPtr;
 
 class QGstPad : public QGstObject
 {
