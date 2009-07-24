@@ -53,6 +53,7 @@ class QGstCaps;
 typedef QSharedPointer<QGstCaps> QGstCapsPtr;
 class QGstStructure;
 class QGValue;
+class QGstXOverlay;
 
 }
 

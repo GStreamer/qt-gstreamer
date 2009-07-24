@@ -14,6 +14,7 @@ set(QtGstreamer_SRCS
     qgvalue.cpp
     qgstcaps.cpp
     qgststructure.cpp
+    interfaces/qgstxoverlay.cpp
 )
 
 set(QtGstreamer_HEADERS
@@ -30,11 +31,17 @@ set(QtGstreamer_HEADERS
     qgstcaps.h
     qgststructure.h
     qgstdeclarations.h
+    interfaces/qgstxoverlay.h
 ) 
 
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
 set_target_properties(QtGstreamer PROPERTIES SOVERSION 0 VERSION 0.0.1)
-target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES} ${GOBJECT_LIBRARIES})
+target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES}
+                                  ${GSTREAMER_INTERFACE_LIBRARY} ${GOBJECT_LIBRARIES})
 
 install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES ${QtGstreamer_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGstreamer)
+
+foreach(header ${QtGstreamer_HEADERS})
+    get_filename_component(header_path ${header} PATH)
+    install(FILES ${header} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGstreamer/${header_path})
+endforeach(header ${QtGstreamer_HEADERS})
