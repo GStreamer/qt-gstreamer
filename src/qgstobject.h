@@ -17,7 +17,7 @@
 #ifndef _QTGSTREAMER_QGSTOBJECT_H
 #define _QTGSTREAMER_QGSTOBJECT_H
 
-#include "qgvalue.h"
+#include "qgstvalue.h"
 #include <QtCore/QObject>
 
 namespace QtGstreamer {
@@ -26,14 +26,14 @@ class QGstObject : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstObject)
-    friend class QGValue;
+    friend class QGstValue;
 public:
     static QGstObjectPtr fromGstObject(GstObject *gstObject);
     virtual ~QGstObject();
 
-    QGValue property(const char *name) const;
+    QGstValue property(const char *name) const;
     template <class T> T property(const char *name) const;
-    void setProperty(const char *name, const QGValue & value);
+    void setProperty(const char *name, const QGstValue & value);
 
 protected:
     QGstObject(GstObject *gstObject);

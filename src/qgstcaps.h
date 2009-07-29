@@ -25,7 +25,7 @@ namespace QtGstreamer {
 class QGstCaps
 {
     Q_DISABLE_COPY(QGstCaps)
-    friend class QGValue;
+    friend class QGstValue;
 public:
     static QGstCapsPtr newEmpty();
     static QGstCapsPtr newAny();

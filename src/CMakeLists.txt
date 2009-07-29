@@ -11,7 +11,7 @@ set(QtGstreamer_SRCS
     qgstpad.cpp
     qgstghostpad.cpp
     qgstbus.cpp
-    qgvalue.cpp
+    qgstvalue.cpp
     qgstcaps.cpp
     qgststructure.cpp
     interfaces/qgstxoverlay.cpp
@@ -27,7 +27,7 @@ set(QtGstreamer_HEADERS
     qgstpad.h
     qgstghostpad.h
     qgstbus.h
-    qgvalue.h
+    qgstvalue.h
     qgstcaps.h
     qgststructure.h
     qgstdeclarations.h

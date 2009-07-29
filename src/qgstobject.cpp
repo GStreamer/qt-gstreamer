@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgstobject.h"
-#include "qgvalue.h"
 #include <QtCore/QtDebug>
 #include <gst/gstobject.h>
 
@@ -45,12 +44,12 @@ QGstObject::~QGstObject()
     gst_object_unref(m_object);
 }
 
-QGValue QGstObject::property(const char *name) const
+QGstValue QGstObject::property(const char *name) const
 {
     GParamSpec *paramSpec = g_object_class_find_property(G_OBJECT_GET_CLASS(m_object), name);
     if ( !paramSpec ) {
         qWarning() << "QGstObject::property: No such property:" << name;
-        return QGValue();
+        return QGstValue();
     }
     g_param_spec_ref_sink(paramSpec);
 
@@ -58,14 +57,14 @@ QGValue QGstObject::property(const char *name) const
     g_value_init(gvalue, G_PARAM_SPEC_VALUE_TYPE(paramSpec));
     g_object_get_property(G_OBJECT(m_object), name, gvalue);
 
-    QGValue result = QGValue::fromGValue(gvalue);
+    QGstValue result = QGstValue::fromGValue(gvalue);
 
     g_slice_free(GValue, gvalue);
     g_param_spec_unref(paramSpec);
     return result;
 }
 
-void QGstObject::setProperty(const char *name, const QGValue & value)
+void QGstObject::setProperty(const char *name, const QGstValue & value)
 {
     g_object_set_property(G_OBJECT(m_object), name, value.toGValue());
 }

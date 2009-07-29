@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgststructure.h"
-#include "qgvalue.h"
+#include "qgstvalue.h"
 #include <gst/gststructure.h>
 
 namespace QtGstreamer {
@@ -42,12 +42,12 @@ QGstStructure & QGstStructure::operator=(const QGstStructure & other)
     return *this;
 }
 
-QGValue QGstStructure::getValue(const char *fieldName) const
+QGstValue QGstStructure::getValue(const char *fieldName) const
 {
-    return QGValue::fromGValue(gst_structure_get_value(m_structure, fieldName));
+    return QGstValue::fromGValue(gst_structure_get_value(m_structure, fieldName));
 }
 
-void QGstStructure::setValue(const char *fieldName, const QGValue & value)
+void QGstStructure::setValue(const char *fieldName, const QGstValue & value)
 {
     gst_structure_set_value(m_structure, fieldName, value.toGValue());
 }

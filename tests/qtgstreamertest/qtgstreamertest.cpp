@@ -16,7 +16,7 @@
 */
 #include "../../src/qgstpipeline.h"
 #include "../../src/qgstelementfactory.h"
-#include "../../src/qgvalue.h"
+#include "../../src/qgstvalue.h"
 #include "../../src/qgstcaps.h"
 #include "../../src/qgststructure.h"
 #include "qtgstreamertest.moc"
@@ -68,15 +68,15 @@ void QtGstreamerTest::player()
 
 void QtGstreamerTest::gValueTest()
 {
-    QGValue v(800);
+    QGstValue v(800);
     qDebug() << v;
     QCOMPARE(v.value<int>(), 800);
 
-    v = QGValue::fromValue(123.123);
+    v = QGstValue::fromValue(123.123);
     qDebug() << v;
     QCOMPARE(v.value<double>(), 123.123);
 
-    v = QGValue::fromValue<QByteArray>("hello world");
+    v = QGstValue::fromValue<QByteArray>("hello world");
     qDebug() << v;
     QCOMPARE(v.value<QByteArray>(), QByteArray("hello world"));
 }

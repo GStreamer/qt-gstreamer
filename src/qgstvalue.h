@@ -14,21 +14,21 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGVALUE_H
-#define _QTGSTREAMER_QGVALUE_H
+#ifndef _QTGSTREAMER_QGSTVALUE_H
+#define _QTGSTREAMER_QGSTVALUE_H
 
 #include "qgstdeclarations.h"
 #include <QtCore/QVariant>
 
 namespace QtGstreamer {
 
-class QGValue
+class QGstValue
 {
 public:
-    QGValue();
+    QGstValue();
 
 #define FUNDAMENTAL_TYPE_FUNCTION_DECLARATIONS(type, typeName) \
-    QGValue(type val); \
+    QGstValue(type val); \
     bool holds ##typeName () const; \
     type get ##typeName () const; \
     void set ##typeName (type val);
@@ -44,30 +44,30 @@ public:
 
 #undef FUNDAMENTAL_TYPE_FUNCTION_DECLARATIONS
 
-    QGValue(const char *val);
-    QGValue(const QByteArray & val);
+    QGstValue(const char *val);
+    QGstValue(const QByteArray & val);
     bool holdsString() const;
     QByteArray getString() const;
     void setString(const char *val);
 
-    QGValue(const QGstObjectPtr & val);
-    QGValue(const QGstElementPtr & val);
-    QGValue(const QGstPadPtr & val);
-    QGValue(const QGstCapsPtr & val);
-    QGValue(const QGValue & other);
-    virtual ~QGValue();
+    QGstValue(const QGstObjectPtr & val);
+    QGstValue(const QGstElementPtr & val);
+    QGstValue(const QGstPadPtr & val);
+    QGstValue(const QGstCapsPtr & val);
+    QGstValue(const QGstValue & other);
+    virtual ~QGstValue();
 
-    QGValue & operator=(const QGValue & other);
+    QGstValue & operator=(const QGstValue & other);
 
     bool isValid() const;
 
-    static QGValue fromGValue(const GValue *val);
+    static QGstValue fromGValue(const GValue *val);
     GValue *toGValue() const;
 
-    static QGValue fromQVariant(const QVariant & variant, quint32 gtype = 0);
+    static QGstValue fromQVariant(const QVariant & variant, quint32 gtype = 0);
     QVariant toQVariant() const;
 
-    template<class T> static QGValue fromValue(const T & value, quint32 gtype = 0);
+    template<class T> static QGstValue fromValue(const T & value, quint32 gtype = 0);
     template<class T> T value() const;
 
     bool holdsFourcc() const;
@@ -88,28 +88,28 @@ public:
 
     bool holdsList() const;
     uint listGetSize() const;
-    QGValue listGetValue(uint index) const;
-    //void listAppendValue(const QGValue & value);
-    //void listPrependValue(const QGValue & value);
-    //void listConcat(const QGValue & value1, const QGValue & value2);
+    QGstValue listGetValue(uint index) const;
+    //void listAppendValue(const QGstValue & value);
+    //void listPrependValue(const QGstValue & value);
+    //void listConcat(const QGstValue & value1, const QGstValue & value2);
 
     bool holdsArray() const;
     uint arrayGetSize() const;
-    QGValue arrayGetValue(uint index) const;
-    //void arrayAppendValue(const QGValue & value);
-    //void arrayPrependValue(const QGValue & value);
+    QGstValue arrayGetValue(uint index) const;
+    //void arrayAppendValue(const QGstValue & value);
+    //void arrayPrependValue(const QGstValue & value);
 
     bool holdsFraction() const;
     int getFractionNumerator() const;
     int getFractionDenominator() const;
     void setFraction(int numerator, int denominator);
-    bool fractionMultiply(const QGValue & factor1, const QGValue & factor2);
-    bool fractionSubtract(const QGValue & minuend, const QGValue & subtrahend);
+    bool fractionMultiply(const QGstValue & factor1, const QGstValue & factor2);
+    bool fractionSubtract(const QGstValue & minuend, const QGstValue & subtrahend);
 
     bool holdsFractionRange() const;
-    QGValue getFractionRangeMin() const;
-    QGValue getFractionRangeMax() const;
-    void setFractionRange(const QGValue & start, const QGValue & end);
+    QGstValue getFractionRangeMin() const;
+    QGstValue getFractionRangeMax() const;
+    void setFractionRange(const QGstValue & start, const QGstValue & end);
     void setFractionRange(int numerator_start, int denominator_start,
                           int numerator_end, int denominator_end);
 
@@ -125,29 +125,29 @@ public:
     QByteArray serialize() const;
     bool deserialize(const char *src);
 
-    static bool canCompare(const QGValue & val1, const QGValue & val2);
-    bool operator<(const QGValue & val2) const;
-    bool operator<=(const QGValue & val2) const;
-    bool operator>(const QGValue & val2) const;
-    bool operator>=(const QGValue & val2) const;
-    bool operator==(const QGValue & val2) const;
+    static bool canCompare(const QGstValue & val1, const QGstValue & val2);
+    bool operator<(const QGstValue & val2) const;
+    bool operator<=(const QGstValue & val2) const;
+    bool operator>(const QGstValue & val2) const;
+    bool operator>=(const QGstValue & val2) const;
+    bool operator==(const QGstValue & val2) const;
 
 private:
     void reinit(unsigned long gtype);
     GValue *m_value;
-    friend QDebug operator<<(QDebug debug, const QGValue & qgvalue);
+    friend QDebug operator<<(QDebug debug, const QGstValue & qgvalue);
 };
 
-QDebug operator<<(QDebug debug, const QGValue & qgvalue);
+QDebug operator<<(QDebug debug, const QGstValue & qgvalue);
 
 template<class T>
-QGValue QGValue::fromValue(const T & value, quint32 gtype)
+QGstValue QGstValue::fromValue(const T & value, quint32 gtype)
 {
-    return QGValue::fromQVariant(QVariant::fromValue(value), gtype);
+    return QGstValue::fromQVariant(QVariant::fromValue(value), gtype);
 }
 
 template<class T>
-T QGValue::value() const
+T QGstValue::value() const
 {
     return toQVariant().value<T>();
 }

@@ -52,7 +52,7 @@ typedef QSharedPointer<QGstElementFactory> QGstElementFactoryPtr;
 class QGstCaps;
 typedef QSharedPointer<QGstCaps> QGstCapsPtr;
 class QGstStructure;
-class QGValue;
+class QGstValue;
 class QGstXOverlay;
 
 }
