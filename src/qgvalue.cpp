@@ -24,78 +24,69 @@
 namespace QtGstreamer {
 
 QGValue::QGValue()
+    : m_value(NULL)
 {
-    m_value = NULL;
 }
 
-QGValue::QGValue(char val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_CHAR);
-    g_value_set_char(m_value, val);
-}
+#define FUNDAMENTAL_TYPE_FUNCTIONS(capsType, camelType, lowercaseType, T) \
+    QGValue::QGValue(T val) \
+        : m_value(NULL) \
+    { \
+        set ##camelType (val); \
+    } \
+    bool QGValue::holds ##camelType () const \
+    { \
+        return G_VALUE_HOLDS_ ##capsType (m_value); \
+    } \
+    \
+    T QGValue::get ##camelType () const \
+    { \
+        return g_value_get_ ##lowercaseType (m_value); \
+    } \
+    \
+    void QGValue::set ##camelType (T val) \
+    { \
+        reinit(G_TYPE_ ##capsType); \
+        g_value_set_ ##lowercaseType (m_value, val); \
+    }
 
-QGValue::QGValue(uchar val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_UCHAR);
-    g_value_set_uchar(m_value, val);
-}
+FUNDAMENTAL_TYPE_FUNCTIONS(CHAR, Char, char, char)
+FUNDAMENTAL_TYPE_FUNCTIONS(UCHAR, UChar, uchar, uchar)
+FUNDAMENTAL_TYPE_FUNCTIONS(INT, Int, int, int)
+FUNDAMENTAL_TYPE_FUNCTIONS(UINT, UInt, uint, uint)
+FUNDAMENTAL_TYPE_FUNCTIONS(INT64, Int64, int64, qint64)
+FUNDAMENTAL_TYPE_FUNCTIONS(UINT64, UInt64, uint64, quint64)
+FUNDAMENTAL_TYPE_FUNCTIONS(BOOLEAN, Boolean, boolean, bool)
+FUNDAMENTAL_TYPE_FUNCTIONS(DOUBLE, Double, double, double)
 
-QGValue::QGValue(int val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_INT);
-    g_value_set_int(m_value, val);
-}
-
-QGValue::QGValue(uint val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_UINT);
-    g_value_set_uint(m_value, val);
-}
-
-QGValue::QGValue(qint64 val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_INT64);
-    g_value_set_int64(m_value, val);
-}
-
-QGValue::QGValue(quint64 val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_UINT64);
-    g_value_set_uint64(m_value, val);
-}
-
-QGValue::QGValue(bool val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_BOOLEAN);
-    g_value_set_boolean(m_value, val);
-}
-
-QGValue::QGValue(double val)
-{
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_DOUBLE);
-    g_value_set_double(m_value, val);
-}
+#undef FUNDAMENTAL_TYPE_FUNCTIONS
 
 QGValue::QGValue(const char *val)
+    : m_value(NULL)
 {
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_STRING);
-    g_value_set_string(m_value, val);
+    setString(val);
 }
 
 QGValue::QGValue(const QByteArray & val)
+    : m_value(NULL)
 {
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_TYPE_STRING);
-    g_value_set_string(m_value, val.constData());
+    setString(val.constData());
+}
+
+bool QGValue::holdsString() const
+{
+    return G_VALUE_HOLDS_STRING(m_value);
+}
+
+QByteArray QGValue::getString() const
+{
+    return QByteArray(g_value_get_string(m_value));
+}
+
+void QGValue::setString(const char *val)
+{
+    reinit(G_TYPE_STRING);
+    g_value_set_string(m_value, val);
 }
 
 QGValue::QGValue(const QGstObjectPtr & val)
@@ -120,17 +111,15 @@ QGValue::QGValue(const QGstPadPtr & val)
 }
 
 QGValue::QGValue(const QGstCapsPtr & val)
+    : m_value(NULL)
 {
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, GST_TYPE_CAPS);
-    g_value_set_boxed(m_value, val->m_caps);
+    setCaps(val);
 }
 
 QGValue::QGValue(const QGValue & other)
+    : m_value(NULL)
 {
-    m_value = g_slice_new0(GValue);
-    g_value_init(m_value, G_VALUE_TYPE(other.m_value));
-    g_value_copy(other.m_value, m_value);
+    operator=(other);
 }
 
 QGValue::~QGValue()
@@ -143,14 +132,19 @@ QGValue::~QGValue()
 
 QGValue & QGValue::operator=(const QGValue & other)
 {
+    reinit(G_VALUE_TYPE(other.m_value));
+    g_value_copy(other.m_value, m_value);
+    return *this;
+}
+
+void QGValue::reinit(unsigned long gtype)
+{
     if ( m_value ) {
         g_value_unset(m_value);
     } else {
         m_value = g_slice_new0(GValue);
     }
-    g_value_init(m_value, G_VALUE_TYPE(other.m_value));
-    g_value_copy(other.m_value, m_value);
-    return *this;
+    g_value_init(m_value, gtype);
 }
 
 bool QGValue::isValid() const
@@ -337,6 +331,247 @@ QVariant QGValue::toQVariant() const
     default:
         return QVariant();
     }
+}
+
+bool QGValue::holdsFourcc() const
+{
+    return GST_VALUE_HOLDS_FOURCC(m_value);
+}
+
+quint32 QGValue::getFourcc() const
+{
+    return gst_value_get_fourcc(m_value);
+}
+
+void QGValue::setFourcc(quint32 fourcc)
+{
+    reinit(GST_TYPE_FOURCC);
+    gst_value_set_fourcc(m_value, fourcc);
+}
+
+void QGValue::setFourcc(char a, char b, char c, char d)
+{
+    reinit(GST_TYPE_FOURCC);
+    gst_value_set_fourcc(m_value, GST_MAKE_FOURCC(a, b, c, d));
+}
+
+void QGValue::setFourcc(const char fourccStr[4])
+{
+    reinit(GST_TYPE_FOURCC);
+    gst_value_set_fourcc(m_value, GST_STR_FOURCC(fourccStr));
+}
+
+bool QGValue::holdsIntRange() const
+{
+    return GST_VALUE_HOLDS_INT_RANGE(m_value);
+}
+
+int QGValue::getIntRangeMin() const
+{
+    return gst_value_get_int_range_min(m_value);
+}
+
+int QGValue::getIntRangeMax() const
+{
+    return gst_value_get_int_range_max(m_value);
+}
+
+void QGValue::setIntRange(int start, int end)
+{
+    reinit(GST_TYPE_INT_RANGE);
+    gst_value_set_int_range(m_value, start, end);
+}
+
+bool QGValue::holdsDoubleRange() const
+{
+    return GST_VALUE_HOLDS_DOUBLE_RANGE(m_value);
+}
+
+double QGValue::getDoubleRangeMin() const
+{
+    return gst_value_get_double_range_min(m_value);
+}
+
+double QGValue::getDoubleRangeMax() const
+{
+    return gst_value_get_double_range_max(m_value);
+}
+
+void QGValue::setDoubleRange(double start, double end)
+{
+    reinit(GST_TYPE_DOUBLE_RANGE);
+    gst_value_set_double_range(m_value, start, end);
+}
+
+bool QGValue::holdsList() const
+{
+    return GST_VALUE_HOLDS_LIST(m_value);
+}
+
+uint QGValue::listGetSize() const
+{
+    return gst_value_list_get_size(m_value);
+}
+
+QGValue QGValue::listGetValue(uint index) const
+{
+    return fromGValue(gst_value_list_get_value(m_value, index));
+}
+
+bool QGValue::holdsArray() const
+{
+    return GST_VALUE_HOLDS_ARRAY(m_value);
+}
+
+uint QGValue::arrayGetSize() const
+{
+    return gst_value_array_get_size(m_value);
+}
+
+QGValue QGValue::arrayGetValue(uint index) const
+{
+    return fromGValue(gst_value_array_get_value(m_value, index));
+}
+
+bool QGValue::holdsFraction() const
+{
+    return GST_VALUE_HOLDS_FRACTION(m_value);
+}
+
+int QGValue::getFractionNumerator() const
+{
+    return gst_value_get_fraction_numerator(m_value);
+}
+
+int QGValue::getFractionDenominator() const
+{
+    return gst_value_get_fraction_denominator(m_value);
+}
+
+void QGValue::setFraction(int numerator, int denominator)
+{
+    reinit(GST_TYPE_FRACTION);
+    gst_value_set_fraction(m_value, numerator, denominator);
+}
+
+bool QGValue::fractionMultiply(const QGValue & factor1, const QGValue & factor2)
+{
+    reinit(GST_TYPE_FRACTION);
+    return gst_value_fraction_multiply(m_value, factor1.m_value, factor2.m_value);
+}
+
+bool QGValue::fractionSubtract(const QGValue & minuend, const QGValue & subtrahend)
+{
+    reinit(GST_TYPE_FRACTION);
+    return gst_value_fraction_subtract(m_value, minuend.m_value, subtrahend.m_value);
+}
+
+bool QGValue::holdsFractionRange() const
+{
+    return GST_VALUE_HOLDS_FRACTION_RANGE(m_value);
+}
+
+QGValue QGValue::getFractionRangeMin() const
+{
+    return fromGValue(gst_value_get_fraction_range_min(m_value));
+}
+
+QGValue QGValue::getFractionRangeMax() const
+{
+    return fromGValue(gst_value_get_fraction_range_max(m_value));
+}
+
+void QGValue::setFractionRange(const QGValue & start, const QGValue & end)
+{
+    reinit(GST_TYPE_FRACTION_RANGE);
+    gst_value_set_fraction_range(m_value, start.m_value, end.m_value);
+}
+
+void QGValue::setFractionRange(int numerator_start, int denominator_start,
+                               int numerator_end, int denominator_end)
+{
+    reinit(GST_TYPE_FRACTION_RANGE);
+    gst_value_set_fraction_range_full(m_value, numerator_start, denominator_start,
+                                               numerator_end, denominator_end);
+}
+
+bool QGValue::holdsCaps() const
+{
+    return GST_VALUE_HOLDS_CAPS(m_value);
+}
+
+QGstCapsPtr QGValue::getCaps() const
+{
+    GstCaps *caps = gst_caps_copy(gst_value_get_caps(m_value));
+    QGstCapsPtr result = QGstCaps::fromGstCaps(caps);
+    gst_caps_unref(caps);
+    return result;
+}
+
+void QGValue::setCaps(const QGstCapsPtr & val)
+{
+    reinit(GST_TYPE_CAPS);
+    gst_value_set_caps(m_value, val->m_caps);
+}
+
+bool QGValue::holdsStructure() const
+{
+    return GST_VALUE_HOLDS_STRUCTURE(m_value);
+}
+
+bool QGValue::isFixed() const
+{
+    return gst_value_is_fixed(m_value);
+}
+
+QByteArray QGValue::serialize() const
+{
+    char *str = gst_value_serialize(m_value);
+    if ( !str ) {
+        return QByteArray();
+    } else {
+        QByteArray result(str);
+        g_free(str);
+        return result;
+    }
+}
+
+bool QGValue::deserialize(const char *src)
+{
+    return gst_value_deserialize(m_value, src);
+}
+
+//static
+bool QGValue::canCompare(const QGValue & val1, const QGValue & val2)
+{
+    return gst_value_can_compare(val1.m_value, val2.m_value);
+}
+
+bool QGValue::operator<(const QGValue & val2) const
+{
+    return (gst_value_compare(m_value, val2.m_value) == GST_VALUE_LESS_THAN);
+}
+
+bool QGValue::operator<=(const QGValue & val2) const
+{
+    int result = gst_value_compare(m_value, val2.m_value);
+    return (result == GST_VALUE_LESS_THAN || result == GST_VALUE_EQUAL);
+}
+
+bool QGValue::operator>(const QGValue & val2) const
+{
+    return (gst_value_compare(m_value, val2.m_value) == GST_VALUE_GREATER_THAN);
+}
+
+bool QGValue::operator>=(const QGValue & val2) const
+{
+    int result = gst_value_compare(m_value, val2.m_value);
+    return (result == GST_VALUE_GREATER_THAN || result == GST_VALUE_EQUAL);
+}
+
+bool QGValue::operator==(const QGValue & val2) const
+{
+    return (gst_value_compare(m_value, val2.m_value) == GST_VALUE_EQUAL);
 }
 
 QDebug operator<<(QDebug debug, const QGValue & qgvalue)
