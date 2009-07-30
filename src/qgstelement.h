@@ -38,7 +38,8 @@ public:
     static QGstElementPtr fromGstElement(GstElement *gstElement);
     virtual ~QGstElement();
 
-    State currentState() const;
+    State currentState();
+    StateChangeReturn getState(State *state, State *pending, quint64 timeout);
     StateChangeReturn setState(State state);
     bool syncStateWithParent();
 

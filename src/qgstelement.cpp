@@ -78,9 +78,25 @@ QGstElement::~QGstElement()
     }
 }
 
-QGstElement::State QGstElement::currentState() const
+QGstElement::State QGstElement::currentState()
 {
-    return static_cast<State>(GST_STATE(m_object));
+    State state;
+    getState(&state, NULL, static_cast<quint64>(-1));
+    return state;
+}
+
+QGstElement::StateChangeReturn QGstElement::getState(State *state, State *pending, quint64 timeout)
+{
+    GstState curState, pendingState;
+    GstStateChangeReturn result = gst_element_get_state(GST_ELEMENT(m_object),
+                                                        &curState, &pendingState, timeout);
+    if ( state ) {
+        *state = static_cast<State>(curState);
+    }
+    if ( pending ) {
+        *pending = static_cast<State>(pendingState);
+    }
+    return static_cast<StateChangeReturn>(result);
 }
 
 QGstElement::StateChangeReturn QGstElement::setState(State state)
