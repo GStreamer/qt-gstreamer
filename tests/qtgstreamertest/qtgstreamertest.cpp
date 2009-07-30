@@ -57,13 +57,16 @@ void QtGstreamerTest::player()
     *bin << src << sink;
     QCOMPARE(QGstElement::link(src, sink), true);
 
+    QGstElement::State state;
     bin->setState(QGstElement::Playing);
-    QTest::qWait(5000);
-    QCOMPARE(bin->currentState(), QGstElement::Playing);
+    bin->getState(&state, NULL, (quint64) -1);
+    QCOMPARE(state, QGstElement::Playing);
+
+    QTest::qWait(1000);
 
     bin->setState(QGstElement::Null);
-    QTest::qWait(2000);
-    QCOMPARE(bin->currentState(), QGstElement::Null);
+    bin->getState(&state, NULL, (quint64) -1);
+    QCOMPARE(state, QGstElement::Null);
 }
 
 void QtGstreamerTest::gValueTest()

@@ -78,13 +78,6 @@ QGstElement::~QGstElement()
     }
 }
 
-QGstElement::State QGstElement::currentState()
-{
-    State state;
-    getState(&state, NULL, static_cast<quint64>(-1));
-    return state;
-}
-
 QGstElement::StateChangeReturn QGstElement::getState(State *state, State *pending, quint64 timeout)
 {
     GstState curState, pendingState;
