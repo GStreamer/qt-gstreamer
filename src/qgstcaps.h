@@ -34,6 +34,7 @@ public:
 
     void makeWritable();
     void appendStructure(const QGstStructure & structure);
+    uint getSize() const;
 
     static QGstCapsPtr fromString(const char *string);
     QByteArray toString() const;

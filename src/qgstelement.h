@@ -40,6 +40,7 @@ public:
 
     State currentState() const;
     StateChangeReturn setState(State state);
+    bool syncStateWithParent();
 
     bool addPad(const QGstPadPtr & pad);
     QGstPadPtr getStaticPad(const char *name);

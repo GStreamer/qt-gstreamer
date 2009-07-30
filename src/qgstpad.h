@@ -42,6 +42,9 @@ public:
     bool unlink(const QGstPadPtr & other);
     bool canLink(const QGstPadPtr & other);
 
+    QGstCapsPtr getCaps();
+    bool setBlocked(bool blocked);
+
 protected:
     QGstPad(GstPad *gstPad);
 };

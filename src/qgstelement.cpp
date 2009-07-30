@@ -89,6 +89,11 @@ QGstElement::StateChangeReturn QGstElement::setState(State state)
                                                                 static_cast<GstState>(state)));
 }
 
+bool QGstElement::syncStateWithParent()
+{
+   return gst_element_sync_state_with_parent(GST_ELEMENT(m_object));
+}
+
 bool QGstElement::addPad(const QGstPadPtr & pad)
 {
     return gst_element_add_pad(GST_ELEMENT(m_object), GST_PAD(pad->m_object));

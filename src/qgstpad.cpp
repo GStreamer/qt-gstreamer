@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgstpad.h"
+#include "qgstcaps.h"
+#include <QtCore/QDebug>
 #include <gst/gstpad.h>
 
 namespace QtGstreamer {
@@ -57,6 +59,23 @@ bool QGstPad::unlink(const QGstPadPtr & other)
 bool QGstPad::canLink(const QGstPadPtr & other)
 {
     return gst_pad_can_link(GST_PAD(m_object), GST_PAD(other->m_object));
+}
+
+QGstCapsPtr QGstPad::getCaps()
+{
+   GstCaps *caps = gst_pad_get_caps(GST_PAD(m_object));
+   if (!caps) {
+       qWarning() << "Could not get caps from pad";
+       return QGstCapsPtr();
+   }
+   QGstCapsPtr result = QGstCaps::fromGstCaps(caps);
+   gst_caps_unref(caps);
+   return result;
+}
+
+bool QGstPad::setBlocked(bool blocked)
+{
+   return gst_pad_set_blocked(GST_PAD(m_object),blocked);
 }
 
 }

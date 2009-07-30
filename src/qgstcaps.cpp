@@ -58,6 +58,11 @@ void QGstCaps::appendStructure(const QGstStructure & structure)
     gst_caps_append_structure(m_caps, gst_structure_copy(structure.m_structure));
 }
 
+uint QGstCaps::getSize() const
+{
+   return gst_caps_get_size(m_caps);
+}
+
 //static
 QGstCapsPtr QGstCaps::fromString(const char *string)
 {
