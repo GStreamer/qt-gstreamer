@@ -20,6 +20,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstObject, GST_TYPE_OBJECT)
+
 QGstObject::QGstObject(GstObject *gstObject)
     : QObject(), m_object(NULL)
 {

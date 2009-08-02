@@ -22,6 +22,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstElementFactory, GST_TYPE_ELEMENT_FACTORY)
+
 QGstElementFactory::QGstElementFactory(GstElementFactory *factory)
     : QGstObject(GST_OBJECT(factory))
 {

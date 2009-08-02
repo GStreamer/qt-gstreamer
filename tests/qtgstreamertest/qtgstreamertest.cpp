@@ -19,6 +19,7 @@
 #include "../../src/qgstvalue.h"
 #include "../../src/qgstcaps.h"
 #include "../../src/qgststructure.h"
+#include "../../src/qgstpad.h"
 #include "qtgstreamertest.moc"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
@@ -43,6 +44,19 @@ void QtGstreamerTest::propertyTest()
 
     qgelement->setProperty("name", QByteArray("test2"));
     QCOMPARE(qgelement->property<QByteArray>("name"), QByteArray("test2"));
+}
+
+void QtGstreamerTest::castTest()
+{
+    QGstPipelinePtr pipeline = QGstPipeline::newPipeline();
+    QGstObjectPtr obj = qtgstreamer_cast<QGstObject>(pipeline);
+    QVERIFY(!obj.isNull());
+
+    QGstElementPtr element = qtgstreamer_cast<QGstElement>(obj);
+    QVERIFY(!element.isNull());
+
+    QGstPadPtr pad = qtgstreamer_cast<QGstPad>(element);
+    QVERIFY(pad.isNull());
 }
 
 void QtGstreamerTest::player()

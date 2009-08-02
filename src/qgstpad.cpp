@@ -21,6 +21,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstPad, GST_TYPE_PAD)
+
 QGstPad::QGstPad(GstPad *gstPad)
     : QGstObject(GST_OBJECT(gstPad))
 {

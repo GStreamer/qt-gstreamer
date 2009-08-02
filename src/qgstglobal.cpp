@@ -29,4 +29,10 @@ void qGstInit(int *argc, char **argv[])
     gst_init(argc, argv);
 }
 
+//internal helper function used for casting
+bool qgst_gtype_check_instance_type(void *instance, unsigned long gtype)
+{
+    return G_TYPE_CHECK_INSTANCE_TYPE(instance, gtype);
+}
+
 }

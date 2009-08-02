@@ -24,6 +24,8 @@ namespace QtGstreamer {
 class QGstElementFactory : public QGstObject //FIXME public QGstPluginFeature
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QGstElementFactory)
+    QGST_WRAPPER(GstElementFactory)
 public:
     static QGstElementFactoryPtr fromGstElementFactory(GstElementFactory *factory);
     virtual ~QGstElementFactory();

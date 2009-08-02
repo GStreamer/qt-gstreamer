@@ -25,6 +25,7 @@ class QGstBin : public QGstElement
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstBin)
+    QGST_WRAPPER(GstBin)
 public:
     static QGstBinPtr newBin(const char *name = 0);
     static QGstBinPtr fromGstBin(GstBin *gstBin);

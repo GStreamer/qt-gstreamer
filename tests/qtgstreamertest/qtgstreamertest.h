@@ -22,6 +22,7 @@ class QtGstreamerTest : public QObject
 private slots:
     void initTestCase();
     void propertyTest();
+    void castTest();
     void player();
     void gValueTest();
     void capsTest();

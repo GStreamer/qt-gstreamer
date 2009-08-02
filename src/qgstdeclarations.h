@@ -31,6 +31,14 @@ typedef struct _GstElementFactory GstElementFactory;
 typedef struct _GstCaps GstCaps;
 typedef struct _GstStructure GstStructure;
 
+#define QGST_WRAPPER(_gstClass) \
+    typedef _gstClass WrappedType; \
+    static unsigned long wrappedGType(); \
+    template <class X, class Y> friend QSharedPointer<X> qtgstreamer_cast(const QSharedPointer<Y> & ptr);
+
+#define QGST_WRAPPER_GTYPE(_qgstClass, _gtype) \
+    unsigned long _qgstClass::wrappedGType() { return (_gtype); }
+
 namespace QtGstreamer {
 
 class QGstObject;
@@ -54,6 +62,21 @@ typedef QSharedPointer<QGstCaps> QGstCapsPtr;
 class QGstStructure;
 class QGstValue;
 class QGstXOverlay;
+
+template <class X, class Y>
+QSharedPointer<X> qtgstreamer_cast(const QSharedPointer<Y> & ptr)
+{
+    //internal helper function used for casting
+    extern bool qgst_gtype_check_instance_type(void *instance, unsigned long gtype);
+
+    bool isCorrectType = qgst_gtype_check_instance_type(ptr->m_object, X::wrappedGType());
+    if ( isCorrectType ) {
+        typename X::WrappedType *gstPtr = reinterpret_cast<typename X::WrappedType*>(ptr->m_object);
+        return QSharedPointer<X>(new X(gstPtr));
+    } else {
+        return QSharedPointer<X>();
+    }
+}
 
 }
 

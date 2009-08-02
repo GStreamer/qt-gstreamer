@@ -25,6 +25,7 @@ class QGstPipeline : public QGstBin
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstPipeline)
+    QGST_WRAPPER(GstPipeline)
 public:
     static QGstPipelinePtr newPipeline(const char *name = 0);
     static QGstPipelinePtr fromGstPipeline(GstPipeline *gstPipeline);

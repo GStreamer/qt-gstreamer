@@ -25,6 +25,7 @@ class QGstPad : public QGstObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstPad)
+    QGST_WRAPPER(GstPad)
     friend class QGstGhostPad;
     friend class QGstElement;
 public:

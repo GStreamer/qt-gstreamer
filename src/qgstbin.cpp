@@ -20,6 +20,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstBin, GST_TYPE_BIN)
+
 QGstBin::QGstBin(const char *name)
     : QGstElement(gst_bin_new(name))
 {

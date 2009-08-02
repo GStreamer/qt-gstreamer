@@ -24,6 +24,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstElement, GST_TYPE_ELEMENT)
+
 class QGstElementPrivate
 {
 public:

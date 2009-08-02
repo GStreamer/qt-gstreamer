@@ -27,6 +27,7 @@ class QGstBus : public QGstObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QGstBus)
+    QGST_WRAPPER(GstBus)
     friend class QGstBusPrivate;
 public:
     static QGstBusPtr fromGstBus(GstBus *gstBus);

@@ -19,6 +19,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstPipeline, GST_TYPE_PIPELINE)
+
 QGstPipeline::QGstPipeline(const char *name)
     : QGstBin(GST_BIN(gst_pipeline_new(name)))
 {

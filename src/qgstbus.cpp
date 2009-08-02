@@ -20,6 +20,8 @@
 
 namespace QtGstreamer {
 
+QGST_WRAPPER_GTYPE(QGstBus, GST_TYPE_BUS)
+
 class QGstBusPrivate
 {
 public:
