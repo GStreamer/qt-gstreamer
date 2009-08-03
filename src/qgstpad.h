@@ -26,8 +26,6 @@ class QGstPad : public QGstObject
     Q_OBJECT
     Q_DISABLE_COPY(QGstPad)
     QGST_WRAPPER(GstPad)
-    friend class QGstGhostPad;
-    friend class QGstElement;
 public:
     enum LinkReturn { Ok = 0, WrongHierarchy = -1, WasLinked = -2, WrongDirection = -3,
                       NoFormat = -4, NoSched = -5, Refused = -6 };

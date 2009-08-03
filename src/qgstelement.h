@@ -28,8 +28,6 @@ class QGstElement : public QGstObject
     Q_OBJECT
     Q_DISABLE_COPY(QGstElement)
     QGST_WRAPPER(GstElement)
-    friend class QGstBin;
-    friend class QGstXOverlay;
     friend class QGstElementPrivate;
 public:
     enum State { VoidPending, Null, Ready, Paused, Playing };

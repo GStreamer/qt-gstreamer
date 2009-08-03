@@ -107,7 +107,7 @@ bool QGstElement::syncStateWithParent()
 
 bool QGstElement::addPad(const QGstPadPtr & pad)
 {
-    return gst_element_add_pad(GST_ELEMENT(m_object), GST_PAD(pad->m_object));
+    return gst_element_add_pad(GST_ELEMENT(m_object), GST_PAD(pad->peekNativeObject()));
 }
 
 QGstPadPtr QGstElement::getStaticPad(const char *name)
@@ -132,7 +132,7 @@ QGstPadPtr QGstElement::getRequestPad(const char *name)
 
 void QGstElement::releaseRequestPad(const QGstPadPtr & pad)
 {
-    gst_element_release_request_pad(GST_ELEMENT(m_object), GST_PAD(pad->m_object));
+    gst_element_release_request_pad(GST_ELEMENT(m_object), GST_PAD(pad->peekNativeObject()));
 }
 
 QGstBusPtr QGstElement::getBus()

@@ -27,7 +27,6 @@ class QGstObject : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(QGstObject)
     QGST_WRAPPER(GstObject)
-    friend class QGstValue;
 public:
     static QGstObjectPtr fromGstObject(GstObject *gstObject);
     virtual ~QGstObject();

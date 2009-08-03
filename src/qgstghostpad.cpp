@@ -20,7 +20,7 @@
 namespace QtGstreamer {
 
 QGstGhostPad::QGstGhostPad(const char *name, const QGstPadPtr & target)
-    : QGstPad(gst_ghost_pad_new(name, GST_PAD(target->m_object)))
+    : QGstPad(gst_ghost_pad_new(name, GST_PAD(target->peekNativeObject())))
 {
 }
 

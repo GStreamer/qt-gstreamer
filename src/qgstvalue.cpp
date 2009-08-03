@@ -93,21 +93,21 @@ QGstValue::QGstValue(const QGstObjectPtr & val)
 {
     m_value = g_slice_new0(GValue);
     g_value_init(m_value, GST_TYPE_OBJECT);
-    g_value_set_object(m_value, val->m_object);
+    g_value_set_object(m_value, val->peekNativeObject());
 }
 
 QGstValue::QGstValue(const QGstElementPtr & val)
 {
     m_value = g_slice_new0(GValue);
     g_value_init(m_value, GST_TYPE_ELEMENT);
-    g_value_set_object(m_value, val->m_object);
+    g_value_set_object(m_value, val->peekNativeObject());
 }
 
 QGstValue::QGstValue(const QGstPadPtr & val)
 {
     m_value = g_slice_new0(GValue);
     g_value_init(m_value, GST_TYPE_PAD);
-    g_value_set_object(m_value, val->m_object);
+    g_value_set_object(m_value, val->peekNativeObject());
 }
 
 QGstValue::QGstValue(const QGstCapsPtr & val)

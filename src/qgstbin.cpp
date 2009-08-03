@@ -50,7 +50,7 @@ QGstBin::~QGstBin()
 
 bool QGstBin::add(const QGstElementPtr & element)
 {
-    return gst_bin_add(GST_BIN(m_object), GST_ELEMENT(element->m_object));
+    return gst_bin_add(GST_BIN(m_object), GST_ELEMENT(element->peekNativeObject()));
 }
 
 QGstBin & QGstBin::operator<<(const QGstElementPtr & element)
@@ -61,7 +61,7 @@ QGstBin & QGstBin::operator<<(const QGstElementPtr & element)
 
 bool QGstBin::remove(const QGstElementPtr & element)
 {
-    return gst_bin_remove(GST_BIN(m_object), GST_ELEMENT(element->m_object));
+    return gst_bin_remove(GST_BIN(m_object), GST_ELEMENT(element->peekNativeObject()));
 }
 
 QGstElementPtr QGstBin::getByName(const char *name)

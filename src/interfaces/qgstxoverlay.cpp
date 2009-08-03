@@ -31,22 +31,22 @@ QGstXOverlay::~QGstXOverlay()
 //static
 bool QGstXOverlay::isXOverlay(const QGstElementPtr & element)
 {
-    return GST_IS_X_OVERLAY(element->m_object);
+    return GST_IS_X_OVERLAY(element->peekNativeObject());
 }
 
 void QGstXOverlay::setXWindowId(unsigned long id)
 {
-    gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_element->m_object), id);
+    gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_element->peekNativeObject()), id);
 }
 
 void QGstXOverlay::expose()
 {
-    gst_x_overlay_expose(GST_X_OVERLAY(m_element->m_object));
+    gst_x_overlay_expose(GST_X_OVERLAY(m_element->peekNativeObject()));
 }
 
 void QGstXOverlay::handleEvents(bool handle_events)
 {
-    gst_x_overlay_handle_events(GST_X_OVERLAY(m_element->m_object), handle_events);
+    gst_x_overlay_handle_events(GST_X_OVERLAY(m_element->peekNativeObject()), handle_events);
 }
 
 }
