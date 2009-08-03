@@ -71,6 +71,11 @@ void QGstObject::setProperty(const char *name, const QGstValue & value)
     g_object_set_property(G_OBJECT(m_object), name, value.toGValue());
 }
 
+GstObject *QGstObject::getNativeObject()
+{
+    return GST_OBJECT(gst_object_ref(m_object));
+}
+
 }
 
 #include "qgstobject.moc"

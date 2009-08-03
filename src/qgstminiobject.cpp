@@ -72,4 +72,9 @@ void QGstMiniObject::flagUnset(Flag flag)
     GST_MINI_OBJECT_FLAG_UNSET(m_object, flag);
 }
 
+GstMiniObject *QGstMiniObject::getNativeObject()
+{
+    return gst_mini_object_ref(m_object);
+}
+
 }

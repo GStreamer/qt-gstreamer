@@ -46,10 +46,28 @@ public:
     void flagSet(Flag flag);
     void flagUnset(Flag flag);
 
+    /** Returns the internal GstMiniObject pointer, without any extra reference count.
+     * This is useful if you want to use a native function on the object.
+     * @sa getNativeObject
+     */
+    inline GstMiniObject *peekNativeObject();
+
+    /** Returns the internal GstMiniObject with an extra reference count on it.
+     * This is useful if you want to extract the GstMiniObject and destroy the QGstMiniObject.
+     * Equivalent to gst_mini_object_ref(qgstminiobjectptr->peekNativeObject());
+     * @sa peekNativeObject
+     */
+    GstMiniObject *getNativeObject();
+
 protected:
     QGstMiniObject(GstMiniObject *gstMiniObject);
     GstMiniObject *m_object;
 };
+
+inline GstMiniObject *QGstMiniObject::peekNativeObject()
+{
+    return m_object;
+}
 
 }
 
