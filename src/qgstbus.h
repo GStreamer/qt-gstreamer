@@ -37,8 +37,7 @@ public:
     void removeSignalWatch();
 
 Q_SIGNALS:
-    //FIXME this should emit a QGstMessagePtr
-    void message(GstMessage *message);
+    void message(const QtGstreamer::QGstMessagePtr & message);
 
 protected:
     QGstBus(GstBus *gstBus);

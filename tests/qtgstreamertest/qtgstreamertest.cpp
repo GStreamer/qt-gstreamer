@@ -20,6 +20,8 @@
 #include "../../src/qgstcaps.h"
 #include "../../src/qgststructure.h"
 #include "../../src/qgstpad.h"
+#include "../../src/qgstbus.h"
+#include "../../src/qgstmessage.h"
 #include "qtgstreamertest.moc"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
@@ -59,6 +61,11 @@ void QtGstreamerTest::castTest()
     QVERIFY(pad.isNull());
 }
 
+void QtGstreamerTest::busWatch(const QGstMessagePtr & message)
+{
+    qDebug() << message;
+}
+
 void QtGstreamerTest::player()
 {
     QGstElementPtr src = QGstElementFactory::make("audiotestsrc");
@@ -70,6 +77,11 @@ void QtGstreamerTest::player()
     QGstPipelinePtr bin = QGstPipeline::newPipeline();
     *bin << src << sink;
     QCOMPARE(QGstElement::link(src, sink), true);
+
+    QGstBusPtr bus = bin->getBus();
+    connect(bus.data(), SIGNAL(message(QtGstreamer::QGstMessagePtr)),
+            this, SLOT(busWatch(QtGstreamer::QGstMessagePtr)));
+    bus->addSignalWatch();
 
     QGstElement::State state;
     bin->setState(QGstElement::Playing);

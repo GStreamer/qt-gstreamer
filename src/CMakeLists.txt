@@ -15,6 +15,7 @@ set(QtGstreamer_SRCS
     qgstcaps.cpp
     qgststructure.cpp
     qgstminiobject.cpp
+    qgstmessage.cpp
     interfaces/qgstxoverlay.cpp
 )
 
@@ -33,6 +34,7 @@ set(QtGstreamer_HEADERS
     qgststructure.h
     qgstminiobject.h
     qgstdeclarations.h
+    qgstmessage.h
     interfaces/qgstxoverlay.h
 ) 
 

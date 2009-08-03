@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <QtTest/QtTest>
+#include "../../src/qgstdeclarations.h"
 
 class QtGstreamerTest : public QObject
 {
@@ -23,6 +24,7 @@ private slots:
     void initTestCase();
     void propertyTest();
     void castTest();
+    void busWatch(const QtGstreamer::QGstMessagePtr & message);
     void player();
     void gValueTest();
     void capsTest();

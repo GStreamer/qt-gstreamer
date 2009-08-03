@@ -25,12 +25,12 @@ typedef struct _GstPad GstPad;
 typedef struct _GstBin GstBin;
 typedef struct _GstPipeline GstPipeline;
 typedef struct _GstBus GstBus;
-typedef struct _GstMessage GstMessage;
 typedef struct _GValue GValue;
 typedef struct _GstElementFactory GstElementFactory;
 typedef struct _GstCaps GstCaps;
 typedef struct _GstStructure GstStructure;
 typedef struct _GstMiniObject GstMiniObject;
+typedef struct _GstMessage GstMessage;
 
 #define QGST_WRAPPER(_gstClass) \
     typedef _gstClass WrappedType; \
@@ -65,6 +65,8 @@ class QGstValue;
 class QGstXOverlay;
 class QGstMiniObject;
 typedef QSharedPointer<QGstMiniObject> QGstMiniObjectPtr;
+class QGstMessage;
+typedef QSharedPointer<QGstMessage> QGstMessagePtr;
 
 template <class X, class Y>
 QSharedPointer<X> qtgstreamer_cast(const QSharedPointer<Y> & ptr)
