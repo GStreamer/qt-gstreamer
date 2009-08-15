@@ -14,8 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGSTBUS_H
-#define _QTGSTREAMER_QGSTBUS_H
+#ifndef QTGSTREAMER_QGSTBUS_H
+#define QTGSTREAMER_QGSTBUS_H
 
 #include "qgstobject.h"
 

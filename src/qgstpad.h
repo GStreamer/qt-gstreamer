@@ -14,8 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGSTPAD_H
-#define _QTGSTREAMER_QGSTPAD_H
+#ifndef QTGSTREAMER_QGSTPAD_H
+#define QTGSTREAMER_QGSTPAD_H
 
 #include "qgstobject.h"
 

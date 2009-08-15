@@ -14,8 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGSTXOVERLAY_H
-#define _QTGSTREAMER_QGSTXOVERLAY_H
+#ifndef QTGSTREAMER_QGSTXOVERLAY_H
+#define QTGSTREAMER_QGSTXOVERLAY_H
 
 #include "../qgstelement.h"
 

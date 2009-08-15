@@ -14,8 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGSTOBJECT_H
-#define _QTGSTREAMER_QGSTOBJECT_H
+#ifndef QTGSTREAMER_QGSTOBJECT_H
+#define QTGSTREAMER_QGSTOBJECT_H
 
 #include "qgstvalue.h"
 #include <QtCore/QObject>

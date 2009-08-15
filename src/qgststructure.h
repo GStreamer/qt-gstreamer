@@ -14,8 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef _QTGSTREAMER_QGSTSTRUCTURE_H
-#define _QTGSTREAMER_QGSTSTRUCTURE_H
+#ifndef QTGSTREAMER_QGSTSTRUCTURE_H
+#define QTGSTREAMER_QGSTSTRUCTURE_H
 
 #include "qgstdeclarations.h"
 
