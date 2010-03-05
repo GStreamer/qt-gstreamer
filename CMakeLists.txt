@@ -12,25 +12,13 @@ find_package(GLIB2 REQUIRED)
 find_package(GObject REQUIRED)
 find_package(LibXml2 REQUIRED)
 
-include(CheckCXXSourceCompiles)
-set(CMAKE_REQUIRED_INCLUDES ${QT_INCLUDES})
-check_cxx_source_compiles("
-#include <QtCore/QtGlobal>
-int main()
-{
-#if defined(QT_NO_GLIB)
-#error \"Qt was compiled with Glib disabled\"
-#endif
-return 0;
-}"
-QT4_GLIB_SUPPORT)
-
-if (NOT QT4_GLIB_SUPPORT)
-    message(STATUS "WARNING: Qt4 is compiled without glib support. libQtGstreamer will not work properly!")
-endif (NOT QT4_GLIB_SUPPORT)
-
 include(${QT_USE_FILE})
+include_directories(${GSTREAMER_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR})
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wnon-virtual-dtor -Wno-long-long -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-check-new -fno-common")
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 add_subdirectory(src)
 add_subdirectory(tests)
-add_subdirectory(examples)
+#add_subdirectory(examples)
