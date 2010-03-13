@@ -113,44 +113,6 @@ Type Type::fromInstance(const RefPointer<T> & instance)
     return fromInstance(static_cast<void*>(static_cast<typename T::CType*>(instance)));
 }
 
-
-template <class T>
-struct GetType { inline operator Type() { return T::type(); } };
-
-template <class T>
-struct GetType< RefPointer<T> > { inline operator Type() { return T::type(); } };
-
-template <class T>
-struct GetType<T*> { inline operator Type() { return Type::Pointer; } };
-
-#define QGLIB_REGISTER_TYPE_DECLARATION(T) \
-    template <> \
-    struct GetType<T> { operator Type(); };
-
-#define QGLIB_REGISTER_TYPE_IMPLEMENTATION(T, GTYPE) \
-    template <> \
-    GetType<T>::operator Type() { return (GTYPE); }
-
-#define QGLIB_REGISTER_TYPE(T, GTYPE) \
-    template <> \
-    struct GetType<T> { inline operator Type() { return (GTYPE); } };
-
-QGLIB_REGISTER_TYPE(char, Type::Char)
-QGLIB_REGISTER_TYPE(unsigned char, Type::UChar)
-QGLIB_REGISTER_TYPE(bool, Type::Boolean)
-QGLIB_REGISTER_TYPE(int, Type::Int)
-QGLIB_REGISTER_TYPE(unsigned int, Type::UInt)
-QGLIB_REGISTER_TYPE(long, Type::Long)
-QGLIB_REGISTER_TYPE(unsigned long, Type::ULong)
-QGLIB_REGISTER_TYPE(qint64, Type::Int64)
-QGLIB_REGISTER_TYPE(quint64, Type::UInt64)
-QGLIB_REGISTER_TYPE(float, Type::Float)
-QGLIB_REGISTER_TYPE(double, Type::Double)
-QGLIB_REGISTER_TYPE(QString, Type::String)
-QGLIB_REGISTER_TYPE(QByteArray, Type::String)
-QGLIB_REGISTER_TYPE(char*, Type::String)
-QGLIB_REGISTER_TYPE(GParamSpec*, Type::Param)
-
 }
 
 #endif // QGLIB_TYPE_H

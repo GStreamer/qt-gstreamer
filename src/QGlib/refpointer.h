@@ -162,6 +162,8 @@ RefPointer<X> RefPointer<T>::staticCast() const
                     : RefPointer<X>::wrap(static_cast<typename X::CType*>(m_class->m_object));
 }
 
+template <class T> struct GetType;
+
 template <class T>
 template <class X>
 RefPointer<X> RefPointer<T>::dynamicCast() const
