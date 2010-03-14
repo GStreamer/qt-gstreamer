@@ -26,7 +26,7 @@ namespace QGlib {
 
 class Closure : public RefCountedObject
 {
-    QGLIB_GTYPE_WRAPPER(GClosure)
+    QGLIB_WRAPPER(GClosure)
 public:
     void setMarshaller(void (*marshaller)(GClosure*, GValue*, uint, const GValue*, void*, void*));
 
@@ -189,12 +189,14 @@ void CppClosure::invokeCallback(const boost::function<R ()> & callback, SharedVa
 }
 
 template <>
-void CppClosure::invokeCallback<void>(const boost::function<void ()> & callback, SharedValue & result)
+inline void CppClosure::invokeCallback<void>(const boost::function<void ()> & callback, SharedValue & result)
 {
     Q_UNUSED(result);
     callback();
 }
 
 }
+
+QGLIB_REGISTER_TYPE(QGlib::Closure)
 
 #endif

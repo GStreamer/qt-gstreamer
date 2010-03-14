@@ -19,8 +19,6 @@
 
 namespace QGst {
 
-QGLIB_GTYPE_WRAPPER_IMPL(Object, GST_TYPE_OBJECT)
-
 void Object::ref()
 {
     gst_object_ref(m_object);

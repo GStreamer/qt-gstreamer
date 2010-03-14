@@ -24,7 +24,7 @@ namespace QGlib {
 
 class Object : public RefCountedObject
 {
-    QGLIB_GTYPE_WRAPPER(GObject)
+    QGLIB_WRAPPER(GObject)
 public:
     ParamSpecPtr findProperty(const char *name) const;
     QList<ParamSpecPtr> listProperties() const;
@@ -60,6 +60,8 @@ void Object::setProperty(const char *name, const T & value)
 }
 
 }
+
+QGLIB_REGISTER_TYPE(QGlib::Object)
 
 //inject ValueImpl for Object refpointers
 #include "valueimpl/objectptr.h"

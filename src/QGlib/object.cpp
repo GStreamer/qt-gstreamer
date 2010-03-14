@@ -19,8 +19,6 @@
 
 namespace QGlib {
 
-QGLIB_GTYPE_WRAPPER_IMPL(Object, Type::Object)
-
 ParamSpecPtr Object::findProperty(const char *name) const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(m_object)));

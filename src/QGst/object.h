@@ -24,12 +24,14 @@ namespace QGst {
 
 class Object : public QGlib::Object
 {
-    QGLIB_GTYPE_WRAPPER(GstObject)
+    QGLIB_WRAPPER(GstObject)
 protected:
     virtual void ref();
     virtual void unref();
 };
 
 }
+
+QGLIB_REGISTER_TYPE(QGst::Object)
 
 #endif // QGST_OBJECT_H

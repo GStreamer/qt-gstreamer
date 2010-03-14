@@ -40,10 +40,10 @@ typedef RefPointer<Object> ObjectPtr;
 
 
 template <class T>
-struct GetType { inline operator Type() { return T::type(); } };
+struct GetType { };
 
 template <class T>
-struct GetType< RefPointer<T> > { inline operator Type() { return T::type(); } };
+struct GetType< RefPointer<T> > { inline operator Type() { return GetType<T>(); } };
 
 template <class T>
 struct GetType<T*> { inline operator Type() { return Type::Pointer; } };
@@ -66,14 +66,10 @@ struct GetType<T*> { inline operator Type() { return Type::Pointer; } };
     }
 
 
-#define QGLIB_GTYPE_WRAPPER(GlibClass) \
+#define QGLIB_WRAPPER(GlibClass) \
     public: \
     typedef GlibClass CType; \
-    static QGlib::Type type(); \
     private:
-
-#define QGLIB_GTYPE_WRAPPER_IMPL(QGlibClass, GTYPE) \
-    QGlib::Type QGlibClass::type() { return QGlib::Type(GTYPE); }
 
 
 template <class T>
@@ -89,14 +85,14 @@ QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
 } //namespace QGlib
 
 QGLIB_REGISTER_NATIVE_TYPE(char, Type::Char)
-QGLIB_REGISTER_NATIVE_TYPE(unsigned char, Type::UChar)
+QGLIB_REGISTER_NATIVE_TYPE(unsigned char, Type::Uchar)
 QGLIB_REGISTER_NATIVE_TYPE(bool, Type::Boolean)
 QGLIB_REGISTER_NATIVE_TYPE(int, Type::Int)
-QGLIB_REGISTER_NATIVE_TYPE(unsigned int, Type::UInt)
+QGLIB_REGISTER_NATIVE_TYPE(unsigned int, Type::Uint)
 QGLIB_REGISTER_NATIVE_TYPE(long, Type::Long)
-QGLIB_REGISTER_NATIVE_TYPE(unsigned long, Type::ULong)
+QGLIB_REGISTER_NATIVE_TYPE(unsigned long, Type::Ulong)
 QGLIB_REGISTER_NATIVE_TYPE(qint64, Type::Int64)
-QGLIB_REGISTER_NATIVE_TYPE(quint64, Type::UInt64)
+QGLIB_REGISTER_NATIVE_TYPE(quint64, Type::Uint64)
 QGLIB_REGISTER_NATIVE_TYPE(float, Type::Float)
 QGLIB_REGISTER_NATIVE_TYPE(double, Type::Double)
 QGLIB_REGISTER_NATIVE_TYPE(QString, Type::String)

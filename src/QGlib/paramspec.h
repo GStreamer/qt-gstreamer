@@ -23,15 +23,15 @@ namespace QGlib {
 
 class ParamSpec : public RefCountedObject
 {
-    QGLIB_GTYPE_WRAPPER(GParamSpec)
+    QGLIB_WRAPPER(GParamSpec)
 public:
-    enum ParamFlag {
+    enum ParamFlag { //codegen: prefix=G_PARAM_, ReadWrite=READWRITE
         Readable = 1<<0,
         Writable = 1<<1,
         ReadWrite = Readable | Writable,
         Construct = 1<<2,
         ConstructOnly = 1<<3,
-        LaxValidation = 1<<5
+        LaxValidation = 1<<4
     };
     Q_DECLARE_FLAGS(ParamFlags, ParamFlag);
 
@@ -56,6 +56,8 @@ protected:
 
 }
 
+QGLIB_REGISTER_TYPE(QGlib::ParamSpec) //codegen: GType=G_TYPE_PARAM
+QGLIB_REGISTER_TYPE(QGlib::ParamSpec::ParamFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::ParamSpec::ParamFlags)
 
 //inject ValueImpl for ParamSpecPtr

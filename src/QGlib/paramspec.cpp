@@ -19,8 +19,6 @@
 
 namespace QGlib {
 
-QGLIB_GTYPE_WRAPPER_IMPL(ParamSpec, Type::Param)
-
 QString ParamSpec::name() const
 {
     return QString::fromUtf8(g_param_spec_get_name(G_PARAM_SPEC(m_object)));

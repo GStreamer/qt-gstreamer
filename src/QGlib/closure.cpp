@@ -21,8 +21,6 @@ namespace QGlib {
 
 //BEGIN Closure
 
-QGLIB_GTYPE_WRAPPER_IMPL(Closure, G_TYPE_CLOSURE)
-
 void Closure::ref()
 {
     g_closure_ref(static_cast<GClosure*>(m_object));

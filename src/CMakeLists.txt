@@ -1,4 +1,4 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(QtGstreamer_SRCS
     QGlib/quark.cpp
@@ -9,9 +9,10 @@ set(QtGstreamer_SRCS
     QGlib/closure.cpp
 
     QGst/object.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
-set(QtGstreamer_HEADERS
+set(INSTALLED_HEADERS
     QGlib/global.h
     QGlib/gdeclarations.h
     QGlib/quark.h       QGlib/Quark
@@ -32,6 +33,20 @@ set(QtGstreamer_HEADERS
     QGst/object.h       QGst/Object
 )
 
+set(CODEGEN_HEADERS
+    QGlib/type.h
+    QGlib/paramspec.h
+    QGlib/object.h
+    QGlib/closure.h
+    QGst/object.h
+)
+
+add_custom_command(OUTPUT gen.cpp
+                   COMMAND codegen
+                   ARGS ${CODEGEN_HEADERS} > ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
+                   DEPENDS codegen ${CODEGEN_HEADERS}
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
 set_target_properties(QtGstreamer PROPERTIES SOVERSION 0 VERSION 0.0.2)
 target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES}
@@ -41,7 +56,7 @@ target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-foreach(header ${QtGstreamer_HEADERS})
+foreach(header ${INSTALLED_HEADERS})
     get_filename_component(header_path ${header} PATH)
     install(FILES ${header} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGstreamer/${header_path})
-endforeach(header ${QtGstreamer_HEADERS})
+endforeach(header ${INSTALLED_HEADERS})
