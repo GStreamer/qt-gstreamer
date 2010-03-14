@@ -12,6 +12,8 @@ find_package(GStreamer REQUIRED)
 find_package(GLIB2 REQUIRED)
 find_package(GObject REQUIRED)
 find_package(LibXml2 REQUIRED)
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
 
 include(${QT_USE_FILE})
 include_directories(${GSTREAMER_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR}
@@ -21,6 +23,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wnon-virtual-dtor -Wno-long-long -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-check-new -fno-common")
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
+add_subdirectory(codegen)
 add_subdirectory(src)
 add_subdirectory(tests)
 #add_subdirectory(examples)
