@@ -28,4 +28,14 @@ typedef QGlib::RefPointer<Object> ObjectPtr;
 
 }
 
+#define QGST_WRAPPER(Class) \
+    public: \
+        typedef Gst##Class CType; \
+    protected: \
+        Class() {} \
+        Class(const Class &); \
+        Class & operator=(const Class &); \
+        ~Class() {} \
+        template <class T> friend class QGlib::RefPointer;
+
 #endif

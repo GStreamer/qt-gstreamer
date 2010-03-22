@@ -26,7 +26,7 @@ namespace QGlib {
 
 class Closure : public RefCountedObject
 {
-    QGLIB_WRAPPER(GClosure)
+    QGLIB_WRAPPER(Closure)
 public:
     void setMarshaller(void (*marshaller)(GClosure*, GValue*, uint, const GValue*, void*, void*));
 

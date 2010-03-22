@@ -24,7 +24,7 @@ namespace QGlib {
 
 class Object : public RefCountedObject
 {
-    QGLIB_WRAPPER(GObject)
+    QGLIB_WRAPPER(Object)
 public:
     ParamSpecPtr findProperty(const char *name) const;
     QList<ParamSpecPtr> listProperties() const;

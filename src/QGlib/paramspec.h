@@ -23,7 +23,7 @@ namespace QGlib {
 
 class ParamSpec : public RefCountedObject
 {
-    QGLIB_WRAPPER(GParamSpec)
+    QGLIB_WRAPPER(ParamSpec)
 public:
     enum ParamFlag { //codegen: prefix=G_PARAM_, ReadWrite=READWRITE
         Readable = 1<<0,

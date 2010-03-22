@@ -66,10 +66,15 @@ struct GetType<T*> { inline operator Type() { return Type::Pointer; } };
     }
 
 
-#define QGLIB_WRAPPER(GlibClass) \
+#define QGLIB_WRAPPER(Class) \
     public: \
-    typedef GlibClass CType; \
-    private:
+        typedef G##Class CType; \
+    protected: \
+        Class() {} \
+        Class(const Class &); \
+        Class & operator=(const Class &); \
+        ~Class() {} \
+        template <class T> friend class QGlib::RefPointer;
 
 
 template <class T>

@@ -24,7 +24,7 @@ namespace QGst {
 
 class Object : public QGlib::Object
 {
-    QGLIB_WRAPPER(GstObject)
+    QGST_WRAPPER(Object)
 protected:
     virtual void ref();
     virtual void unref();
