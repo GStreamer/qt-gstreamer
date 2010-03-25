@@ -15,9 +15,50 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "object.h"
-#include <gst/gst.h>
+#include "helpers_p.h"
+#include <gst/gstobject.h>
 
 namespace QGst {
+
+QString Object::name() const
+{
+    return gcharPtrToQString(gst_object_get_name(GST_OBJECT(m_object)));
+}
+
+bool Object::setName(const QString & name)
+{
+    return gst_object_set_name(GST_OBJECT(m_object), name.isEmpty() ? NULL : name.toUtf8().constData());
+}
+
+ObjectPtr Object::parent() const
+{
+    return ObjectPtr::wrap(gst_object_get_parent(GST_OBJECT(m_object)), false);
+}
+
+bool Object::setParent(const QGst::ObjectPtr & parent)
+{
+    return gst_object_set_parent(GST_OBJECT(m_object), parent);
+}
+
+void Object::unparent()
+{
+    gst_object_unparent(GST_OBJECT(m_object));
+}
+
+QString Object::namePrefix() const
+{
+    return gcharPtrToQString(gst_object_get_name_prefix(GST_OBJECT(m_object)));
+}
+
+void Object::setNamePrefix(const QString & prefix)
+{
+    gst_object_set_name_prefix(GST_OBJECT(m_object), prefix.toUtf8());
+}
+
+bool Object::isAncestorOf(const QGst::ObjectPtr & object) const
+{
+    return gst_object_has_ancestor(object, GST_OBJECT(m_object));
+}
 
 void Object::ref()
 {

@@ -14,37 +14,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef QGST_OBJECT_H
-#define QGST_OBJECT_H
+#ifndef HELPERS_P_H
+#define HELPERS_P_H
 
-#include "global.h"
-#include "../QGlib/object.h"
+#include <glib.h>
+#include <QtCore/QString>
 
-namespace QGst {
-
-class Object : public QGlib::Object
+inline QString gcharPtrToQString(gchar *str)
 {
-    QGST_WRAPPER(Object)
-public:
-    QString name() const;
-    bool setName(const QString & name);
-
-    ObjectPtr parent() const;
-    bool setParent(const ObjectPtr & parent);
-    void unparent();
-
-    QString namePrefix() const;
-    void setNamePrefix(const QString & prefix);
-
-    bool isAncestorOf(const ObjectPtr & object) const;
-
-protected:
-    virtual void ref();
-    virtual void unref();
-};
-
+    QString result = QString::fromUtf8(str);
+    g_free(str);
+    return result;
 }
 
-QGLIB_REGISTER_TYPE(QGst::Object)
-
-#endif // QGST_OBJECT_H
+#endif
