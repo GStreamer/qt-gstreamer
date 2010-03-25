@@ -24,20 +24,18 @@ namespace QGlib {
 class ValueBase
 {
 public:
-    void reset();
-
     bool isValid() const;
-    Type type() const;
+    void reset();
 
     template <typename T> T get() const;
     template <typename T> void set(const T & data);
 
-    QString dumpContents() const;
+    Type type() const;
     bool canTransformTo(Type type) const;
     Value transformTo(Type type) const;
 
-    inline GValue *peekNativeObject() { return m_value; }
-    inline const GValue *peekNativeObject() const { return m_value; }
+    inline GValue *peekGValue() { return m_value; }
+    inline const GValue *peekGValue() const { return m_value; }
 
 #define QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(NICK, TYPE) \
     TYPE get ##NICK () const; \
@@ -73,17 +71,25 @@ protected:
     GValue *m_value;
 };
 
+class SharedValue;
+
 class Value : public ValueBase
 {
 public:
     Value();
     Value(const GValue & gvalue);
-    template <typename T> explicit Value(const T & data);
+    template <typename T> Value(const T & data);
+    Value(const SharedValue & other);
     Value(const Value & other);
     virtual ~Value();
+
+    Value & operator=(const SharedValue & other);
     Value & operator=(const Value & other);
 
     void init(Type type);
+
+    template <typename T>
+    inline void init();
 };
 
 class SharedValue : public ValueBase
@@ -123,10 +129,19 @@ template <typename T>
 Value::Value(const T & data)
     : ValueBase(NULL)
 {
-    init(GetType<T>());
+    init<T>();
     set(data);
 }
 
+template <typename T>
+inline void Value::init()
+{
+    init(GetType<T>());
 }
+
+} //namespace QGlib
+
+class QDebug;
+QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value);
 
 #endif

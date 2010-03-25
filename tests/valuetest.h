@@ -26,6 +26,8 @@ private slots:
     void intTest();
     void stringTest();
     void enumTest();
+    void copyTest();
+    void qdebugTest();
 };
 
 #endif // VALUETEST_H

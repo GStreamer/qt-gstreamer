@@ -151,7 +151,7 @@ inline T *RefPointer<T>::operator->() const
 template <class T>
 inline RefPointer<T>::operator typename T::CType*() const
 {
-    return static_cast<typename T::CType*>(m_class->m_object);
+    return m_class ? static_cast<typename T::CType*>(m_class->m_object) : NULL;
 }
 
 template <class T>

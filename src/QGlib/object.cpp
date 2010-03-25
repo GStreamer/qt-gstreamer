@@ -51,14 +51,14 @@ Value Object::getPropertyInternal(const char *name) const
     ParamSpecPtr param = findProperty(name);
     if (param && (param->flags() & ParamSpec::Readable)) {
         result.init(param->valueType());
-        g_object_get_property(G_OBJECT(m_object), name, result.peekNativeObject());
+        g_object_get_property(G_OBJECT(m_object), name, result.peekGValue());
     }
     return result;
 }
 
 void Object::setPropertyInternal(const char *name, const Value & value)
 {
-    g_object_set_property(G_OBJECT(m_object), name, value.peekNativeObject());
+    g_object_set_property(G_OBJECT(m_object), name, value.peekGValue());
 }
 
 void Object::ref()

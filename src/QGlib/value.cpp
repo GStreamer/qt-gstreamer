@@ -16,6 +16,7 @@
 */
 #include "value.h"
 #include <glib-object.h>
+#include <QtCore/QDebug>
 
 namespace QGlib {
 
@@ -30,6 +31,11 @@ ValueBase::~ValueBase()
 {
 }
 
+bool ValueBase::isValid() const
+{
+    return m_value != NULL;
+}
+
 void ValueBase::reset()
 {
     if (m_value) {
@@ -37,27 +43,10 @@ void ValueBase::reset()
     }
 }
 
-bool ValueBase::isValid() const
-{
-    return m_value != NULL;
-}
-
 Type ValueBase::type() const
 {
     Q_ASSERT(isValid());
     return G_VALUE_TYPE(m_value);
-}
-
-QString ValueBase::dumpContents() const
-{
-    if (m_value) {
-        gchar *str = g_strdup_value_contents(m_value);
-        QString result = QString::fromUtf8(str);
-        g_free(str);
-        return result;
-    } else {
-        return QString();
-    }
 }
 
 bool ValueBase::canTransformTo(Type t) const
@@ -70,7 +59,7 @@ Value ValueBase::transformTo(Type t) const
     Q_ASSERT(isValid());
     Value dest;
     dest.init(t);
-    g_value_transform(m_value, dest.m_value); //FIXME checks?
+    g_value_transform(m_value, dest.m_value);
     return dest;
 }
 
@@ -124,6 +113,12 @@ Value::Value(const GValue & gvalue)
     g_value_copy(&gvalue, m_value);
 }
 
+Value::Value(const SharedValue & other)
+    : ValueBase(NULL)
+{
+    operator=(other);
+}
+
 Value::Value(const Value & other)
     : ValueBase(NULL)
 {
@@ -138,11 +133,24 @@ Value::~Value()
     }
 }
 
+Value & Value::operator=(const SharedValue & other)
+{
+    if (other.isValid()) {
+        init(other.type());
+        g_value_copy(other.peekGValue(), m_value);
+    } else if (m_value) {
+        g_value_unset(m_value);
+        g_slice_free(GValue, m_value);
+        m_value = NULL;
+    }
+    return *this;
+}
+
 Value & Value::operator=(const Value & other)
 {
-    if (other.m_value) {
-        init(G_VALUE_TYPE(other.m_value));
-        g_value_copy(other.m_value, m_value);
+    if (other.isValid()) {
+        init(other.type());
+        g_value_copy(other.peekGValue(), m_value);
     } else if (m_value) {
         g_value_unset(m_value);
         g_slice_free(GValue, m_value);
@@ -187,4 +195,29 @@ SharedValue & SharedValue::operator=(const SharedValue & other)
 
 //END SharedValue
 
+}
+
+
+QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
+{
+    debug.nospace() << "QGlib::ValueBase";
+    if(!value.isValid()) {
+        debug << "(<invalid>)";
+        return debug.space();
+    } else {
+        QString str;
+        if (value.type().fundamental() == QGlib::Type::String) {
+            str = value.get<QString>();
+        } else if (value.canTransformTo(QGlib::Type::String)) {
+            str = value.transformTo(QGlib::Type::String).get<QString>();
+        } else if (g_value_fits_pointer(value.peekGValue())) {
+            quintptr ptr = reinterpret_cast<quintptr>(g_value_peek_pointer(value.peekGValue()));
+            str = QString(QLatin1String("0x%1")).arg(ptr, sizeof(quintptr)*2, 16, QLatin1Char('0'));
+        } else {
+            str = QLatin1String("<unknown value>");
+        }
+
+        debug << "(" << value.type().name() << ", " << str << ")";
+        return debug.space();
+    }
 }

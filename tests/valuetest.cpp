@@ -16,6 +16,7 @@
 */
 #include "valuetest.h"
 #include <QGlib/Value>
+#include <QGlib/Object>
 
 void ValueTest::intTest()
 {
@@ -46,6 +47,57 @@ void ValueTest::enumTest()
     QCOMPARE(static_cast<GType>(v.type()), GST_TYPE_PAD_DIRECTION);
     QCOMPARE(v.get<GstPadDirection>(), GST_PAD_SINK);
 }
+
+void ValueTest::copyTest()
+{
+    QGlib::Value v(10);
+
+    QGlib::SharedValue sv(v.peekGValue());
+    QVERIFY(sv.isValid());
+    QCOMPARE(static_cast<GType>(sv.type()), G_TYPE_INT);
+    QCOMPARE(sv.get<int>(), 10);
+
+    sv.set(20);
+    QCOMPARE(v.get<int>(), 20);
+
+    {
+        QGlib::Value v2(sv);
+        QVERIFY(v2.isValid());
+        QCOMPARE(static_cast<GType>(v2.type()), G_TYPE_INT);
+        QCOMPARE(v2.get<int>(), 20);
+
+        v2.set(30);
+        QCOMPARE(v.get<int>(), 20);
+        QCOMPARE(sv.get<int>(), 20);
+        QCOMPARE(v2.get<int>(), 30);
+
+        v2 = v;
+        QCOMPARE(v2.get<int>(), 20);
+    }
+
+    {
+        QGlib::Value v2(v);
+        QVERIFY(v2.isValid());
+        QCOMPARE(static_cast<GType>(v2.type()), G_TYPE_INT);
+        QCOMPARE(v2.get<int>(), 20);
+
+        v2.set(30);
+        QCOMPARE(v.get<int>(), 20);
+        QCOMPARE(sv.get<int>(), 20);
+        QCOMPARE(v2.get<int>(), 30);
+
+        v2 = sv;
+        QCOMPARE(v2.get<int>(), 20);
+    }
+}
+
+void ValueTest::qdebugTest()
+{
+    qDebug() << QGlib::Value(10);
+    qDebug() << QGlib::Value(QByteArray("Hello world"));
+    qDebug() << QGlib::Value(QGlib::ObjectPtr());
+}
+
 
 QTEST_APPLESS_MAIN(ValueTest)
 
