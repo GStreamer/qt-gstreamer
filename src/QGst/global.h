@@ -19,14 +19,28 @@
 
 #include "../QGlib/global.h"
 
-typedef struct _GstObject GstObject;
+#define QGST_WRAPPER_DECLARATION(Class) \
+    typedef struct _Gst##Class Gst##Class; \
+    namespace QGst { \
+        class Class; \
+        typedef QGlib::RefPointer<Class> Class##Ptr; \
+    }
 
-namespace QGst {
+QGST_WRAPPER_DECLARATION(Bin)
+QGST_WRAPPER_DECLARATION(Bus)
+QGST_WRAPPER_DECLARATION(Caps)
+QGST_WRAPPER_DECLARATION(Element)
+QGST_WRAPPER_DECLARATION(ElementFactory)
+QGST_WRAPPER_DECLARATION(GhostPad)
+QGST_WRAPPER_DECLARATION(Message)
+QGST_WRAPPER_DECLARATION(MiniObject)
+QGST_WRAPPER_DECLARATION(Object)
+QGST_WRAPPER_DECLARATION(Pad)
+QGST_WRAPPER_DECLARATION(Pipeline)
+typedef struct _GstStructure GstStructure;
 
-class Object;
-typedef QGlib::RefPointer<Object> ObjectPtr;
+#undef QGST_WRAPPER_DECLARATION
 
-}
 
 #define QGST_WRAPPER(Class) \
     public: \
