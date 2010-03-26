@@ -8,6 +8,7 @@ set(QtGstreamer_SRCS
     QGlib/value.cpp
     QGlib/closure.cpp
 
+    QGst/structure.cpp
     QGst/object.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
@@ -30,6 +31,7 @@ set(INSTALLED_HEADERS
     QGlib/valueimpl/objectptr.h
 
     QGst/global.h
+    QGst/structure.h    QGst/Structure
     QGst/object.h       QGst/Object
 )
 
@@ -38,6 +40,7 @@ set(CODEGEN_HEADERS
     QGlib/paramspec.h
     QGlib/object.h
     QGlib/closure.h
+    QGst/structure.h
     QGst/object.h
 )
 
