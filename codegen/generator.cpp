@@ -106,13 +106,19 @@ void CodeGen::printEnumAssertions(QTextStream& outStream, const Enum & enumDef)
 
     foreach(const QByteArray & value, enumDef.values) {
         outStream << "    BOOST_STATIC_ASSERT(static_cast<int>(";
-        outStream << enumDef.options["class"] << "::" << value;
+        if (enumDef.options.contains("class") && !enumDef.options["class"].isEmpty()) {
+            outStream << enumDef.options["class"] << "::";
+        }
+        outStream << value;
         outStream << ") == static_cast<int>(";
 
         if (enumDef.options.contains("prefix")) {
             outStream << enumDef.options["prefix"];
         } else {
-            outStream << (enumDef.options["namespace"] == "QGst" ? "GST_TYPE_" : "G_TYPE_");
+            outStream << (enumDef.options["namespace"] == "QGst" ? "GST_" : "G_");
+            if (enumDef.options.contains("class") && !enumDef.options["class"].isEmpty()) {
+                outStream << toGstStyle(enumDef.options["class"]) << "_";
+            }
         }
 
         if (enumDef.options.contains(value)) {
