@@ -17,7 +17,7 @@
 #ifndef QGST_GLOBAL_H
 #define QGST_GLOBAL_H
 
-#include "../QGlib/global.h"
+#include "enums.h"
 
 #define QGST_WRAPPER_DECLARATION(Class) \
     typedef struct _Gst##Class Gst##Class; \
