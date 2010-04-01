@@ -14,8 +14,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "propertiestest.h"
+#include "qgsttest.h"
 #include <QGst/Object>
+
+class PropertiesTest : public QGstTest
+{
+    Q_OBJECT
+private slots:
+    void findPropertyTest();
+    void listPropertiesTest();
+    void getPropertyTest();
+};
 
 void PropertiesTest::findPropertyTest()
 {
@@ -61,5 +70,5 @@ void PropertiesTest::getPropertyTest()
 
 QTEST_APPLESS_MAIN(PropertiesTest)
 
+#include "moc_qgsttest.cpp"
 #include "propertiestest.moc"
-#include "qgsttest.moc"

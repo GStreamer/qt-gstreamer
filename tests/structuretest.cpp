@@ -14,8 +14,16 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "structuretest.h"
+#include "qgsttest.h"
 #include <QGst/Structure>
+
+class StructureTest : public QGstTest
+{
+    Q_OBJECT
+private slots:
+    void bindingsTest();
+    void copyTest();
+};
 
 void StructureTest::bindingsTest()
 {
@@ -87,5 +95,5 @@ void StructureTest::copyTest()
 
 QTEST_APPLESS_MAIN(StructureTest)
 
+#include "moc_qgsttest.cpp"
 #include "structuretest.moc"
-#include "qgsttest.moc"

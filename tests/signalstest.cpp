@@ -14,8 +14,18 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "signalstest.h"
+#include "qgsttest.h"
 #include <QGlib/Closure>
+#include <QGst/Object>
+
+class SignalsTest : public QGstTest
+{
+    Q_OBJECT
+private:
+    void closureTestClosure(QGst::ObjectPtr obj, QGst::ObjectPtr parentObj);
+private slots:
+    void closureTest();
+};
 
 static bool closureCalled = false;
 
@@ -44,5 +54,5 @@ void SignalsTest::closureTest()
 
 QTEST_APPLESS_MAIN(SignalsTest)
 
+#include "moc_qgsttest.cpp"
 #include "signalstest.moc"
-#include "qgsttest.moc"

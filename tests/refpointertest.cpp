@@ -14,8 +14,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "refpointertest.h"
+#include "qgsttest.h"
 #include <QGst/Object>
+
+class RefPointerTest : public QGstTest
+{
+    Q_OBJECT
+private slots:
+    void refTest1();
+    void refTest2();
+    void dynamicCastTest();
+};
 
 void RefPointerTest::refTest1()
 {
@@ -61,5 +70,5 @@ void RefPointerTest::dynamicCastTest()
 
 QTEST_APPLESS_MAIN(RefPointerTest)
 
+#include "moc_qgsttest.cpp"
 #include "refpointertest.moc"
-#include "qgsttest.moc"

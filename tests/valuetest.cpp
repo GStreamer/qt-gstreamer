@@ -14,9 +14,20 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "valuetest.h"
+#include "qgsttest.h"
 #include <QGlib/Value>
 #include <QGlib/Object>
+
+class ValueTest : public QGstTest
+{
+    Q_OBJECT
+private slots:
+    void intTest();
+    void stringTest();
+    void enumTest();
+    void copyTest();
+    void qdebugTest();
+};
 
 void ValueTest::intTest()
 {
@@ -101,5 +112,5 @@ void ValueTest::qdebugTest()
 
 QTEST_APPLESS_MAIN(ValueTest)
 
+#include "moc_qgsttest.cpp"
 #include "valuetest.moc"
-#include "qgsttest.moc"
