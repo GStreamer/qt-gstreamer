@@ -38,6 +38,12 @@ QGST_WRAPPER_DECLARATION(Object)
 QGST_WRAPPER_DECLARATION(Pad)
 QGST_WRAPPER_DECLARATION(Pipeline)
 typedef struct _GstStructure GstStructure;
+namespace QGst {
+    class StructureBase;
+    class Structure;
+    class SharedStructure;
+}
+typedef struct _xmlNode* xmlNodePtr;
 
 #undef QGST_WRAPPER_DECLARATION
 

@@ -9,6 +9,7 @@ set(QtGstreamer_SRCS
     QGlib/closure.cpp
 
     QGst/structure.cpp
+    QGst/caps.cpp
     QGst/miniobject.cpp
     QGst/object.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
@@ -34,6 +35,7 @@ set(INSTALLED_HEADERS
     QGst/global.h
     QGst/enums.h
     QGst/structure.h    QGst/Structure
+    QGst/caps.h         QGst/Caps
     QGst/miniobject.h   QGst/MiniObject
     QGst/object.h       QGst/Object
 )
@@ -46,6 +48,7 @@ set(CODEGEN_HEADERS
 
     QGst/enums.h
     QGst/structure.h
+    QGst/caps.h
     QGst/miniobject.h
     QGst/object.h
 )
