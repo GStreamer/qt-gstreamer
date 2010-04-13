@@ -12,6 +12,8 @@ set(QtGstreamer_SRCS
     QGst/caps.cpp
     QGst/miniobject.cpp
     QGst/object.cpp
+    QGst/pad.cpp
+    QGst/element.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -38,6 +40,8 @@ set(INSTALLED_HEADERS
     QGst/caps.h         QGst/Caps
     QGst/miniobject.h   QGst/MiniObject
     QGst/object.h       QGst/Object
+    QGst/pad.h          QGst/Pad
+    QGst/element.h      QGst/Element
 )
 
 set(CODEGEN_HEADERS
@@ -51,6 +55,8 @@ set(CODEGEN_HEADERS
     QGst/caps.h
     QGst/miniobject.h
     QGst/object.h
+    QGst/pad.h
+    QGst/element.h
 )
 
 add_custom_command(OUTPUT gen.cpp
