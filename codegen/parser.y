@@ -61,10 +61,9 @@ void yyerror(CodeGen *codegen, const char *msg);
 
 %%
 
-header: enum_def_list type_registrations_list;
+header: header expression | expression | /*empty*/;
 
-
-enum_def_list: enum_def_list enum_def | enum_def | /*empty*/;
+expression : enum_def | type_registration;
 
 enum_def:
     ENUM_KEYWORD IDENTIFIER LEFT_BRACE optional_instructions enum_list RIGHT_BRACE SEMICOLON
@@ -89,8 +88,6 @@ enum_list:
         delete $1;
     };
 
-
-type_registrations_list: type_registrations_list type_registration | type_registration | /*empty*/;
 
 type_registration:
     REGISTER_TYPE_BEGIN IDENTIFIER SCOPE_RESOLUTION_OPERATOR IDENTIFIER optional_enum_id REGISTER_TYPE_END optional_instructions
