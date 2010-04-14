@@ -143,4 +143,15 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::ActivateMode)
 
+
+namespace QGst {
+    enum Rank {
+        RankNone = 0,
+        RankMarginal = 64,
+        RankSecondary = 128,
+        RankPrimary = 256
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::Rank)
+
 #endif

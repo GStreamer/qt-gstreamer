@@ -37,6 +37,7 @@ QGST_WRAPPER_DECLARATION(MiniObject)
 QGST_WRAPPER_DECLARATION(Object)
 QGST_WRAPPER_DECLARATION(Pad)
 QGST_WRAPPER_DECLARATION(Pipeline)
+QGST_WRAPPER_DECLARATION(PluginFeature)
 typedef struct _GstStructure GstStructure;
 namespace QGst {
     class StructureBase;
