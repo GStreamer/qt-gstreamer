@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pluginfeature.h"
+#include "helpers_p.h"
 #include <gst/gstpluginfeature.h>
 
 namespace QGst {
@@ -36,7 +37,7 @@ QString PluginFeature::name() const
 
 void PluginFeature::setName(const QString & name)
 {
-    gst_plugin_feature_set_name(GST_PLUGIN_FEATURE(m_object), name.toUtf8());
+    gst_plugin_feature_set_name(GST_PLUGIN_FEATURE(m_object), qstringToGcharPtr(name));
 }
 
 bool PluginFeature::checkVersion(uint major, uint minor, uint micro) const

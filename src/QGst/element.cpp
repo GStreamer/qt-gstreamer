@@ -16,6 +16,7 @@
 */
 #include "element.h"
 #include "pad.h"
+#include "helpers_p.h"
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
 
@@ -63,13 +64,13 @@ bool Element::addPad(const PadPtr & pad)
 
 PadPtr Element::getStaticPad(const QString & name)
 {
-    GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), name.toUtf8());
+    GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), qstringToGcharPtr(name));
     return PadPtr::wrap(pad, false);
 }
 
 PadPtr Element::getRequestPad(const QString & name)
 {
-    GstPad *pad = gst_element_get_request_pad(GST_ELEMENT(m_object), name.toUtf8());
+    GstPad *pad = gst_element_get_request_pad(GST_ELEMENT(m_object), qstringToGcharPtr(name));
     return PadPtr::wrap(pad, false);
 }
 
@@ -81,11 +82,8 @@ void Element::releaseRequestPad(const PadPtr & pad)
 bool Element::link(const QString & srcPadName, const ElementPtr & dest,
                    const QString& sinkPadName, const CapsPtr & filter)
 {
-    return gst_element_link_pads_filtered(GST_ELEMENT(m_object),
-                                          srcPadName.isEmpty() ? NULL : srcPadName.toUtf8().constData(),
-                                          dest,
-                                          sinkPadName.isEmpty() ? NULL : sinkPadName.toUtf8().constData(),
-                                          filter);
+    return gst_element_link_pads_filtered(GST_ELEMENT(m_object), qstringToGcharPtr(srcPadName),
+                                          dest, qstringToGcharPtr(sinkPadName), filter);
 }
 
 bool Element::link(const QString & srcPadName, const ElementPtr & dest, const CapsPtr & filter)
@@ -105,10 +103,8 @@ bool Element::link(const ElementPtr & dest, const CapsPtr & filter)
 
 void Element::unlink(const QString & srcPadName, const ElementPtr & dest, const QString & sinkPadName)
 {
-    gst_element_unlink_pads(GST_ELEMENT(m_object),
-                            srcPadName.isEmpty() ? NULL : srcPadName.toUtf8().constData(),
-                            dest,
-                            sinkPadName.isEmpty() ? NULL : sinkPadName.toUtf8().constData());
+    gst_element_unlink_pads(GST_ELEMENT(m_object), qstringToGcharPtr(srcPadName),
+                            dest, qstringToGcharPtr(sinkPadName));
 }
 
 void Element::unlink(const ElementPtr & dest, const QString & sinkPadName)

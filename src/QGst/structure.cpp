@@ -46,19 +46,19 @@ QString StructureBase::name() const
 void StructureBase::setName(const QString & name)
 {
     Q_ASSERT(isValid());
-    gst_structure_set_name(m_structure, name.toUtf8());
+    gst_structure_set_name(m_structure, qstringToGcharPtr(name));
 }
 
 QGlib::Value StructureBase::value(const QString & fieldName) const
 {
     Q_ASSERT(isValid());
-    return QGlib::Value(*gst_structure_get_value(m_structure, fieldName.toUtf8()));
+    return QGlib::Value(*gst_structure_get_value(m_structure, qstringToGcharPtr(fieldName)));
 }
 
 void StructureBase::setValue(const QString & fieldName, const QGlib::Value & value)
 {
     Q_ASSERT(isValid());
-    gst_structure_set_value(m_structure, fieldName.toUtf8(), value.peekGValue());
+    gst_structure_set_value(m_structure, qstringToGcharPtr(fieldName), value.peekGValue());
 }
 
 unsigned int StructureBase::numberOfFields() const
@@ -76,25 +76,25 @@ QString StructureBase::fieldName(unsigned int fieldNumber)
 QGlib::Type StructureBase::fieldType(const QString& fieldName) const
 {
     Q_ASSERT(isValid());
-    return gst_structure_get_field_type(m_structure, fieldName.toUtf8());
+    return gst_structure_get_field_type(m_structure, qstringToGcharPtr(fieldName));
 }
 
 bool StructureBase::hasField(const QString& fieldName) const
 {
     Q_ASSERT(isValid());
-    return gst_structure_has_field(m_structure, fieldName.toUtf8());
+    return gst_structure_has_field(m_structure, qstringToGcharPtr(fieldName));
 }
 
 bool StructureBase::hasFieldTyped(const QString& fieldName, QGlib::Type type) const
 {
     Q_ASSERT(isValid());
-    return gst_structure_has_field_typed(m_structure, fieldName.toUtf8(), type);
+    return gst_structure_has_field_typed(m_structure, qstringToGcharPtr(fieldName), type);
 }
 
 void StructureBase::removeField(const QString& fieldName)
 {
     Q_ASSERT(isValid());
-    return gst_structure_remove_field(m_structure, fieldName.toUtf8());
+    return gst_structure_remove_field(m_structure, qstringToGcharPtr(fieldName));
 }
 
 void StructureBase::removeAllFields()
@@ -114,7 +114,7 @@ QString StructureBase::toString() const
 //BEGIN Structure
 
 Structure::Structure(const QString & name)
-    : StructureBase(gst_structure_empty_new(name.toUtf8()))
+    : StructureBase(gst_structure_empty_new(qstringToGcharPtr(name)))
 {
 }
 
@@ -156,7 +156,7 @@ Structure & Structure::operator=(const Structure & other)
 Structure Structure::fromString(const QString& str)
 {
     Structure s(SharedStructure(NULL));
-    s.m_structure = gst_structure_from_string(str.toUtf8(), NULL);
+    s.m_structure = gst_structure_from_string(qstringToGcharPtr(str), NULL);
     return s;
 }
 

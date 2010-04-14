@@ -25,7 +25,7 @@ namespace QGst {
 //static
 CapsPtr Caps::newSimple(const QString & mediaType)
 {
-    return CapsPtr::wrap(gst_caps_new_simple(mediaType.toUtf8(), NULL), false);
+    return CapsPtr::wrap(gst_caps_new_simple(qstringToGcharPtr(mediaType), NULL), false);
 }
 
 //static
@@ -43,7 +43,7 @@ CapsPtr Caps::newEmpty()
 //static
 CapsPtr Caps::fromString(const QString & string)
 {
-    return CapsPtr::wrap(gst_caps_from_string(string.toUtf8()), false);
+    return CapsPtr::wrap(gst_caps_from_string(qstringToGcharPtr(string)), false);
 }
 
 QString Caps::toString() const
@@ -79,7 +79,7 @@ void Caps::merge(const CapsPtr & caps2)
 
 void Caps::setValue(const QString& field, const QGlib::Value& value)
 {
-    gst_caps_set_value(GST_CAPS(m_object), field.toUtf8(), value.peekGValue());
+    gst_caps_set_value(GST_CAPS(m_object), qstringToGcharPtr(field), value.peekGValue());
 }
 
 bool Caps::simplify()

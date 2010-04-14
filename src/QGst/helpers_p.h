@@ -27,4 +27,7 @@ inline QString gcharPtrToQString(gchar *str)
     return result;
 }
 
+#define qstringToGcharPtr(str) \
+    (str.isEmpty() ? NULL : str.toUtf8().constData())
+
 #endif
