@@ -15,6 +15,7 @@ set(QtGstreamer_SRCS
     QGst/pad.cpp
     QGst/element.cpp
     QGst/pluginfeature.cpp
+    QGst/elementfactory.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -44,6 +45,7 @@ set(INSTALLED_HEADERS
     QGst/pad.h          QGst/Pad
     QGst/element.h      QGst/Element
     QGst/pluginfeature.h QGst/PluginFeature
+    QGst/elementfactory.h QGst/ElementFactory
 )
 
 set(CODEGEN_HEADERS
@@ -60,6 +62,7 @@ set(CODEGEN_HEADERS
     QGst/pad.h
     QGst/element.h
     QGst/pluginfeature.h
+    QGst/elementfactory.h
 )
 
 add_custom_command(OUTPUT gen.cpp
