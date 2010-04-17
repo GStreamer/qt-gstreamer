@@ -32,8 +32,8 @@ static bool closureCalled = false;
 void SignalsTest::closureTestClosure(QGst::ObjectPtr obj, QGst::ObjectPtr parentObj)
 {
     qDebug() << "Closure called";
-    QCOMPARE(obj->property<QString>("name"), QString("mybin"));
-    QCOMPARE(parentObj->property<QString>("name"), QString("mypipeline"));
+    QCOMPARE(obj->property("name").get<QString>(), QString("mybin"));
+    QCOMPARE(parentObj->property("name").get<QString>(), QString("mypipeline"));
     closureCalled = true;
 }
 

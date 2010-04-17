@@ -15,20 +15,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "object.h"
+#include "../QGst/helpers_p.h"
 #include <glib-object.h>
 
 namespace QGlib {
 
-ParamSpecPtr Object::findProperty(const char *name) const
+ParamSpecPtr Object::findProperty(const QString & name) const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(m_object)));
-    GParamSpec *param = g_object_class_find_property(klass, name);
+    GParamSpec *param = g_object_class_find_property(klass, qstringToGcharPtr(name));
     g_type_class_unref(klass);
     if (param) {
-        param = g_param_spec_ref_sink(param);
-        ParamSpecPtr paramSpec = ParamSpecPtr::wrap(param);
-        g_param_spec_unref(param);
-        return paramSpec;
+        return ParamSpecPtr::wrap(g_param_spec_ref_sink(param), false);
     } else {
         return ParamSpecPtr();
     }
@@ -45,20 +43,20 @@ QList<ParamSpecPtr> Object::listProperties() const
     return result;
 }
 
-Value Object::getPropertyInternal(const char *name) const
+Value Object::property(const QString & name) const
 {
     Value result;
     ParamSpecPtr param = findProperty(name);
     if (param && (param->flags() & ParamSpec::Readable)) {
         result.init(param->valueType());
-        g_object_get_property(G_OBJECT(m_object), name, result.peekGValue());
+        g_object_get_property(G_OBJECT(m_object), qstringToGcharPtr(name), result.peekGValue());
     }
     return result;
 }
 
-void Object::setPropertyInternal(const char *name, const Value & value)
+void Object::setPropertyValue(const QString & name, const ValueBase & value)
 {
-    g_object_set_property(G_OBJECT(m_object), name, value.peekGValue());
+    g_object_set_property(G_OBJECT(m_object), qstringToGcharPtr(name), value.peekGValue());
 }
 
 void Object::ref()

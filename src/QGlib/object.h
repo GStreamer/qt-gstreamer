@@ -26,36 +26,27 @@ class Object : public RefCountedObject
 {
     QGLIB_WRAPPER(Object)
 public:
-    ParamSpecPtr findProperty(const char *name) const;
+    ParamSpecPtr findProperty(const QString & name) const;
     QList<ParamSpecPtr> listProperties() const;
 
-    template <class T> T property(const char *name) const;
-    template <class T> void setProperty(const char *name, const T & value);
+    Value property(const QString & name) const;
+    template <class T> void setProperty(const QString & name, const T & value);
+    void setPropertyValue(const QString & name, const ValueBase & value);
 
 protected:
     virtual void ref();
     virtual void unref();
-
-private:
-    Value getPropertyInternal(const char *name) const;
-    void setPropertyInternal(const char *name, const Value & value);
 };
 
 template <class T>
-T Object::property(const char *name) const
-{
-    return getPropertyInternal(name).get<T>();
-}
-
-template <class T>
-void Object::setProperty(const char *name, const T & value)
+void Object::setProperty(const QString & name, const T & value)
 {
     ParamSpecPtr param = findProperty(name);
     if (param) {
         Value v;
         v.init(param->valueType());
         v.set<T>(value);
-        setPropertyInternal(name, v);
+        setPropertyValue(name, v);
     }
 }
 

@@ -60,7 +60,7 @@ void PropertiesTest::getPropertyTest()
     QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin, false);
 
     try {
-        QString name = object->property<QString>("name");
+        QString name = object->property("name").get<QString>();
         QVERIFY(!name.isEmpty());
         qDebug() << name;
     } catch(...) {
