@@ -22,7 +22,7 @@
 
 namespace QGst {
 
-class Element : public Object
+class Element : public virtual Object
 {
     QGST_WRAPPER(Element)
 public:

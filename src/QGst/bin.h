@@ -18,10 +18,11 @@
 #define QGST_BIN_H
 
 #include "element.h"
+#include "childproxy.h"
 
 namespace QGst {
 
-class Bin : public Element
+class Bin : public Element, public ChildProxy
 {
     QGST_WRAPPER(Bin)
 public:

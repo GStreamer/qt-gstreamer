@@ -22,7 +22,7 @@
 
 namespace QGst {
 
-class Object : public QGlib::Object
+class Object : public virtual QGlib::Object
 {
     QGST_WRAPPER(Object)
 public:

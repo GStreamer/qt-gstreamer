@@ -16,6 +16,7 @@
 */
 #include "qgsttest.h"
 #include <QGst/Object>
+#include <QGst/Bin>
 
 class PropertiesTest : public QGstTest
 {
@@ -28,9 +29,7 @@ private slots:
 
 void PropertiesTest::findPropertyTest()
 {
-    GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
-    gst_object_sink(bin);
-    QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin, false);
+    QGst::BinPtr object = QGst::Bin::newBin();
 
     QGlib::ParamSpecPtr param = object->findProperty("name");
     QVERIFY(!param.isNull());
@@ -41,9 +40,7 @@ void PropertiesTest::findPropertyTest()
 
 void PropertiesTest::listPropertiesTest()
 {
-    GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
-    gst_object_sink(bin);
-    QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin, false);
+    QGst::BinPtr object = QGst::Bin::newBin();
 
     QList<QGlib::ParamSpecPtr> paramlist = object->listProperties();
     QVERIFY(!paramlist.isEmpty());
@@ -55,9 +52,7 @@ void PropertiesTest::listPropertiesTest()
 
 void PropertiesTest::getPropertyTest()
 {
-    GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
-    gst_object_sink(bin);
-    QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin, false);
+    QGst::BinPtr object = QGst::Bin::newBin();
 
     try {
         QString name = object->property("name").get<QString>();
