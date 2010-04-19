@@ -18,6 +18,7 @@ set(QtGstreamer_SRCS
     QGst/elementfactory.cpp
     QGst/bin.cpp
     QGst/childproxy.cpp
+    QGst/pipeline.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -50,6 +51,7 @@ set(INSTALLED_HEADERS
     QGst/elementfactory.h QGst/ElementFactory
     QGst/bin.h          QGst/Bin
     QGst/childproxy.h   QGst/ChildProxy
+    QGst/pipeline.h     QGst/Pipeline
 )
 
 set(CODEGEN_HEADERS
@@ -69,6 +71,7 @@ set(CODEGEN_HEADERS
     QGst/elementfactory.h
     QGst/bin.h
     QGst/childproxy.h
+    QGst/pipeline.h
 )
 
 add_custom_command(OUTPUT gen.cpp
