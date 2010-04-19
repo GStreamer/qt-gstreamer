@@ -8,6 +8,7 @@ set(QtGstreamer_SRCS
     QGlib/value.cpp
     QGlib/closure.cpp
 
+    QGst/global.cpp
     QGst/structure.cpp
     QGst/caps.cpp
     QGst/miniobject.cpp
@@ -39,7 +40,7 @@ set(INSTALLED_HEADERS
     QGlib/valueimpl/paramspecptr.h
     QGlib/valueimpl/objectptr.h
 
-    QGst/global.h
+    QGst/global.h       QGst/Global
     QGst/enums.h
     QGst/structure.h    QGst/Structure
     QGst/caps.h         QGst/Caps

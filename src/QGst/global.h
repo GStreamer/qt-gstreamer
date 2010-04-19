@@ -59,4 +59,10 @@ typedef struct _xmlNode* xmlNodePtr;
         ~Class() {} \
         template <class T> friend class QGlib::RefPointer;
 
+namespace QGst {
+    void init();
+    void init(int *argc, char **argv[]);
+    void deinit();
+}
+
 #endif
