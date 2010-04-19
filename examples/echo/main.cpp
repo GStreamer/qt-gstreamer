@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2009  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -14,17 +14,16 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "../../src/qgstpipeline.h"
-#include "../../src/qgstelementfactory.h"
-#include "../../src/qgstglobal.h"
+#include <QGst/Pipeline>
+#include <QGst/ElementFactory>
+#include <QGst/Global>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <signal.h>
 
-using namespace QtGstreamer;
-
 static void sighandler(int code)
 {
+    Q_UNUSED(code);
     qDebug("SIGINT");
     QCoreApplication::quit();
 }
@@ -32,21 +31,24 @@ static void sighandler(int code)
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-    qGstInit(&argc, &argv);
+    QGst::init(&argc, &argv);
 
-    QGstPipelinePtr pipeline = QGstPipeline::newPipeline();
+    QGst::PipelinePtr pipeline = QGst::Pipeline::newPipeline();
 
-    QGstElementPtr src = QGstElementFactory::make("autoaudiosrc");
-    QGstElementPtr sink = QGstElementFactory::make("autoaudiosink");
+    QGst::ElementPtr src = QGst::ElementFactory::make("audiotestsrc");
+    QGst::ElementPtr sink = QGst::ElementFactory::make("autoaudiosink");
 
-    *pipeline << src << sink;
-    QGstElement::link(src, sink);
+    pipeline->add(src);
+    pipeline->add(sink);
+    src->link(sink);
 
-    pipeline->setState(QGstElement::Playing);
+    pipeline->setState(QGst::StatePlaying);
 
     signal(SIGINT, sighandler);
     int result = app.exec();
 
-    pipeline->setState(QGstElement::Null);
+    pipeline->setState(QGst::StateNull);
+    QGst::deinit();
+
     return result;
 }
