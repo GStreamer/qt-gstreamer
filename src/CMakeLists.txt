@@ -14,6 +14,7 @@ set(QtGstreamer_SRCS
     QGst/miniobject.cpp
     QGst/object.cpp
     QGst/pad.cpp
+    QGst/ghostpad.cpp
     QGst/element.cpp
     QGst/pluginfeature.cpp
     QGst/elementfactory.cpp
@@ -47,6 +48,7 @@ set(INSTALLED_HEADERS
     QGst/miniobject.h   QGst/MiniObject
     QGst/object.h       QGst/Object
     QGst/pad.h          QGst/Pad
+    QGst/ghostpad.h     QGst/GhostPad
     QGst/element.h      QGst/Element
     QGst/pluginfeature.h QGst/PluginFeature
     QGst/elementfactory.h QGst/ElementFactory
@@ -67,6 +69,7 @@ set(CODEGEN_HEADERS
     QGst/miniobject.h
     QGst/object.h
     QGst/pad.h
+    QGst/ghostpad.h
     QGst/element.h
     QGst/pluginfeature.h
     QGst/elementfactory.h
