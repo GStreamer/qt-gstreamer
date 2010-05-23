@@ -32,7 +32,6 @@ BinPtr Bin::newBin(const QString & name)
 
 bool Bin::add(const ElementPtr & element)
 {
-    gst_object_ref(element); //bin takes ownership so it needs to have an extra reference on it
     return gst_bin_add(GST_BIN(m_object), element);
 }
 

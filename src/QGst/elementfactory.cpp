@@ -34,6 +34,7 @@ ElementPtr ElementFactory::make(const QString & factoryName, const QString & ele
 {
     GstElement *e = gst_element_factory_make(qstringToGcharPtr(factoryName),
                                              qstringToGcharPtr(elementName));
+    gst_object_ref_sink(e);
     return ElementPtr::wrap(e, false);
 }
 
@@ -90,8 +91,10 @@ bool ElementFactory::canSrcCaps(const CapsPtr & caps) const
 
 ElementPtr ElementFactory::create(const QString & elementName) const
 {
-    return ElementPtr::wrap(gst_element_factory_create(GST_ELEMENT_FACTORY(m_object),
-                                                       qstringToGcharPtr(elementName)), false);
+    GstElement *e = gst_element_factory_create(GST_ELEMENT_FACTORY(m_object),
+                                               qstringToGcharPtr(elementName));
+    gst_object_ref_sink(e);
+    return ElementPtr::wrap(e, false);
 }
 
 }
