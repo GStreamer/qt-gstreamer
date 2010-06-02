@@ -154,4 +154,37 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::Rank)
 
+
+namespace QGst {
+    enum MessageType {
+        MessageUnknown         = 0,
+        MessageEos             = (1 << 0),
+        MessageError           = (1 << 1),
+        MessageWarning         = (1 << 2),
+        MessageInfo            = (1 << 3),
+        MessageTag             = (1 << 4),
+        MessageBuffering       = (1 << 5),
+        MessageStateChanged    = (1 << 6),
+        MessageStateDirty      = (1 << 7),
+        MessageStepDone        = (1 << 8),
+        MessageClockProvide    = (1 << 9),
+        MessageClockLost       = (1 << 10),
+        MessageNewClock        = (1 << 11),
+        MessageStructureChange = (1 << 12),
+        MessageStreamStatus    = (1 << 13),
+        MessageApplication     = (1 << 14),
+        MessageElement         = (1 << 15),
+        MessageSegmentStart    = (1 << 16),
+        MessageSegmentDone     = (1 << 17),
+        MessageDuration        = (1 << 18),
+        MessageLatency         = (1 << 19),
+        MessageAsyncStart      = (1 << 20),
+        MessageAsyncDone       = (1 << 21),
+        MessageRequestState    = (1 << 22),
+        MessageStepStart       = (1 << 23),
+        MessageAny             = ~0
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::MessageType)
+
 #endif
