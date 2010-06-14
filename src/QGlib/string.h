@@ -56,6 +56,11 @@ public:
     /** Behaves the same as toGCharPtr() */
     inline operator const char*() const { return toGCharPtr(); }
 
+    inline bool operator==(const char *other) const { return m_str == other; }
+    inline bool operator==(const QByteArray & other) const { return m_str == other; }
+    inline bool operator==(const String & other) const { return m_str == other.m_str; }
+    inline bool operator==(const QString & other) const { return QString::fromUtf8(m_str) == other; }
+
 private:
     QByteArray m_str;
 };
