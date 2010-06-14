@@ -19,6 +19,8 @@
 
 #include "type.h"
 #include <stddef.h>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 
 namespace QGlib {
 
@@ -27,10 +29,15 @@ class RefPointer
 {
 public:
     inline RefPointer();
-    RefPointer(const RefPointer<T> & other);
-    ~RefPointer();
+    inline ~RefPointer();
 
-    RefPointer<T> & operator=(const RefPointer<T> & other);
+    inline RefPointer(const RefPointer<T> & other);
+    template <class X>
+    inline RefPointer(const RefPointer<X> & other);
+    inline RefPointer<T> & operator=(const RefPointer<T> & other);
+    template <class X>
+    inline RefPointer<T> & operator=(const RefPointer<X> & other);
+
     void clear();
 
     inline bool isNull() const;
@@ -48,6 +55,10 @@ public:
     RefPointer<X> dynamicCast() const;
 
 private:
+    template <class X> friend class RefPointer;
+    template <class X>
+    void assign(const RefPointer<X> & other);
+
     T *m_class;
 };
 
@@ -73,30 +84,55 @@ inline RefPointer<T>::RefPointer()
 }
 
 template <class T>
-RefPointer<T>::RefPointer(const RefPointer<T> & other)
+inline RefPointer<T>::~RefPointer()
+{
+    clear();
+}
+
+template <class T>
+template <class X>
+inline RefPointer<T>::RefPointer(const RefPointer<X> & other)
     : m_class(NULL)
 {
-    operator=(other);
+    assign(other);
 }
 
 template <class T>
-RefPointer<T>::~RefPointer()
+inline RefPointer<T>::RefPointer(const RefPointer<T> & other)
+    : m_class(NULL)
 {
-    clear();
+    assign(other);
 }
 
 template <class T>
-RefPointer<T> & RefPointer<T>::operator=(const RefPointer<T> & other)
+template <class X>
+inline RefPointer<T> & RefPointer<T>::operator=(const RefPointer<X> & other)
 {
     clear();
+    assign(other);
+    return *this;
+}
+
+template <class T>
+inline RefPointer<T> & RefPointer<T>::operator=(const RefPointer<T> & other)
+{
+    clear();
+    assign(other);
+    return *this;
+}
+
+template <class T>
+template <class X>
+void RefPointer<T>::assign(const RefPointer<X> & other)
+{
+    //T should be a base class of X
+    BOOST_STATIC_ASSERT((boost::is_base_of<T, X>::value));
 
     if (!other.isNull()) {
         m_class = new T();
         m_class->m_object = other.m_class->m_object;
         static_cast<RefCountedObject*>(m_class)->ref();
     }
-
-    return *this;
 }
 
 template <class T>
