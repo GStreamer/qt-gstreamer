@@ -27,22 +27,22 @@ class StructureBase
 public:
     bool isValid() const;
 
-    QString name() const;
-    void setName(const QString & name);
+    QGlib::String name() const;
+    void setName(const QGlib::String & name);
 
-    QGlib::Value value(const QString & fieldName) const;
-    void setValue(const QString & fieldName, const QGlib::Value & value);
+    QGlib::Value value(const QGlib::String & fieldName) const;
+    void setValue(const QGlib::String & fieldName, const QGlib::Value & value);
 
     unsigned int numberOfFields() const;
-    QString fieldName(unsigned int fieldNumber);
-    QGlib::Type fieldType(const QString & fieldName) const;
-    bool hasField(const QString & fieldName) const;
-    bool hasFieldTyped(const QString & fieldName, QGlib::Type type) const; //FIXME better name?
+    QGlib::String fieldName(unsigned int fieldNumber);
+    QGlib::Type fieldType(const QGlib::String & fieldName) const;
+    bool hasField(const QGlib::String & fieldName) const;
+    bool hasFieldTyped(const QGlib::String & fieldName, QGlib::Type type) const; //FIXME better name?
 
-    void removeField(const QString & fieldName);
+    void removeField(const QGlib::String & fieldName);
     void removeAllFields();
 
-    QString toString() const; //FIXME maybe call it serialize()?
+    QGlib::String toString() const; //FIXME maybe call it serialize()?
 
     inline GstStructure *peekGstStructure() { return m_structure; }
     inline const GstStructure *peekGstStructure() const { return m_structure; }
@@ -62,7 +62,7 @@ class SharedStructure;
 class Structure : public StructureBase
 {
 public:
-    Structure(const QString & name);
+    Structure(const QGlib::String & name);
     Structure(const SharedStructure & other);
     Structure(const Structure & other);
     virtual ~Structure();
@@ -70,7 +70,7 @@ public:
     Structure & operator=(const SharedStructure & other);
     Structure & operator=(const Structure & other);
 
-    static Structure fromString(const QString & str);
+    static Structure fromString(const QGlib::String & str);
 };
 
 class SharedStructure : public StructureBase

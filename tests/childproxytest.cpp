@@ -41,13 +41,13 @@ void ChildProxyTest::inspectionTest()
     {
         QGst::ElementPtr tee2 = bin->childByIndex(0).dynamicCast<QGst::Element>();
         QVERIFY(!tee2.isNull());
-        QCOMPARE(tee2->name(), QString("mytee"));
+        QCOMPARE(tee2->name(), QGlib::String("mytee"));
     }
 
     {
         QGst::ElementPtr tee2 = bin->childByName("mytee").dynamicCast<QGst::Element>();
         QVERIFY(!tee2.isNull());
-        QCOMPARE(tee2->name(), QString("mytee"));
+        QCOMPARE(tee2->name(), QGlib::String("mytee"));
     }
 }
 
@@ -81,8 +81,8 @@ void ChildProxyTest::propertiesTest()
         QCOMPARE(bin->findChildProperty("mytee::has-chain", &obj, &param), true);
         QVERIFY(!obj.isNull());
         QVERIFY(!param.isNull());
-        QCOMPARE(obj->name(), QString("mytee"));
-        QCOMPARE(param->name(), QString("has-chain"));
+        QCOMPARE(obj->name(), QGlib::String("mytee"));
+        QCOMPARE(param->name(), QGlib::String("has-chain"));
     }
 
     {

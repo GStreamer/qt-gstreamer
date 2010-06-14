@@ -14,20 +14,16 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef HELPERS_P_H
-#define HELPERS_P_H
-
+#include "string.h"
 #include <glib.h>
-#include <QtCore/QString>
 
-inline QString gcharPtrToQString(gchar *str)
+namespace QGlib {
+
+String String::fromGCharPtr(char* s)
 {
-    QString result = QString::fromUtf8(str);
-    g_free(str);
-    return result;
+    String str(s);
+    g_free(s);
+    return str;
 }
 
-#define qstringToGcharPtr(str) \
-    (str.isEmpty() ? NULL : str.toUtf8().constData())
-
-#endif
+}

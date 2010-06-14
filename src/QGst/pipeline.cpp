@@ -15,15 +15,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pipeline.h"
-#include "helpers_p.h"
 #include <gst/gstpipeline.h>
 
 namespace QGst {
 
 //static
-PipelinePtr Pipeline::newPipeline(const QString & name)
+PipelinePtr Pipeline::newPipeline(const QGlib::String & name)
 {
-    GstElement *p = gst_pipeline_new(qstringToGcharPtr(name));
+    GstElement *p = gst_pipeline_new(name);
     gst_object_ref_sink(p);
     return PipelinePtr::wrap(GST_PIPELINE(p), false);
 }

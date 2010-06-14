@@ -15,19 +15,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "object.h"
-#include "helpers_p.h"
 #include <gst/gstobject.h>
 
 namespace QGst {
 
-QString Object::name() const
+QGlib::String Object::name() const
 {
-    return gcharPtrToQString(gst_object_get_name(GST_OBJECT(m_object)));
+    return QGlib::String::fromGCharPtr(gst_object_get_name(GST_OBJECT(m_object)));
 }
 
-bool Object::setName(const QString & name)
+bool Object::setName(const QGlib::String & name)
 {
-    return gst_object_set_name(GST_OBJECT(m_object), qstringToGcharPtr(name));
+    return gst_object_set_name(GST_OBJECT(m_object), name);
 }
 
 ObjectPtr Object::parent() const
@@ -45,14 +44,14 @@ void Object::unparent()
     gst_object_unparent(GST_OBJECT(m_object));
 }
 
-QString Object::namePrefix() const
+QGlib::String Object::namePrefix() const
 {
-    return gcharPtrToQString(gst_object_get_name_prefix(GST_OBJECT(m_object)));
+    return QGlib::String::fromGCharPtr(gst_object_get_name_prefix(GST_OBJECT(m_object)));
 }
 
-void Object::setNamePrefix(const QString & prefix)
+void Object::setNamePrefix(const QGlib::String & prefix)
 {
-    gst_object_set_name_prefix(GST_OBJECT(m_object), qstringToGcharPtr(prefix));
+    gst_object_set_name_prefix(GST_OBJECT(m_object), prefix);
 }
 
 bool Object::isAncestorOf(const ObjectPtr & object) const

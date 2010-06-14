@@ -25,22 +25,23 @@ class ElementFactory : public PluginFeature
 {
     QGST_WRAPPER(ElementFactory)
 public:
-    static ElementFactoryPtr find(const QString & factoryName);
-    static ElementPtr make(const QString & factoryName, const QString & elementName = QString());
+    static ElementFactoryPtr find(const QGlib::String & factoryName);
+    static ElementPtr make(const QGlib::String & factoryName,
+                           const QGlib::String & elementName = QGlib::String());
 
     QGlib::Type elementType() const;
-    QString longName() const;
-    QString klass() const;
-    QString description() const;
-    QString author() const;
+    QGlib::String longName() const;
+    QGlib::String klass() const;
+    QGlib::String description() const;
+    QGlib::String author() const;
 
     uint padTemplatesCount() const;
     int uriType() const;
-    bool hasInterface(const QString & interfaceName) const;
+    bool hasInterface(const QGlib::String & interfaceName) const;
     bool canSinkCaps(const CapsPtr & caps) const;
     bool canSrcCaps(const CapsPtr & caps) const;
 
-    ElementPtr create(const QString & elementName) const;
+    ElementPtr create(const QGlib::String & elementName) const;
 };
 
 }

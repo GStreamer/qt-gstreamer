@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "childproxy.h"
-#include "helpers_p.h"
 #include <gst/gstobject.h>
 #include <gst/gstchildproxy.h>
 
@@ -26,10 +25,9 @@ uint ChildProxy::childrenCount() const
     return gst_child_proxy_get_children_count(GST_CHILD_PROXY(m_object));
 }
 
-ObjectPtr ChildProxy::childByName(const QString & name) const
+ObjectPtr ChildProxy::childByName(const QGlib::String & name) const
 {
-    return ObjectPtr::wrap(gst_child_proxy_get_child_by_name(GST_CHILD_PROXY(m_object),
-                                                             qstringToGcharPtr(name)), false);
+    return ObjectPtr::wrap(gst_child_proxy_get_child_by_name(GST_CHILD_PROXY(m_object), name), false);
 }
 
 ObjectPtr ChildProxy::childByIndex(uint index) const
@@ -37,11 +35,11 @@ ObjectPtr ChildProxy::childByIndex(uint index) const
     return ObjectPtr::wrap(gst_child_proxy_get_child_by_index(GST_CHILD_PROXY(m_object), index), false);
 }
 
-bool ChildProxy::findChildProperty(const QString & name, ObjectPtr *object, QGlib::ParamSpecPtr *paramSpec) const
+bool ChildProxy::findChildProperty(const QGlib::String & name, ObjectPtr *object, QGlib::ParamSpecPtr *paramSpec) const
 {
     GstObject *op;
     GParamSpec *pp;
-    bool result = gst_child_proxy_lookup(GST_OBJECT(m_object), qstringToGcharPtr(name), &op, &pp);
+    bool result = gst_child_proxy_lookup(GST_OBJECT(m_object), name, &op, &pp);
     if (result) {
         *object = ObjectPtr::wrap(op, false);
         *paramSpec = QGlib::ParamSpecPtr::wrap(pp, false);
@@ -49,7 +47,7 @@ bool ChildProxy::findChildProperty(const QString & name, ObjectPtr *object, QGli
     return result;
 }
 
-QGlib::Value ChildProxy::childProperty(const QString & name) const
+QGlib::Value ChildProxy::childProperty(const QGlib::String & name) const
 {
     QGlib::ParamSpecPtr param;
     ObjectPtr object;

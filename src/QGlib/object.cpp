@@ -15,15 +15,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "object.h"
-#include "../QGst/helpers_p.h"
 #include <glib-object.h>
 
 namespace QGlib {
 
-ParamSpecPtr Object::findProperty(const QString & name) const
+ParamSpecPtr Object::findProperty(const String & name) const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(m_object)));
-    GParamSpec *param = g_object_class_find_property(klass, qstringToGcharPtr(name));
+    GParamSpec *param = g_object_class_find_property(klass, name);
     g_type_class_unref(klass);
     if (param) {
         return ParamSpecPtr::wrap(g_param_spec_ref_sink(param), false);
@@ -43,20 +42,20 @@ QList<ParamSpecPtr> Object::listProperties() const
     return result;
 }
 
-Value Object::property(const QString & name) const
+Value Object::property(const String & name) const
 {
     Value result;
     ParamSpecPtr param = findProperty(name);
     if (param && (param->flags() & ParamSpec::Readable)) {
         result.init(param->valueType());
-        g_object_get_property(G_OBJECT(m_object), qstringToGcharPtr(name), result.peekGValue());
+        g_object_get_property(G_OBJECT(m_object), name, result.peekGValue());
     }
     return result;
 }
 
-void Object::setPropertyValue(const QString & name, const ValueBase & value)
+void Object::setPropertyValue(const String & name, const ValueBase & value)
 {
-    g_object_set_property(G_OBJECT(m_object), qstringToGcharPtr(name), value.peekGValue());
+    g_object_set_property(G_OBJECT(m_object), name, value.peekGValue());
 }
 
 void Object::ref()

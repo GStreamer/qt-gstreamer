@@ -34,19 +34,21 @@ public:
     bool setStateLocked(bool locked); //### is the return value ever needed?
 
     bool addPad(const PadPtr & pad);
-    PadPtr getStaticPad(const QString & name);
-    PadPtr getRequestPad(const QString & name);
+    PadPtr getStaticPad(const QGlib::String & name);
+    PadPtr getRequestPad(const QGlib::String & name);
     void releaseRequestPad(const PadPtr & pad);
 
-    bool link(const QString & srcPadName, const ElementPtr & dest, const QString & sinkPadName,
+    bool link(const QGlib::String & srcPadName, const ElementPtr & dest,
+              const QGlib::String & sinkPadName, const CapsPtr & filter = CapsPtr());
+    bool link(const QGlib::String & srcPadName, const ElementPtr & dest,
               const CapsPtr & filter = CapsPtr());
-    bool link(const QString & srcPadName, const ElementPtr & dest, const CapsPtr & filter = CapsPtr());
-    bool link(const ElementPtr & dest, const QString & sinkPadName, const CapsPtr & filter = CapsPtr());
+    bool link(const ElementPtr & dest, const QGlib::String & sinkPadName,
+              const CapsPtr & filter = CapsPtr());
     bool link(const ElementPtr & dest, const CapsPtr & filter = CapsPtr());
 
-    void unlink(const QString & srcPadName, const ElementPtr & dest,
-                const QString & sinkPadName = QString());
-    void unlink(const ElementPtr & dest, const QString & sinkPadName = QString());
+    void unlink(const QGlib::String & srcPadName, const ElementPtr & dest,
+                const QGlib::String & sinkPadName = QGlib::String());
+    void unlink(const ElementPtr & dest, const QGlib::String & sinkPadName = QGlib::String());
 };
 
 }

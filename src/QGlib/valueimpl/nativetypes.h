@@ -127,4 +127,19 @@ public:
     }
 };
 
+template <>
+class ValueImpl<QGlib::String>
+{
+public:
+    static QGlib::String get(const ValueBase & value) {
+        VALUE_ASSERT(value.type().fundamental() == Type::String);
+        return value.getString();
+    }
+
+    static void set(ValueBase & value, const QGlib::String & data) {
+        VALUE_ASSERT(value.type().fundamental() == Type::String);
+        value.setString(data);
+    }
+};
+
 }

@@ -29,9 +29,9 @@ Type Type::fromName(const char *name)
     return g_type_from_name(name);
 }
 
-QString Type::name() const
+QGlib::String Type::name() const
 {
-    return QString::fromUtf8(g_type_name(m_type));
+    return QGlib::String(g_type_name(m_type));
 }
 
 Quark Type::qname() const

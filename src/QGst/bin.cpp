@@ -16,16 +16,15 @@
 */
 #include "bin.h"
 #include "pad.h"
-#include "helpers_p.h"
 #include <gst/gstbin.h>
 #include <gst/gstutils.h>
 
 namespace QGst {
 
 //static
-BinPtr Bin::newBin(const QString & name)
+BinPtr Bin::newBin(const QGlib::String & name)
 {
-    GstElement *bin = gst_bin_new(qstringToGcharPtr(name));
+    GstElement *bin = gst_bin_new(name);
     gst_object_ref_sink(GST_OBJECT(bin));
     return BinPtr::wrap(GST_BIN(bin), false);
 }
@@ -40,15 +39,15 @@ bool Bin::remove(const ElementPtr & element)
     return gst_bin_remove(GST_BIN(m_object), element);
 }
 
-ElementPtr Bin::getElementByName(const QString & name, RecursionType r) const
+ElementPtr Bin::getElementByName(const QGlib::String & name, RecursionType r) const
 {
     GstElement *e = NULL;
     switch(r) {
     case RecurseDown:
-        e = gst_bin_get_by_name(GST_BIN(m_object), qstringToGcharPtr(name));
+        e = gst_bin_get_by_name(GST_BIN(m_object), name);
         break;
     case RecurseUp:
-        e = gst_bin_get_by_name_recurse_up(GST_BIN(m_object), qstringToGcharPtr(name));
+        e = gst_bin_get_by_name_recurse_up(GST_BIN(m_object), name);
         break;
     default:
         Q_ASSERT_X(false, "QGst::Bin::getByName", "Invalid RecursionType");

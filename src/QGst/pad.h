@@ -25,7 +25,7 @@ class Pad : public Object
 {
     QGST_WRAPPER(Pad)
 public:
-    static PadPtr newPad(PadDirection direction, const QString & name = QString());
+    static PadPtr newPad(PadDirection direction, const QGlib::String & name = QGlib::String());
 
     PadDirection direction() const;
 

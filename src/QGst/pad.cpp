@@ -17,7 +17,6 @@
 #include "pad.h"
 #include "caps.h"
 #include "element.h"
-#include "helpers_p.h"
 #include <QtCore/QDebug>
 #include <gst/gstpad.h>
 #include <gst/gstutils.h>
@@ -25,9 +24,9 @@
 namespace QGst {
 
 //static
-PadPtr Pad::newPad(PadDirection direction, const QString & name)
+PadPtr Pad::newPad(PadDirection direction, const QGlib::String & name)
 {
-    GstPad *pad = gst_pad_new(qstringToGcharPtr(name), static_cast<GstPadDirection>(direction));
+    GstPad *pad = gst_pad_new(name, static_cast<GstPadDirection>(direction));
     return PadPtr::wrap(pad, false);
 }
 

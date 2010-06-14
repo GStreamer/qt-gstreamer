@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pluginfeature.h"
-#include "helpers_p.h"
 #include <gst/gstpluginfeature.h>
 
 namespace QGst {
@@ -30,14 +29,14 @@ void PluginFeature::setRank(uint rank)
     gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE(m_object), rank);
 }
 
-QString PluginFeature::name() const
+QGlib::String PluginFeature::name() const
 {
-    return QString::fromUtf8(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(m_object)));
+    return QGlib::String(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(m_object)));
 }
 
-void PluginFeature::setName(const QString & name)
+void PluginFeature::setName(const QGlib::String & name)
 {
-    gst_plugin_feature_set_name(GST_PLUGIN_FEATURE(m_object), qstringToGcharPtr(name));
+    gst_plugin_feature_set_name(GST_PLUGIN_FEATURE(m_object), name);
 }
 
 bool PluginFeature::checkVersion(uint major, uint minor, uint micro) const

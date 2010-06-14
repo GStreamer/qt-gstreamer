@@ -25,8 +25,10 @@ class GhostPad : public Pad
 {
     QGST_WRAPPER(GhostPad)
 public:
-    static GhostPadPtr newGhostPad(const PadPtr & target, const QString & name = QString());
-    static GhostPadPtr newGhostPad(PadDirection direction, const QString & name = QString());
+    static GhostPadPtr newGhostPad(const PadPtr & target,
+                                   const QGlib::String & name = QGlib::String());
+    static GhostPadPtr newGhostPad(PadDirection direction,
+                                   const QGlib::String & name = QGlib::String());
 
     PadPtr target() const;
     bool setTarget(const PadPtr & target);

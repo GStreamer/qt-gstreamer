@@ -7,6 +7,7 @@ set(QtGstreamer_SRCS
     QGlib/object.cpp
     QGlib/value.cpp
     QGlib/closure.cpp
+    QGlib/string.cpp
 
     QGst/global.cpp
     QGst/structure.cpp
@@ -35,6 +36,7 @@ set(INSTALLED_HEADERS
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value
     QGlib/closure.h     QGlib/Closure
+    QGlib/string.h      QGlib/String
 
     QGlib/valueimpl/assert.h
     QGlib/valueimpl/valueimpl.h

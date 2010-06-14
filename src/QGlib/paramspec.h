@@ -35,9 +35,9 @@ public:
     };
     Q_DECLARE_FLAGS(ParamFlags, ParamFlag);
 
-    QString name() const;
-    QString nick() const;
-    QString description() const;
+    String name() const;
+    String nick() const;
+    String description() const;
 
     ParamFlags flags() const;
     Type valueType() const;

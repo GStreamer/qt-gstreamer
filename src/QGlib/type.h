@@ -65,7 +65,7 @@ public:
     static Type fromInstance(void *nativeInstance);
     static Type fromName(const char *name);
 
-    QString name() const;
+    QGlib::String name() const;
     Quark qname() const;
 
     bool isAbstract() const;

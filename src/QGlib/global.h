@@ -102,6 +102,7 @@ QGLIB_REGISTER_NATIVE_TYPE(float, Type::Float)
 QGLIB_REGISTER_NATIVE_TYPE(double, Type::Double)
 QGLIB_REGISTER_NATIVE_TYPE(QString, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QByteArray, Type::String)
+QGLIB_REGISTER_NATIVE_TYPE(String, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(char*, Type::String)
 
 #endif

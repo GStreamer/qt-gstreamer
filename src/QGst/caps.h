@@ -26,12 +26,12 @@ class Caps : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(Caps)
 public:
-    static CapsPtr newSimple(const QString & mediaType);
+    static CapsPtr newSimple(const QGlib::String & mediaType);
     static CapsPtr newAny();
     static CapsPtr newEmpty();
 
-    static CapsPtr fromString(const QString & string);
-    QString toString() const;
+    static CapsPtr fromString(const QGlib::String & string);
+    QGlib::String toString() const;
 
     static CapsPtr fromXml(xmlNodePtr node);
     xmlNodePtr toXml(xmlNodePtr parent) const;
@@ -39,7 +39,7 @@ public:
     void makeWritable();
     void append(const CapsPtr & caps2);
     void merge(const CapsPtr & caps2);
-    void setValue(const QString & field, const QGlib::Value & value);
+    void setValue(const QGlib::String & field, const QGlib::Value & value);
     bool simplify();
     void truncate();
 

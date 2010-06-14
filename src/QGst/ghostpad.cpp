@@ -15,22 +15,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ghostpad.h"
-#include "helpers_p.h"
 #include <gst/gstghostpad.h>
 
 namespace QGst {
 
-GhostPadPtr GhostPad::newGhostPad(const PadPtr & target, const QString & name)
+GhostPadPtr GhostPad::newGhostPad(const PadPtr & target, const QGlib::String & name)
 {
-    GstPad *gp = gst_ghost_pad_new(qstringToGcharPtr(name), target);
+    GstPad *gp = gst_ghost_pad_new(name, target);
     gst_object_ref_sink(gp);
     return GhostPadPtr::wrap(GST_GHOST_PAD(gp), false);
 }
 
-GhostPadPtr GhostPad::newGhostPad(PadDirection direction, const QString & name)
+GhostPadPtr GhostPad::newGhostPad(PadDirection direction, const QGlib::String & name)
 {
-    GstPad *gp = gst_ghost_pad_new_no_target(qstringToGcharPtr(name),
-                                             static_cast<GstPadDirection>(direction));
+    GstPad *gp = gst_ghost_pad_new_no_target(name, static_cast<GstPadDirection>(direction));
     gst_object_ref_sink(gp);
     return GhostPadPtr::wrap(GST_GHOST_PAD(gp), false);
 }

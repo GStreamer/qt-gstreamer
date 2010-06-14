@@ -16,7 +16,6 @@
 */
 #include "elementfactory.h"
 #include "element.h"
-#include "helpers_p.h"
 #include <gst/gstelement.h>
 #include <gst/gstelementfactory.h>
 #include <gst/gstutils.h>
@@ -24,16 +23,15 @@
 namespace QGst {
 
 //static
-ElementFactoryPtr ElementFactory::find(const QString & factoryName)
+ElementFactoryPtr ElementFactory::find(const QGlib::String & factoryName)
 {
-    return ElementFactoryPtr::wrap(gst_element_factory_find(qstringToGcharPtr(factoryName)), false);
+    return ElementFactoryPtr::wrap(gst_element_factory_find(factoryName), false);
 }
 
 //static
-ElementPtr ElementFactory::make(const QString & factoryName, const QString & elementName)
+ElementPtr ElementFactory::make(const QGlib::String & factoryName, const QGlib::String & elementName)
 {
-    GstElement *e = gst_element_factory_make(qstringToGcharPtr(factoryName),
-                                             qstringToGcharPtr(elementName));
+    GstElement *e = gst_element_factory_make(factoryName, elementName);
     gst_object_ref_sink(e);
     return ElementPtr::wrap(e, false);
 }
@@ -43,24 +41,24 @@ QGlib::Type ElementFactory::elementType() const
     return gst_element_factory_get_element_type(GST_ELEMENT_FACTORY(m_object));
 }
 
-QString ElementFactory::longName() const
+QGlib::String ElementFactory::longName() const
 {
-    return QString::fromUtf8(gst_element_factory_get_longname(GST_ELEMENT_FACTORY(m_object)));
+    return QGlib::String(gst_element_factory_get_longname(GST_ELEMENT_FACTORY(m_object)));
 }
 
-QString ElementFactory::klass() const
+QGlib::String ElementFactory::klass() const
 {
-    return QString::fromUtf8(gst_element_factory_get_klass(GST_ELEMENT_FACTORY(m_object)));
+    return QGlib::String(gst_element_factory_get_klass(GST_ELEMENT_FACTORY(m_object)));
 }
 
-QString ElementFactory::description() const
+QGlib::String ElementFactory::description() const
 {
-    return QString::fromUtf8(gst_element_factory_get_description(GST_ELEMENT_FACTORY(m_object)));
+    return QGlib::String(gst_element_factory_get_description(GST_ELEMENT_FACTORY(m_object)));
 }
 
-QString ElementFactory::author() const
+QGlib::String ElementFactory::author() const
 {
-    return QString::fromUtf8(gst_element_factory_get_author(GST_ELEMENT_FACTORY(m_object)));
+    return QGlib::String(gst_element_factory_get_author(GST_ELEMENT_FACTORY(m_object)));
 }
 
 uint ElementFactory::padTemplatesCount() const
@@ -73,10 +71,9 @@ int ElementFactory::uriType() const
     return gst_element_factory_get_uri_type(GST_ELEMENT_FACTORY(m_object));
 }
 
-bool ElementFactory::hasInterface(const QString & interfaceName) const
+bool ElementFactory::hasInterface(const QGlib::String & interfaceName) const
 {
-    return gst_element_factory_has_interface(GST_ELEMENT_FACTORY(m_object),
-                                             qstringToGcharPtr(interfaceName));
+    return gst_element_factory_has_interface(GST_ELEMENT_FACTORY(m_object), interfaceName);
 }
 
 bool ElementFactory::canSinkCaps(const CapsPtr & caps) const
@@ -89,10 +86,9 @@ bool ElementFactory::canSrcCaps(const CapsPtr & caps) const
     return gst_element_factory_can_src_caps(GST_ELEMENT_FACTORY(m_object), caps);
 }
 
-ElementPtr ElementFactory::create(const QString & elementName) const
+ElementPtr ElementFactory::create(const QGlib::String & elementName) const
 {
-    GstElement *e = gst_element_factory_create(GST_ELEMENT_FACTORY(m_object),
-                                               qstringToGcharPtr(elementName));
+    GstElement *e = gst_element_factory_create(GST_ELEMENT_FACTORY(m_object), elementName);
     gst_object_ref_sink(e);
     return ElementPtr::wrap(e, false);
 }

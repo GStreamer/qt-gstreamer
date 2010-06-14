@@ -16,7 +16,6 @@
 */
 #include "element.h"
 #include "pad.h"
-#include "helpers_p.h"
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
 
@@ -62,15 +61,15 @@ bool Element::addPad(const PadPtr & pad)
     return gst_element_add_pad(GST_ELEMENT(m_object), pad);
 }
 
-PadPtr Element::getStaticPad(const QString & name)
+PadPtr Element::getStaticPad(const QGlib::String & name)
 {
-    GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), qstringToGcharPtr(name));
+    GstPad *pad = gst_element_get_static_pad(GST_ELEMENT(m_object), name);
     return PadPtr::wrap(pad, false);
 }
 
-PadPtr Element::getRequestPad(const QString & name)
+PadPtr Element::getRequestPad(const QGlib::String & name)
 {
-    GstPad *pad = gst_element_get_request_pad(GST_ELEMENT(m_object), qstringToGcharPtr(name));
+    GstPad *pad = gst_element_get_request_pad(GST_ELEMENT(m_object), name);
     return PadPtr::wrap(pad, false);
 }
 
@@ -79,37 +78,37 @@ void Element::releaseRequestPad(const PadPtr & pad)
     gst_element_release_request_pad(GST_ELEMENT(m_object), pad);
 }
 
-bool Element::link(const QString & srcPadName, const ElementPtr & dest,
-                   const QString& sinkPadName, const CapsPtr & filter)
+bool Element::link(const QGlib::String & srcPadName, const ElementPtr & dest,
+                   const QGlib::String& sinkPadName, const CapsPtr & filter)
 {
-    return gst_element_link_pads_filtered(GST_ELEMENT(m_object), qstringToGcharPtr(srcPadName),
-                                          dest, qstringToGcharPtr(sinkPadName), filter);
+    return gst_element_link_pads_filtered(GST_ELEMENT(m_object), srcPadName,
+                                          dest, sinkPadName, filter);
 }
 
-bool Element::link(const QString & srcPadName, const ElementPtr & dest, const CapsPtr & filter)
+bool Element::link(const QGlib::String & srcPadName, const ElementPtr & dest, const CapsPtr & filter)
 {
-    return link(srcPadName, dest, QString(), filter);
+    return link(srcPadName, dest, QGlib::String(), filter);
 }
 
-bool Element::link(const ElementPtr & dest, const QString & sinkPadName, const CapsPtr & filter)
+bool Element::link(const ElementPtr & dest, const QGlib::String & sinkPadName, const CapsPtr & filter)
 {
-    return link(QString(), dest, sinkPadName, filter);
+    return link(QGlib::String(), dest, sinkPadName, filter);
 }
 
 bool Element::link(const ElementPtr & dest, const CapsPtr & filter)
 {
-    return link(QString(), dest, QString(), filter);
+    return link(QGlib::String(), dest, QGlib::String(), filter);
 }
 
-void Element::unlink(const QString & srcPadName, const ElementPtr & dest, const QString & sinkPadName)
+void Element::unlink(const QGlib::String & srcPadName, const ElementPtr & dest,
+                     const QGlib::String & sinkPadName)
 {
-    gst_element_unlink_pads(GST_ELEMENT(m_object), qstringToGcharPtr(srcPadName),
-                            dest, qstringToGcharPtr(sinkPadName));
+    gst_element_unlink_pads(GST_ELEMENT(m_object), srcPadName, dest, sinkPadName);
 }
 
-void Element::unlink(const ElementPtr & dest, const QString & sinkPadName)
+void Element::unlink(const ElementPtr & dest, const QGlib::String & sinkPadName)
 {
-    unlink(QString(), dest, sinkPadName);
+    unlink(QGlib::String(), dest, sinkPadName);
 }
 
 }

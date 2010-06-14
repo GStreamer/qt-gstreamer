@@ -25,16 +25,16 @@ class ChildProxy : public virtual Object
 {
 public:
     uint childrenCount() const;
-    ObjectPtr childByName(const QString & name) const;
+    ObjectPtr childByName(const QGlib::String & name) const;
     ObjectPtr childByIndex(uint index) const;
 
-    bool findChildProperty(const QString & name, ObjectPtr *object, QGlib::ParamSpecPtr *paramSpec) const;
-    QGlib::Value childProperty(const QString & name) const;
-    template <typename T> void setChildProperty(const QString & name, const T & value);
+    bool findChildProperty(const QGlib::String & name, ObjectPtr *object, QGlib::ParamSpecPtr *paramSpec) const;
+    QGlib::Value childProperty(const QGlib::String & name) const;
+    template <typename T> void setChildProperty(const QGlib::String & name, const T & value);
 };
 
 template <typename T>
-void ChildProxy::setChildProperty(const QString & name, const T & value)
+void ChildProxy::setChildProperty(const QGlib::String & name, const T & value)
 {
     QGlib::ParamSpecPtr param;
     ObjectPtr object;

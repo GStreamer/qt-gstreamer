@@ -16,16 +16,15 @@
 */
 #include "caps.h"
 #include "structure.h"
-#include "helpers_p.h"
 #include <QtCore/QDebug>
 #include <gst/gstcaps.h>
 
 namespace QGst {
 
 //static
-CapsPtr Caps::newSimple(const QString & mediaType)
+CapsPtr Caps::newSimple(const QGlib::String & mediaType)
 {
-    return CapsPtr::wrap(gst_caps_new_simple(qstringToGcharPtr(mediaType), NULL), false);
+    return CapsPtr::wrap(gst_caps_new_simple(mediaType, NULL), false);
 }
 
 //static
@@ -41,14 +40,14 @@ CapsPtr Caps::newEmpty()
 }
 
 //static
-CapsPtr Caps::fromString(const QString & string)
+CapsPtr Caps::fromString(const QGlib::String & string)
 {
-    return CapsPtr::wrap(gst_caps_from_string(qstringToGcharPtr(string)), false);
+    return CapsPtr::wrap(gst_caps_from_string(string), false);
 }
 
-QString Caps::toString() const
+QGlib::String Caps::toString() const
 {
-    return gcharPtrToQString(gst_caps_to_string(GST_CAPS(m_object)));
+    return QGlib::String::fromGCharPtr(gst_caps_to_string(GST_CAPS(m_object)));
 }
 
 //static
@@ -77,9 +76,9 @@ void Caps::merge(const CapsPtr & caps2)
     gst_caps_merge(GST_CAPS(m_object), gst_caps_copy(caps2));
 }
 
-void Caps::setValue(const QString& field, const QGlib::Value& value)
+void Caps::setValue(const QGlib::String & field, const QGlib::Value & value)
 {
-    gst_caps_set_value(GST_CAPS(m_object), qstringToGcharPtr(field), value.peekGValue());
+    gst_caps_set_value(GST_CAPS(m_object), field, value.peekGValue());
 }
 
 bool Caps::simplify()
