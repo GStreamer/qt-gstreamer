@@ -57,7 +57,7 @@ QGlib::Value StructureBase::value(const QGlib::String & fieldName) const
 void StructureBase::setValue(const QGlib::String & fieldName, const QGlib::Value & value)
 {
     Q_ASSERT(isValid());
-    gst_structure_set_value(m_structure, fieldName, value.peekGValue());
+    gst_structure_set_value(m_structure, fieldName, value);
 }
 
 unsigned int StructureBase::numberOfFields() const

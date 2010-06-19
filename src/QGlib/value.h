@@ -18,9 +18,12 @@
 #define QGLIB_VALUE_H
 
 #include "global.h"
+#include "type.h"
+#include <boost/type_traits.hpp>
 
 namespace QGlib {
 
+/*! This class serves as a base class for Value and SharedValue, providing all the common bits. */
 class ValueBase
 {
 public:
@@ -34,34 +37,8 @@ public:
     bool canTransformTo(Type type) const;
     Value transformTo(Type type) const;
 
-    inline GValue *peekGValue() { return m_value; }
-    inline const GValue *peekGValue() const { return m_value; }
-
-#define QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(NICK, TYPE) \
-    TYPE get ##NICK () const; \
-    void set ##NICK (TYPE data)
-
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Bool, bool);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Char, char);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Uchar, uchar);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Int, int);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Uint, uint);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Long, long);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Ulong, ulong);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Int64, qint64);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Uint64, quint64);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Float, float);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Double, double);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Enum, int);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Flags, uint);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Pointer, void*);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Boxed, void*);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(ParamSpec, GParamSpec*);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(Object, void*);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(String, const char*);
-    QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION(GType, ulong);
-
-#undef QGLIBVALUE_FUNDAMENTAL_GETSET_DECLARATION
+    inline operator GValue*() { return m_value; }
+    inline operator const GValue*() const { return m_value; }
 
 protected:
     ValueBase(GValue *val);
@@ -71,14 +48,25 @@ protected:
     GValue *m_value;
 };
 
-class SharedValue;
-
+/*! This class serves as a wrapper for GValue. GValue is a data type that can hold different
+ * types of values inside, like a QVariant.
+ * To set a value, you must first initialize this Value using one of the init() methods
+ * (preferably the template one) in order to tell it what kind of value it is going to hold.
+ * Once initialized to hold a specific type, you can use the set() and get() methods to set and
+ * get values of this type only. Attempting to use another type will assert. To change the type
+ * that this value holds, you can call the init() method again at any time. In this case, though,
+ * any held value will be lost.
+ * \note Unlike SharedValue, this class always keeps a private GValue internally which is
+ * allocated in the constructors and freed from the destructor.
+ * \sa SharedValue
+ */
 class Value : public ValueBase
 {
 public:
     Value();
     Value(const GValue & gvalue);
-    template <typename T> Value(const T & data);
+    template <typename T>
+    inline Value(const T & data);
     Value(const SharedValue & other);
     Value(const Value & other);
     virtual ~Value();
@@ -92,6 +80,14 @@ public:
     inline void init();
 };
 
+/*! This class serves as a wrapper for shared GValue instances. Some functions in the GStreamer
+ * API return a pointer to some internal GValue and expect you to change this internal instance,
+ * not copy it and re-set it using some setter function (like all normal object-oriented APIs do),
+ * so it is necessary to have way of accessing those instances. This class wraps a GValue without
+ * copying it and without freeing it from the destructor, unlike Value, which always keeps a
+ * GValue instance for itself.
+ * \sa Value
+ */
 class SharedValue : public ValueBase
 {
 public:
@@ -101,32 +97,79 @@ public:
     SharedValue & operator=(const SharedValue & other);
 };
 
-} //namespace QGlib
 
-#define QGLIB_VALUEIMPL_H
-# include "valueimpl/valueimpl.h"
-# include "valueimpl/nativetypes.h"
-#undef QGLIB_VALUEIMPL_H
+/*! This class provides the implementation for the ValueBase::get() and ValueBase::set() methods.
+ * If you want to provide support for a custom type, you should provide a template specialization
+ * of this class that sets and gets data to the underlying GValue for your custom type.
+ * The default implementation expects T to be an enum.
+ * \sa QGLIB_REGISTER_VALUEIMPL
+ */
+template <typename T>
+struct ValueImpl
+{
+    static inline T get(const ValueBase & value);
+    static inline void set(ValueBase & value, const T & data);
+};
 
-namespace QGlib {
+/*! This macro declares a specialization for ValueImpl for the type \a T.
+ * It should be used in a header, in combination with QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION
+ * in the respective source file, which will define the implementation of this specialization.
+ * \sa ValueImpl, QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION
+ */
+#define QGLIB_REGISTER_VALUEIMPL(T) \
+    namespace QGlib { \
+        template <> \
+        struct ValueImpl<T> \
+        { \
+            static T get(const ValueBase & value); \
+            static void set(ValueBase & value, T const & data); \
+        }; \
+    }
+
+/*! This macro defines the implementation of a ValueImpl specialization for type \a T.
+ * \param GET_IMPL should be an expression that evaluates to type T and extracts a value from
+ * a const ValueBase refererence called 'value'
+ * \param SET_IMPL should be an expression that evaluates to void and sets the data from a
+ * const T reference called 'data' to a ValueBase reference called 'value'
+ * \sa QGLIB_REGISTER_VALUEIMPL, ValueImpl, ValueBase
+ */
+#define QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(T, GET_IMPL, SET_IMPL) \
+    namespace QGlib { \
+        T ValueImpl<T>::get(const ValueBase & value) \
+        { \
+            return (GET_IMPL);\
+        } \
+        void ValueImpl<T>::set(ValueBase & value, T const & data) \
+        { \
+            (SET_IMPL);\
+        } \
+    }
+
+// -- template implementations --
 
 template <typename T>
 T ValueBase::get() const
 {
-    Q_ASSERT(isValid());
+    Q_ASSERT_X(isValid(), "ValueBase::get", "This ValueBase instance has not been intialized");
+    Q_ASSERT_X(GetType<T>() == type() || type().isA(GetType<T>()), "QGlib::ValueBase::get",
+               "This ValueBase instance has been initialized to hold a different type of data "
+               "than the one that you are trying to access");
     return ValueImpl<T>::get(*this);
 }
 
 template <typename T>
 void ValueBase::set(const T & data)
 {
-    Q_ASSERT(isValid());
+    Q_ASSERT_X(isValid(), "ValueBase::set", "This ValueBase instance has not been intialized");
+    Q_ASSERT_X(GetType<T>() == type() || type().isA(GetType<T>()), "QGlib::ValueBase::set",
+               "This ValueBase instance has been initialized to hold a different type of data "
+               "than the one that you are trying to access");
     ValueImpl<T>::set(*this, data);
 }
 
 
 template <typename T>
-Value::Value(const T & data)
+inline Value::Value(const T & data)
     : ValueBase(NULL)
 {
     init<T>();
@@ -139,9 +182,76 @@ inline void Value::init()
     init(GetType<T>());
 }
 
+// -- default ValueImpl implementation (handles enums) --
+
+struct ValueImpl_Enum
+{
+    static int get(const ValueBase & value);
+    static void set(ValueBase & value, int data);
+};
+
+template <typename T>
+inline T ValueImpl<T>::get(const ValueBase & value)
+{
+    QGLIB_STATIC_ASSERT(boost::is_enum<T>::value,
+                        "No QGlib::ValueImpl<T> specialization has been registered for this type");
+    return static_cast<T>(ValueImpl_Enum::get(value));
+}
+
+template <typename T>
+inline void ValueImpl<T>::set(ValueBase & value, const T & data)
+{
+    QGLIB_STATIC_ASSERT(boost::is_enum<T>::value,
+                        "No QGlib::ValueImpl<T> specialization has been registered for this type");
+    ValueImpl_Enum::set(value, static_cast<int>(data));
+}
+
+// -- ValueImpl specialization for QFlags --
+
+struct ValueImpl_Flags
+{
+    static uint get(const ValueBase & value);
+    static void set(ValueBase & value, uint data);
+};
+
+template <class T>
+struct ValueImpl< QFlags<T> >
+{
+    static inline QFlags<T> get(const ValueBase & value)
+    {
+        return QFlags<T>(QFlag(ValueImpl_Flags::get(value)));
+    }
+
+    static inline void set(ValueBase & value, const QFlags<T> & data)
+    {
+        ValueImpl_Flags::set(value, static_cast<uint>(data));
+    }
+};
+
 } //namespace QGlib
 
-class QDebug;
 QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value);
+
+QGLIB_REGISTER_TYPE(QGlib::ValueBase) //codegen: GType=G_TYPE_VALUE
+QGLIB_REGISTER_TYPE(QGlib::Value)
+QGLIB_REGISTER_TYPE(QGlib::SharedValue) //codegen: GType=G_TYPE_VALUE
+
+QGLIB_REGISTER_VALUEIMPL(bool)
+QGLIB_REGISTER_VALUEIMPL(char)
+QGLIB_REGISTER_VALUEIMPL(unsigned char)
+QGLIB_REGISTER_VALUEIMPL(int)
+QGLIB_REGISTER_VALUEIMPL(unsigned int)
+QGLIB_REGISTER_VALUEIMPL(long)
+QGLIB_REGISTER_VALUEIMPL(unsigned long)
+QGLIB_REGISTER_VALUEIMPL(qint64)
+QGLIB_REGISTER_VALUEIMPL(quint64)
+QGLIB_REGISTER_VALUEIMPL(float)
+QGLIB_REGISTER_VALUEIMPL(double)
+QGLIB_REGISTER_VALUEIMPL(void*)
+QGLIB_REGISTER_VALUEIMPL(QGlib::Type)
+QGLIB_REGISTER_VALUEIMPL(const char*)
+QGLIB_REGISTER_VALUEIMPL(QGlib::String)
+QGLIB_REGISTER_VALUEIMPL(QByteArray)
+QGLIB_REGISTER_VALUEIMPL(QString)
 
 #endif

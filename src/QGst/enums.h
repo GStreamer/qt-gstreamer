@@ -17,7 +17,7 @@
 #ifndef QGST_ENUMS_H
 #define QGST_ENUMS_H
 
-#include "../QGlib/global.h"
+#include "../QGlib/type.h"
 #include <QtCore/QFlags>
 
 namespace QGst {

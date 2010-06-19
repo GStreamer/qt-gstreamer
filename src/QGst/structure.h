@@ -18,6 +18,8 @@
 #define QGST_STRUCTURE_H
 
 #include "global.h"
+#include "../QGlib/type.h"
+#include "../QGlib/string.h"
 #include "../QGlib/value.h"
 
 namespace QGst {
@@ -84,9 +86,10 @@ public:
 
 } //namespace QGst
 
-class QDebug;
 QDebug operator<<(QDebug debug, const QGst::StructureBase & structure);
 
 QGLIB_REGISTER_TYPE(QGst::StructureBase) //codegen: GType=GST_TYPE_STRUCTURE
+QGLIB_REGISTER_TYPE(QGst::Structure)
+QGLIB_REGISTER_TYPE(QGst::SharedStructure) //codegen: GType=GST_TYPE_STRUCTURE
 
 #endif

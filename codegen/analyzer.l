@@ -37,6 +37,7 @@ id      [a-zA-Z][a-zA-Z_0-9]*
 %x NAMESPACE
 %x CLASS
 %x EAT_TEMPLATE
+%x MACRO
 
 %%
 
@@ -109,6 +110,14 @@ template[[:space:]]*\<   { yy_push_state(EAT_TEMPLATE); }
     \<                   { yy_push_state(EAT_TEMPLATE); };
     \>                   { yy_pop_state(); }
     \n
+    .
+}
+
+ /* Eats only one-line defines. Used to eat the #define QGLIB_REGISTER_TYPE(T),
+    which would be a syntax error for codegen otherwise. */
+#define                  { yy_push_state(MACRO); }
+<MACRO>{
+    \n                   { yy_pop_state(); }
     .
 }
 

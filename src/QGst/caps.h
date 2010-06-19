@@ -19,6 +19,9 @@
 
 #include "global.h"
 #include "../QGlib/value.h"
+#include "../QGlib/refpointer.h"
+#include "../QGlib/type.h"
+#include "../QGlib/string.h"
 
 namespace QGst {
 
@@ -74,7 +77,6 @@ protected:
 
 QGLIB_REGISTER_TYPE(QGst::Caps)
 
-class QDebug;
 QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps);
 
 #endif

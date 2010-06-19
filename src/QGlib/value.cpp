@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "value.h"
+#include "string.h"
 #include <glib-object.h>
 #include <QtCore/QDebug>
 
@@ -63,40 +64,6 @@ Value ValueBase::transformTo(Type t) const
     return dest;
 }
 
-#define FUNDAMENTAL_GETSET_IMPLEMENTATION(NICK, TYPE, GETFUNC, SETFUNC) \
-    TYPE ValueBase::get ##NICK () const \
-    { \
-        Q_ASSERT(isValid()); \
-        return GETFUNC(m_value); \
-    } \
-    void ValueBase::set ##NICK (TYPE data) \
-    { \
-        Q_ASSERT(isValid()); \
-        SETFUNC(m_value, data); \
-    }
-
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Bool, bool, g_value_get_boolean, g_value_set_boolean)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Char, char, g_value_get_char, g_value_set_char)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Uchar, uchar, g_value_get_uchar, g_value_set_uchar)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Int, int, g_value_get_int, g_value_set_int)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Uint, uint, g_value_get_uint, g_value_set_uint)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Long, long, g_value_get_long, g_value_set_long)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Ulong, ulong, g_value_get_ulong, g_value_set_ulong)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Int64, qint64, g_value_get_int64, g_value_set_int64)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Uint64, quint64, g_value_get_uint64, g_value_set_uint64)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Float, float, g_value_get_float, g_value_set_float)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Double, double, g_value_get_double, g_value_set_double)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Enum, int, g_value_get_enum, g_value_set_enum)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Flags, uint, g_value_get_flags, g_value_set_flags)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Pointer, void*, g_value_get_pointer, g_value_set_pointer)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Boxed, void*, g_value_get_boxed, g_value_set_boxed)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(ParamSpec, GParamSpec*, g_value_get_param, g_value_set_param)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(Object, void*, g_value_get_object, g_value_set_object)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(String, const char*, g_value_get_string, g_value_set_string)
-FUNDAMENTAL_GETSET_IMPLEMENTATION(GType, ulong, g_value_get_gtype, g_value_set_gtype)
-
-#undef FUNDAMENTAL_GETSET_IMPLEMENTATION
-
 //END ValueBase
 
 //BEGIN Value
@@ -137,7 +104,7 @@ Value & Value::operator=(const SharedValue & other)
 {
     if (other.isValid()) {
         init(other.type());
-        g_value_copy(other.peekGValue(), m_value);
+        g_value_copy(other, m_value);
     } else if (m_value) {
         g_value_unset(m_value);
         g_slice_free(GValue, m_value);
@@ -150,7 +117,7 @@ Value & Value::operator=(const Value & other)
 {
     if (other.isValid()) {
         init(other.type());
-        g_value_copy(other.peekGValue(), m_value);
+        g_value_copy(other, m_value);
     } else if (m_value) {
         g_value_unset(m_value);
         g_slice_free(GValue, m_value);
@@ -195,6 +162,31 @@ SharedValue & SharedValue::operator=(const SharedValue & other)
 
 //END SharedValue
 
+
+//BEGIN ValueImpl internal helpers
+
+uint ValueImpl_Flags::get(const ValueBase & value)
+{
+    return g_value_get_flags(value);
+}
+
+void ValueImpl_Flags::set(ValueBase & value, uint data)
+{
+    g_value_set_flags(value, data);
+}
+
+int ValueImpl_Enum::get(const ValueBase & value)
+{
+    return g_value_get_enum(value);
+}
+
+void ValueImpl_Enum::set(ValueBase & value, int data)
+{
+    g_value_set_enum(value, data);
+}
+
+//END ValueImpl internal helpers
+
 }
 
 
@@ -210,8 +202,8 @@ QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
             str = value.get<QString>();
         } else if (value.canTransformTo(QGlib::Type::String)) {
             str = value.transformTo(QGlib::Type::String).get<QString>();
-        } else if (g_value_fits_pointer(value.peekGValue())) {
-            quintptr ptr = reinterpret_cast<quintptr>(g_value_peek_pointer(value.peekGValue()));
+        } else if (g_value_fits_pointer(value)) {
+            quintptr ptr = reinterpret_cast<quintptr>(g_value_peek_pointer(value));
             str = QString(QLatin1String("0x%1")).arg(ptr, sizeof(quintptr)*2, 16, QLatin1Char('0'));
         } else {
             str = QLatin1String("<unknown value>");
@@ -221,3 +213,26 @@ QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
         return debug.space();
     }
 }
+
+#define SHORT_VALUEIMPL_IMPLEMENTATION(T, NICK) \
+    QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(T, g_value_get_##NICK(value), g_value_set_##NICK(value, data))
+
+SHORT_VALUEIMPL_IMPLEMENTATION(bool, boolean)
+SHORT_VALUEIMPL_IMPLEMENTATION(char, char)
+SHORT_VALUEIMPL_IMPLEMENTATION(unsigned char, uchar)
+SHORT_VALUEIMPL_IMPLEMENTATION(int, int)
+SHORT_VALUEIMPL_IMPLEMENTATION(unsigned int, uint)
+SHORT_VALUEIMPL_IMPLEMENTATION(long, long)
+SHORT_VALUEIMPL_IMPLEMENTATION(unsigned long, ulong)
+SHORT_VALUEIMPL_IMPLEMENTATION(qint64, int64)
+SHORT_VALUEIMPL_IMPLEMENTATION(quint64, uint64)
+SHORT_VALUEIMPL_IMPLEMENTATION(float, float)
+SHORT_VALUEIMPL_IMPLEMENTATION(double, double)
+SHORT_VALUEIMPL_IMPLEMENTATION(void*, pointer)
+SHORT_VALUEIMPL_IMPLEMENTATION(QGlib::Type, gtype)
+SHORT_VALUEIMPL_IMPLEMENTATION(const char*, string)
+SHORT_VALUEIMPL_IMPLEMENTATION(QGlib::String, string)
+SHORT_VALUEIMPL_IMPLEMENTATION(QByteArray, string)
+
+QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(QString, QString::fromUtf8(g_value_get_string(value)),
+                                        g_value_set_string(value, data.toUtf8().constData()))

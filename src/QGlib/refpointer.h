@@ -17,9 +17,9 @@
 #ifndef QGLIB_REFPOINTER_H
 #define QGLIB_REFPOINTER_H
 
+#include "global.h"
 #include "type.h"
-#include <stddef.h>
-#include <boost/static_assert.hpp>
+#include <cstddef>
 #include <boost/type_traits.hpp>
 
 namespace QGlib {
@@ -126,7 +126,8 @@ template <class X>
 void RefPointer<T>::assign(const RefPointer<X> & other)
 {
     //T should be a base class of X
-    BOOST_STATIC_ASSERT((boost::is_base_of<T, X>::value));
+    QGLIB_STATIC_ASSERT((boost::is_base_of<T, X>::value),
+                        "Cannot upcast a RefPointer without using dynamicCast()");
 
     if (!other.isNull()) {
         m_class = new T();
@@ -198,8 +199,6 @@ RefPointer<X> RefPointer<T>::staticCast() const
                     : RefPointer<X>::wrap(static_cast<typename X::CType*>(m_class->m_object));
 }
 
-template <class T> struct GetType;
-
 template <class T>
 template <class X>
 RefPointer<X> RefPointer<T>::dynamicCast() const
@@ -210,6 +209,13 @@ RefPointer<X> RefPointer<T>::dynamicCast() const
         return RefPointer<X>();
     }
 }
+
+// trick GetType to return the same type for GetType<T>() and GetType< RefPointer<T> >()
+template <class T>
+struct GetTypeImpl< RefPointer<T> >
+{
+    inline operator Type() { return GetType<T>(); }
+};
 
 }
 

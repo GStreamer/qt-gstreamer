@@ -28,7 +28,6 @@ set(QtGstreamer_SRCS
 
 set(INSTALLED_HEADERS
     QGlib/global.h
-    QGlib/gdeclarations.h
     QGlib/quark.h       QGlib/Quark
     QGlib/type.h        QGlib/Type
     QGlib/refpointer.h  QGlib/RefPointer
@@ -37,12 +36,6 @@ set(INSTALLED_HEADERS
     QGlib/value.h       QGlib/Value
     QGlib/closure.h     QGlib/Closure
     QGlib/string.h      QGlib/String
-
-    QGlib/valueimpl/assert.h
-    QGlib/valueimpl/valueimpl.h
-    QGlib/valueimpl/nativetypes.h
-    QGlib/valueimpl/paramspecptr.h
-    QGlib/valueimpl/objectptr.h
 
     QGst/global.h       QGst/Global
     QGst/enums.h

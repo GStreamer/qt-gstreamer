@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "paramspec.h"
+#include "string.h"
+#include "quark.h"
 #include <glib-object.h>
 
 namespace QGlib {
@@ -80,3 +82,7 @@ void ParamSpec::unref()
 }
 
 }
+
+QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(QGlib::ParamSpecPtr,
+                                        ParamSpecPtr::wrap(g_value_get_param(value)),
+                                        g_value_set_param(value, data))

@@ -19,6 +19,16 @@
 
 namespace QGlib {
 
+template <class T>
+QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
+{
+    QList< RefPointer<T> > result;
+    for(uint i = 0; i<n; ++i) {
+        result.append(RefPointer<T>::wrap(array[i]));
+    }
+    return result;
+}
+
 ParamSpecPtr Object::findProperty(const String & name) const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(m_object)));
@@ -48,14 +58,14 @@ Value Object::property(const String & name) const
     ParamSpecPtr param = findProperty(name);
     if (param && (param->flags() & ParamSpec::Readable)) {
         result.init(param->valueType());
-        g_object_get_property(G_OBJECT(m_object), name, result.peekGValue());
+        g_object_get_property(G_OBJECT(m_object), name, result);
     }
     return result;
 }
 
 void Object::setPropertyValue(const String & name, const ValueBase & value)
 {
-    g_object_set_property(G_OBJECT(m_object), name, value.peekGValue());
+    g_object_set_property(G_OBJECT(m_object), name, value);
 }
 
 void Object::ref()
@@ -66,6 +76,17 @@ void Object::ref()
 void Object::unref()
 {
     g_object_unref(m_object);
+}
+
+
+ObjectPtr ValueImpl_Object::get(const ValueBase & value)
+{
+    return ObjectPtr::wrap(static_cast<GObject*>(g_value_get_object(value)));
+}
+
+void ValueImpl_Object::set(ValueBase & value, const ObjectPtr & data)
+{
+    g_value_set_object(value, static_cast<GObject*>(data));
 }
 
 }

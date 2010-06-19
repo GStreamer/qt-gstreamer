@@ -18,6 +18,8 @@
 #define QGST_MINIOBJECT_H
 
 #include "global.h"
+#include "../QGlib/refpointer.h"
+#include "../QGlib/type.h"
 
 namespace QGst {
 

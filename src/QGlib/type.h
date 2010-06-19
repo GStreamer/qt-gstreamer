@@ -17,13 +17,11 @@
 #ifndef QGLIB_TYPE_H
 #define QGLIB_TYPE_H
 
-#include "gdeclarations.h"
-#include "quark.h"
+#include "global.h"
 
 namespace QGlib {
 
-template <class T> class RefPointer;
-
+/*! This class is a wrapper for GType. It represents a type ID in the glib type system */
 class Type
 {
 public:
@@ -58,12 +56,12 @@ public:
 
     inline Type & operator=(Type other);
     inline bool operator==(Type other) const;
-    inline operator unsigned long() { return m_type; }
+    inline operator unsigned long() const { return m_type; }
 
     template<class T>
     static Type fromInstance(const RefPointer<T> & instance);
     static Type fromInstance(void *nativeInstance);
-    static Type fromName(const char *name);
+    static Type fromName(const QGlib::String & name);
 
     QGlib::String name() const;
     Quark qname() const;
@@ -96,6 +94,50 @@ private:
     unsigned long m_type;
 };
 
+/*! \internal Used to provide the implementation for GetType() */
+template <class T>
+struct GetTypeImpl
+{
+//If we have static_assert(), use it to show a more friendly error message to the developer.
+//The check is dummy and is expected to evaluate to false. It is just used to trick the
+//compiler to delay the evaluation of the expression until the instantiation of this template
+//(where T becomes a known type). static_assert(false, "foo"); fails even before instantiation.
+#if defined(QGLIB_HAVE_CXX0x_STATIC_ASSERT)
+private:
+    template <class X> struct FailStruct { static const bool value = false; };
+    static_assert(FailStruct<T>::value, "Type T has not been registered with the QGlib type system");
+#endif
+};
+
+/*! This template function retrieves the QGlib::Type (aka GType) of a given type T.
+ * Type T must have been registered with the QGlib type system using QGLIB_REGISTER_TYPE,
+ * otherwise this function will fail to compile.
+ */
+template <class T>
+inline Type GetType()
+{
+    return GetTypeImpl<T>();
+}
+
+/*! This macro is used to register a class with the QGlib type system. It forward-declares
+ * a specialization for struct GetTypeImpl and serves as a keyword for codegen, our code generator,
+ * which then uses QGLIB_REGISTER_TYPE_IMPLEMENTATION to provide the compiled implementation.
+ * \note this macro must be used outside of any namespace scope
+ */
+#define QGLIB_REGISTER_TYPE(T) \
+    namespace QGlib { \
+        template <> \
+        struct GetTypeImpl<T> { operator Type(); }; \
+    }
+
+/*! \internal Used by codegen only */
+#define QGLIB_REGISTER_TYPE_IMPLEMENTATION(T, GTYPE) \
+    namespace QGlib { \
+        GetTypeImpl<T>::operator Type() { return (GTYPE); } \
+    }
+
+// -- template implementations --
+
 inline Type & Type::operator=(Type other)
 {
     m_type = other.m_type;
@@ -113,6 +155,37 @@ Type Type::fromInstance(const RefPointer<T> & instance)
     return fromInstance(static_cast<void*>(static_cast<typename T::CType*>(instance)));
 }
 
-}
+} //namespace QGlib
+
+// -- type registrations --
+
+#define QGLIB_REGISTER_NATIVE_TYPE(T, GTYPE) \
+    namespace QGlib { \
+        template <> \
+        struct GetTypeImpl<T> { \
+            inline operator Type() { return (GTYPE); }; \
+        }; \
+    }
+
+QGLIB_REGISTER_NATIVE_TYPE(bool, Type::Boolean)
+QGLIB_REGISTER_NATIVE_TYPE(char, Type::Char)
+QGLIB_REGISTER_NATIVE_TYPE(unsigned char, Type::Uchar)
+QGLIB_REGISTER_NATIVE_TYPE(int, Type::Int)
+QGLIB_REGISTER_NATIVE_TYPE(unsigned int, Type::Uint)
+QGLIB_REGISTER_NATIVE_TYPE(long, Type::Long)
+QGLIB_REGISTER_NATIVE_TYPE(unsigned long, Type::Ulong)
+QGLIB_REGISTER_NATIVE_TYPE(qint64, Type::Int64)
+QGLIB_REGISTER_NATIVE_TYPE(quint64, Type::Uint64)
+QGLIB_REGISTER_NATIVE_TYPE(float, Type::Float)
+QGLIB_REGISTER_NATIVE_TYPE(double, Type::Double)
+QGLIB_REGISTER_NATIVE_TYPE(void*, Type::Pointer)
+QGLIB_REGISTER_NATIVE_TYPE(const char*, Type::String)
+QGLIB_REGISTER_NATIVE_TYPE(QGlib::String, Type::String)
+QGLIB_REGISTER_NATIVE_TYPE(QByteArray, Type::String)
+QGLIB_REGISTER_NATIVE_TYPE(QString, Type::String)
+
+#undef QGLIB_REGISTER_NATIVE_TYPE
+
+QGLIB_REGISTER_TYPE(QGlib::Type) //codegen: GType=G_TYPE_GTYPE
 
 #endif // QGLIB_TYPE_H

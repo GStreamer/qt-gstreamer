@@ -17,6 +17,8 @@
 #ifndef QGLIB_CLOSURE_H
 #define QGLIB_CLOSURE_H
 
+#include "global.h"
+#include "refpointer.h"
 #include "value.h"
 #include <boost/function.hpp>
 #include <boost/bind.hpp>

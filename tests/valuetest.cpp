@@ -16,7 +16,7 @@
 */
 #include "qgsttest.h"
 #include <QGlib/Value>
-#include <QGlib/Object>
+#include <QGst/Object>
 
 class ValueTest : public QGstTest
 {
@@ -52,18 +52,18 @@ void ValueTest::stringTest()
 void ValueTest::enumTest()
 {
     QGlib::Value v;
-    v.init(GST_TYPE_PAD_DIRECTION);
-    v.set(GST_PAD_SINK);
+    v.init<QGst::PadDirection>();
+    v.set(QGst::PadSink);
     QVERIFY(v.isValid());
-    QCOMPARE(static_cast<GType>(v.type()), GST_TYPE_PAD_DIRECTION);
-    QCOMPARE(v.get<GstPadDirection>(), GST_PAD_SINK);
+    QCOMPARE(v.type(), QGlib::GetType<QGst::PadDirection>());
+    QCOMPARE(v.get<QGst::PadDirection>(), QGst::PadSink);
 }
 
 void ValueTest::copyTest()
 {
     QGlib::Value v(10);
 
-    QGlib::SharedValue sv(v.peekGValue());
+    QGlib::SharedValue sv(v);
     QVERIFY(sv.isValid());
     QCOMPARE(static_cast<GType>(sv.type()), G_TYPE_INT);
     QCOMPARE(sv.get<int>(), 10);

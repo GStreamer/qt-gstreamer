@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "type.h"
+#include "string.h"
+#include "quark.h"
 #include <glib-object.h>
 
 namespace QGlib {
@@ -24,7 +26,7 @@ Type Type::fromInstance(void *instance)
     return G_TYPE_FROM_INSTANCE(instance);
 }
 
-Type Type::fromName(const char *name)
+Type Type::fromName(const QGlib::String & name)
 {
     return g_type_from_name(name);
 }

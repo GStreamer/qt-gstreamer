@@ -78,7 +78,7 @@ void Caps::merge(const CapsPtr & caps2)
 
 void Caps::setValue(const QGlib::String & field, const QGlib::Value & value)
 {
-    gst_caps_set_value(GST_CAPS(m_object), field, value.peekGValue());
+    gst_caps_set_value(GST_CAPS(m_object), field, value);
 }
 
 bool Caps::simplify()
