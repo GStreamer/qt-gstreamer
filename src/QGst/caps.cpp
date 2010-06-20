@@ -98,12 +98,12 @@ SharedStructure Caps::structure(uint index)
 
 void Caps::appendStructure(const StructureBase & structure)
 {
-    gst_caps_append_structure(GST_CAPS(m_object), gst_structure_copy(structure.peekGstStructure()));
+    gst_caps_append_structure(GST_CAPS(m_object), gst_structure_copy(structure));
 }
 
 void Caps::mergeStructure(const StructureBase & structure)
 {
-    gst_caps_merge_structure(GST_CAPS(m_object), gst_structure_copy(structure.peekGstStructure()));
+    gst_caps_merge_structure(GST_CAPS(m_object), gst_structure_copy(structure));
 }
 
 void Caps::removeStructure(uint index)

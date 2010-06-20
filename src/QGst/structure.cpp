@@ -118,12 +118,12 @@ Structure::Structure(const QGlib::String & name)
 }
 
 Structure::Structure(const SharedStructure & other)
-    : StructureBase(other.peekGstStructure() ? gst_structure_copy(other.peekGstStructure()) : NULL)
+    : StructureBase(other.isValid() ? gst_structure_copy(other) : NULL)
 {
 }
 
 Structure::Structure(const Structure & other)
-    : StructureBase(other.peekGstStructure() ? gst_structure_copy(other.peekGstStructure()) : NULL)
+    : StructureBase(other.isValid() ? gst_structure_copy(other) : NULL)
 {
 }
 
@@ -139,7 +139,7 @@ Structure & Structure::operator=(const SharedStructure & other)
     if (m_structure) {
         gst_structure_free(m_structure);
     }
-    m_structure = other.peekGstStructure() ? gst_structure_copy(other.peekGstStructure()) : NULL;
+    m_structure = other.isValid() ? gst_structure_copy(other) : NULL;
     return *this;
 }
 
@@ -148,7 +148,7 @@ Structure & Structure::operator=(const Structure & other)
     if (m_structure) {
         gst_structure_free(m_structure);
     }
-    m_structure = other.peekGstStructure() ? gst_structure_copy(other.peekGstStructure()) : NULL;
+    m_structure = other.isValid() ? gst_structure_copy(other) : NULL;
     return *this;
 }
 

@@ -57,7 +57,7 @@ void StructureTest::copyTest()
     QGst::Structure s("mystructure");
     s.setValue("intfield", 10);
 
-    QGst::SharedStructure ss(s.peekGstStructure());
+    QGst::SharedStructure ss(s);
     QVERIFY(ss.isValid());
     QCOMPARE(ss.value("intfield").get<int>(), 10);
 

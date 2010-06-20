@@ -46,8 +46,8 @@ public:
 
     QGlib::String toString() const; //FIXME maybe call it serialize()?
 
-    inline GstStructure *peekGstStructure() { return m_structure; }
-    inline const GstStructure *peekGstStructure() const { return m_structure; }
+    inline operator GstStructure*() { return m_structure; }
+    inline operator const GstStructure*() const { return m_structure; }
 
     //TODO iterators, gst_structure_fixate_*, quark methods
 
