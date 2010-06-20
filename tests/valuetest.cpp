@@ -26,6 +26,7 @@ private slots:
     void stringTest();
     void enumTest();
     void copyTest();
+    void castTest();
     void qdebugTest();
 };
 
@@ -33,7 +34,7 @@ void ValueTest::intTest()
 {
     QGlib::Value v(10);
     QVERIFY(v.isValid());
-    QCOMPARE(static_cast<GType>(v.type()), G_TYPE_INT);
+    QCOMPARE(v.type(), QGlib::GetType<int>());
     QCOMPARE(v.get<int>(), 10);
 }
 
@@ -41,9 +42,9 @@ void ValueTest::stringTest()
 {
     QGlib::Value v;
     QVERIFY(!v.isValid());
-    v.init(QGlib::Type::String);
+    v.init<QString>();
     v.set(QString::fromUtf8("Γειά σου κόσμε"));
-    QCOMPARE(static_cast<GType>(v.type()), G_TYPE_STRING);
+    QCOMPARE(v.type(), QGlib::GetType<QString>());
     QByteArray b = v.get<QByteArray>();
     QCOMPARE(QString::fromUtf8(b), QString::fromUtf8("Γειά σου κόσμε"));
     QCOMPARE(v.get<QString>(), QString::fromUtf8("Γειά σου κόσμε"));
@@ -65,7 +66,7 @@ void ValueTest::copyTest()
 
     QGlib::SharedValue sv(v);
     QVERIFY(sv.isValid());
-    QCOMPARE(static_cast<GType>(sv.type()), G_TYPE_INT);
+    QCOMPARE(sv.type(), QGlib::GetType<int>());
     QCOMPARE(sv.get<int>(), 10);
 
     sv.set(20);
@@ -74,7 +75,7 @@ void ValueTest::copyTest()
     {
         QGlib::Value v2(sv);
         QVERIFY(v2.isValid());
-        QCOMPARE(static_cast<GType>(v2.type()), G_TYPE_INT);
+        QCOMPARE(v2.type(), QGlib::GetType<int>());
         QCOMPARE(v2.get<int>(), 20);
 
         v2.set(30);
@@ -89,7 +90,7 @@ void ValueTest::copyTest()
     {
         QGlib::Value v2(v);
         QVERIFY(v2.isValid());
-        QCOMPARE(static_cast<GType>(v2.type()), G_TYPE_INT);
+        QCOMPARE(v2.type(), QGlib::GetType<int>());
         QCOMPARE(v2.get<int>(), 20);
 
         v2.set(30);
@@ -100,6 +101,14 @@ void ValueTest::copyTest()
         v2 = sv;
         QCOMPARE(v2.get<int>(), 20);
     }
+}
+
+void ValueTest::castTest()
+{
+    QGlib::Value v(10);
+    GValue *gv = v;
+    QCOMPARE(G_VALUE_TYPE(gv), G_TYPE_INT);
+    QCOMPARE(g_value_get_int(gv), 10);
 }
 
 void ValueTest::qdebugTest()
