@@ -43,7 +43,8 @@ public:
     inline bool isNull() const;
     inline operator bool() const;
     inline bool operator!() const;
-    inline T *operator->() const;
+    inline T *operator->();
+    inline const T *operator->() const;
     inline operator typename T::CType*() const;
 
     static RefPointer<T> wrap(typename T::CType *nativePtr, bool increaseRef = true);
@@ -180,7 +181,13 @@ inline bool RefPointer<T>::operator!() const
 }
 
 template <class T>
-inline T *RefPointer<T>::operator->() const
+inline T *RefPointer<T>::operator->()
+{
+    return m_class;
+}
+
+template <class T>
+inline const T *RefPointer<T>::operator->() const
 {
     return m_class;
 }

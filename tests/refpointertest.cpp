@@ -25,7 +25,7 @@ private slots:
     void refTest1();
     void refTest2();
     void dynamicCastTest();
-    void implicitCastTest();
+    void compilationTest();
 };
 
 void RefPointerTest::refTest1()
@@ -75,7 +75,7 @@ static void testMethod(const QGlib::ObjectPtr & obj)
     QVERIFY(!obj.dynamicCast<QGst::Bin>().isNull());
 };
 
-void RefPointerTest::implicitCastTest()
+void RefPointerTest::compilationTest()
 {
     //This is mostly a compilation test. If it compiles, it's fine, if it doesn't, there is a problem.
     QGst::BinPtr bin = QGst::Bin::newBin();
@@ -103,6 +103,14 @@ void RefPointerTest::implicitCastTest()
         QGst::BinPtr bin2 = obj; //should fail to compile
     }
 #endif
+
+    {
+        const QGst::ObjectPtr obj = bin;
+        (void)obj->name(); //should work
+#if 0
+        obj->setName("foo"); //should fail to compile
+#endif
+    }
 }
 
 QTEST_APPLESS_MAIN(RefPointerTest)
