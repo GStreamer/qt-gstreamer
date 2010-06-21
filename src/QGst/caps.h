@@ -39,7 +39,6 @@ public:
     static CapsPtr fromXml(xmlNodePtr node);
     xmlNodePtr toXml(xmlNodePtr parent) const;
 
-    void makeWritable();
     void append(const CapsPtr & caps2);
     void merge(const CapsPtr & caps2);
     void setValue(const QGlib::String & field, const QGlib::Value & value);
@@ -71,6 +70,7 @@ public:
 protected:
     virtual void ref();
     virtual void unref();
+    virtual void makeWritable();
 };
 
 }

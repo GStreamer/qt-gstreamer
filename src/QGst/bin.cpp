@@ -31,12 +31,12 @@ BinPtr Bin::newBin(const QGlib::String & name)
 
 bool Bin::add(const ElementPtr & element)
 {
-    return gst_bin_add(GST_BIN(m_object), element);
+    return gst_bin_add(GST_BIN(object()), element);
 }
 
 bool Bin::remove(const ElementPtr & element)
 {
-    return gst_bin_remove(GST_BIN(m_object), element);
+    return gst_bin_remove(GST_BIN(object()), element);
 }
 
 ElementPtr Bin::getElementByName(const QGlib::String & name, RecursionType r) const
@@ -44,10 +44,10 @@ ElementPtr Bin::getElementByName(const QGlib::String & name, RecursionType r) co
     GstElement *e = NULL;
     switch(r) {
     case RecurseDown:
-        e = gst_bin_get_by_name(GST_BIN(m_object), name);
+        e = gst_bin_get_by_name(GST_BIN(object()), name);
         break;
     case RecurseUp:
-        e = gst_bin_get_by_name_recurse_up(GST_BIN(m_object), name);
+        e = gst_bin_get_by_name_recurse_up(GST_BIN(object()), name);
         break;
     default:
         Q_ASSERT_X(false, "QGst::Bin::getByName", "Invalid RecursionType");
@@ -57,18 +57,18 @@ ElementPtr Bin::getElementByName(const QGlib::String & name, RecursionType r) co
 
 ElementPtr Bin::getElementByInterface(QGlib::Type interfaceType) const
 {
-    return ElementPtr::wrap(gst_bin_get_by_interface(GST_BIN(m_object), interfaceType), false);
+    return ElementPtr::wrap(gst_bin_get_by_interface(GST_BIN(object()), interfaceType), false);
 }
 
 PadPtr Bin::findUnlinkedPad(PadDirection direction) const
 {
-    return PadPtr::wrap(gst_bin_find_unlinked_pad(GST_BIN(m_object),
+    return PadPtr::wrap(gst_bin_find_unlinked_pad(GST_BIN(object()),
                                                   static_cast<GstPadDirection>(direction)), false);
 }
 
 bool Bin::recalculateLatency()
 {
-    return gst_bin_recalculate_latency(GST_BIN(m_object));
+    return gst_bin_recalculate_latency(GST_BIN(object()));
 }
 
 }

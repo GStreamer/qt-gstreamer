@@ -22,26 +22,26 @@ namespace QGst {
 
 uint ChildProxy::childrenCount() const
 {
-    return gst_child_proxy_get_children_count(GST_CHILD_PROXY(m_object));
+    return gst_child_proxy_get_children_count(GST_CHILD_PROXY(object()));
 }
 
 ObjectPtr ChildProxy::childByName(const QGlib::String & name) const
 {
-    return ObjectPtr::wrap(gst_child_proxy_get_child_by_name(GST_CHILD_PROXY(m_object), name), false);
+    return ObjectPtr::wrap(gst_child_proxy_get_child_by_name(GST_CHILD_PROXY(object()), name), false);
 }
 
 ObjectPtr ChildProxy::childByIndex(uint index) const
 {
-    return ObjectPtr::wrap(gst_child_proxy_get_child_by_index(GST_CHILD_PROXY(m_object), index), false);
+    return ObjectPtr::wrap(gst_child_proxy_get_child_by_index(GST_CHILD_PROXY(object()), index), false);
 }
 
-bool ChildProxy::findChildProperty(const QGlib::String & name, ObjectPtr *object, QGlib::ParamSpecPtr *paramSpec) const
+bool ChildProxy::findChildProperty(const QGlib::String & name, ObjectPtr *obj, QGlib::ParamSpecPtr *paramSpec) const
 {
     GstObject *op;
     GParamSpec *pp;
-    bool result = gst_child_proxy_lookup(GST_OBJECT(m_object), name, &op, &pp);
+    bool result = gst_child_proxy_lookup(GST_OBJECT(object()), name, &op, &pp);
     if (result) {
-        *object = ObjectPtr::wrap(op, false);
+        *obj = ObjectPtr::wrap(op, false);
         *paramSpec = QGlib::ParamSpecPtr::wrap(pp, false);
     }
     return result;

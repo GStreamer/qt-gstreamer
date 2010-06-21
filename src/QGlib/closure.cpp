@@ -33,7 +33,7 @@ void Closure::unref()
 
 void Closure::setMarshaller(void (*marshaller)(GClosure*, GValue*, uint, const GValue*, void*, void*))
 {
-    g_closure_set_marshal(static_cast<GClosure*>(m_object), marshaller);
+    g_closure_set_marshal(static_cast<GClosure*>(object()), marshaller);
 }
 
 //END Closure

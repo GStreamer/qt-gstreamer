@@ -73,9 +73,24 @@ protected:
 
     virtual void ref() = 0;
     virtual void unref() = 0;
+    virtual void makeWritable() {}
+
+    inline void* & object();
+    inline void* const & object() const;
 
     void *m_object;
 };
+
+inline void* & RefCountedObject::object()
+{
+    makeWritable();
+    return m_object;
+}
+
+inline void* const & RefCountedObject::object() const
+{
+    return m_object;
+}
 
 
 template <class T>

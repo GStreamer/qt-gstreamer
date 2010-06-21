@@ -23,52 +23,52 @@ namespace QGlib {
 
 String ParamSpec::name() const
 {
-    return String(g_param_spec_get_name(G_PARAM_SPEC(m_object)));
+    return String(g_param_spec_get_name(G_PARAM_SPEC(object())));
 }
 
 String ParamSpec::nick() const
 {
-    return String(g_param_spec_get_nick(G_PARAM_SPEC(m_object)));
+    return String(g_param_spec_get_nick(G_PARAM_SPEC(object())));
 }
 
 String ParamSpec::description() const
 {
-    return String(g_param_spec_get_blurb(G_PARAM_SPEC(m_object)));
+    return String(g_param_spec_get_blurb(G_PARAM_SPEC(object())));
 }
 
 ParamSpec::ParamFlags ParamSpec::flags() const
 {
-    return ParamFlags(G_PARAM_SPEC(m_object)->flags);
+    return ParamFlags(G_PARAM_SPEC(object())->flags);
 }
 
 Type ParamSpec::valueType() const
 {
-    return Type(G_PARAM_SPEC_VALUE_TYPE(G_PARAM_SPEC(m_object)));
+    return Type(G_PARAM_SPEC_VALUE_TYPE(G_PARAM_SPEC(object())));
 }
 
 Type ParamSpec::ownerType() const
 {
-    return Type(G_PARAM_SPEC(m_object)->owner_type);
+    return Type(G_PARAM_SPEC(object())->owner_type);
 }
 
 void *ParamSpec::quarkData(const Quark & quark) const
 {
-    return g_param_spec_get_qdata(G_PARAM_SPEC(m_object), quark);
+    return g_param_spec_get_qdata(G_PARAM_SPEC(object()), quark);
 }
 
 void *ParamSpec::stealQuarkData(const Quark & quark) const
 {
-    return g_param_spec_steal_qdata(G_PARAM_SPEC(m_object), quark);
+    return g_param_spec_steal_qdata(G_PARAM_SPEC(object()), quark);
 }
 
 void ParamSpec::setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*))
 {
-    g_param_spec_set_qdata_full(G_PARAM_SPEC(m_object), quark, data, destroyCallback);
+    g_param_spec_set_qdata_full(G_PARAM_SPEC(object()), quark, data, destroyCallback);
 }
 
 ParamSpecPtr ParamSpec::redirectTarget() const
 {
-    return ParamSpecPtr::wrap(g_param_spec_get_redirect_target(G_PARAM_SPEC(m_object)));
+    return ParamSpecPtr::wrap(g_param_spec_get_redirect_target(G_PARAM_SPEC(object())));
 }
 
 void ParamSpec::ref()

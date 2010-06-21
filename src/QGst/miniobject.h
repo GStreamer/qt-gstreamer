@@ -29,7 +29,6 @@ class MiniObject : public QGlib::RefCountedObject
 public:
     MiniObjectPtr copy() const;
     bool isWritable() const;
-    void makeWritable();
 
     MiniObjectFlags flags() const;
     bool flagIsSet(MiniObjectFlag flag) const;
@@ -39,6 +38,7 @@ public:
 protected:
     virtual void ref();
     virtual void unref();
+    virtual void makeWritable();
 };
 
 }

@@ -93,7 +93,7 @@ void CapsTest::writabilityTest()
         QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 2);
         QVERIFY(static_cast<GstCaps*>(caps2) == static_cast<GstCaps*>(caps));
 
-        caps2->makeWritable();
+        (void)caps2->structure(0); //non-const method, so makeWritable() is called internally
         QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
         QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps2) == 1);
         QVERIFY(static_cast<GstCaps*>(caps2) != static_cast<GstCaps*>(caps));
@@ -101,7 +101,7 @@ void CapsTest::writabilityTest()
 
     GstCaps *oldPtr = caps;
     QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
-    caps->makeWritable();
+    (void)caps->structure(0); //non-const method, so makeWritable() is called internally
     QVERIFY(oldPtr == static_cast<GstCaps*>(caps));
     QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
 }

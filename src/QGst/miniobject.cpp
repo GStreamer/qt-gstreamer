@@ -21,37 +21,32 @@ namespace QGst {
 
 MiniObjectPtr MiniObject::copy() const
 {
-    return MiniObjectPtr::wrap(gst_mini_object_copy(GST_MINI_OBJECT(m_object)), false);
+    return MiniObjectPtr::wrap(gst_mini_object_copy(GST_MINI_OBJECT(object())), false);
 }
 
 bool MiniObject::isWritable() const
 {
-    return gst_mini_object_is_writable(GST_MINI_OBJECT(m_object));
-}
-
-void MiniObject::makeWritable()
-{
-    m_object = gst_mini_object_make_writable(GST_MINI_OBJECT(m_object));
+    return gst_mini_object_is_writable(GST_MINI_OBJECT(object()));
 }
 
 MiniObjectFlags MiniObject::flags() const
 {
-    return QFlag((GST_MINI_OBJECT_FLAGS(m_object)));
+    return QFlag((GST_MINI_OBJECT_FLAGS(object())));
 }
 
 bool MiniObject::flagIsSet(MiniObjectFlag flag) const
 {
-    return GST_MINI_OBJECT_FLAG_IS_SET(m_object, flag);
+    return GST_MINI_OBJECT_FLAG_IS_SET(object(), flag);
 }
 
 void MiniObject::setFlag(MiniObjectFlag flag)
 {
-    GST_MINI_OBJECT_FLAG_SET(m_object, flag);
+    GST_MINI_OBJECT_FLAG_SET(object(), flag);
 }
 
 void MiniObject::unsetFlag(MiniObjectFlag flag)
 {
-    GST_MINI_OBJECT_FLAG_UNSET(m_object, flag);
+    GST_MINI_OBJECT_FLAG_UNSET(object(), flag);
 }
 
 void MiniObject::ref()
@@ -62,6 +57,11 @@ void MiniObject::ref()
 void MiniObject::unref()
 {
     gst_mini_object_unref(GST_MINI_OBJECT(m_object));
+}
+
+void MiniObject::makeWritable()
+{
+    m_object = gst_mini_object_make_writable(GST_MINI_OBJECT(m_object));
 }
 
 }
