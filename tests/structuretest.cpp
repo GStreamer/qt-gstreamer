@@ -20,7 +20,7 @@
 class StructureTest : public QGstTest
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void bindingsTest();
     void copyTest();
 };

@@ -19,11 +19,6 @@
 
 namespace QGlib {
 
-Quark::Quark(const char *str)
-{
-    m_quark = g_quark_from_string(str);
-}
-
 Quark::Quark(const String & str)
 {
     m_quark = g_quark_from_string(str);

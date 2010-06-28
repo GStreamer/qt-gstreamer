@@ -24,8 +24,7 @@ namespace QGlib {
 class Quark
 {
 public:
-    inline Quark(quint32 gquark) : m_quark(gquark) {}
-    Quark(const char *str);
+    inline Quark(quint32 gquark = 0) : m_quark(gquark) {}
     Quark(const String & str);
 
     String toString() const;

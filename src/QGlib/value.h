@@ -20,6 +20,7 @@
 #include "global.h"
 #include "type.h"
 #include <boost/type_traits.hpp>
+#include <stdexcept>
 
 namespace QGlib {
 
@@ -27,6 +28,21 @@ namespace QGlib {
 class ValueBase
 {
 public:
+    class InvalidValueException : public std::runtime_error
+    {
+    public:
+        inline InvalidValueException()
+            : std::runtime_error("This ValueBase instance has not been initialized") {}
+    };
+
+    class InvalidTypeException : public std::runtime_error
+    {
+    public:
+        inline InvalidTypeException()
+            : std::runtime_error("This ValueBase instance has been initialized to hold a different "
+                                 "type of data than the one that you are trying to access") {}
+    };
+
     bool isValid() const;
     void reset();
 
@@ -150,20 +166,26 @@ struct ValueImpl
 template <typename T>
 T ValueBase::get() const
 {
-    Q_ASSERT_X(isValid(), "ValueBase::get", "This ValueBase instance has not been intialized");
-    Q_ASSERT_X(GetType<T>() == type() || type().isA(GetType<T>()), "QGlib::ValueBase::get",
-               "This ValueBase instance has been initialized to hold a different type of data "
-               "than the one that you are trying to access");
+    if (!isValid()) {
+        throw InvalidValueException();
+    }
+    if (!(GetType<T>() == type() || type().isA(GetType<T>()))) {
+        throw InvalidTypeException();
+    }
+
     return ValueImpl<T>::get(*this);
 }
 
 template <typename T>
 void ValueBase::set(const T & data)
 {
-    Q_ASSERT_X(isValid(), "ValueBase::set", "This ValueBase instance has not been intialized");
-    Q_ASSERT_X(GetType<T>() == type() || type().isA(GetType<T>()), "QGlib::ValueBase::set",
-               "This ValueBase instance has been initialized to hold a different type of data "
-               "than the one that you are trying to access");
+    if (!isValid()) {
+        throw InvalidValueException();
+    }
+    if (!(GetType<T>() == type() || type().isA(GetType<T>()))) {
+        throw InvalidTypeException();
+    }
+
     ValueImpl<T>::set(*this, data);
 }
 

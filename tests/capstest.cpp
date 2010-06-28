@@ -21,7 +21,7 @@
 class CapsTest : public QGstTest
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void simpleTest();
     void anyTest();
     void fullTest();

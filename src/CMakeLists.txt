@@ -8,6 +8,7 @@ set(QtGstreamer_SRCS
     QGlib/value.cpp
     QGlib/closure.cpp
     QGlib/string.cpp
+    QGlib/signal.cpp
 
     QGst/global.cpp
     QGst/structure.cpp
@@ -34,8 +35,11 @@ set(INSTALLED_HEADERS
     QGlib/paramspec.h   QGlib/ParamSpec
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value
-    QGlib/closure.h     QGlib/Closure
     QGlib/string.h      QGlib/String
+    QGlib/closure.h     QGlib/Closure
+    QGlib/closureimpl_p.h
+    QGlib/signal.h      QGlib/Signal
+    QGlib/signalimpl_p.h
 
     QGst/global.h       QGst/Global
     QGst/enums.h
@@ -59,6 +63,7 @@ set(CODEGEN_HEADERS
     QGlib/paramspec.h
     QGlib/object.h
     QGlib/closure.h
+    QGlib/signal.h
 
     QGst/enums.h
     QGst/structure.h
@@ -75,6 +80,8 @@ set(CODEGEN_HEADERS
     QGst/pipeline.h
     QGst/message.h
 )
+
+add_definitions(-DQT_NO_KEYWORDS)
 
 add_custom_command(OUTPUT gen.cpp
                    COMMAND codegen

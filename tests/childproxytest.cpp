@@ -21,7 +21,7 @@
 class ChildProxyTest : public QGstTest
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void inspectionTest();
     void removeTest();
     void propertiesTest();

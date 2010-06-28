@@ -18,7 +18,7 @@
 #define QGLIB_GLOBAL_H
 
 #include <QtCore/QtGlobal>
-#include <boost/static_assert.hpp>
+#include <boost/config.hpp>
 
 typedef struct _GValue GValue;
 typedef struct _GParamSpec GParamSpec;
@@ -33,6 +33,8 @@ class SharedValue;
 class String;
 class Quark;
 class Type;
+class Signal;
+class SignalHandler;
 template <class T> class RefPointer;
 class ParamSpec;
 typedef RefPointer<ParamSpec> ParamSpecPtr;
@@ -54,11 +56,22 @@ typedef RefPointer<Object> ObjectPtr;
         template <class T> friend class QGlib::RefPointer;
 
 
-#if defined(BOOST_HAS_STATIC_ASSERT) //we have c++0x static_assert
+#if !defined(BOOST_NO_STATIC_ASSERT) //we have c++0x static_assert
 # define QGLIB_STATIC_ASSERT(expr, message) static_assert(expr, message)
 # define QGLIB_HAVE_CXX0x_STATIC_ASSERT 1
 #else
+# include <boost/static_assert.hpp>
 # define QGLIB_STATIC_ASSERT(expr, message) BOOST_STATIC_ASSERT(expr)
 #endif
+
+//check for the C++0x features that we need
+#if !defined(BOOST_NO_VARIADIC_TEMPLATES) && !defined(BOOST_NO_RVALUE_REFERENCES)
+# define QGLIB_HAVE_CXX0X 1
+#else
+# define QGLIB_HAVE_CXX0X 0
+#endif
+
+//proper initializer for GValue structs on the stack
+#define QGLIB_G_VALUE_INITIALIZER {0, {{0}, {0}}}
 
 #endif

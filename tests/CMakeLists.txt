@@ -1,6 +1,8 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
 
+add_definitions(-DQT_NO_KEYWORDS)
+
 macro(qgst_test target)
     automoc4_add_executable(${ARGV})
     target_link_libraries(${target} ${QT_QTTEST_LIBRARY} ${GSTREAMER_LIBRARIES}

@@ -21,7 +21,7 @@
 class RefPointerTest : public QGstTest
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void refTest1();
     void refTest2();
     void dynamicCastTest();

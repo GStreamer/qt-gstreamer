@@ -23,7 +23,7 @@
 class QGstTest : public QObject
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void initTestCase() { gst_init(NULL, NULL); }
     void cleanupTestCase() { gst_deinit(); }
 };

@@ -21,7 +21,7 @@
 class PropertiesTest : public QGstTest
 {
     Q_OBJECT
-private slots:
+private Q_SLOTS:
     void findPropertyTest();
     void listPropertiesTest();
     void getPropertyTest();
@@ -45,7 +45,7 @@ void PropertiesTest::listPropertiesTest()
     QList<QGlib::ParamSpecPtr> paramlist = object->listProperties();
     QVERIFY(!paramlist.isEmpty());
 
-    foreach(const QGlib::ParamSpecPtr & param, paramlist) {
+    Q_FOREACH(const QGlib::ParamSpecPtr & param, paramlist) {
         qDebug() << param->name() << param->nick() << param->description();
     }
 }

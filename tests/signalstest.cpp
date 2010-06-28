@@ -15,23 +15,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgsttest.h"
-#include <QGlib/Closure>
-#include <QGst/Object>
+#include <QGlib/Signal>
+#include <QGst/Pipeline>
 
 class SignalsTest : public QGstTest
 {
     Q_OBJECT
 private:
-    void closureTestClosure(QGst::ObjectPtr obj, QGst::ObjectPtr parentObj);
-private slots:
-    void closureTest();
+   void closureTestClosure(const QGst::ObjectPtr & obj, QGst::ObjectPtr parentObj);
+   void emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib::ParamSpecPtr & param);
+private Q_SLOTS:
+   void closureTest();
+   void queryTest();
+   void emitTest();
 };
 
 static bool closureCalled = false;
 
-void SignalsTest::closureTestClosure(QGst::ObjectPtr obj, QGst::ObjectPtr parentObj)
+void SignalsTest::closureTestClosure(const QGst::ObjectPtr & obj, QGst::ObjectPtr parentObj)
 {
-    qDebug() << "Closure called";
+    qDebug() << "closureTestClosure called";
     QCOMPARE(obj->property("name").get<QString>(), QString("mybin"));
     QCOMPARE(parentObj->property("name").get<QString>(), QString("mypipeline"));
     closureCalled = true;
@@ -39,17 +42,78 @@ void SignalsTest::closureTestClosure(QGst::ObjectPtr obj, QGst::ObjectPtr parent
 
 void SignalsTest::closureTest()
 {
-    GstObject *pipeline = GST_OBJECT(gst_pipeline_new("mypipeline"));
-    GstObject *bin = GST_OBJECT(gst_bin_new("mybin"));
+    QGst::PipelinePtr pipeline = QGst::Pipeline::newPipeline("mypipeline");
+    QGst::BinPtr bin = QGst::Bin::newBin("mybin");
 
     closureCalled = false;
-    QGlib::ClosurePtr closure = QGlib::CppClosure::newCppClosure(&SignalsTest::closureTestClosure, this);
-    g_signal_connect_closure(bin, "parent-set", closure, FALSE);
-    gst_object_set_parent(bin, pipeline);
+    QGlib::Signal::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure);
+    bin->setParent(pipeline);
+    QCOMPARE(closureCalled, true);
+}
+
+void SignalsTest::queryTest()
+{
+    //void user_function(GObject *gobject, GParamSpec *pspec, gpointer user_data)
+    //Run First / No Recursion / Has Details / Action / No Hooks
+    QGlib::Signal s = QGlib::Signal::lookup("notify", QGlib::GetType<QGlib::Object>());
+    QVERIFY(s.isValid());
+
+    QCOMPARE(s.name(), QGlib::String("notify"));
+    QCOMPARE(s.instanceType(), QGlib::GetType<QGlib::Object>());
+
+    QCOMPARE(s.flags(), QGlib::Signal::RunFirst | QGlib::Signal::NoRecurse |
+                        QGlib::Signal::Detailed | QGlib::Signal::Action | QGlib::Signal::NoHooks);
+    QCOMPARE(s.returnType(), QGlib::Type(QGlib::Type::None));
+
+    QList<QGlib::Type> paramTypes = s.paramTypes();
+    QCOMPARE(paramTypes.size(), 1);
+    QCOMPARE(paramTypes[0], QGlib::GetType<QGlib::ParamSpec>());
+}
+
+void SignalsTest::emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib::ParamSpecPtr & param)
+{
+    qDebug() << "emitTestClosure called";
+    QCOMPARE(instance->property("name").get<QGlib::String>(), QGlib::String("mybin"));
+    QCOMPARE(param->name(), QGlib::String("name"));
+    closureCalled = true;
+}
+
+void SignalsTest::emitTest()
+{
+    QGst::BinPtr bin = QGst::Bin::newBin("mybin");
+    QGlib::SignalHandler handler = QGlib::Signal::connect(bin, "notify::name",
+                                                          this, &SignalsTest::emitTestClosure);
+
+    QVERIFY(handler.isConnected());
+
+    closureCalled = false;
+    QGlib::Signal::emit<void>(bin, "notify::name", bin->findProperty("name"));
     QCOMPARE(closureCalled, true);
 
-    gst_object_sink(bin);
-    gst_object_sink(pipeline);
+    //calling with wrong return value. should show error message but *call* the signal
+    //and return default constructed value for int
+    closureCalled = false;
+    int r = QGlib::Signal::emit<int>(bin, "notify::name", bin->findProperty("name"));
+    QCOMPARE(r, int());
+    QCOMPARE(closureCalled, true);
+
+    //calling with wrong number of arguments. should show error message and *not call* the signal
+    closureCalled = false;
+    QGlib::Signal::emit<void>(bin, "notify::name");
+    QCOMPARE(closureCalled, false);
+
+    //calling wrong signal. will return default constructed value for int
+    closureCalled = false;
+    r = QGlib::Signal::emit<int>(bin, "foobar");
+    QCOMPARE(r, int());
+    QCOMPARE(closureCalled, false);
+
+    handler.disconnect();
+    QVERIFY(!handler.isConnected());
+
+    closureCalled = false;
+    QGlib::Signal::emit<void>(bin, "notify::name", bin->findProperty("name"));
+    QCOMPARE(closureCalled, false);
 }
 
 QTEST_APPLESS_MAIN(SignalsTest)
