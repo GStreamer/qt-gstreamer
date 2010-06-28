@@ -11,6 +11,7 @@ set(QtGstreamer_SRCS
     QGlib/signal.cpp
 
     QGst/global.cpp
+    QGst/structs.cpp
     QGst/structure.cpp
     QGst/caps.cpp
     QGst/miniobject.cpp
@@ -43,6 +44,11 @@ set(INSTALLED_HEADERS
 
     QGst/global.h       QGst/Global
     QGst/enums.h
+    QGst/structs.h      QGst/Fourcc
+                        QGst/Fraction
+                        QGst/IntRange
+                        QGst/DoubleRange
+                        QGst/FractionRange
     QGst/structure.h    QGst/Structure
     QGst/caps.h         QGst/Caps
     QGst/miniobject.h   QGst/MiniObject
@@ -66,6 +72,7 @@ set(CODEGEN_HEADERS
     QGlib/signal.h
 
     QGst/enums.h
+    QGst/structs.h
     QGst/structure.h
     QGst/caps.h
     QGst/miniobject.h
