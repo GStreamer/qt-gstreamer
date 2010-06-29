@@ -26,7 +26,7 @@ class Element : public virtual Object
 {
     QGST_WRAPPER(Element)
 public:
-    StateChangeReturn getState(State *state, State *pending, quint64 timeout);
+    StateChangeReturn getState(State *state, State *pending, ClockTime timeout);
     StateChangeReturn setState(State state);
     bool syncStateWithParent();
 

@@ -18,6 +18,7 @@
 #define QGST_GLOBAL_H
 
 #include "enums.h"
+#include <QtCore/QtGlobal>
 
 #define QGST_WRAPPER_DECLARATION(Class) \
     typedef struct _Gst##Class Gst##Class; \
@@ -58,6 +59,11 @@ typedef struct _xmlNode* xmlNodePtr;
         Class & operator=(const Class &); \
         ~Class() {} \
         template <class T> friend class QGlib::RefPointer;
+
+namespace QGst {
+    typedef quint64 ClockTime;
+    typedef qint64 ClockTimeDiff;
+}
 
 namespace QGst {
     void init();
