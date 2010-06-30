@@ -25,6 +25,7 @@ set(QtGstreamer_SRCS
     QGst/childproxy.cpp
     QGst/pipeline.cpp
     QGst/message.cpp
+    QGst/bus.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -62,6 +63,7 @@ set(INSTALLED_HEADERS
     QGst/childproxy.h   QGst/ChildProxy
     QGst/pipeline.h     QGst/Pipeline
     QGst/message.h      QGst/Message
+    QGst/bus.h          QGst/Bus
 )
 
 set(CODEGEN_HEADERS
@@ -86,6 +88,7 @@ set(CODEGEN_HEADERS
     QGst/childproxy.h
     QGst/pipeline.h
     QGst/message.h
+    QGst/bus.h
 )
 
 add_definitions(-DQT_NO_KEYWORDS)
