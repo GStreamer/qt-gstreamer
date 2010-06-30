@@ -30,7 +30,7 @@ private Q_SLOTS:
 
 void CapsTest::simpleTest()
 {
-    QGst::CapsPtr caps = QGst::Caps::newSimple("video/x-raw-yuv");
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     QVERIFY(caps->isSimple());
     QVERIFY(!caps->isEmpty());
     QVERIFY(!caps->isAny());
@@ -51,7 +51,7 @@ void CapsTest::simpleTest()
 
 void CapsTest::anyTest()
 {
-    QGst::CapsPtr caps = QGst::Caps::newAny();
+    QGst::CapsPtr caps = QGst::Caps::createAny();
     QVERIFY(!caps->isSimple());
     QVERIFY(!caps->isEmpty());
     QVERIFY(caps->isAny());
@@ -64,7 +64,7 @@ void CapsTest::fullTest()
     s.setValue("width", 320);
     s.setValue("height", 240);
 
-    QGst::CapsPtr caps = QGst::Caps::newEmpty();
+    QGst::CapsPtr caps = QGst::Caps::createEmpty();
     QVERIFY(!caps->isSimple());
     QVERIFY(caps->isEmpty());
     QVERIFY(!caps->isAny());
@@ -76,7 +76,7 @@ void CapsTest::fullTest()
     QVERIFY(!caps->isAny());
     QVERIFY(caps->size() == 1);
 
-    QGst::CapsPtr caps2 = QGst::Caps::newSimple("video/x-raw-yuv");
+    QGst::CapsPtr caps2 = QGst::Caps::createSimple("video/x-raw-yuv");
     caps2->setValue("width", 320);
     caps2->setValue("height", 240);
 
@@ -85,7 +85,7 @@ void CapsTest::fullTest()
 
 void CapsTest::writabilityTest()
 {
-    QGst::CapsPtr caps = QGst::Caps::newSimple("video/x-raw-yuv");
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
 
     {

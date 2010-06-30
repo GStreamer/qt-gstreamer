@@ -22,7 +22,7 @@
 namespace QGst {
 
 //static
-BinPtr Bin::newBin(const QGlib::String & name)
+BinPtr Bin::create(const QGlib::String & name)
 {
     GstElement *bin = gst_bin_new(name);
     gst_object_ref_sink(GST_OBJECT(bin));

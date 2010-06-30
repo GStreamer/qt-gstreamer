@@ -26,7 +26,7 @@ class Bin : public Element, public ChildProxy
 {
     QGST_WRAPPER(Bin)
 public:
-    static BinPtr newBin(const QGlib::String & name = QGlib::String());
+    static BinPtr create(const QGlib::String & name = QGlib::String());
 
     bool add(const ElementPtr & element);
     bool remove(const ElementPtr & element);

@@ -29,9 +29,9 @@ class Caps : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(Caps)
 public:
-    static CapsPtr newSimple(const QGlib::String & mediaType);
-    static CapsPtr newAny();
-    static CapsPtr newEmpty();
+    static CapsPtr createSimple(const QGlib::String & mediaType);
+    static CapsPtr createAny();
+    static CapsPtr createEmpty();
 
     static CapsPtr fromString(const QGlib::String & string);
     QGlib::String toString() const;

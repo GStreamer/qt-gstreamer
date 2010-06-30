@@ -20,7 +20,7 @@
 namespace QGst {
 
 //static
-PipelinePtr Pipeline::newPipeline(const QGlib::String & name)
+PipelinePtr Pipeline::create(const QGlib::String & name)
 {
     GstElement *p = gst_pipeline_new(name);
     gst_object_ref_sink(p);

@@ -29,7 +29,7 @@ private Q_SLOTS:
 
 void PropertiesTest::findPropertyTest()
 {
-    QGst::BinPtr object = QGst::Bin::newBin();
+    QGst::BinPtr object = QGst::Bin::create();
 
     QGlib::ParamSpecPtr param = object->findProperty("name");
     QVERIFY(!param.isNull());
@@ -40,7 +40,7 @@ void PropertiesTest::findPropertyTest()
 
 void PropertiesTest::listPropertiesTest()
 {
-    QGst::BinPtr object = QGst::Bin::newBin();
+    QGst::BinPtr object = QGst::Bin::create();
 
     QList<QGlib::ParamSpecPtr> paramlist = object->listProperties();
     QVERIFY(!paramlist.isEmpty());
@@ -52,7 +52,7 @@ void PropertiesTest::listPropertiesTest()
 
 void PropertiesTest::getPropertyTest()
 {
-    QGst::BinPtr object = QGst::Bin::newBin();
+    QGst::BinPtr object = QGst::Bin::create();
 
     try {
         QString name = object->property("name").get<QString>();

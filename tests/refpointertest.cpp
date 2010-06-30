@@ -78,7 +78,7 @@ static void testMethod(const QGlib::ObjectPtr & obj)
 void RefPointerTest::compilationTest()
 {
     //This is mostly a compilation test. If it compiles, it's fine, if it doesn't, there is a problem.
-    QGst::BinPtr bin = QGst::Bin::newBin();
+    QGst::BinPtr bin = QGst::Bin::create();
 
     {
         //operator=()

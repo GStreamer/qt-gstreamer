@@ -22,19 +22,19 @@
 namespace QGst {
 
 //static
-CapsPtr Caps::newSimple(const QGlib::String & mediaType)
+CapsPtr Caps::createSimple(const QGlib::String & mediaType)
 {
     return CapsPtr::wrap(gst_caps_new_simple(mediaType, NULL), false);
 }
 
 //static
-CapsPtr Caps::newAny()
+CapsPtr Caps::createAny()
 {
     return CapsPtr::wrap(gst_caps_new_any(), false);
 }
 
 //static
-CapsPtr Caps::newEmpty()
+CapsPtr Caps::createEmpty()
 {
     return CapsPtr::wrap(gst_caps_new_empty(), false);
 }

@@ -24,7 +24,7 @@
 namespace QGst {
 
 //static
-PadPtr Pad::newPad(PadDirection direction, const QGlib::String & name)
+PadPtr Pad::create(PadDirection direction, const QGlib::String & name)
 {
     GstPad *pad = gst_pad_new(name, static_cast<GstPadDirection>(direction));
     return PadPtr::wrap(pad, false);

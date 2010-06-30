@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
     QGst::init(&argc, &argv);
 
-    QGst::PipelinePtr pipeline = QGst::Pipeline::newPipeline();
+    QGst::PipelinePtr pipeline = QGst::Pipeline::create();
 
     QGst::ElementPtr src = QGst::ElementFactory::make("audiotestsrc");
     QGst::ElementPtr sink = QGst::ElementFactory::make("autoaudiosink");

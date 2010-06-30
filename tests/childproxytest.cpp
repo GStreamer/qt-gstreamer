@@ -29,7 +29,7 @@ private Q_SLOTS:
 
 void ChildProxyTest::inspectionTest()
 {
-    QGst::BinPtr bin = QGst::Bin::newBin();
+    QGst::BinPtr bin = QGst::Bin::create();
     QVERIFY(!bin.isNull());
     QCOMPARE(bin->childrenCount(), static_cast<uint>(0));
 
@@ -53,7 +53,7 @@ void ChildProxyTest::inspectionTest()
 
 void ChildProxyTest::removeTest()
 {
-    QGst::BinPtr bin = QGst::Bin::newBin();
+    QGst::BinPtr bin = QGst::Bin::create();
     QVERIFY(!bin.isNull());
     QCOMPARE(bin->childrenCount(), static_cast<uint>(0));
 
@@ -68,7 +68,7 @@ void ChildProxyTest::removeTest()
 
 void ChildProxyTest::propertiesTest()
 {
-    QGst::BinPtr bin = QGst::Bin::newBin();
+    QGst::BinPtr bin = QGst::Bin::create();
     QVERIFY(!bin.isNull());
 
     QGst::ElementPtr tee = QGst::ElementFactory::make("tee", "mytee");

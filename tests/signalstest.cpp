@@ -42,8 +42,8 @@ void SignalsTest::closureTestClosure(const QGst::ObjectPtr & obj, QGst::ObjectPt
 
 void SignalsTest::closureTest()
 {
-    QGst::PipelinePtr pipeline = QGst::Pipeline::newPipeline("mypipeline");
-    QGst::BinPtr bin = QGst::Bin::newBin("mybin");
+    QGst::PipelinePtr pipeline = QGst::Pipeline::create("mypipeline");
+    QGst::BinPtr bin = QGst::Bin::create("mybin");
 
     closureCalled = false;
     QGlib::Signal::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure);
@@ -80,7 +80,7 @@ void SignalsTest::emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib
 
 void SignalsTest::emitTest()
 {
-    QGst::BinPtr bin = QGst::Bin::newBin("mybin");
+    QGst::BinPtr bin = QGst::Bin::create("mybin");
     QGlib::SignalHandler handler = QGlib::Signal::connect(bin, "notify::name",
                                                           this, &SignalsTest::emitTestClosure);
 
