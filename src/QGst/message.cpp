@@ -23,27 +23,27 @@ namespace QGst {
 
 ObjectPtr Message::source() const
 {
-    return ObjectPtr::wrap(GST_MESSAGE_SRC(GST_MESSAGE(object())));
+    return ObjectPtr::wrap(GST_MESSAGE_SRC(object<GstMessage>()));
 }
 
 quint64 Message::timestamp() const
 {
-    return GST_MESSAGE(object())->timestamp;
+    return object<GstMessage>()->timestamp;
 }
 
 MessageType Message::type() const
 {
-    return static_cast<MessageType>(GST_MESSAGE_TYPE(object()));
+    return static_cast<MessageType>(GST_MESSAGE_TYPE(object<GstMessage>()));
 }
 
 quint32 Message::sequenceNumber() const
 {
-    return gst_message_get_seqnum(GST_MESSAGE(object()));
+    return gst_message_get_seqnum(object<GstMessage>());
 }
 
 void Message::setSequenceNumber(quint32 num)
 {
-    gst_message_set_seqnum(GST_MESSAGE(object()), num);
+    gst_message_set_seqnum(object<GstMessage>(), num);
 }
 
 } //namespace QGst

@@ -31,7 +31,7 @@ QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
 
 ParamSpecPtr Object::findProperty(const String & name) const
 {
-    GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object())));
+    GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object<void>())));
     GParamSpec *param = g_object_class_find_property(klass, name);
     g_type_class_unref(klass);
     if (param) {
@@ -43,7 +43,7 @@ ParamSpecPtr Object::findProperty(const String & name) const
 
 QList<ParamSpecPtr> Object::listProperties() const
 {
-    GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object())));
+    GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object<void>())));
     uint n;
     GParamSpec **param = g_object_class_list_properties(klass, &n);
     g_type_class_unref(klass);
@@ -58,14 +58,14 @@ Value Object::property(const String & name) const
     ParamSpecPtr param = findProperty(name);
     if (param && (param->flags() & ParamSpec::Readable)) {
         result.init(param->valueType());
-        g_object_get_property(G_OBJECT(object()), name, result);
+        g_object_get_property(object<GObject>(), name, result);
     }
     return result;
 }
 
 void Object::setPropertyValue(const String & name, const ValueBase & value)
 {
-    g_object_set_property(G_OBJECT(object()), name, value);
+    g_object_set_property(object<GObject>(), name, value);
 }
 
 void Object::ref()

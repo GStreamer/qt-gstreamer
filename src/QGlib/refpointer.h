@@ -75,21 +75,26 @@ protected:
     virtual void unref() = 0;
     virtual void makeWritable() {}
 
-    inline void* & object();
-    inline void* const & object() const;
+    template <class T>
+    inline T* object();
+
+    template <class T>
+    inline T* object() const;
 
     void *m_object;
 };
 
-inline void* & RefCountedObject::object()
+template <class T>
+inline T* RefCountedObject::object()
 {
     makeWritable();
-    return m_object;
+    return static_cast<T*>(m_object);
 }
 
-inline void* const & RefCountedObject::object() const
+template <class T>
+inline T* RefCountedObject::object() const
 {
-    return m_object;
+    return static_cast<T* const>(m_object);
 }
 
 

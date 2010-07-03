@@ -35,12 +35,12 @@ GhostPadPtr GhostPad::create(PadDirection direction, const QGlib::String & name)
 
 PadPtr GhostPad::target() const
 {
-    return PadPtr::wrap(gst_ghost_pad_get_target(GST_GHOST_PAD(object())), false);
+    return PadPtr::wrap(gst_ghost_pad_get_target(object<GstGhostPad>()), false);
 }
 
 bool GhostPad::setTarget(const PadPtr & target)
 {
-    return gst_ghost_pad_set_target(GST_GHOST_PAD(object()), target);
+    return gst_ghost_pad_set_target(object<GstGhostPad>(), target);
 }
 
 }

@@ -32,77 +32,77 @@ PadPtr Pad::create(PadDirection direction, const QGlib::String & name)
 
 PadDirection Pad::direction() const
 {
-    return static_cast<PadDirection>(gst_pad_get_direction(GST_PAD(object())));
+    return static_cast<PadDirection>(gst_pad_get_direction(object<GstPad>()));
 }
 
 ElementPtr Pad::parentElement() const
 {
-    return ElementPtr::wrap(gst_pad_get_parent_element(GST_PAD(object())), false);
+    return ElementPtr::wrap(gst_pad_get_parent_element(object<GstPad>()), false);
 }
 
 PadPtr Pad::peer() const
 {
-    return PadPtr::wrap(gst_pad_get_peer(GST_PAD(object())), false);
+    return PadPtr::wrap(gst_pad_get_peer(object<GstPad>()), false);
 }
 
 bool Pad::isLinked() const
 {
-    return gst_pad_is_linked(GST_PAD(object()));
+    return gst_pad_is_linked(object<GstPad>());
 }
 
 bool Pad::canLink(const PadPtr & sink) const
 {
-    return gst_pad_can_link(GST_PAD(object()), sink);
+    return gst_pad_can_link(object<GstPad>(), sink);
 }
 
 PadLinkReturn Pad::link(const PadPtr & sink)
 {
-    return static_cast<PadLinkReturn>(gst_pad_link(GST_PAD(object()), sink));
+    return static_cast<PadLinkReturn>(gst_pad_link(object<GstPad>(), sink));
 }
 
 bool Pad::unlink(const PadPtr & sink)
 {
-    return gst_pad_unlink(GST_PAD(object()), sink);
+    return gst_pad_unlink(object<GstPad>(), sink);
 }
 
 CapsPtr Pad::caps() const
 {
-    return CapsPtr::wrap(gst_pad_get_caps_reffed(GST_PAD(object())), false);
+    return CapsPtr::wrap(gst_pad_get_caps_reffed(object<GstPad>()), false);
 }
 
 CapsPtr Pad::allowedCaps() const
 {
-    return CapsPtr::wrap(gst_pad_get_allowed_caps(GST_PAD(object())), false);
+    return CapsPtr::wrap(gst_pad_get_allowed_caps(object<GstPad>()), false);
 }
 
 CapsPtr Pad::negotiatedCaps() const
 {
-    return CapsPtr::wrap(gst_pad_get_negotiated_caps(GST_PAD(object())), false);
+    return CapsPtr::wrap(gst_pad_get_negotiated_caps(object<GstPad>()), false);
 }
 
 bool Pad::setCaps(const CapsPtr & caps)
 {
-    return gst_pad_set_caps(GST_PAD(object()), caps);
+    return gst_pad_set_caps(object<GstPad>(), caps);
 }
 
 bool Pad::isActive() const
 {
-    return gst_pad_is_active(GST_PAD(object()));
+    return gst_pad_is_active(object<GstPad>());
 }
 
 bool Pad::isBlocked() const
 {
-    return gst_pad_is_blocked(GST_PAD(object()));
+    return gst_pad_is_blocked(object<GstPad>());
 }
 
 bool Pad::isBlocking() const
 {
-    return gst_pad_is_blocking(GST_PAD(object()));
+    return gst_pad_is_blocking(object<GstPad>());
 }
 
 bool Pad::setBlocked(bool blocked)
 {
-    return gst_pad_set_blocked(GST_PAD(object()), blocked);
+    return gst_pad_set_blocked(object<GstPad>(), blocked);
 }
 
 }

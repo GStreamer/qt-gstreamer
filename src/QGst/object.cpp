@@ -21,42 +21,42 @@ namespace QGst {
 
 QGlib::String Object::name() const
 {
-    return QGlib::String::fromGCharPtr(gst_object_get_name(GST_OBJECT(object())));
+    return QGlib::String::fromGCharPtr(gst_object_get_name(object<GstObject>()));
 }
 
 bool Object::setName(const QGlib::String & name)
 {
-    return gst_object_set_name(GST_OBJECT(object()), name);
+    return gst_object_set_name(object<GstObject>(), name);
 }
 
 ObjectPtr Object::parent() const
 {
-    return ObjectPtr::wrap(gst_object_get_parent(GST_OBJECT(object())), false);
+    return ObjectPtr::wrap(gst_object_get_parent(object<GstObject>()), false);
 }
 
 bool Object::setParent(const ObjectPtr & parent)
 {
-    return gst_object_set_parent(GST_OBJECT(object()), parent);
+    return gst_object_set_parent(object<GstObject>(), parent);
 }
 
 void Object::unparent()
 {
-    gst_object_unparent(GST_OBJECT(object()));
+    gst_object_unparent(object<GstObject>());
 }
 
 QGlib::String Object::namePrefix() const
 {
-    return QGlib::String::fromGCharPtr(gst_object_get_name_prefix(GST_OBJECT(object())));
+    return QGlib::String::fromGCharPtr(gst_object_get_name_prefix(object<GstObject>()));
 }
 
 void Object::setNamePrefix(const QGlib::String & prefix)
 {
-    gst_object_set_name_prefix(GST_OBJECT(object()), prefix);
+    gst_object_set_name_prefix(object<GstObject>(), prefix);
 }
 
 bool Object::isAncestorOf(const ObjectPtr & obj) const
 {
-    return gst_object_has_ancestor(obj, GST_OBJECT(object()));
+    return gst_object_has_ancestor(obj, object<GstObject>());
 }
 
 void Object::ref()

@@ -22,24 +22,24 @@ namespace QGst {
 
 uint ChildProxy::childrenCount() const
 {
-    return gst_child_proxy_get_children_count(GST_CHILD_PROXY(object()));
+    return gst_child_proxy_get_children_count(object<GstChildProxy>());
 }
 
 ObjectPtr ChildProxy::childByName(const QGlib::String & name) const
 {
-    return ObjectPtr::wrap(gst_child_proxy_get_child_by_name(GST_CHILD_PROXY(object()), name), false);
+    return ObjectPtr::wrap(gst_child_proxy_get_child_by_name(object<GstChildProxy>(), name), false);
 }
 
 ObjectPtr ChildProxy::childByIndex(uint index) const
 {
-    return ObjectPtr::wrap(gst_child_proxy_get_child_by_index(GST_CHILD_PROXY(object()), index), false);
+    return ObjectPtr::wrap(gst_child_proxy_get_child_by_index(object<GstChildProxy>(), index), false);
 }
 
 bool ChildProxy::findChildProperty(const QGlib::String & name, ObjectPtr *obj, QGlib::ParamSpecPtr *paramSpec) const
 {
     GstObject *op;
     GParamSpec *pp;
-    bool result = gst_child_proxy_lookup(GST_OBJECT(object()), name, &op, &pp);
+    bool result = gst_child_proxy_lookup(object<GstObject>(), name, &op, &pp);
     if (result) {
         *obj = ObjectPtr::wrap(op, false);
         *paramSpec = QGlib::ParamSpecPtr::wrap(pp, false);

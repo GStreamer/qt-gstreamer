@@ -38,57 +38,57 @@ ElementPtr ElementFactory::make(const QGlib::String & factoryName, const QGlib::
 
 QGlib::Type ElementFactory::elementType() const
 {
-    return gst_element_factory_get_element_type(GST_ELEMENT_FACTORY(object()));
+    return gst_element_factory_get_element_type(object<GstElementFactory>());
 }
 
 QGlib::String ElementFactory::longName() const
 {
-    return QGlib::String(gst_element_factory_get_longname(GST_ELEMENT_FACTORY(object())));
+    return QGlib::String(gst_element_factory_get_longname(object<GstElementFactory>()));
 }
 
 QGlib::String ElementFactory::klass() const
 {
-    return QGlib::String(gst_element_factory_get_klass(GST_ELEMENT_FACTORY(object())));
+    return QGlib::String(gst_element_factory_get_klass(object<GstElementFactory>()));
 }
 
 QGlib::String ElementFactory::description() const
 {
-    return QGlib::String(gst_element_factory_get_description(GST_ELEMENT_FACTORY(object())));
+    return QGlib::String(gst_element_factory_get_description(object<GstElementFactory>()));
 }
 
 QGlib::String ElementFactory::author() const
 {
-    return QGlib::String(gst_element_factory_get_author(GST_ELEMENT_FACTORY(object())));
+    return QGlib::String(gst_element_factory_get_author(object<GstElementFactory>()));
 }
 
 uint ElementFactory::padTemplatesCount() const
 {
-    return gst_element_factory_get_num_pad_templates(GST_ELEMENT_FACTORY(object()));
+    return gst_element_factory_get_num_pad_templates(object<GstElementFactory>());
 }
 
 int ElementFactory::uriType() const
 {
-    return gst_element_factory_get_uri_type(GST_ELEMENT_FACTORY(object()));
+    return gst_element_factory_get_uri_type(object<GstElementFactory>());
 }
 
 bool ElementFactory::hasInterface(const QGlib::String & interfaceName) const
 {
-    return gst_element_factory_has_interface(GST_ELEMENT_FACTORY(object()), interfaceName);
+    return gst_element_factory_has_interface(object<GstElementFactory>(), interfaceName);
 }
 
 bool ElementFactory::canSinkCaps(const CapsPtr & caps) const
 {
-    return gst_element_factory_can_sink_caps(GST_ELEMENT_FACTORY(object()), caps);
+    return gst_element_factory_can_sink_caps(object<GstElementFactory>(), caps);
 }
 
 bool ElementFactory::canSrcCaps(const CapsPtr & caps) const
 {
-    return gst_element_factory_can_src_caps(GST_ELEMENT_FACTORY(object()), caps);
+    return gst_element_factory_can_src_caps(object<GstElementFactory>(), caps);
 }
 
 ElementPtr ElementFactory::create(const QGlib::String & elementName) const
 {
-    GstElement *e = gst_element_factory_create(GST_ELEMENT_FACTORY(object()), elementName);
+    GstElement *e = gst_element_factory_create(object<GstElementFactory>(), elementName);
     gst_object_ref_sink(e);
     return ElementPtr::wrap(e, false);
 }

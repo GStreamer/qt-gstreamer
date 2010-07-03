@@ -31,43 +31,43 @@ BusPtr Bus::create()
 
 bool Bus::hasPendingMessages() const
 {
-    return gst_bus_have_pending(GST_BUS(object()));
+    return gst_bus_have_pending(object<GstBus>());
 }
 
 MessagePtr Bus::peek() const
 {
-    return MessagePtr::wrap(gst_bus_peek(GST_BUS(object())), false);
+    return MessagePtr::wrap(gst_bus_peek(object<GstBus>()), false);
 }
 
 MessagePtr Bus::pop(ClockTime timeout)
 {
-    return MessagePtr::wrap(gst_bus_timed_pop(GST_BUS(object()), timeout), false);
+    return MessagePtr::wrap(gst_bus_timed_pop(object<GstBus>(), timeout), false);
 }
 
 MessagePtr Bus::pop(MessageType type, ClockTime timeout)
 {
-    return MessagePtr::wrap(gst_bus_timed_pop_filtered(GST_BUS(object()), timeout,
+    return MessagePtr::wrap(gst_bus_timed_pop_filtered(object<GstBus>(), timeout,
                                                        static_cast<GstMessageType>(type)), false);
 }
 
 bool Bus::post(const QGst::MessagePtr & message)
 {
-    return gst_bus_post(GST_BUS(object()), message->copy().staticCast<Message>());
+    return gst_bus_post(object<GstBus>(), message->copy().staticCast<Message>());
 }
 
 void Bus::setFlushing(bool flush)
 {
-    gst_bus_set_flushing(GST_BUS(object()), flush);
+    gst_bus_set_flushing(object<GstBus>(), flush);
 }
 
 void Bus::enableSyncMessageEmission()
 {
-    gst_bus_enable_sync_message_emission(GST_BUS(object()));
+    gst_bus_enable_sync_message_emission(object<GstBus>());
 }
 
 void Bus::disableSyncMessageEmission()
 {
-    gst_bus_disable_sync_message_emission(GST_BUS(object()));
+    gst_bus_disable_sync_message_emission(object<GstBus>());
 }
 
 } //namespace QGst

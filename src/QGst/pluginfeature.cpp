@@ -21,32 +21,32 @@ namespace QGst {
 
 uint PluginFeature::rank() const
 {
-    return gst_plugin_feature_get_rank(GST_PLUGIN_FEATURE(object()));
+    return gst_plugin_feature_get_rank(object<GstPluginFeature>());
 }
 
 void PluginFeature::setRank(uint rank)
 {
-    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE(object()), rank);
+    gst_plugin_feature_set_rank(object<GstPluginFeature>(), rank);
 }
 
 QGlib::String PluginFeature::name() const
 {
-    return QGlib::String(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(object())));
+    return QGlib::String(gst_plugin_feature_get_name(object<GstPluginFeature>()));
 }
 
 void PluginFeature::setName(const QGlib::String & name)
 {
-    gst_plugin_feature_set_name(GST_PLUGIN_FEATURE(object()), name);
+    gst_plugin_feature_set_name(object<GstPluginFeature>(), name);
 }
 
 bool PluginFeature::checkVersion(uint major, uint minor, uint micro) const
 {
-    return gst_plugin_feature_check_version(GST_PLUGIN_FEATURE(object()), major, minor, micro);
+    return gst_plugin_feature_check_version(object<GstPluginFeature>(), major, minor, micro);
 }
 
 PluginFeaturePtr PluginFeature::load() const
 {
-    return PluginFeaturePtr::wrap(gst_plugin_feature_load(GST_PLUGIN_FEATURE(object())), false);
+    return PluginFeaturePtr::wrap(gst_plugin_feature_load(object<GstPluginFeature>()), false);
 }
 
 }
