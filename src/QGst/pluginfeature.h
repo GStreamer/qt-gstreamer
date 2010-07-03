@@ -33,7 +33,7 @@ public:
 
     bool checkVersion(uint major, uint minor, uint micro) const;
 
-    PluginFeaturePtr load() const;
+    void load();
 };
 
 }

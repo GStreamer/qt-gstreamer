@@ -44,9 +44,16 @@ bool PluginFeature::checkVersion(uint major, uint minor, uint micro) const
     return gst_plugin_feature_check_version(object<GstPluginFeature>(), major, minor, micro);
 }
 
-PluginFeaturePtr PluginFeature::load() const
+void PluginFeature::load()
 {
-    return PluginFeaturePtr::wrap(gst_plugin_feature_load(object<GstPluginFeature>()), false);
+    GstPluginFeature *feature = gst_plugin_feature_load(object<GstPluginFeature>());
+    if (feature) {
+        gst_object_unref(m_object);
+        m_object = feature;
+        if (GST_OBJECT_IS_FLOATING(m_object)) {
+            gst_object_ref_sink(m_object);
+        }
+    }
 }
 
 }
