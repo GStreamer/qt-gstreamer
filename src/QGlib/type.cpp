@@ -15,7 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "type.h"
-#include "string.h"
 #include "quark.h"
 #include <glib-object.h>
 
@@ -26,14 +25,14 @@ Type Type::fromInstance(void *instance)
     return G_TYPE_FROM_INSTANCE(instance);
 }
 
-Type Type::fromName(const QGlib::String & name)
+Type Type::fromName(const char *name)
 {
     return g_type_from_name(name);
 }
 
-QGlib::String Type::name() const
+QString Type::name() const
 {
-    return QGlib::String(g_type_name(m_type));
+    return QString::fromUtf8(g_type_name(m_type));
 }
 
 Quark Type::qname() const

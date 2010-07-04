@@ -25,7 +25,7 @@ class Pipeline : public Bin
 {
     QGST_WRAPPER(Pipeline)
 public:
-    static PipelinePtr create(const QGlib::String & name = QGlib::String());
+    static PipelinePtr create(const char *name = NULL);
 };
 
 }

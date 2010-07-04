@@ -28,8 +28,8 @@ public:
     uint rank() const;
     void setRank(uint rank);
 
-    QGlib::String name() const;
-    void setName(const QGlib::String & name);
+    QString name() const;
+    void setName(const char *name);
 
     bool checkVersion(uint major, uint minor, uint micro) const;
 

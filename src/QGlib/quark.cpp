@@ -19,14 +19,19 @@
 
 namespace QGlib {
 
-Quark::Quark(const String & str)
+Quark::Quark(const char *str)
 {
     m_quark = g_quark_from_string(str);
 }
 
-String Quark::toString() const
+Quark::Quark(const QString & str)
 {
-    return String(g_quark_to_string(m_quark));
+    m_quark = g_quark_from_string(str.toUtf8());
+}
+
+QString Quark::toString() const
+{
+    return QString::fromUtf8(g_quark_to_string(m_quark));
 }
 
 }

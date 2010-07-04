@@ -22,7 +22,6 @@
 #include "paramspec.h"
 #include "value.h"
 #include "type.h"
-#include "string.h"
 #include <QtCore/QList>
 
 namespace QGlib {
@@ -31,12 +30,12 @@ class Object : public RefCountedObject
 {
     QGLIB_WRAPPER(Object)
 public:
-    ParamSpecPtr findProperty(const String & name) const;
+    ParamSpecPtr findProperty(const char *name) const;
     QList<ParamSpecPtr> listProperties() const;
 
-    Value property(const String & name) const;
-    template <class T> void setProperty(const String & name, const T & value);
-    void setPropertyValue(const String & name, const ValueBase & value);
+    Value property(const char *name) const;
+    template <class T> void setProperty(const char *name, const T & value);
+    void setPropertyValue(const char *name, const ValueBase & value);
 
 protected:
     virtual void ref();
@@ -44,7 +43,7 @@ protected:
 };
 
 template <class T>
-void Object::setProperty(const String & name, const T & value)
+void Object::setProperty(const char *name, const T & value)
 {
     ParamSpecPtr param = findProperty(name);
     if (param) {

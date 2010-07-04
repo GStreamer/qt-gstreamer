@@ -22,7 +22,7 @@
 namespace QGst {
 
 //static
-BinPtr Bin::create(const QGlib::String & name)
+BinPtr Bin::create(const char *name)
 {
     GstElement *bin = gst_bin_new(name);
     gst_object_ref_sink(bin);
@@ -39,7 +39,7 @@ bool Bin::remove(const ElementPtr & element)
     return gst_bin_remove(object<GstBin>(), element);
 }
 
-ElementPtr Bin::getElementByName(const QGlib::String & name, RecursionType r) const
+ElementPtr Bin::getElementByName(const char *name, RecursionType r) const
 {
     GstElement *e = NULL;
     switch(r) {

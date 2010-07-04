@@ -23,13 +23,13 @@
 namespace QGst {
 
 //static
-ElementFactoryPtr ElementFactory::find(const QGlib::String & factoryName)
+ElementFactoryPtr ElementFactory::find(const char *factoryName)
 {
     return ElementFactoryPtr::wrap(gst_element_factory_find(factoryName), false);
 }
 
 //static
-ElementPtr ElementFactory::make(const QGlib::String & factoryName, const QGlib::String & elementName)
+ElementPtr ElementFactory::make(const char *factoryName, const char *elementName)
 {
     GstElement *e = gst_element_factory_make(factoryName, elementName);
     gst_object_ref_sink(e);
@@ -41,24 +41,24 @@ QGlib::Type ElementFactory::elementType() const
     return gst_element_factory_get_element_type(object<GstElementFactory>());
 }
 
-QGlib::String ElementFactory::longName() const
+QString ElementFactory::longName() const
 {
-    return QGlib::String(gst_element_factory_get_longname(object<GstElementFactory>()));
+    return QString::fromUtf8(gst_element_factory_get_longname(object<GstElementFactory>()));
 }
 
-QGlib::String ElementFactory::klass() const
+QString ElementFactory::klass() const
 {
-    return QGlib::String(gst_element_factory_get_klass(object<GstElementFactory>()));
+    return QString::fromUtf8(gst_element_factory_get_klass(object<GstElementFactory>()));
 }
 
-QGlib::String ElementFactory::description() const
+QString ElementFactory::description() const
 {
-    return QGlib::String(gst_element_factory_get_description(object<GstElementFactory>()));
+    return QString::fromUtf8(gst_element_factory_get_description(object<GstElementFactory>()));
 }
 
-QGlib::String ElementFactory::author() const
+QString ElementFactory::author() const
 {
-    return QGlib::String(gst_element_factory_get_author(object<GstElementFactory>()));
+    return QString::fromUtf8(gst_element_factory_get_author(object<GstElementFactory>()));
 }
 
 uint ElementFactory::padTemplatesCount() const
@@ -71,7 +71,7 @@ int ElementFactory::uriType() const
     return gst_element_factory_get_uri_type(object<GstElementFactory>());
 }
 
-bool ElementFactory::hasInterface(const QGlib::String & interfaceName) const
+bool ElementFactory::hasInterface(const char *interfaceName) const
 {
     return gst_element_factory_has_interface(object<GstElementFactory>(), interfaceName);
 }
@@ -86,7 +86,7 @@ bool ElementFactory::canSrcCaps(const CapsPtr & caps) const
     return gst_element_factory_can_src_caps(object<GstElementFactory>(), caps);
 }
 
-ElementPtr ElementFactory::create(const QGlib::String & elementName) const
+ElementPtr ElementFactory::create(const char *elementName) const
 {
     GstElement *e = gst_element_factory_create(object<GstElementFactory>(), elementName);
     gst_object_ref_sink(e);

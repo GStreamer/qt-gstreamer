@@ -64,7 +64,7 @@ QList<Value> packArguments(Arg1 && a1, Args&&... args)
 template <typename R, typename... Args>
 struct EmitImpl<R (Args...)>
 {
-    static inline R emit(void *instance, const QGlib::String & detailedSignal, Args&&... args)
+    static inline R emit(void *instance, const char *detailedSignal, Args&&... args)
     {
         Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
 
@@ -81,7 +81,7 @@ struct EmitImpl<R (Args...)>
 template <typename... Args>
 struct EmitImpl<void (Args...)>
 {
-    static inline void emit(void *instance, const QGlib::String & detailedSignal, Args&&... args)
+    static inline void emit(void *instance, const char *detailedSignal, Args&&... args)
     {
         Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
 
@@ -117,13 +117,13 @@ MemberFunction<T, R, Args...> mem_fn(R (T::*fn)(Args...), T *obj)
 } //namespace Private
 
 template <typename R, typename... Args>
-R Signal::emit(void *instance, const QGlib::String & detailedSignal, Args&&... args)
+R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
 {
     return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, args...);
 }
 
 template <typename T, typename R, typename... Args>
-SignalHandler Signal::connect(void *instance, const QGlib::String & detailedSignal,
+SignalHandler Signal::connect(void *instance, const char *detailedSignal,
                               T *receiver, R (T::*slot)(Args...), ConnectFlags flags)
 {
     typedef QGlib::Private::MemberFunction<T, R, Args...> F;
@@ -191,7 +191,7 @@ template <typename R QGLIB_SIGNAL_IMPL_COMMA
                      QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
 struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 {
-    static inline R emit(void *instance, const QGlib::String & detailedSignal
+    static inline R emit(void *instance, const char *detailedSignal
                          QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
     {
         QList<Value> values;
@@ -211,7 +211,7 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 template <QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
 struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 {
-    static inline void emit(void *instance, const QGlib::String & detailedSignal
+    static inline void emit(void *instance, const char *detailedSignal
                             QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
     {
         QList<Value> values;
@@ -228,7 +228,7 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 
 template <typename R QGLIB_SIGNAL_IMPL_COMMA
                      QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
-R Signal::emit(void *instance, const QGlib::String & detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
+R Signal::emit(void *instance, const char *detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
 {
     return QGlib::Private::EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
                              ::emit(instance, detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_ARGS);
@@ -236,7 +236,7 @@ R Signal::emit(void *instance, const QGlib::String & detailedSignal QGLIB_SIGNAL
 
 template <typename T, typename R QGLIB_SIGNAL_IMPL_COMMA
                                  QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
-SignalHandler Signal::connect(void *instance, const QGlib::String & detailedSignal,
+SignalHandler Signal::connect(void *instance, const char *detailedSignal,
                               T *receiver, R (T::*slot)(QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
                               ConnectFlags flags)
 {

@@ -14,16 +14,21 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "string.h"
+#include <QtCore/QString>
 #include <glib.h>
 
-namespace QGlib {
+/* WARNING: This header should only be included from
+ * QtGstreamer source files and should not be installed */
 
-String String::fromGCharPtr(char* s)
+namespace QGlib {
+namespace Private {
+
+inline QString stringFromGCharPtr(char *s)
 {
-    String str(s);
+    QString str = QString::fromUtf8(s);
     g_free(s);
     return str;
 }
 
+}
 }

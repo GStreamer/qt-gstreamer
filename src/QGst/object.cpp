@@ -15,16 +15,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "object.h"
+#include "../QGlib/string_p.h"
 #include <gst/gstobject.h>
 
 namespace QGst {
 
-QGlib::String Object::name() const
+QString Object::name() const
 {
-    return QGlib::String::fromGCharPtr(gst_object_get_name(object<GstObject>()));
+    return QGlib::Private::stringFromGCharPtr(gst_object_get_name(object<GstObject>()));
 }
 
-bool Object::setName(const QGlib::String & name)
+bool Object::setName(const char *name)
 {
     return gst_object_set_name(object<GstObject>(), name);
 }
@@ -44,12 +45,12 @@ void Object::unparent()
     gst_object_unparent(object<GstObject>());
 }
 
-QGlib::String Object::namePrefix() const
+QString Object::namePrefix() const
 {
-    return QGlib::String::fromGCharPtr(gst_object_get_name_prefix(object<GstObject>()));
+    return QGlib::Private::stringFromGCharPtr(gst_object_get_name_prefix(object<GstObject>()));
 }
 
-void Object::setNamePrefix(const QGlib::String & prefix)
+void Object::setNamePrefix(const char *prefix)
 {
     gst_object_set_name_prefix(object<GstObject>(), prefix);
 }

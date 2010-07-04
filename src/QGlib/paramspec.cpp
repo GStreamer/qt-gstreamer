@@ -21,19 +21,19 @@
 
 namespace QGlib {
 
-String ParamSpec::name() const
+QString ParamSpec::name() const
 {
-    return String(g_param_spec_get_name(object<GParamSpec>()));
+    return QString::fromUtf8(g_param_spec_get_name(object<GParamSpec>()));
 }
 
-String ParamSpec::nick() const
+QString ParamSpec::nick() const
 {
-    return String(g_param_spec_get_nick(object<GParamSpec>()));
+    return QString::fromUtf8(g_param_spec_get_nick(object<GParamSpec>()));
 }
 
-String ParamSpec::description() const
+QString ParamSpec::description() const
 {
-    return String(g_param_spec_get_blurb(object<GParamSpec>()));
+    return QString::fromUtf8(g_param_spec_get_blurb(object<GParamSpec>()));
 }
 
 ParamSpec::ParamFlags ParamSpec::flags() const

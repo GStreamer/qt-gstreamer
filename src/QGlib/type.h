@@ -61,9 +61,9 @@ public:
     template<class T>
     static Type fromInstance(const RefPointer<T> & instance);
     static Type fromInstance(void *nativeInstance);
-    static Type fromName(const QGlib::String & name);
+    static Type fromName(const char *name);
 
-    QGlib::String name() const;
+    QString name() const;
     Quark qname() const;
 
     bool isAbstract() const;
@@ -180,7 +180,6 @@ QGLIB_REGISTER_NATIVE_TYPE(float, Type::Float)
 QGLIB_REGISTER_NATIVE_TYPE(double, Type::Double)
 QGLIB_REGISTER_NATIVE_TYPE(void*, Type::Pointer)
 QGLIB_REGISTER_NATIVE_TYPE(const char*, Type::String)
-QGLIB_REGISTER_NATIVE_TYPE(QGlib::String, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QByteArray, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QString, Type::String)
 

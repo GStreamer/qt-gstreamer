@@ -21,7 +21,6 @@
 #include "../QGlib/value.h"
 #include "../QGlib/refpointer.h"
 #include "../QGlib/type.h"
-#include "../QGlib/string.h"
 
 namespace QGst {
 
@@ -29,19 +28,19 @@ class Caps : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(Caps)
 public:
-    static CapsPtr createSimple(const QGlib::String & mediaType);
+    static CapsPtr createSimple(const char *mediaType);
     static CapsPtr createAny();
     static CapsPtr createEmpty();
 
-    static CapsPtr fromString(const QGlib::String & string);
-    QGlib::String toString() const;
+    static CapsPtr fromString(const char *string);
+    QString toString() const;
 
     static CapsPtr fromXml(xmlNodePtr node);
     xmlNodePtr toXml(xmlNodePtr parent) const;
 
     void append(const CapsPtr & caps2);
     void merge(const CapsPtr & caps2);
-    void setValue(const QGlib::String & field, const QGlib::Value & value);
+    void setValue(const char *field, const QGlib::Value & value);
     bool simplify();
     void truncate();
 

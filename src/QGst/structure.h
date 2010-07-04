@@ -19,8 +19,8 @@
 
 #include "global.h"
 #include "../QGlib/type.h"
-#include "../QGlib/string.h"
 #include "../QGlib/value.h"
+#include <QtCore/QString>
 
 namespace QGst {
 
@@ -29,22 +29,22 @@ class StructureBase
 public:
     bool isValid() const;
 
-    QGlib::String name() const;
-    void setName(const QGlib::String & name);
+    QString name() const;
+    void setName(const char *name);
 
-    QGlib::Value value(const QGlib::String & fieldName) const;
-    void setValue(const QGlib::String & fieldName, const QGlib::Value & value);
+    QGlib::Value value(const char *fieldName) const;
+    void setValue(const char *fieldName, const QGlib::Value & value);
 
     unsigned int numberOfFields() const;
-    QGlib::String fieldName(unsigned int fieldNumber);
-    QGlib::Type fieldType(const QGlib::String & fieldName) const;
-    bool hasField(const QGlib::String & fieldName) const;
-    bool hasFieldTyped(const QGlib::String & fieldName, QGlib::Type type) const; //FIXME better name?
+    QString fieldName(unsigned int fieldNumber);
+    QGlib::Type fieldType(const char *fieldName) const;
+    bool hasField(const char *fieldName) const;
+    bool hasFieldTyped(const char *fieldName, QGlib::Type type) const; //FIXME better name?
 
-    void removeField(const QGlib::String & fieldName);
+    void removeField(const char *fieldName);
     void removeAllFields();
 
-    QGlib::String toString() const; //FIXME maybe call it serialize()?
+    QString toString() const; //FIXME maybe call it serialize()?
 
     inline operator GstStructure*() { return m_structure; }
     inline operator const GstStructure*() const { return m_structure; }
@@ -64,7 +64,7 @@ class SharedStructure;
 class Structure : public StructureBase
 {
 public:
-    Structure(const QGlib::String & name);
+    Structure(const char *name);
     Structure(const SharedStructure & other);
     Structure(const Structure & other);
     virtual ~Structure();
@@ -72,7 +72,7 @@ public:
     Structure & operator=(const SharedStructure & other);
     Structure & operator=(const Structure & other);
 
-    static Structure fromString(const QGlib::String & str);
+    static Structure fromString(const char *str);
 };
 
 class SharedStructure : public StructureBase

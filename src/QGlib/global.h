@@ -30,7 +30,6 @@ namespace QGlib {
 class ValueBase;
 class Value;
 class SharedValue;
-class String;
 class Quark;
 class Type;
 class Signal;

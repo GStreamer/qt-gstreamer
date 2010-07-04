@@ -7,7 +7,6 @@ set(QtGstreamer_SRCS
     QGlib/object.cpp
     QGlib/value.cpp
     QGlib/closure.cpp
-    QGlib/string.cpp
     QGlib/signal.cpp
 
     QGst/global.cpp
@@ -37,7 +36,6 @@ set(INSTALLED_HEADERS
     QGlib/paramspec.h   QGlib/ParamSpec
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value
-    QGlib/string.h      QGlib/String
     QGlib/closure.h     QGlib/Closure
     QGlib/closureimpl_p.h
     QGlib/signal.h      QGlib/Signal

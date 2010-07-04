@@ -21,6 +21,7 @@
 #include "refpointer.h"
 #include "type.h"
 #include "value.h"
+#include <QtCore/QString>
 
 namespace QGlib {
 
@@ -38,9 +39,9 @@ public:
     };
     Q_DECLARE_FLAGS(ParamFlags, ParamFlag);
 
-    String name() const;
-    String nick() const;
-    String description() const;
+    QString name() const;
+    QString nick() const;
+    QString description() const;
 
     ParamFlags flags() const;
     Type valueType() const;

@@ -93,34 +93,34 @@ public:
     bool isValid() const;
 
     uint id() const;
-    QGlib::String name() const;
+    QString name() const;
     SignalFlags flags() const;
 
     Type instanceType() const;
     Type returnType() const;
     QList<Type> paramTypes() const;
 
-    static Signal lookup(const QGlib::String & name, Type type);
+    static Signal lookup(const char *name, Type type);
     static QList<Signal> listSignals(Type type);
 
 
 #if QGLIB_HAVE_CXX0X
 
     template <typename R, typename... Args>
-    static R emit(void *instance, const QGlib::String & detailedSignal, Args&&... args);
+    static R emit(void *instance, const char *detailedSignal, Args&&... args);
 
     template <typename T, typename R, typename... Args>
-    static SignalHandler connect(void *instance, const QGlib::String & detailedSignal,
+    static SignalHandler connect(void *instance, const char *detailedSignal,
                                  T *receiver, R (T::*slot)(Args...), ConnectFlags flags = 0);
 
 #else //QGLIB_HAVE_CXX0X
 
     //versions that take no arguments
     template <typename R>
-    static R emit(void *instance, const QGlib::String & detailedSignal);
+    static R emit(void *instance, const char *detailedSignal);
 
     template <typename T, typename R>
-    static SignalHandler connect(void *instance, const QGlib::String & detailedSignal,
+    static SignalHandler connect(void *instance, const char *detailedSignal,
                                  T *receiver, R (T::*slot)(), ConnectFlags flags = 0);
 
 # define QGLIB_SIGNAL_TMPL_PARAMS(n) \
@@ -131,11 +131,11 @@ public:
 
 # define QGLIB_SIGNAL_EMIT_DECLARATION(z, n, data) \
     template <typename R, QGLIB_SIGNAL_TMPL_PARAMS(n) > \
-    static R emit(void *instance, const QGlib::String & detailedSignal, QGLIB_SIGNAL_TMPL_ARGS(n));
+    static R emit(void *instance, const char *detailedSignal, QGLIB_SIGNAL_TMPL_ARGS(n));
 
 # define QGLIB_SIGNAL_CONNECT_DECLARATION(z, n, data) \
     template <typename T, typename R, QGLIB_SIGNAL_TMPL_PARAMS(n) > \
-    static SignalHandler connect(void *instance, const QGlib::String & detailedSignal, \
+    static SignalHandler connect(void *instance, const char *detailedSignal, \
                                  T *receiver, R (T::*slot)(QGLIB_SIGNAL_TMPL_ARGS(n)), \
                                  ConnectFlags flags = 0);
 
@@ -151,9 +151,9 @@ public:
 #endif //QGLIB_HAVE_CXX0X
 
 
-    static Value emit(void *instance, const QGlib::String & detailedSignal, const QList<Value> & args);
+    static Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
 
-    static SignalHandler connect(void *instance, const QGlib::String & detailedSignal,
+    static SignalHandler connect(void *instance, const char *detailedSignal,
                                  const ClosurePtr & closure, ConnectFlags flags = 0);
 
 private:

@@ -58,7 +58,7 @@ void SignalsTest::queryTest()
     QGlib::Signal s = QGlib::Signal::lookup("notify", QGlib::GetType<QGlib::Object>());
     QVERIFY(s.isValid());
 
-    QCOMPARE(s.name(), QGlib::String("notify"));
+    QCOMPARE(s.name(), QString("notify"));
     QCOMPARE(s.instanceType(), QGlib::GetType<QGlib::Object>());
 
     QCOMPARE(s.flags(), QGlib::Signal::RunFirst | QGlib::Signal::NoRecurse |
@@ -73,8 +73,8 @@ void SignalsTest::queryTest()
 void SignalsTest::emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib::ParamSpecPtr & param)
 {
     qDebug() << "emitTestClosure called";
-    QCOMPARE(instance->property("name").get<QGlib::String>(), QGlib::String("mybin"));
-    QCOMPARE(param->name(), QGlib::String("name"));
+    QCOMPARE(instance->property("name").get<QString>(), QString("mybin"));
+    QCOMPARE(param->name(), QString("name"));
     closureCalled = true;
 }
 

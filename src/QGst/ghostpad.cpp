@@ -19,14 +19,14 @@
 
 namespace QGst {
 
-GhostPadPtr GhostPad::create(const PadPtr & target, const QGlib::String & name)
+GhostPadPtr GhostPad::create(const PadPtr & target, const char *name)
 {
     GstPad *gp = gst_ghost_pad_new(name, target);
     gst_object_ref_sink(gp);
     return GhostPadPtr::wrap(GST_GHOST_PAD(gp), false);
 }
 
-GhostPadPtr GhostPad::create(PadDirection direction, const QGlib::String & name)
+GhostPadPtr GhostPad::create(PadDirection direction, const char *name)
 {
     GstPad *gp = gst_ghost_pad_new_no_target(name, static_cast<GstPadDirection>(direction));
     gst_object_ref_sink(gp);

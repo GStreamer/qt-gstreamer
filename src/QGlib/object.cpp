@@ -29,7 +29,7 @@ QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
     return result;
 }
 
-ParamSpecPtr Object::findProperty(const String & name) const
+ParamSpecPtr Object::findProperty(const char *name) const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object<void>())));
     GParamSpec *param = g_object_class_find_property(klass, name);
@@ -52,7 +52,7 @@ QList<ParamSpecPtr> Object::listProperties() const
     return result;
 }
 
-Value Object::property(const String & name) const
+Value Object::property(const char *name) const
 {
     Value result;
     ParamSpecPtr param = findProperty(name);
@@ -63,7 +63,7 @@ Value Object::property(const String & name) const
     return result;
 }
 
-void Object::setPropertyValue(const String & name, const ValueBase & value)
+void Object::setPropertyValue(const char *name, const ValueBase & value)
 {
     g_object_set_property(object<GObject>(), name, value);
 }

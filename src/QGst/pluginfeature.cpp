@@ -29,12 +29,12 @@ void PluginFeature::setRank(uint rank)
     gst_plugin_feature_set_rank(object<GstPluginFeature>(), rank);
 }
 
-QGlib::String PluginFeature::name() const
+QString PluginFeature::name() const
 {
-    return QGlib::String(gst_plugin_feature_get_name(object<GstPluginFeature>()));
+    return QString::fromUtf8(gst_plugin_feature_get_name(object<GstPluginFeature>()));
 }
 
-void PluginFeature::setName(const QGlib::String & name)
+void PluginFeature::setName(const char *name)
 {
     gst_plugin_feature_set_name(object<GstPluginFeature>(), name);
 }

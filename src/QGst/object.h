@@ -26,15 +26,15 @@ class Object : public virtual QGlib::Object
 {
     QGST_WRAPPER(Object)
 public:
-    QGlib::String name() const;
-    bool setName(const QGlib::String & name);
+    QString name() const;
+    bool setName(const char *name);
 
     ObjectPtr parent() const;
     bool setParent(const ObjectPtr & parent);
     void unparent();
 
-    QGlib::String namePrefix() const;
-    void setNamePrefix(const QGlib::String & prefix);
+    QString namePrefix() const;
+    void setNamePrefix(const char *prefix);
 
     bool isAncestorOf(const ObjectPtr & object) const;
 

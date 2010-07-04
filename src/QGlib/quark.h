@@ -17,7 +17,7 @@
 #ifndef QGLIB_QUARK_H
 #define QGLIB_QUARK_H
 
-#include "string.h"
+#include <QtCore/QString>
 
 namespace QGlib {
 
@@ -25,10 +25,10 @@ class Quark
 {
 public:
     inline Quark(quint32 gquark = 0) : m_quark(gquark) {}
-    Quark(const String & str);
+    Quark(const char *str);
+    Quark(const QString & str);
 
-    String toString() const;
-
+    QString toString() const;
     inline operator quint32() const { return m_quark; }
 
 private:

@@ -30,17 +30,17 @@ void StructureTest::bindingsTest()
     QGst::Structure s("mystructure");
 
     QVERIFY(s.isValid());
-    QCOMPARE(s.name(), QGlib::String("mystructure"));
+    QCOMPARE(s.name(), QString("mystructure"));
     QCOMPARE(s.numberOfFields(), static_cast<unsigned int>(0));
 
     s.setValue("intfield", 20);
     QCOMPARE(s.numberOfFields(), static_cast<unsigned int>(1));
     QVERIFY(s.hasField("intfield"));
-    QCOMPARE(s.fieldName(0), QGlib::String("intfield"));
+    QCOMPARE(s.fieldName(0), QString("intfield"));
     QCOMPARE(s.value("intfield").get<int>(), 20);
     QCOMPARE(s.fieldType("intfield"), QGlib::Type(QGlib::Type::Int));
 
-    s.setValue("strfield", QGlib::String("hello world"));
+    s.setValue("strfield", QString("hello world"));
     QCOMPARE(s.numberOfFields(), static_cast<unsigned int>(2));
 
     qDebug() << s;

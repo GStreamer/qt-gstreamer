@@ -17,6 +17,7 @@
 #include "closure.h"
 #include "quark.h"
 #include <glib-object.h>
+#include <QtCore/QDebug>
 
 namespace QGlib {
 
@@ -60,7 +61,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
             if (ihint->detail != 0) {
                 Quark q(ihint->detail);
                 signalName.append(QLatin1String("::"));
-                signalName.append(q.toString().toQString()); //FIXME ugly syntax
+                signalName.append(q.toString());
             }
         }
 

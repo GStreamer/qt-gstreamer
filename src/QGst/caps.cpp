@@ -16,13 +16,14 @@
 */
 #include "caps.h"
 #include "structure.h"
+#include "../QGlib/string_p.h"
 #include <QtCore/QDebug>
 #include <gst/gstcaps.h>
 
 namespace QGst {
 
 //static
-CapsPtr Caps::createSimple(const QGlib::String & mediaType)
+CapsPtr Caps::createSimple(const char *mediaType)
 {
     return CapsPtr::wrap(gst_caps_new_simple(mediaType, NULL), false);
 }
@@ -40,14 +41,14 @@ CapsPtr Caps::createEmpty()
 }
 
 //static
-CapsPtr Caps::fromString(const QGlib::String & string)
+CapsPtr Caps::fromString(const char *string)
 {
     return CapsPtr::wrap(gst_caps_from_string(string), false);
 }
 
-QGlib::String Caps::toString() const
+QString Caps::toString() const
 {
-    return QGlib::String::fromGCharPtr(gst_caps_to_string(object<GstCaps>()));
+    return QGlib::Private::stringFromGCharPtr(gst_caps_to_string(object<GstCaps>()));
 }
 
 //static
@@ -71,7 +72,7 @@ void Caps::merge(const CapsPtr & caps2)
     gst_caps_merge(object<GstCaps>(), gst_caps_copy(caps2));
 }
 
-void Caps::setValue(const QGlib::String & field, const QGlib::Value & value)
+void Caps::setValue(const char *field, const QGlib::Value & value)
 {
     gst_caps_set_value(object<GstCaps>(), field, value);
 }

@@ -98,9 +98,9 @@ uint Signal::id() const
     return d->id;
 }
 
-String Signal::name() const
+QString Signal::name() const
 {
-    return d->query()->signal_name;
+    return QString::fromUtf8(d->query()->signal_name);
 }
 
 Signal::SignalFlags Signal::flags() const
@@ -128,7 +128,7 @@ QList<Type> Signal::paramTypes() const
 }
 
 //static
-Signal Signal::lookup(const String & name, Type type)
+Signal Signal::lookup(const char *name, Type type)
 {
     return Signal(g_signal_lookup(name, type));
 }
@@ -147,11 +147,11 @@ QList<Signal> Signal::listSignals(Type type)
 }
 
 //static
-Value Signal::emit(void *instance, const String & detailedSignal, const QList<Value> & args)
+Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value> & args)
 {
     Value result;
     Type itype = Type::fromInstance(instance);
-    QStringList signalParts = detailedSignal.toQString().split(QLatin1String("::"));
+    QStringList signalParts = QString::fromUtf8(detailedSignal).split(QLatin1String("::"));
     Quark detail;
     if (signalParts.size() > 1) {
         detail = Quark(signalParts[1]);
@@ -225,7 +225,7 @@ Value Signal::emit(void *instance, const String & detailedSignal, const QList<Va
 }
 
 //static
-SignalHandler Signal::connect(void *instance, const String & detailedSignal,
+SignalHandler Signal::connect(void *instance, const char *detailedSignal,
                               const ClosurePtr & closure, ConnectFlags flags)
 {
     uint id = g_signal_connect_closure(instance, detailedSignal, closure,

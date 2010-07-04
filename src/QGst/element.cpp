@@ -61,13 +61,13 @@ bool Element::addPad(const PadPtr & pad)
     return gst_element_add_pad(object<GstElement>(), pad);
 }
 
-PadPtr Element::getStaticPad(const QGlib::String & name)
+PadPtr Element::getStaticPad(const char *name)
 {
     GstPad *pad = gst_element_get_static_pad(object<GstElement>(), name);
     return PadPtr::wrap(pad, false);
 }
 
-PadPtr Element::getRequestPad(const QGlib::String & name)
+PadPtr Element::getRequestPad(const char *name)
 {
     GstPad *pad = gst_element_get_request_pad(object<GstElement>(), name);
     return PadPtr::wrap(pad, false);
@@ -78,37 +78,36 @@ void Element::releaseRequestPad(const PadPtr & pad)
     gst_element_release_request_pad(object<GstElement>(), pad);
 }
 
-bool Element::link(const QGlib::String & srcPadName, const ElementPtr & dest,
-                   const QGlib::String& sinkPadName, const CapsPtr & filter)
+bool Element::link(const char *srcPadName, const ElementPtr & dest,
+                   const char *sinkPadName, const CapsPtr & filter)
 {
     return gst_element_link_pads_filtered(object<GstElement>(), srcPadName,
                                           dest, sinkPadName, filter);
 }
 
-bool Element::link(const QGlib::String & srcPadName, const ElementPtr & dest, const CapsPtr & filter)
+bool Element::link(const char *srcPadName, const ElementPtr & dest, const CapsPtr & filter)
 {
-    return link(srcPadName, dest, QGlib::String(), filter);
+    return link(srcPadName, dest, NULL, filter);
 }
 
-bool Element::link(const ElementPtr & dest, const QGlib::String & sinkPadName, const CapsPtr & filter)
+bool Element::link(const ElementPtr & dest, const char *sinkPadName, const CapsPtr & filter)
 {
-    return link(QGlib::String(), dest, sinkPadName, filter);
+    return link(NULL, dest, sinkPadName, filter);
 }
 
 bool Element::link(const ElementPtr & dest, const CapsPtr & filter)
 {
-    return link(QGlib::String(), dest, QGlib::String(), filter);
+    return link(NULL, dest, NULL, filter);
 }
 
-void Element::unlink(const QGlib::String & srcPadName, const ElementPtr & dest,
-                     const QGlib::String & sinkPadName)
+void Element::unlink(const char *srcPadName, const ElementPtr & dest, const char *sinkPadName)
 {
     gst_element_unlink_pads(object<GstElement>(), srcPadName, dest, sinkPadName);
 }
 
-void Element::unlink(const ElementPtr & dest, const QGlib::String & sinkPadName)
+void Element::unlink(const ElementPtr & dest, const char *sinkPadName)
 {
-    unlink(QGlib::String(), dest, sinkPadName);
+    unlink(NULL, dest, sinkPadName);
 }
 
 }

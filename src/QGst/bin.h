@@ -26,7 +26,7 @@ class Bin : public Element, public ChildProxy
 {
     QGST_WRAPPER(Bin)
 public:
-    static BinPtr create(const QGlib::String & name = QGlib::String());
+    static BinPtr create(const char *name = NULL);
 
     bool add(const ElementPtr & element);
     bool remove(const ElementPtr & element);
@@ -42,7 +42,7 @@ public:
          */
         RecurseUp
     };
-    ElementPtr getElementByName(const QGlib::String & name, RecursionType = RecurseDown) const;
+    ElementPtr getElementByName(const char *name, RecursionType = RecurseDown) const;
     ElementPtr getElementByInterface(QGlib::Type interfaceType) const;
     template <typename T> QGlib::RefPointer<T> getElementByInterface() const;
 

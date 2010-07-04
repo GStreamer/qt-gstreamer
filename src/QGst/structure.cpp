@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "structure.h"
+#include "../QGlib/string_p.h"
 #include <gst/gststructure.h>
 #include <QtCore/QDebug>
 
@@ -36,25 +37,25 @@ bool StructureBase::isValid() const
     return m_structure != NULL;
 }
 
-QGlib::String StructureBase::name() const
+QString StructureBase::name() const
 {
     Q_ASSERT(isValid());
-    return QGlib::String(gst_structure_get_name(m_structure));
+    return QString::fromUtf8(gst_structure_get_name(m_structure));
 }
 
-void StructureBase::setName(const QGlib::String & name)
+void StructureBase::setName(const char *name)
 {
     Q_ASSERT(isValid());
     gst_structure_set_name(m_structure, name);
 }
 
-QGlib::Value StructureBase::value(const QGlib::String & fieldName) const
+QGlib::Value StructureBase::value(const char *fieldName) const
 {
     Q_ASSERT(isValid());
     return QGlib::Value(*gst_structure_get_value(m_structure, fieldName));
 }
 
-void StructureBase::setValue(const QGlib::String & fieldName, const QGlib::Value & value)
+void StructureBase::setValue(const char *fieldName, const QGlib::Value & value)
 {
     Q_ASSERT(isValid());
     gst_structure_set_value(m_structure, fieldName, value);
@@ -66,31 +67,31 @@ unsigned int StructureBase::numberOfFields() const
     return gst_structure_n_fields(m_structure);
 }
 
-QGlib::String StructureBase::fieldName(unsigned int fieldNumber)
+QString StructureBase::fieldName(unsigned int fieldNumber)
 {
     Q_ASSERT(isValid());
-    return QGlib::String(gst_structure_nth_field_name(m_structure, fieldNumber));
+    return QString::fromUtf8(gst_structure_nth_field_name(m_structure, fieldNumber));
 }
 
-QGlib::Type StructureBase::fieldType(const QGlib::String& fieldName) const
+QGlib::Type StructureBase::fieldType(const char *fieldName) const
 {
     Q_ASSERT(isValid());
     return gst_structure_get_field_type(m_structure, fieldName);
 }
 
-bool StructureBase::hasField(const QGlib::String& fieldName) const
+bool StructureBase::hasField(const char *fieldName) const
 {
     Q_ASSERT(isValid());
     return gst_structure_has_field(m_structure, fieldName);
 }
 
-bool StructureBase::hasFieldTyped(const QGlib::String& fieldName, QGlib::Type type) const
+bool StructureBase::hasFieldTyped(const char *fieldName, QGlib::Type type) const
 {
     Q_ASSERT(isValid());
     return gst_structure_has_field_typed(m_structure, fieldName, type);
 }
 
-void StructureBase::removeField(const QGlib::String& fieldName)
+void StructureBase::removeField(const char *fieldName)
 {
     Q_ASSERT(isValid());
     return gst_structure_remove_field(m_structure, fieldName);
@@ -102,17 +103,17 @@ void StructureBase::removeAllFields()
     return gst_structure_remove_all_fields(m_structure);
 }
 
-QGlib::String StructureBase::toString() const
+QString StructureBase::toString() const
 {
     Q_ASSERT(isValid());
-    return QGlib::String::fromGCharPtr(gst_structure_to_string(m_structure));
+    return QGlib::Private::stringFromGCharPtr(gst_structure_to_string(m_structure));
 }
 
 //END StructureBase
 
 //BEGIN Structure
 
-Structure::Structure(const QGlib::String & name)
+Structure::Structure(const char *name)
     : StructureBase(gst_structure_empty_new(name))
 {
 }
@@ -152,7 +153,7 @@ Structure & Structure::operator=(const Structure & other)
     return *this;
 }
 
-Structure Structure::fromString(const QGlib::String& str)
+Structure Structure::fromString(const char *str)
 {
     Structure s(SharedStructure(NULL));
     s.m_structure = gst_structure_from_string(str, NULL);
