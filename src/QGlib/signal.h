@@ -21,7 +21,7 @@
 #include "closure.h"
 #include <QtCore/QString>
 #include <QtCore/QFlags>
-#include <QtCore/QSharedPointer>
+#include <QtCore/QSharedData>
 
 #if !QGLIB_HAVE_CXX0X
 //boost::bind restricts us to 9 arguments. if you need more,
@@ -160,7 +160,7 @@ private:
     Signal(uint id);
 
     struct Private;
-    QSharedPointer<Private> d;
+    QSharedDataPointer<Private> d;
 };
 
 } //namespace QGlib

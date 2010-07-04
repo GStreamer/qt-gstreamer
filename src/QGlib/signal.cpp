@@ -52,17 +52,18 @@ struct Signal::Private : public QSharedData
     Private(uint i) : id(i), m_queryInitialized(false) {}
 
     uint id;
-    GSignalQuery *query();
+    GSignalQuery *query() const;
 
 private:
-    GSignalQuery m_query;
-    bool m_queryInitialized;
+    mutable GSignalQuery m_query;
+    mutable bool m_queryInitialized;
 };
 
-GSignalQuery *Signal::Private::query()
+GSignalQuery *Signal::Private::query() const
 {
     if (!m_queryInitialized) {
         g_signal_query(id, &m_query);
+        m_queryInitialized = true;
     }
     return &m_query;
 }
