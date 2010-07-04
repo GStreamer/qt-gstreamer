@@ -49,7 +49,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
     try {
         SharedValue result(returnValue);
         (*cdata->cppMarshaller)(result, params, cdata);
-    } catch (const std::runtime_error & e) {
+    } catch (const std::logic_error & e) {
         QString signalName;
         if (hint != NULL) {
             GSignalInvocationHint *ihint = static_cast<GSignalInvocationHint*>(hint);

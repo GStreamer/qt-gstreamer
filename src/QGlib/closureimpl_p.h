@@ -143,7 +143,7 @@ struct CppClosure<R (Args...), F>
     static inline void marshaller(SharedValue & result, const QList<Value> & params, ClosureDataBase *data)
     {
         if (static_cast<unsigned int>(params.size()) < sizeof...(Args)) {
-            throw std::runtime_error("The signal provides less arguments than what the closure expects");
+            throw std::logic_error("The signal provides less arguments than what the closure expects");
         }
 
         ClosureData *cdata = static_cast<ClosureData*>(data);
@@ -231,7 +231,7 @@ struct QGLIB_CLOSURE_IMPL_CPPCLOSUREN
     static void marshaller(SharedValue & result, const QList<Value> & params, ClosureDataBase *data)
     {
         if (params.size() < QGLIB_CLOSURE_IMPL_NUM_ARGS) {
-            throw std::runtime_error("The signal provides less arguments than what the closure expects");
+            throw std::logic_error("The signal provides less arguments than what the closure expects");
         }
 
         ClosureData *cdata = static_cast<ClosureData*>(data);

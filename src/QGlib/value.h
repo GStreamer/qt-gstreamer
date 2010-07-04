@@ -28,18 +28,18 @@ namespace QGlib {
 class ValueBase
 {
 public:
-    class InvalidValueException : public std::runtime_error
+    class InvalidValueException : public std::logic_error
     {
     public:
         inline InvalidValueException()
-            : std::runtime_error("This ValueBase instance has not been initialized") {}
+            : std::logic_error("This ValueBase instance has not been initialized") {}
     };
 
-    class InvalidTypeException : public std::runtime_error
+    class InvalidTypeException : public std::logic_error
     {
     public:
         inline InvalidTypeException()
-            : std::runtime_error("This ValueBase instance has been initialized to hold a different "
+            : std::logic_error("This ValueBase instance has been initialized to hold a different "
                                  "type of data than the one that you are trying to access") {}
     };
 

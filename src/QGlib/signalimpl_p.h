@@ -70,7 +70,7 @@ struct EmitImpl<R (Args...)>
 
         try {
             return returnValue.get<R>();
-        } catch(const std::runtime_error &) {
+        } catch(const std::logic_error &) {
             qCritical() << "Error during emission of signal" << detailedSignal
                         << "The returned value from emit is of different type than the one requested";
             return R();
@@ -200,7 +200,7 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 
         try {
             return returnValue.get<R>();
-        } catch(const std::runtime_error &) {
+        } catch(const std::logic_error &) {
             qCritical() << "Error during emission of signal" << detailedSignal
                         << "The returned value from emit is of different type than the one requested";
             return R();
