@@ -34,9 +34,10 @@ public:
     void setSequenceNumber(quint32 num);
 };
 
-}
+} //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Message)
+QGLIB_REGISTER_VALUEIMPL(QGst::MessagePtr)
 
 QDebug operator<<(QDebug debug, QGst::MessageType type);
 QDebug operator<<(QDebug debug, const QGst::MessagePtr & message);

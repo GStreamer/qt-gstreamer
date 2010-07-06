@@ -75,6 +75,7 @@ protected:
 }
 
 QGLIB_REGISTER_TYPE(QGst::Caps)
+QGLIB_REGISTER_VALUEIMPL(QGst::CapsPtr)
 
 QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps);
 

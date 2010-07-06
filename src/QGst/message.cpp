@@ -48,6 +48,12 @@ void Message::setSequenceNumber(quint32 num)
 
 } //namespace QGst
 
+QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
+    QGst::MessagePtr,
+    QGst::MessagePtr::wrap(GST_MESSAGE(gst_value_get_mini_object(value))),
+    gst_value_set_mini_object(value, GST_MINI_OBJECT(static_cast<GstMessage*>(data)))
+)
+
 QDebug operator<<(QDebug debug, QGst::MessageType type)
 {
     debug.nospace() << gst_message_type_get_name(static_cast<GstMessageType>(type));

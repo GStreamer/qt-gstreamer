@@ -19,6 +19,7 @@
 #include "../QGlib/string_p.h"
 #include <QtCore/QDebug>
 #include <gst/gstcaps.h>
+#include <gst/gstvalue.h>
 
 namespace QGst {
 
@@ -198,6 +199,12 @@ void Caps::makeWritable()
 }
 
 } //namespace QGst
+
+QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
+    QGst::CapsPtr,
+    QGst::CapsPtr::wrap(gst_caps_copy(gst_value_get_caps(value)), false),
+    gst_value_set_caps(value, data)
+)
 
 QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps)
 {
