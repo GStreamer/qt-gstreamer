@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pipeline.h"
+#include "bus.h"
 #include <gst/gstpipeline.h>
 
 namespace QGst {
@@ -25,6 +26,11 @@ PipelinePtr Pipeline::create(const char *name)
     GstElement *p = gst_pipeline_new(name);
     gst_object_ref_sink(p);
     return PipelinePtr::wrap(GST_PIPELINE(p), false);
+}
+
+BusPtr Pipeline::bus() const
+{
+    return BusPtr::wrap(gst_pipeline_get_bus(object<GstPipeline>()), false);
 }
 
 }

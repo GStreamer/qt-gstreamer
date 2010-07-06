@@ -26,6 +26,8 @@ class Pipeline : public Bin
     QGST_WRAPPER(Pipeline)
 public:
     static PipelinePtr create(const char *name = NULL);
+
+    BusPtr bus() const;
 };
 
 }
