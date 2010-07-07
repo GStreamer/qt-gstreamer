@@ -8,6 +8,7 @@ set(QtGstreamer_SRCS
     QGlib/value.cpp
     QGlib/closure.cpp
     QGlib/signal.cpp
+    QGlib/error.cpp
 
     QGst/global.cpp
     QGst/structs.cpp
@@ -40,6 +41,7 @@ set(INSTALLED_HEADERS
     QGlib/closureimpl_p.h
     QGlib/signal.h      QGlib/Signal
     QGlib/signalimpl_p.h
+    QGlib/error.h       QGlib/Error
 
     QGst/global.h       QGst/Global
     QGst/enums.h

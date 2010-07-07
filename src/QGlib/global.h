@@ -24,6 +24,7 @@ typedef struct _GValue GValue;
 typedef struct _GParamSpec GParamSpec;
 typedef struct _GClosure GClosure;
 typedef struct _GObject GObject;
+typedef struct _GError GError;
 
 namespace QGlib {
 
