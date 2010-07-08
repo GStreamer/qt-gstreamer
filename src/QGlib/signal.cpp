@@ -201,7 +201,7 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
         g_signal_emitv(values, signal.id(), detail, &returnValue);
 
         if (G_IS_VALUE(&returnValue)) {
-            result = returnValue;
+            result = SharedValue(&returnValue);
             g_value_unset(&returnValue);
         }
     } catch (const QString & msg) {

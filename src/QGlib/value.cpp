@@ -73,11 +73,11 @@ Value::Value()
 {
 }
 
-Value::Value(const GValue & gvalue)
+Value::Value(const GValue *gvalue)
     : ValueBase(NULL)
 {
-    init(G_VALUE_TYPE(&gvalue));
-    g_value_copy(&gvalue, m_value);
+    init(G_VALUE_TYPE(gvalue));
+    g_value_copy(gvalue, m_value);
 }
 
 Value::Value(const SharedValue & other)

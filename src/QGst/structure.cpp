@@ -52,7 +52,7 @@ void StructureBase::setName(const char *name)
 QGlib::Value StructureBase::value(const char *fieldName) const
 {
     Q_ASSERT(isValid());
-    return QGlib::Value(*gst_structure_get_value(m_structure, fieldName));
+    return QGlib::Value(gst_structure_get_value(m_structure, fieldName));
 }
 
 void StructureBase::setValue(const char *fieldName, const QGlib::Value & value)
@@ -67,7 +67,7 @@ unsigned int StructureBase::numberOfFields() const
     return gst_structure_n_fields(m_structure);
 }
 
-QString StructureBase::fieldName(unsigned int fieldNumber)
+QString StructureBase::fieldName(unsigned int fieldNumber) const
 {
     Q_ASSERT(isValid());
     return QString::fromUtf8(gst_structure_nth_field_name(m_structure, fieldNumber));
@@ -118,13 +118,18 @@ Structure::Structure(const char *name)
 {
 }
 
+Structure::Structure(const GstStructure* structure)
+    : StructureBase(gst_structure_copy(structure))
+{
+}
+
 Structure::Structure(const SharedStructure & other)
-    : StructureBase(other.isValid() ? gst_structure_copy(other) : NULL)
+    : StructureBase(gst_structure_copy(other))
 {
 }
 
 Structure::Structure(const Structure & other)
-    : StructureBase(other.isValid() ? gst_structure_copy(other) : NULL)
+    : StructureBase(gst_structure_copy(other))
 {
 }
 
@@ -140,7 +145,7 @@ Structure & Structure::operator=(const SharedStructure & other)
     if (m_structure) {
         gst_structure_free(m_structure);
     }
-    m_structure = other.isValid() ? gst_structure_copy(other) : NULL;
+    m_structure = gst_structure_copy(other);
     return *this;
 }
 
@@ -149,15 +154,21 @@ Structure & Structure::operator=(const Structure & other)
     if (m_structure) {
         gst_structure_free(m_structure);
     }
-    m_structure = other.isValid() ? gst_structure_copy(other) : NULL;
+    m_structure = gst_structure_copy(other);
     return *this;
 }
 
 Structure Structure::fromString(const char *str)
 {
-    Structure s(SharedStructure(NULL));
+    //we don't use the Structure(const GstStructure*) constructor to avoid copying
+    Structure s;
     s.m_structure = gst_structure_from_string(str, NULL);
     return s;
+}
+
+Structure::Structure()
+    : StructureBase(NULL)
+{
 }
 
 //END Structure

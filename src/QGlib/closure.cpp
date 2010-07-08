@@ -43,7 +43,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
 
     QList<Value> params;
     for(uint i=0; i<paramValuesCount; ++i) {
-        params.append(Value(paramValues[i]));
+        params.append(Value(&paramValues[i]));
     }
 
     try {
@@ -66,7 +66,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
         }
 
         QString instanceName;
-        Value instanceValue(paramValues[0]);
+        const Value & instanceValue = params.at(0);
         if (instanceValue.type().isInstantiatable() && instanceValue.canTransformTo(Type::String)) {
             //instances can be transformed to strings for debugging purposes
             instanceName = instanceValue.transformTo(Type::String).get<QString>();

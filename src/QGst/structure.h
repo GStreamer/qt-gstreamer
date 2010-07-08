@@ -36,7 +36,7 @@ public:
     void setValue(const char *fieldName, const QGlib::Value & value);
 
     unsigned int numberOfFields() const;
-    QString fieldName(unsigned int fieldNumber);
+    QString fieldName(unsigned int fieldNumber) const;
     QGlib::Type fieldType(const char *fieldName) const;
     bool hasField(const char *fieldName) const;
     bool hasFieldTyped(const char *fieldName, QGlib::Type type) const; //FIXME better name?
@@ -64,7 +64,8 @@ class SharedStructure;
 class Structure : public StructureBase
 {
 public:
-    Structure(const char *name);
+    explicit Structure(const char *name);
+    explicit Structure(const GstStructure *structure);
     Structure(const SharedStructure & other);
     Structure(const Structure & other);
     virtual ~Structure();
@@ -73,6 +74,9 @@ public:
     Structure & operator=(const Structure & other);
 
     static Structure fromString(const char *str);
+
+private:
+    Structure(); //used in fromString()
 };
 
 class SharedStructure : public StructureBase

@@ -80,7 +80,7 @@ class Value : public ValueBase
 {
 public:
     Value();
-    Value(const GValue & gvalue);
+    explicit Value(const GValue *gvalue);
     template <typename T>
     inline Value(const T & data);
     Value(const SharedValue & other);
@@ -107,7 +107,7 @@ public:
 class SharedValue : public ValueBase
 {
 public:
-    SharedValue(GValue *gvalue);
+    explicit SharedValue(GValue *gvalue);
     SharedValue(const SharedValue & other);
     virtual ~SharedValue();
     SharedValue & operator=(const SharedValue & other);

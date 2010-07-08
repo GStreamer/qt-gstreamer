@@ -43,8 +43,8 @@ QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
 
 QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
     QGst::FractionRange,
-    QGst::FractionRange(QGlib::Value(*gst_value_get_fraction_range_min(value)).get<QGst::Fraction>(),
-                        QGlib::Value(*gst_value_get_fraction_range_max(value)).get<QGst::Fraction>()),
+    QGst::FractionRange(QGlib::Value(gst_value_get_fraction_range_min(value)).get<QGst::Fraction>(),
+                        QGlib::Value(gst_value_get_fraction_range_max(value)).get<QGst::Fraction>()),
     gst_value_set_fraction_range_full(value, data.start.numerator, data.start.denominator,
                                              data.end.numerator, data.end.denominator)
 )
