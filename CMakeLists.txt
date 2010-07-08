@@ -1,5 +1,6 @@
 project(QtGstreamer)
 cmake_minimum_required(VERSION 2.6)
+enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 set(QT_DONT_USE_QTGUI 1)
@@ -20,8 +21,13 @@ include_directories(${GSTREAMER_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR}
                     ${LIBXML2_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wnon-virtual-dtor -Wno-long-long -Wundef -Wcast-align -Wchar-subscripts -Wall -W -Wpointer-arith -Wformat-security -fno-check-new -fno-common")
-endif (CMAKE_COMPILER_IS_GNUCXX)
+    include(TestCXXAcceptsFlag)
+    check_cxx_accepts_flag("-std=c++0x" HAVE_CXX0X_SUPPORT)
+    if (HAVE_CXX0X_SUPPORT)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    endif()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat-security -Wundef -Wpointer-arith -Wcast-align -fno-common")
+endif ()
 
 add_subdirectory(codegen)
 add_subdirectory(src)
