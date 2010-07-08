@@ -93,6 +93,11 @@ SharedStructure Caps::structure(uint index)
     return SharedStructure(gst_caps_get_structure(object<GstCaps>(), index));
 }
 
+const SharedStructure Caps::structure(uint index) const
+{
+    return SharedStructure(gst_caps_get_structure(object<GstCaps>(), index));
+}
+
 void Caps::appendStructure(const StructureBase & structure)
 {
     gst_caps_append_structure(object<GstCaps>(), gst_structure_copy(structure));

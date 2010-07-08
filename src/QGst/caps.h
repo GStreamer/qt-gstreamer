@@ -45,6 +45,8 @@ public:
     void truncate();
 
     SharedStructure structure(uint index);
+    const SharedStructure structure(uint index) const;
+
     void appendStructure(const StructureBase & structure);
     void mergeStructure(const StructureBase & structure);
     void removeStructure(uint index);
