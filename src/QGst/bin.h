@@ -19,6 +19,7 @@
 
 #include "element.h"
 #include "childproxy.h"
+#include "parse.h"
 
 namespace QGst {
 
@@ -27,6 +28,7 @@ class Bin : public Element, public ChildProxy
     QGST_WRAPPER(Bin)
 public:
     static BinPtr create(const char *name = NULL);
+    static BinPtr fromDescription(const char *description, bool ghostUnlinkedPads = true);
 
     bool add(const ElementPtr & element);
     bool remove(const ElementPtr & element);

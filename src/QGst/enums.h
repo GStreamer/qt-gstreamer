@@ -187,4 +187,19 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::MessageType)
 
+
+namespace QGst {
+    enum ParseError {
+        ParseErrorSyntax,
+        ParseErrorNoSuchElement,
+        ParseErrorNoSuchProperty,
+        ParseErrorLink,
+        ParseErrorCouldNotSetProperty,
+        ParseErrorEmptyBin,
+        ParseErrorEmpty
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::ParseError)
+
+
 #endif

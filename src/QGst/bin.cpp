@@ -16,6 +16,7 @@
 */
 #include "bin.h"
 #include "pad.h"
+#include "../QGlib/error.h"
 #include <gst/gstbin.h>
 #include <gst/gstutils.h>
 
@@ -27,6 +28,19 @@ BinPtr Bin::create(const char *name)
     GstElement *bin = gst_bin_new(name);
     gst_object_ref_sink(bin);
     return BinPtr::wrap(GST_BIN(bin), false);
+}
+
+//static
+BinPtr Bin::fromDescription(const char *description, bool ghostUnlinkedPads)
+{
+    GError *error = NULL;
+    GstElement *e = gst_parse_bin_from_description_full(description, ghostUnlinkedPads,
+                                                        NULL, GST_PARSE_FLAG_FATAL_ERRORS, &error);
+    if (error) {
+        throw QGlib::Error(error);
+    }
+    gst_object_ref_sink(e);
+    return BinPtr::wrap(GST_BIN(e), false);
 }
 
 bool Bin::add(const ElementPtr & element)

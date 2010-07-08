@@ -26,6 +26,7 @@ set(QtGstreamer_SRCS
     QGst/pipeline.cpp
     QGst/message.cpp
     QGst/bus.cpp
+    QGst/parse.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -64,6 +65,7 @@ set(INSTALLED_HEADERS
     QGst/pipeline.h     QGst/Pipeline
     QGst/message.h      QGst/Message
     QGst/bus.h          QGst/Bus
+    QGst/parse.h        QGst/Parse
 )
 
 set(CODEGEN_HEADERS
