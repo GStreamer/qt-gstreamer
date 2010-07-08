@@ -27,6 +27,7 @@ set(QtGstreamer_SRCS
     QGst/message.cpp
     QGst/bus.cpp
     QGst/parse.cpp
+    QGst/urihandler.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -66,6 +67,7 @@ set(INSTALLED_HEADERS
     QGst/message.h      QGst/Message
     QGst/bus.h          QGst/Bus
     QGst/parse.h        QGst/Parse
+    QGst/urihandler.h   QGst/UriHandler
 )
 
 set(CODEGEN_HEADERS
@@ -91,6 +93,7 @@ set(CODEGEN_HEADERS
     QGst/pipeline.h
     QGst/message.h
     QGst/bus.h
+    QGst/urihandler.h
 )
 
 add_definitions(-DQT_NO_KEYWORDS)

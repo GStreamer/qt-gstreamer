@@ -23,6 +23,7 @@ namespace QGst {
 
 class ChildProxy : public virtual Object
 {
+    QGST_WRAPPER(ChildProxy)
 public:
     uint childrenCount() const;
     ObjectPtr childByName(const char *name) const;

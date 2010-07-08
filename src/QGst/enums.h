@@ -202,4 +202,14 @@ namespace QGst {
 QGLIB_REGISTER_TYPE(QGst::ParseError)
 
 
+namespace QGst {
+    enum UriType {
+        UriUnknown,
+        UriSink,
+        UriSrc
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::UriType)
+
+
 #endif

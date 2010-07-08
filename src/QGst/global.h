@@ -20,16 +20,23 @@
 #include "enums.h"
 #include <QtCore/QtGlobal>
 
-#define QGST_WRAPPER_DECLARATION(Class) \
-    typedef struct _Gst##Class Gst##Class; \
+#define QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
+    typedef struct _Gst##Class Gst##Class;
+
+#define QGST_WRAPPER_REFPOINTER_DECLARATION(Class) \
     namespace QGst { \
         class Class; \
         typedef QGlib::RefPointer<Class> Class##Ptr; \
     }
 
+#define QGST_WRAPPER_DECLARATION(Class) \
+    QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
+    QGST_WRAPPER_REFPOINTER_DECLARATION(Class)
+
 QGST_WRAPPER_DECLARATION(Bin)
 QGST_WRAPPER_DECLARATION(Bus)
 QGST_WRAPPER_DECLARATION(Caps)
+QGST_WRAPPER_DECLARATION(ChildProxy)
 QGST_WRAPPER_DECLARATION(Element)
 QGST_WRAPPER_DECLARATION(ElementFactory)
 QGST_WRAPPER_DECLARATION(GhostPad)
@@ -39,26 +46,33 @@ QGST_WRAPPER_DECLARATION(Object)
 QGST_WRAPPER_DECLARATION(Pad)
 QGST_WRAPPER_DECLARATION(Pipeline)
 QGST_WRAPPER_DECLARATION(PluginFeature)
-typedef struct _GstStructure GstStructure;
+QGST_WRAPPER_GSTCLASS_DECLARATION(Structure)
 namespace QGst {
     class StructureBase;
     class Structure;
     class SharedStructure;
 }
+QGST_WRAPPER_GSTCLASS_DECLARATION(URIHandler)
+QGST_WRAPPER_REFPOINTER_DECLARATION(UriHandler)
 typedef struct _xmlNode* xmlNodePtr;
 
 #undef QGST_WRAPPER_DECLARATION
+#undef QGST_WRAPPER_REFPOINTER_DECLARATION
+#undef QGST_WRAPPER_GSTCLASS_DECLARATION
 
 
-#define QGST_WRAPPER(Class) \
+#define QGST_WRAPPER_DIFFERENT_C_CLASS(Class, CClass) \
     public: \
-        typedef Gst##Class CType; \
+        typedef Gst##CClass CType; \
     protected: \
         Class() {} \
         Class(const Class &); \
         Class & operator=(const Class &); \
         ~Class() {} \
         template <class T> friend class QGlib::RefPointer;
+
+#define QGST_WRAPPER(Class) \
+        QGST_WRAPPER_DIFFERENT_C_CLASS(Class, Class)
 
 namespace QGst {
     typedef quint64 ClockTime;
