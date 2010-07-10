@@ -17,6 +17,8 @@
 #include "qgsttest.h"
 #include <QGst/Object>
 #include <QGst/Bin>
+#include <QGst/Message>
+#include <QGst/Pipeline>
 
 class RefPointerTest : public QGstTest
 {
@@ -110,6 +112,15 @@ void RefPointerTest::compilationTest()
 #if 0
         obj->setName("foo"); //should fail to compile
 #endif
+    }
+
+    //test staticCast
+    {
+#if 0
+        QGst::MessagePtr message = bin.staticCast<QGst::Message>(); //should fail to compile
+#endif
+        QGst::ElementPtr element = bin.staticCast<QGst::Element>();
+        QGst::PipelinePtr pipeline = bin.staticCast<QGst::Pipeline>();
     }
 }
 

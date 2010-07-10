@@ -223,7 +223,7 @@ template <class X>
 RefPointer<X> RefPointer<T>::staticCast() const
 {
     return isNull() ? RefPointer<X>()
-                    : RefPointer<X>::wrap(static_cast<typename X::CType*>(m_class->m_object));
+        : RefPointer<X>::wrap(static_cast<typename X::CType*>(static_cast<X*>(m_class)->m_object));
 }
 
 template <class T>
