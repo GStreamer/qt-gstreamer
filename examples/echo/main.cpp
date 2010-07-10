@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     int result = app.exec();
 
     pipeline->setState(QGst::StateNull);
-    QGst::deinit();
+    QGst::cleanup();
 
     return result;
 }

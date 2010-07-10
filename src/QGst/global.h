@@ -82,7 +82,7 @@ namespace QGst {
 namespace QGst {
     void init();
     void init(int *argc, char **argv[]);
-    void deinit();
+    void cleanup();
 }
 
 #endif

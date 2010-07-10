@@ -171,8 +171,8 @@ int main(int argc, char **argv)
     signal(SIGINT, sighandler);
     int result = app.exec();
 
-    delete p; // we must delete all gstreamer objects before calling QGst::deinit()
-    QGst::deinit();
+    delete p; // we must delete all gstreamer objects before calling QGst::cleanup()
+    QGst::cleanup();
 
     return result;
 }

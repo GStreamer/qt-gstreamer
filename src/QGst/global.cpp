@@ -29,7 +29,7 @@ void init(int *argc, char **argv[])
     gst_init(argc, argv); //TODO throw the GError
 }
 
-void deinit()
+void cleanup()
 {
     gst_deinit();
 }
