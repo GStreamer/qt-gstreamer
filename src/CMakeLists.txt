@@ -1,5 +1,3 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-
 set(QtGstreamer_SRCS
     QGlib/quark.cpp
     QGlib/type.cpp
@@ -96,23 +94,44 @@ set(CODEGEN_HEADERS
     QGst/urihandler.h
 )
 
-add_definitions(-DQT_NO_KEYWORDS)
+# Setup the environment
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GSTREAMER_INCLUDE_DIR}
+                    ${GLIB2_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR} ${QTGSTREAMER_INCLUDES})
+add_definitions(${QTGSTREAMER_DEFINITIONS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 
+
+# Add command to generate gen.cpp using codegen
 add_custom_command(OUTPUT gen.cpp
                    COMMAND codegen
                    ARGS ${CODEGEN_HEADERS} > ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
                    DEPENDS codegen ${CODEGEN_HEADERS}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
+
+# Build and link QtGstreamer
+if(STATIC_QTGSTREAMER)
+    automoc4_add_library(QtGstreamer STATIC ${QtGstreamer_SRCS})
+else()
+    automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
+endif()
+
 set_target_properties(QtGstreamer PROPERTIES SOVERSION 0 VERSION 0.0.2)
 target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES}
                                   ${GSTREAMER_INTERFACE_LIBRARY} ${GOBJECT_LIBRARIES})
 target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 
-install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+# Install the library
+install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGstreamerTargets)
 
+# Install the cmake scripts that are used to find the installed library from external projects
+install(EXPORT QtGstreamerTargets DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGstreamer)
+install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGstreamer.cmake
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGstreamer
+        RENAME QtGstreamerConfig.cmake)
+
+# Install the headers
 foreach(header ${INSTALLED_HEADERS})
     get_filename_component(header_path ${header} PATH)
     install(FILES ${header} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGstreamer/${header_path})

@@ -1,5 +1,9 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/)
-add_definitions(-DQT_NO_KEYWORDS)
+# This file serves as an example of how to use cmake with QtGstreamer.
+# It can be used for building this example either in the QtGstreamer source tree or standalone.
+
+find_package(QtGstreamer REQUIRED)
+include_directories(${QTGSTREAMER_INCLUDES})
+add_definitions(${QTGSTREAMER_DEFINITIONS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 add_executable(player main.cpp)
-target_link_libraries(player ${QT_QTCORE_LIBRARY} QtGstreamer)
+target_link_libraries(player ${QTGSTREAMER_LIBRARIES})

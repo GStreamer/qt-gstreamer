@@ -1,12 +1,12 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
-
-add_definitions(-DQT_NO_KEYWORDS)
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GSTREAMER_INCLUDE_DIR}
+                    ${GLIB2_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR} ${QTGSTREAMER_INCLUDES})
+add_definitions(${QTGSTREAMER_DEFINITIONS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 
 macro(qgst_test target)
     automoc4_add_executable(${target} "${target}.cpp")
     target_link_libraries(${target} ${QT_QTTEST_LIBRARY} ${GSTREAMER_LIBRARIES}
-                                    ${GOBJECT_LIBRARIES} QtGstreamer)
+                                    ${GOBJECT_LIBRARIES} ${QTGSTREAMER_LIBRARIES})
     add_test(NAME ${target} COMMAND ${target})
 endmacro(qgst_test)
 
