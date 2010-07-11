@@ -78,33 +78,81 @@ $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix
 $ make
 $ make install
 
+The above commands will build and install QtGstreamer as a shared library.
+If you prefer to build QtGstreamer as a static library, pass the
+-DSTATIC_QTGSTREAMER=1 option to cmake, like that:
 
-3. Coding style
----------------
+$ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix -DSTATIC_QTGSTREAMER=1
+
+
+3. Using QtGstreamer
+--------------------
+
+3.1. Build system integration
+-----------------------------
+
+If you are using cmake as your build system, using QtGstreamer is quite easy.
+You can just do:
+
+    find_package(QtGstreamer)
+
+which will find QtGstreamer and define the following variables:
+
+    QTGSTREAMER_FOUND - system has QtGstreamer
+    QTGSTREAMER_INCLUDE_DIR - the QtGstreamer include directory
+    QTGSTREAMER_INCLUDES - the include directories needed to use QtGstreamer
+    QTGSTREAMER_LIBRARY - the QtGstreamer library
+    QTGSTREAMER_LIBRARIES - the libraries needed to use QtGstreamer
+    QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGstreamer
+    QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGstreamer
+
+Take a look at the CMakeLists.txt of the QtGstreamer examples to see how to use them.
+
+Alternatively, if you are using qmake, you can manually set the required variables,
+as demonstrated in the example qmake project files that you can find together with
+the QtGstreamer examples. Unfortunately qmake does not support dynamic detection
+of installed libraries, so those variables have to be set manually, or you will have
+to write some wrapper "configure" script that generates a qmake project file. This
+is quite painful, compared to cmake, thus cmake is recommended.
+
+3.2. Headers
+------------
+
+The correct way to include a certain QtGstreamer header for a class is to use
+the #include <namespace/class> syntax. For example: #include <QGst/Element>
+All the other lowercase headers (which all end with .h) are considered private
+and should not be used directly.
+
+
+4. Developing QtGstreamer
+-------------------------
+
+4.1. Coding style
+-----------------
 
 QtGstreamer follows the kdelibs coding style:
 http://techbase.kde.org/Policies/Kdelibs_Coding_Style
 
 
-4. Naming policies
-------------------
+4.2. Naming policies
+--------------------
 
-4.1 The namespaces
-------------------
+4.2.1. The namespaces
+---------------------
 
 The "G" namespace (GObject, GValue, etc...) is referred to as "QGlib".
 The "Gst" namespace (GstObject, GstElement, etc...) is referred to as "QGst".
 I didn't like them much when I chose them, better names could be discussed...
 
-4.2 The class names
--------------------
+4.2.2. The class names
+----------------------
 
 Class names should be the same as their G* equivalents, with the namespace
 prefix removed. For example, "GstObject" becomes "QGst::Object", "GParamSpec"
 becomes "QGlib::ParamSpec", etc...
 
-4.3 The method names
---------------------
+4.2.3. The method names
+-----------------------
 
 In general the method names should be the same as the gstreamer ones,
 with the g[st]_<class> prefix removed and converted to camel case.
@@ -132,8 +180,8 @@ as "state" is the subject and should go before the verb "is".
 So, it becomes stateIsLocked().
 
 
-5. Refcounted wrappers policy
------------------------------
+4.3. Refcounted wrappers policy
+-------------------------------
 
 All reference counted classes must:
 1) Inherit from QGlib::RefCountedObject and implement its virtual ref() and
@@ -161,8 +209,8 @@ higher than 1, so when one accesses a non-const method on an object that has mor
 than one references, it is automatically copied.
 
 
-6. About codegen
-----------------
+4.4. About codegen
+------------------
 
 Codegen is a simple code generator that does two basic jobs:
 
@@ -247,8 +295,8 @@ namespace QGst {
 ---- endsnip ----
 
 
-7. How to contribute
---------------------
+4.5. How to contribute
+----------------------
 
 Simply clone the repository on gitorious, develop the feature that you want there
 and when it's ready, send me a merge request.
@@ -256,4 +304,4 @@ and when it's ready, send me a merge request.
 
 --
 George Kiagiadakis <kiagiadakis.george@gmail.com>
-Last updated: 8 July 2010
+Last updated: 11 July 2010
