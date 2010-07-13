@@ -18,6 +18,7 @@
 #define QGST_MESSAGE_H
 
 #include "miniobject.h"
+#include "structure.h"
 
 namespace QGst {
 
@@ -25,19 +26,291 @@ class Message : public MiniObject
 {
     QGST_WRAPPER(Message)
 public:
+    static MessagePtr create(MessageType type, const ObjectPtr & source,
+                             const StructureBase & structure = SharedStructure(NULL));
+
     ObjectPtr source() const;
     quint64 timestamp() const;
-
     MessageType type() const;
+
+    SharedStructure structure();
+    const SharedStructure structure() const;
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);
 };
 
+class EosMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(EosMessage, Message)
+public:
+    static EosMessagePtr create(const ObjectPtr & source);
+};
+
+class ErrorMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(ErrorMessage, Message)
+public:
+    static ErrorMessagePtr create(const ObjectPtr & source,
+                                  const QGlib::Error & error, const char *debug);
+
+    QGlib::Error error() const;
+    QString debugMessage() const;
+};
+
+class WarningMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(WarningMessage, Message)
+public:
+    static WarningMessagePtr create(const ObjectPtr & source,
+                                    const QGlib::Error & error, const char *debug);
+
+    QGlib::Error error() const;
+    QString debugMessage() const;
+};
+
+class InfoMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(InfoMessage, Message)
+public:
+    static InfoMessagePtr create(const ObjectPtr & source,
+                                 const QGlib::Error & error, const char *debug);
+
+    QGlib::Error error() const;
+    QString debugMessage() const;
+};
+
+//TODO TagMessage
+
+class BufferingMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(BufferingMessage, Message)
+public:
+    static BufferingMessagePtr create(const ObjectPtr & source, int percent);
+
+    int percent() const;
+    BufferingMode mode() const;
+    int averageInputRate() const;
+    int averageOutputRate() const;
+    qint64 bufferingTimeLeft() const;
+
+    void setStats(BufferingMode mode, int avgIn, int avgOut, qint64 bufferingLeft);
+};
+
+class StateChangedMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(StateChangedMessage, Message)
+public:
+    static StateChangedMessagePtr create(const ObjectPtr & source,
+                                         State oldState, State newState, State pending);
+
+    State oldState() const;
+    State newState() const;
+    State pendingState() const;
+};
+
+//won't do: STATE_DIRTY (deprecated)
+
+class StepDoneMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(StepDoneMessage, Message)
+public:
+    static StepDoneMessagePtr create(const ObjectPtr & source, Format format, quint64 amount,
+                                     double rate, bool flush, bool intermediate, quint64 duration, bool eos);
+
+    Format format() const;
+    quint64 amount() const;
+    double rate() const;
+    bool isFlushingStep() const;
+    bool isIntermediateStep() const;
+    quint64 duration() const;
+    bool causedEos() const;
+};
+
+//TODO CLOCK_PROVIDE, CLOCK_LOST, NEW_CLOCK
+//maybe do: STRUCTURE_CHANGE (internal)
+
+class StreamStatusMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(StreamStatusMessage, Message)
+public:
+    static StreamStatusMessagePtr create(const ObjectPtr & source,
+                                         StreamStatusType type, const ElementPtr & owner);
+
+    StreamStatusType type() const;
+    ElementPtr owner() const;
+    QGlib::Value streamStatusObject() const;
+    void setStreamStatusObject(const QGlib::ValueBase & object);
+};
+
+class ApplicationMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(ApplicationMessage, Message)
+public:
+    static ApplicationMessagePtr create(const ObjectPtr & source,
+                                        const StructureBase & structure = SharedStructure(NULL));
+};
+
+class ElementMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(ElementMessage, Message)
+public:
+    static ElementMessagePtr create(const ObjectPtr & source,
+                                    const StructureBase & structure = SharedStructure(NULL));
+};
+
+//maybe do: SEGMENT_START (internal)
+
+class SegmentDoneMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(SegmentDoneMessage, Message)
+public:
+    static SegmentDoneMessagePtr create(const ObjectPtr & source, Format format, qint64 position);
+
+    Format format() const;
+    qint64 position() const;
+};
+
+class DurationMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(DurationMessage, Message)
+public:
+    static DurationMessagePtr create(const ObjectPtr & source, Format format, qint64 duration);
+
+    Format format() const;
+    qint64 duration() const;
+};
+
+class LatencyMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(LatencyMessage, Message)
+public:
+    static LatencyMessagePtr create(const ObjectPtr & source);
+};
+
+//maybe do: ASYNC_START (internal)
+
+class AsyncDoneMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(AsyncDoneMessage, Message)
+public:
+    static AsyncDoneMessagePtr create(const ObjectPtr & source);
+};
+
+class RequestStateMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(RequestStateMessage, Message)
+public:
+    static RequestStateMessagePtr create(const ObjectPtr & source, State state);
+
+    State state() const;
+};
+
+class StepStartMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(StepStartMessage, Message)
+public:
+    static StepStartMessagePtr create(const ObjectPtr & source, bool active, Format format,
+                                      quint64 amount, double rate, bool flush, bool intermediate);
+    bool isActive() const;
+    Format format() const;
+    quint64 amount() const;
+    double rate() const;
+    bool isFlushingStep() const;
+    bool isIntermediateStep() const;
+};
+
+class QosMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(QosMessage, Message)
+public:
+    static QosMessagePtr create(const ObjectPtr & source, bool live, quint64 runningTime,
+                                quint64 streamTime, quint64 timestamp, quint64 duration);
+
+    bool live() const;
+    quint64 runningTime() const;
+    quint64 streamTime() const;
+    quint64 timestamp() const;
+    quint64 duration() const;
+
+    qint64 jitter() const;
+    double proportion() const;
+    int quality() const;
+    void setValues(qint64 jitter, double proportion, int quality);
+
+    Format format() const;
+    quint64 processed() const;
+    quint64 dropped() const;
+    void setStats(Format format, quint64 processed, quint64 dropped);
+};
+
 } //namespace QGst
+
+
+#define QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS(CLASS, MSGTYPE) \
+    namespace QGlib { \
+    namespace Private { \
+        template <> \
+        struct CanConvertTo<CLASS> \
+        { \
+            static inline bool from(void *instance) \
+            { \
+                return (Type::fromInstance(instance).isA(GetType<QGst::Message>()) && \
+                        QGst::MessagePtr::wrap(static_cast<GstMessage*>(instance))->type() == MSGTYPE); \
+            } \
+            /* NO 'static inline bool from(Type t)' to disallow usage from Value::get */ \
+            /* ValueBase::get is not supposed to provide dynamic_cast capabilities */ \
+        }; \
+        \
+        template <> \
+        struct CanConvertFrom<CLASS##Ptr> \
+        { \
+            static inline bool to(Type t) \
+            { \
+                return GetType<QGst::Message>().isA(t); \
+            } \
+        }; \
+    } /* namespace Private */ \
+    } /* namespace QGlib */
+
+#define QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL(CLASSPTR, MSGTYPE) \
+    namespace QGlib { \
+        template<> \
+        struct ValueImpl<CLASSPTR> \
+        { \
+            static void set(ValueBase & value, const CLASSPTR & data) { \
+                ValueImpl<QGst::MessagePtr>::set(value, data); \
+            } \
+        }; \
+    } /* namespace QGlib */
+
+#define QGST_REGISTER_MESSAGE_SUBCLASS(TYPE) \
+    QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS(QGst::TYPE##Message, QGst::Message##TYPE) \
+    QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL(QGst::TYPE##MessagePtr, QGst::Message##TYPE)
 
 QGLIB_REGISTER_TYPE(QGst::Message)
 QGLIB_REGISTER_VALUEIMPL(QGst::MessagePtr)
+QGST_REGISTER_MESSAGE_SUBCLASS(Eos)
+QGST_REGISTER_MESSAGE_SUBCLASS(Error)
+QGST_REGISTER_MESSAGE_SUBCLASS(Warning)
+QGST_REGISTER_MESSAGE_SUBCLASS(Info)
+QGST_REGISTER_MESSAGE_SUBCLASS(Buffering)
+QGST_REGISTER_MESSAGE_SUBCLASS(StateChanged)
+QGST_REGISTER_MESSAGE_SUBCLASS(StepDone)
+QGST_REGISTER_MESSAGE_SUBCLASS(StreamStatus)
+QGST_REGISTER_MESSAGE_SUBCLASS(Application)
+QGST_REGISTER_MESSAGE_SUBCLASS(Element)
+QGST_REGISTER_MESSAGE_SUBCLASS(SegmentDone)
+QGST_REGISTER_MESSAGE_SUBCLASS(Duration)
+QGST_REGISTER_MESSAGE_SUBCLASS(Latency)
+QGST_REGISTER_MESSAGE_SUBCLASS(AsyncDone)
+QGST_REGISTER_MESSAGE_SUBCLASS(RequestState)
+QGST_REGISTER_MESSAGE_SUBCLASS(StepStart)
+QGST_REGISTER_MESSAGE_SUBCLASS(Qos)
+
+#undef QGST_REGISTER_MESSAGE_SUBCLASS
+#undef QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL
+#undef QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS
 
 QDebug operator<<(QDebug debug, QGst::MessageType type);
 QDebug operator<<(QDebug debug, const QGst::MessagePtr & message);

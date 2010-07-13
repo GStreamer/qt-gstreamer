@@ -27,6 +27,7 @@ private Q_SLOTS:
     void refTest1();
     void refTest2();
     void dynamicCastTest();
+    void messageDynamicCastTest();
     void compilationTest();
 };
 
@@ -70,6 +71,15 @@ void RefPointerTest::dynamicCastTest()
     }
 
     gst_object_unref(bin);
+}
+
+void RefPointerTest::messageDynamicCastTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create();
+    QGst::MessagePtr msg = QGst::ApplicationMessage::create(bin);
+    QVERIFY(!msg.isNull());
+    QVERIFY(!msg.dynamicCast<QGst::ApplicationMessage>().isNull());
+    QVERIFY(msg.dynamicCast<QGst::EosMessage>().isNull());
 }
 
 static void testMethod(const QGlib::ObjectPtr & obj)

@@ -169,7 +169,7 @@ T ValueBase::get() const
     if (!isValid()) {
         throw InvalidValueException();
     }
-    if (!(GetType<T>() == type() || type().isA(GetType<T>()))) {
+    if (!QGlib::Private::CanConvertTo<T>::from(type())) {
         throw InvalidTypeException();
     }
 
@@ -182,7 +182,7 @@ void ValueBase::set(const T & data)
     if (!isValid()) {
         throw InvalidValueException();
     }
-    if (!(GetType<T>() == type() || type().isA(GetType<T>()))) {
+    if (!QGlib::Private::CanConvertFrom<T>::to(type())) {
         throw InvalidTypeException();
     }
 

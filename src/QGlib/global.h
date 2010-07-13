@@ -28,6 +28,7 @@ typedef struct _GError GError;
 
 namespace QGlib {
 
+class Error;
 class ValueBase;
 class Value;
 class SharedValue;

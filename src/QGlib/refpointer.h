@@ -230,7 +230,7 @@ template <class T>
 template <class X>
 RefPointer<X> RefPointer<T>::dynamicCast() const
 {
-    if (!isNull() && Type::fromInstance(m_class->m_object).isA(GetType<X>())) {
+    if (!isNull() && QGlib::Private::CanConvertTo<X>::from(m_class->m_object)) {
         return RefPointer<X>::wrap(static_cast<typename X::CType*>(m_class->m_object));
     } else {
         return RefPointer<X>();

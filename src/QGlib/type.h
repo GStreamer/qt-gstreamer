@@ -155,6 +155,47 @@ Type Type::fromInstance(const RefPointer<T> & instance)
     return fromInstance(static_cast<void*>(static_cast<typename T::CType*>(instance)));
 }
 
+// -- private helpers --
+
+namespace Private {
+
+/* These are used in RefPointer::dynamicCast and ValueBase::set / ValueBase::get
+ * to retrieve if it is possible to convert from a given Type to the type T
+ * or vice versa. It is provided as a template to be able to be specialized
+ * for strange cases like the GstMessage subclasses, where the subclasses
+ * have the same GType as their superclass.
+ * The names "from" and "to" are just to be able to type this in a nice syntax:
+ * CanConvertTo<T>::from(mytype) or CanConvertFrom<T>::to(mytype)
+ */
+
+template <typename T>
+struct CanConvertTo
+{
+    /* This is used from RefPointer::dynamicCast only.
+     * It takes an instance so that specializations can actually query the instance itself. */
+    static inline bool from(void *instance)
+    {
+        return from(Type::fromInstance(instance));
+    }
+
+    /* This is used from ValueBase::get only. */
+    static inline bool from(Type t)
+    {
+        return t.isA(GetType<T>());
+    }
+};
+
+template <typename T>
+struct CanConvertFrom
+{
+    /* This is used from ValueBase::set only. */
+    static inline bool to(Type t)
+    {
+        return GetType<T>().isA(t);
+    }
+};
+
+} //namespace Private
 } //namespace QGlib
 
 // -- type registrations --

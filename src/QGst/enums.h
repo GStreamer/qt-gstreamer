@@ -182,6 +182,7 @@ namespace QGst {
         MessageAsyncDone       = (1 << 21),
         MessageRequestState    = (1 << 22),
         MessageStepStart       = (1 << 23),
+        MessageQos             = (1 << 24),
         MessageAny             = ~0
     };
 }
@@ -211,5 +212,39 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::UriType)
 
+namespace QGst {
+    enum BufferingMode {
+        BufferingStream,
+        BufferingDownload,
+        BufferingTimeshift,
+        BufferingLive
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::BufferingMode)
+
+namespace QGst {
+    enum Format {
+        FormatUndefined,
+        FormatDefault,
+        FormatBytes,
+        FormatTime,
+        FormatBuffers,
+        FormatPercent
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::Format)
+
+namespace QGst {
+    enum StreamStatusType {
+        StreamStatusTypeCreate = 0,
+        StreamStatusTypeEnter = 1,
+        StreamStatusTypeLeave = 2,
+        StreamStatusTypeDestroy = 3,
+        StreamStatusTypeStart = 8,
+        StreamStatusTypePause = 9,
+        StreamStatusTypeStop = 10
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::StreamStatusType)
 
 #endif
