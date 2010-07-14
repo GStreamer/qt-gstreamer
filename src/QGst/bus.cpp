@@ -18,8 +18,92 @@
 #include "message.h"
 #include "../QGlib/signal.h"
 #include <gst/gst.h>
+#include <QtCore/QObject>
+#include <QtCore/QTimerEvent>
+#include <QtCore/QHash>
+#include <QtCore/QBasicTimer>
 
 namespace QGst {
+namespace Private {
+
+class BusWatch : public QObject
+{
+public:
+    BusWatch(GstBus *bus)
+        : QObject(), m_bus(bus)
+    {
+        m_timer.start(0, this);
+    }
+
+    void stop()
+    {
+        m_timer.stop();
+    }
+
+private:
+    virtual void timerEvent(QTimerEvent *event)
+    {
+        if (event->timerId() == m_timer.timerId()) {
+            dispatch();
+        } else {
+            QObject::timerEvent(event);
+        }
+    }
+
+    void dispatch()
+    {
+        GstMessage *message;
+        gst_object_ref(m_bus);
+        while((message = gst_bus_pop(m_bus)) != NULL) {
+            QGlib::Signal::emit<void>(m_bus, "message", MessagePtr::wrap(message, false));
+        }
+        gst_object_unref(m_bus);
+    }
+
+    GstBus *m_bus;
+    QBasicTimer m_timer;
+};
+
+class BusWatchManager
+{
+public:
+    void addWatch(GstBus *bus)
+    {
+        if (m_watches.contains(bus)) {
+            m_watches[bus].second++; //reference count
+        } else {
+            m_watches.insert(bus, qMakePair(new BusWatch(bus), uint(1)));
+            g_object_weak_ref(G_OBJECT(bus), &BusWatchManager::onBusDestroyed, this);
+        }
+    }
+
+    void removeWatch(GstBus *bus)
+    {
+        if (m_watches.contains(bus) && --m_watches[bus].second == 0) {
+            m_watches[bus].first->stop();
+            m_watches[bus].first->deleteLater();
+            m_watches.remove(bus);
+        }
+    }
+
+private:
+    static void onBusDestroyed(gpointer selfPtr, GObject *busPtr)
+    {
+        BusWatchManager *self = static_cast<BusWatchManager*>(selfPtr);
+        GstBus *bus = reinterpret_cast<GstBus*>(busPtr);
+
+        //set refcount to 1 to make sure the following call will remove the watch
+        self->m_watches[bus].second = 1;
+        self->removeWatch(bus);
+    }
+
+    QHash< GstBus*, QPair<BusWatch*, uint> > m_watches;
+};
+
+Q_GLOBAL_STATIC(Private::BusWatchManager, s_watchManager)
+
+} //namespace Private
+
 
 //static
 BusPtr Bus::create()
@@ -52,12 +136,22 @@ MessagePtr Bus::pop(MessageType type, ClockTime timeout)
 
 bool Bus::post(const QGst::MessagePtr & message)
 {
-    return gst_bus_post(object<GstBus>(), message->copy().staticCast<Message>());
+    return gst_bus_post(object<GstBus>(), gst_message_copy(message));
 }
 
 void Bus::setFlushing(bool flush)
 {
     gst_bus_set_flushing(object<GstBus>(), flush);
+}
+
+void Bus::addSignalWatch()
+{
+    Private::s_watchManager()->addWatch(object<GstBus>());
+}
+
+void Bus::removeSignalWatch()
+{
+    Private::s_watchManager()->removeWatch(object<GstBus>());
 }
 
 void Bus::enableSyncMessageEmission()

@@ -36,6 +36,9 @@ public:
 
     void setFlushing(bool flush);
 
+    void addSignalWatch();
+    void removeSignalWatch();
+
     void enableSyncMessageEmission();
     void disableSyncMessageEmission();
 };
