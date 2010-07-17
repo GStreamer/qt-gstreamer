@@ -38,7 +38,7 @@ set(INSTALLED_HEADERS
     QGlib/paramspec.h   QGlib/ParamSpec
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value
-    QGlib/closure.h     QGlib/Closure
+    QGlib/closure.h
     QGlib/closureimpl_p.h
     QGlib/signal.h      QGlib/Signal
     QGlib/signalimpl_p.h
