@@ -26,6 +26,7 @@ set(QtGstreamer_SRCS
     QGst/bus.cpp
     QGst/parse.cpp
     QGst/urihandler.cpp
+    QGst/xoverlay.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -66,6 +67,7 @@ set(INSTALLED_HEADERS
     QGst/bus.h          QGst/Bus
     QGst/parse.h        QGst/Parse
     QGst/urihandler.h   QGst/UriHandler
+    QGst/xoverlay.h     QGst/XOverlay
 )
 
 set(CODEGEN_HEADERS
@@ -92,6 +94,12 @@ set(CODEGEN_HEADERS
     QGst/message.h
     QGst/bus.h
     QGst/urihandler.h
+    QGst/xoverlay.h
+)
+
+set(CODEGEN_INCLUDES
+    -Igst/gst.h
+    -Igst/interfaces/xoverlay.h
 )
 
 # Setup the environment
@@ -104,7 +112,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 # Add command to generate gen.cpp using codegen
 add_custom_command(OUTPUT gen.cpp
                    COMMAND codegen
-                   ARGS ${CODEGEN_HEADERS} > ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
+                   ARGS ${CODEGEN_INCLUDES} ${CODEGEN_HEADERS} > ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
                    DEPENDS codegen ${CODEGEN_HEADERS}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
