@@ -22,6 +22,9 @@
 
 namespace QGst {
 
+/*! \headerfile QGst/object.h <QGst/Object>
+ * \brief Wrapper class for GstObject
+ */
 class Object : public virtual QGlib::Object
 {
     QGST_WRAPPER(Object)

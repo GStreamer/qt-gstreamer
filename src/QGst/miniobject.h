@@ -24,6 +24,9 @@
 
 namespace QGst {
 
+/*! \headerfile miniobject.h <QGst/MiniObject>
+ * \brief Wrapper class for GstMiniObject
+ */
 class MiniObject : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(MiniObject)

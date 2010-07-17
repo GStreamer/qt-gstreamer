@@ -24,10 +24,18 @@
 
 namespace QGlib {
 
-/*! This class serves as a base class for Value and SharedValue, providing all the common bits. */
+/*! \headerfile value.h <QGlib/Value>
+ * \brief Common base class for Value and SharedValue, wrappers for GValue
+ */
 class ValueBase
 {
 public:
+    /*! \headerfile value.h <QGlib/Value>
+     * Exception thrown from ValueBase::set and ValueBase::get when the ValueBase
+     * instance on which they are being called has not been initialized. You can
+     * check if a ValueBase instance has been initialized with ValueBase::isValid()
+     * and if is actually a Value instance, you can initialize it by calling Value::init().
+     */
     class InvalidValueException : public std::logic_error
     {
     public:
@@ -35,6 +43,11 @@ public:
             : std::logic_error("This ValueBase instance has not been initialized") {}
     };
 
+    /*! \headerfile value.h <QGlib/Value>
+     * Exception thrown from ValueBase::set and ValueBase::get when the ValueBase
+     * instance on which they are being called has been initialized to hold a different
+     * type than the one that is being accessed.
+     */
     class InvalidTypeException : public std::logic_error
     {
     public:
@@ -43,14 +56,50 @@ public:
                                  "type of data than the one that you are trying to access") {}
     };
 
+    /*! \returns whether this ValueBase instance wraps a valid GValue instance or not */
     bool isValid() const;
+
+    /*! Clears the current value in this GValue instance and resets it to the
+     * default value (as if the GValue had just been initialized). */
     void reset();
 
+    /*! Retrieves the value stored in this GValue instance, as the specified type T.
+     * The bindings take care of calling the appropriate g_value_get_* method depending
+     * on the type T. Note though that this is only meant to be used with the types of
+     * the bindings, not their C types. This means that if for example the GValue has
+     * been initialized to hold a GstObject pointer, you can use:
+     * \code
+     * QGst::ObjectPtr object = value.get<QGst::ObjectPtr>();
+     * \endcode
+     * but \em not this:
+     * \code
+     * GstObject *object = value.get<GstObject*>(); //will cause compilation error
+     * \endcode
+     * \throws InvalidValueException if this instance is invalid (see isValid())
+     * \throws InvalidTypeException if the type T does not match the type stored
+     * in this GValue instance.
+     */
     template <typename T> T get() const;
+
+    /*! Sets this GValue instance to hold the specified \a data.
+     * As with get(), the bindings take care of calling the appropriate g_value_set_*
+     * method depending on the type T, but note that this is only meant to be used
+     * with the types of the bindings.
+     * \throws InvalidValueException if this instance is invalid (see isValid())
+     * \throws InvalidTypeException if the type T does not match the type that this
+     * GValue instance has been initialized to hold.
+     * \sa get()
+     */
     template <typename T> void set(const T & data);
 
+    /*! \returns the type that this GValue instance has been initialized to hold */
     Type type() const;
+
+    /*! \returns whether it is possible to transform this GValue to a GValue of another type. */
     bool canTransformTo(Type type) const;
+
+    /*! Transforms the current value into a value of the specified \a type, if possible.
+     * Possible transformations are, for example, int to float, int to string, etc... */
     Value transformTo(Type type) const;
 
     inline operator GValue*() { return m_value; }
@@ -64,7 +113,10 @@ protected:
     GValue *m_value;
 };
 
-/*! This class serves as a wrapper for GValue. GValue is a data type that can hold different
+/*! \headerfile value.h <QGlib/Value>
+ * \brief Wrapper class for GValue
+ *
+ * This class serves as a wrapper for GValue. GValue is a data type that can hold different
  * types of values inside, like a QVariant.
  * To set a value, you must first initialize this Value using one of the init() methods
  * (preferably the template one) in order to tell it what kind of value it is going to hold.
@@ -96,7 +148,10 @@ public:
     inline void init();
 };
 
-/*! This class serves as a wrapper for shared GValue instances. Some functions in the GStreamer
+/*! \headerfile value.h <QGlib/Value>
+ * \brief Wrapper class for shared GValue instances
+ *
+ * This class serves as a wrapper for shared GValue instances. Some functions in the GStreamer
  * API return a pointer to some internal GValue and expect you to change this internal instance,
  * not copy it and re-set it using some setter function (like all normal object-oriented APIs do),
  * so it is necessary to have way of accessing those instances. This class wraps a GValue without
@@ -127,10 +182,13 @@ struct ValueImpl
     static inline void set(ValueBase & value, const T & data);
 };
 
+/*! \addtogroup macros Internal macros */
+//@{
+
 /*! This macro declares a specialization for ValueImpl for the type \a T.
  * It should be used in a header, in combination with QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION
  * in the respective source file, which will define the implementation of this specialization.
- * \sa ValueImpl, QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION
+ * \sa QGlib::ValueImpl, QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION
  */
 #define QGLIB_REGISTER_VALUEIMPL(T) \
     namespace QGlib { \
@@ -147,7 +205,7 @@ struct ValueImpl
  * a const ValueBase refererence called 'value'
  * \param SET_IMPL should be an expression that evaluates to void and sets the data from a
  * const T reference called 'data' to a ValueBase reference called 'value'
- * \sa QGLIB_REGISTER_VALUEIMPL, ValueImpl, ValueBase
+ * \sa QGLIB_REGISTER_VALUEIMPL, QGlib::ValueImpl, QGlib::ValueBase
  */
 #define QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(T, GET_IMPL, SET_IMPL) \
     namespace QGlib { \
@@ -160,6 +218,8 @@ struct ValueImpl
             (SET_IMPL);\
         } \
     }
+
+//@}
 
 // -- template implementations --
 
@@ -252,6 +312,7 @@ struct ValueImpl< QFlags<T> >
 
 } //namespace QGlib
 
+/*! \relates QGlib::ValueBase */
 QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value);
 
 QGLIB_REGISTER_TYPE(QGlib::ValueBase) //codegen: GType=G_TYPE_VALUE

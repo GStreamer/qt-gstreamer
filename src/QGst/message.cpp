@@ -193,7 +193,7 @@ void BufferingMessage::setStats(BufferingMode mode, int avgIn, int avgOut, qint6
 
 //********************************************************
 
-StateChangedMessagePtr StateChangedMessage::create(const QGst::ObjectPtr& source,
+StateChangedMessagePtr StateChangedMessage::create(const ObjectPtr & source,
                                                    State oldState, State newState, State pending)
 {
     GstMessage *m = gst_message_new_state_changed(source, static_cast<GstState>(oldState),

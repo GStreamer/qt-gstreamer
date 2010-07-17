@@ -84,6 +84,13 @@ If you prefer to build QtGstreamer as a static library, pass the
 
 $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix -DSTATIC_QTGSTREAMER=1
 
+2.4 Generating documentation
+----------------------------
+
+QtGstreamer uses doxygen for documentation. To generate the documentation you need
+to install doxygen and run "make doc" after you have run cmake. This will generate
+the documentation in <builddir>/doc/html/.
+
 
 3. Using QtGstreamer
 --------------------

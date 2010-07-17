@@ -18,6 +18,7 @@
 #include <glib-object.h>
 
 namespace QGlib {
+namespace Private {
 
 template <class T>
 QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
@@ -28,6 +29,9 @@ QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
     }
     return result;
 }
+
+} //namespace Private
+
 
 ParamSpecPtr Object::findProperty(const char *name) const
 {
@@ -47,7 +51,7 @@ QList<ParamSpecPtr> Object::listProperties() const
     uint n;
     GParamSpec **param = g_object_class_list_properties(klass, &n);
     g_type_class_unref(klass);
-    QList<ParamSpecPtr> result = arrayToList<ParamSpec>(param, n);
+    QList<ParamSpecPtr> result = QGlib::Private::arrayToList<ParamSpec>(param, n);
     g_free(param);
     return result;
 }

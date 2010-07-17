@@ -24,6 +24,9 @@
 
 namespace QGst {
 
+/*! \headerfile caps.h <QGst/Caps>
+ * \brief Wrapper class for GstCaps
+ */
 class Caps : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(Caps)
@@ -79,6 +82,7 @@ protected:
 QGLIB_REGISTER_TYPE(QGst::Caps)
 QGLIB_REGISTER_VALUEIMPL(QGst::CapsPtr)
 
+/*! \relates QGst::Caps */
 QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps);
 
 #endif

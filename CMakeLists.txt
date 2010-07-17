@@ -4,6 +4,8 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 set(BUILDING_QTGSTREAMER TRUE)
+set(QTGSTREAMER_VERSION 0.1)
+set(QTGSTREAMER_SOVERSION 0)
 
 find_package(Qt4 COMPONENTS QtCore QtTest REQUIRED)
 find_package(QtGstreamer REQUIRED)
@@ -29,3 +31,6 @@ add_subdirectory(examples)
 # Add uninstall target. Taken from the KDE4 scripts
 configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/cmake_uninstall.cmake.in" "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake" @ONLY)
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake")
+
+# Add doc target
+include(UseDoxygen)

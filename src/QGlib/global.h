@@ -59,7 +59,7 @@ typedef RefPointer<Object> ObjectPtr;
 
 #if !defined(BOOST_NO_STATIC_ASSERT) //we have c++0x static_assert
 # define QGLIB_STATIC_ASSERT(expr, message) static_assert(expr, message)
-# define QGLIB_HAVE_CXX0x_STATIC_ASSERT 1
+# define QGLIB_HAVE_CXX0X_STATIC_ASSERT 1
 #else
 # include <boost/static_assert.hpp>
 # define QGLIB_STATIC_ASSERT(expr, message) BOOST_STATIC_ASSERT(expr)

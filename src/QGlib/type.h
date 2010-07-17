@@ -21,7 +21,23 @@
 
 namespace QGlib {
 
-/*! This class is a wrapper for GType. It represents a type ID in the glib type system */
+/*! \headerfile type.h <QGlib/Type>
+ * \brief Wrapper class for GType
+ *
+ * A GType is a numerical value which represents the unique identifier
+ * of a registered type. The GType API is the foundation of the GObject system.
+ * It provides the facilities for registering and managing all fundamental data types,
+ * user-defined object and interface types.
+ *
+ * As a wrapper, this class provides only methods for querying existing types,
+ * not registering new ones. You should never need to use it directly, although
+ * it might come in handy in some cases.
+ *
+ * To retrieve a Type for a certain class, use GetType().
+ *
+ * \note This class is a thin wrapper around an unsigned long. There is no overhead
+ * in copying it around, since it is just an integer.
+ */
 class Type
 {
 public:
@@ -94,50 +110,6 @@ private:
     unsigned long m_type;
 };
 
-/*! \internal Used to provide the implementation for GetType() */
-template <class T>
-struct GetTypeImpl
-{
-//If we have static_assert(), use it to show a more friendly error message to the developer.
-//The check is dummy and is expected to evaluate to false. It is just used to trick the
-//compiler to delay the evaluation of the expression until the instantiation of this template
-//(where T becomes a known type). static_assert(false, "foo"); fails even before instantiation.
-#if defined(QGLIB_HAVE_CXX0x_STATIC_ASSERT)
-private:
-    template <class X> struct FailStruct { static const bool value = false; };
-    static_assert(FailStruct<T>::value, "Type T has not been registered with the QGlib type system");
-#endif
-};
-
-/*! This template function retrieves the QGlib::Type (aka GType) of a given type T.
- * Type T must have been registered with the QGlib type system using QGLIB_REGISTER_TYPE,
- * otherwise this function will fail to compile.
- */
-template <class T>
-inline Type GetType()
-{
-    return GetTypeImpl<T>();
-}
-
-/*! This macro is used to register a class with the QGlib type system. It forward-declares
- * a specialization for struct GetTypeImpl and serves as a keyword for codegen, our code generator,
- * which then uses QGLIB_REGISTER_TYPE_IMPLEMENTATION to provide the compiled implementation.
- * \note this macro must be used outside of any namespace scope
- */
-#define QGLIB_REGISTER_TYPE(T) \
-    namespace QGlib { \
-        template <> \
-        struct GetTypeImpl<T> { operator Type(); }; \
-    }
-
-/*! \internal Used by codegen only */
-#define QGLIB_REGISTER_TYPE_IMPLEMENTATION(T, GTYPE) \
-    namespace QGlib { \
-        GetTypeImpl<T>::operator Type() { return (GTYPE); } \
-    }
-
-// -- template implementations --
-
 inline Type & Type::operator=(Type other)
 {
     m_type = other.m_type;
@@ -155,7 +127,63 @@ Type Type::fromInstance(const RefPointer<T> & instance)
     return fromInstance(static_cast<void*>(static_cast<typename T::CType*>(instance)));
 }
 
+//***************
+// -- GetType --
+//***************
+
+/* Used to provide the implementation for GetType() */
+template <class T>
+struct GetTypeImpl
+{
+//If we have static_assert(), use it to show a more friendly error message to the developer.
+//The check is dummy and is expected to evaluate to false. It is just used to trick the
+//compiler to delay the evaluation of the expression until the instantiation of this template
+//(where T becomes a known type). static_assert(false, "foo"); fails even before instantiation.
+#if defined(QGLIB_HAVE_CXX0X_STATIC_ASSERT)
+private:
+    template <class X> struct FailStruct { static const bool value = false; };
+    static_assert(FailStruct<T>::value, "Type T has not been registered with the QGlib type system");
+#endif
+};
+
+/*! This template function retrieves the QGlib::Type (aka GType) of a given type T.
+ * Type T must have been registered with the QGlib type system using QGLIB_REGISTER_TYPE,
+ * otherwise this function will fail to compile.
+ * \relates QGlib::Type
+ * \sa QGLIB_REGISTER_TYPE
+ */
+template <class T>
+inline Type GetType()
+{
+    return GetTypeImpl<T>();
+}
+
+/*! \addtogroup macros Internal macros */
+//@{
+
+/*! \internal
+ * This macro is used to register a class with the QGlib type system. It forward-declares
+ * a specialization for struct GetTypeImpl and serves as a keyword for codegen, our code generator,
+ * which then uses QGLIB_REGISTER_TYPE_IMPLEMENTATION to provide the compiled implementation.
+ * \note this macro must be used outside of any namespace scope
+ */
+#define QGLIB_REGISTER_TYPE(T) \
+    namespace QGlib { \
+        template <> \
+        struct GetTypeImpl<T> { operator Type(); }; \
+    }
+
+/*! \internal Used by codegen only */
+#define QGLIB_REGISTER_TYPE_IMPLEMENTATION(T, GTYPE) \
+    namespace QGlib { \
+        GetTypeImpl<T>::operator Type() { return (GTYPE); } \
+    }
+
+//@}
+
+//***********************
 // -- private helpers --
+//***********************
 
 namespace Private {
 
@@ -198,7 +226,9 @@ struct CanConvertFrom
 } //namespace Private
 } //namespace QGlib
 
+//**************************
 // -- type registrations --
+//**************************
 
 #define QGLIB_REGISTER_NATIVE_TYPE(T, GTYPE) \
     namespace QGlib { \

@@ -19,10 +19,25 @@
 
 #include "global.h"
 
+/*! \namespace QGst::Parse
+ * \brief Wrappers for the GstParse methods
+ * \note The gst_parse_bin_from_description() method is available as QGst::Bin::fromDescription().
+ */
+
 namespace QGst {
 namespace Parse {
 
+/*! Creates a pipeline out of a pipeline description.
+ * The syntax is the same as the one used in the gst-launch tool.
+ * \throws QGlib::Error when there was a problem creating the pipeline
+ */
 ElementPtr launch(const char *description);
+
+/*! \overload
+ * This function takes an array of strings, which are joined before they are
+ * parsed as a description. This is the function used by the gst-launch tool.
+ * \throws QGlib::Error when there was a problem creating the pipeline
+ */
 ElementPtr launch(const char *argv[]);
 
 } //namespace Parse

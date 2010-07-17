@@ -21,6 +21,15 @@
 
 namespace QGlib {
 
+/*! \headerfile quark.h <QGlib/Quark>
+ * \brief Wrapper class for GQuark
+ *
+ * Quarks are associations between strings and integer identifiers.
+ * Given either the string or the Quark identifier it is possible to retrieve the other.
+ *
+ * \note This class is a thin wrapper around a quint32. There is no overhead in copying
+ * it around, since it is just an integer.
+ */
 class Quark
 {
 public:

@@ -22,6 +22,27 @@
 
 namespace QGst {
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for GstMessage
+ *
+ * Messages are lightweight objects to signal the application of pipeline events. They
+ * are posted by objects in the pipeline and are passed to the application using the Bus.
+ *
+ * Messages are implemented as a subclass of MiniObject with a generic GstStructure as the
+ * content. This allows for writing custom messages without requiring an API change while
+ * allowing a wide range of different types of messages.
+ *
+ * In these bindings, for convenience, each message type has its own Message subclass. This
+ * does not reflect 1-1 the native C API, where there is only one Message class with tens of
+ * 'new_foo' and 'parse_foo' methods. You can use RefPointer::dynamicCast() to cast a MessagePtr
+ * to a RefPointer of one of the Message subclasses and it will behave as expected (i.e. it will
+ * only succeed if the message type matches the message type that the subclass handles). Note
+ * however that the Message subclasses \em cannot be used with ValueBase::get(), since a GValue
+ * will actually contain a GstMessage (the subclasses do not exist in C) and ValueBase::get()
+ * is not able to do dynamic casts. As a result of that, Message subclasses also \em cannot be
+ * used as arguments in slots connected to GObject signals, even though you may know that your
+ * slot will only be called with that type of message.
+ */
 class Message : public MiniObject
 {
     QGST_WRAPPER(Message)
@@ -40,6 +61,9 @@ public:
     void setSequenceNumber(quint32 num);
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageEos
+ */
 class EosMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(EosMessage, Message)
@@ -47,6 +71,9 @@ public:
     static EosMessagePtr create(const ObjectPtr & source);
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageError
+ */
 class ErrorMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(ErrorMessage, Message)
@@ -58,6 +85,9 @@ public:
     QString debugMessage() const;
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageWarning
+ */
 class WarningMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(WarningMessage, Message)
@@ -69,6 +99,9 @@ public:
     QString debugMessage() const;
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageInfo
+ */
 class InfoMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(InfoMessage, Message)
@@ -82,6 +115,9 @@ public:
 
 //TODO TagMessage
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageBuffering
+ */
 class BufferingMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(BufferingMessage, Message)
@@ -97,6 +133,9 @@ public:
     void setStats(BufferingMode mode, int avgIn, int avgOut, qint64 bufferingLeft);
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageStateChanged
+ */
 class StateChangedMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(StateChangedMessage, Message)
@@ -111,6 +150,9 @@ public:
 
 //won't do: STATE_DIRTY (deprecated)
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageStepDone
+ */
 class StepDoneMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(StepDoneMessage, Message)
@@ -130,6 +172,9 @@ public:
 //TODO CLOCK_PROVIDE, CLOCK_LOST, NEW_CLOCK
 //maybe do: STRUCTURE_CHANGE (internal)
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageStreamStatus
+ */
 class StreamStatusMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(StreamStatusMessage, Message)
@@ -143,6 +188,9 @@ public:
     void setStreamStatusObject(const QGlib::ValueBase & object);
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageApplication
+ */
 class ApplicationMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(ApplicationMessage, Message)
@@ -151,6 +199,9 @@ public:
                                         const StructureBase & structure = SharedStructure(NULL));
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageElement
+ */
 class ElementMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(ElementMessage, Message)
@@ -161,6 +212,9 @@ public:
 
 //maybe do: SEGMENT_START (internal)
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageSegmentDone
+ */
 class SegmentDoneMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(SegmentDoneMessage, Message)
@@ -171,6 +225,9 @@ public:
     qint64 position() const;
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageDuration
+ */
 class DurationMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(DurationMessage, Message)
@@ -181,6 +238,9 @@ public:
     qint64 duration() const;
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageLatency
+ */
 class LatencyMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(LatencyMessage, Message)
@@ -190,6 +250,9 @@ public:
 
 //maybe do: ASYNC_START (internal)
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageAsyncDone
+ */
 class AsyncDoneMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(AsyncDoneMessage, Message)
@@ -197,6 +260,9 @@ public:
     static AsyncDoneMessagePtr create(const ObjectPtr & source);
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageRequestState
+ */
 class RequestStateMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(RequestStateMessage, Message)
@@ -206,6 +272,9 @@ public:
     State state() const;
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageStepStart
+ */
 class StepStartMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(StepStartMessage, Message)
@@ -220,6 +289,9 @@ public:
     bool isIntermediateStep() const;
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageQos
+ */
 class QosMessage : public Message
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(QosMessage, Message)
@@ -312,7 +384,10 @@ QGST_REGISTER_MESSAGE_SUBCLASS(Qos)
 #undef QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL
 #undef QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS
 
+/*! \relates QGst::Message */
 QDebug operator<<(QDebug debug, QGst::MessageType type);
+
+/*! \relates QGst::Message */
 QDebug operator<<(QDebug debug, const QGst::MessagePtr & message);
 
 #endif

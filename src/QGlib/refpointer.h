@@ -24,6 +24,31 @@
 
 namespace QGlib {
 
+/*! \headerfile refpointer.h <QGlib/RefPointer>
+ * \brief Smart pointer class for working with wrapper classes that support reference counting
+ *
+ * Nearly all GObject and GStreamer classes are designed to work with reference counting.
+ * This class provides a smart pointer for instances of those classes which takes care of
+ * increasing and decreasing the reference count automatically when a new pointer is
+ * constructed and destructed, respectively.
+ *
+ * All wrapper classes that wrap reference-counted objects must be used with RefPointer.
+ * For convenience, this library provides typedefs for all the reference-counted wrappers,
+ * which are in the form:
+ * \code
+ * typedef RefPointer<Foo> FooPtr;
+ * \endcode
+ * So, for example, if you want to use an instance of a QGst::Element, you should declare
+ * a pointer to it like that:
+ * \code
+ * QGst::ElementPtr element;
+ * \endcode
+ *
+ * For reference-counted classes that also have the concept of writability only when their
+ * reference count is 1 (like GstMiniObject and GstCaps), this class also automatically
+ * takes care of making a copy of the object when you are trying to access a non-const
+ * method. This is similar to Qt's implicit sharing technique.
+ */
 template <class T>
 class RefPointer
 {
@@ -45,13 +70,38 @@ public:
     inline bool operator!() const;
     inline T *operator->();
     inline const T *operator->() const;
+
+    /*! Cast operator that implicitly casts the smart pointer to the pointer type
+     * of the underlying C instance. For example, RefPointer<QGst::Element> will cast
+     * to GstElement*. This is provided as a helper tool for working with native C
+     * methods if needed.
+     * \note the returned pointer does not have an increased reference count
+     */
     inline operator typename T::CType*() const;
 
+    /*! Makes a RefPointer out of a pointer to a native C instance. If \a increaseRef
+     * is specified as false, the reference count is not increased on construction
+     * (but it is decreased on destruction!).
+     */
     static RefPointer<T> wrap(typename T::CType *nativePtr, bool increaseRef = true);
 
+    /*! Statically casts this RefPointer to a RefPointer of another class. */
     template <class X>
     RefPointer<X> staticCast() const;
 
+    /*! Dynamically casts this RefPointer to a RefPointer of another class.
+     * This is equivalent to the built-in dynamic_cast, but it uses the Glib type system
+     * to determine if the cast is allowed or not. If the cast fails, it returns a null
+     * RefPointer.
+     *
+     * This method also allows you to cast an object to an interface that it implements.
+     * For example, you can do:
+     * \code
+     * QGst::ElementPtr filesrc = QGst::ElementFactory::make("filesrc");
+     * QGst::UriHandlerPtr uriHandler = filesrc.dynamicCast<QGst::UriHandler>();
+     * \endcode
+     * because a "filesrc" element implements the GstUriHandler interface.
+     */
     template <class X>
     RefPointer<X> dynamicCast() const;
 
@@ -63,7 +113,9 @@ private:
     T *m_class;
 };
 
-
+/*! \headerfile refpointer.h <QGlib/RefPointer>
+ * \brief Base class for all the reference-counted object wrappers.
+ */
 class RefCountedObject
 {
 protected:

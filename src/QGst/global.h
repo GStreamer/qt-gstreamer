@@ -92,13 +92,33 @@ typedef struct _xmlNode* xmlNodePtr;
         QGST_WRAPPER_DIFFERENT_C_CLASS(Class, Class)
 
 namespace QGst {
+    /*! A datatype to hold a time, measured in nanoseconds */
     typedef quint64 ClockTime;
+
+    /*! A datatype to hold a time difference, measured in nanoseconds */
     typedef qint64 ClockTimeDiff;
 }
 
 namespace QGst {
+    /*! \overload */
     void init();
+
+    /*! Initializes the GStreamer library, setting up internal path lists,
+     * registering built-in elements, and loading standard plugins.
+     * \param argc pointer to the application's argc
+     * \param argv pointer to the application's argv
+     * \throws QGlib::Error when initialization fails
+     */
     void init(int *argc, char **argv[]);
+
+    /*! Clean up any resources created by GStreamer in init().
+     *
+     * It is normally not needed to call this function in a normal application as the resources
+     * will automatically be freed when the program terminates. This function is therefore mostly
+     * used by testsuites and other memory profiling tools.
+     *
+     * After this call GStreamer (including this method) should not be used anymore.
+     */
     void cleanup();
 }
 

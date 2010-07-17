@@ -21,6 +21,9 @@
 
 namespace QGst {
 
+/*! \headerfile pipeline.h <QGst/Pipeline>
+ * \brief Wrapper class for GstPipeline
+ */
 class Pipeline : public Bin
 {
     QGST_WRAPPER(Pipeline)

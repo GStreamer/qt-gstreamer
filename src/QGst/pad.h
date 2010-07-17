@@ -21,6 +21,9 @@
 
 namespace QGst {
 
+/*! \headerfile pad.h <QGst/Pad>
+ * \brief Wrapper class for GstPad
+ */
 class Pad : public Object
 {
     QGST_WRAPPER(Pad)

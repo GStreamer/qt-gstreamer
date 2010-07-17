@@ -1,0 +1,29 @@
+/*! \mainpage QtGstreamer API Reference
+ *
+ * \section introduction Introduction
+ * QtGstreamer provides C++ bindings for <a href="http://www.gstreamer.net">GStreamer</a>
+ * with a Qt-style API, plus some helper classes for integrating GStreamer better in
+ * <a href="http://qt.nokia.com">Qt</a> applications.
+ */
+
+/*! \namespace QGlib
+ * \brief Wrappers for Glib and GObject classes
+ *
+ * This namespace provides wrapper classes for objects from the Glib and GObject libraries,
+ * plus some helper classes that provide the foundations for building C++/Qt bindings for
+ * GObject-based libraries.
+ */
+
+/*! \namespace QGst
+ * \brief Wrappers for GStreamer classes
+ *
+ * This namespace provides wrapper classes for GStreamer objects.
+ */
+
+/*! \example echo/main.cpp
+ * This is a trivial example which echoes the microphone input to the output
+ */
+
+/*! \example player/main.cpp
+ * This is an example audio player using QtGstreamer
+ */

@@ -21,6 +21,10 @@
 #include "../QGlib/value.h"
 
 namespace QGst {
+
+    /*! \headerfile structs.h <QGst/Fourcc>
+     * \brief Helper structure for accessing Fourcc values
+     */
     struct Fourcc
     {
         inline Fourcc() { value.as_integer = 0; }
@@ -66,6 +70,9 @@ QGLIB_REGISTER_TYPE(QGst::Fourcc)
 QGLIB_REGISTER_VALUEIMPL(QGst::Fourcc)
 
 namespace QGst {
+    /*! \headerfile structs.h <QGst/Fraction>
+     * \brief Helper structure for accessing Fraction values
+     */
     struct Fraction
     {
         inline Fraction() {}
@@ -81,6 +88,10 @@ QGLIB_REGISTER_VALUEIMPL(QGst::Fraction)
 
 namespace QGst {
     namespace Private {
+        /*! \brief Common template for QGst::IntRange, QGst::DoubleRange and QGst::FractionRange
+         * \note This structure is private and should not be used directly. You should use
+         * QGst::IntRange, QGst::DoubleRange and QGst::FractionRange instead.
+         */
         template <typename T>
         struct Range
         {
@@ -94,8 +105,19 @@ namespace QGst {
         };
     }
 
+    /*! \headerfile structs.h <QGst/IntRange>
+     * \brief Helper structure for accessing int ranges
+     */
     typedef Private::Range<int> IntRange;
+
+    /*! \headerfile structs.h <QGst/DoubleRange>
+     * \brief Helper structure for accessing double ranges
+     */
     typedef Private::Range<double> DoubleRange;
+
+    /*! \headerfile structs.h <QGst/FractionRange>
+     * \brief Helper structure for accessing fraction ranges
+     */
     typedef Private::Range<Fraction> FractionRange;
 }
 QGLIB_REGISTER_TYPE(QGst::IntRange)

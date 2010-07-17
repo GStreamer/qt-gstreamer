@@ -116,7 +116,8 @@ else()
     automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
 endif()
 
-set_target_properties(QtGstreamer PROPERTIES SOVERSION 0 VERSION 0.0.2)
+set_target_properties(QtGstreamer PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
+                                             VERSION ${QTGSTREAMER_VERSION})
 target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES}
                                   ${GSTREAMER_INTERFACE_LIBRARY} ${GOBJECT_LIBRARIES})
 target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})

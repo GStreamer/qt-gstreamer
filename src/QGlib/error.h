@@ -23,12 +23,14 @@
 
 namespace QGlib {
 
-/*! Wrapper class for GError */
+/*! \headerfile error.h <QGlib/Error>
+ * \brief Wrapper class for GError
+ */
 class Error : public std::exception
 {
 public:
     /*! Wraps an existing GError into an Error.
-     * \note this method takes ownership of \a error */
+     * \note the constructed Error takes ownership of \a error */
     Error(GError *error);
 
     /*! Creates a new Error with the given \a domain, \a code and \a message */
@@ -42,17 +44,22 @@ public:
      * to implement the std::exception interface. */
     virtual const char* what() const throw();
 
-    /*! Returns the domain of the error.
+    /*! \returns the domain of the error.
      * The domain indicates the module where the error has happened. */
     Quark domain() const;
 
-    /*! Returns a code that describes the error. */
+    /*! \returns a code that describes the error */
     int code() const;
 
-    /*! Returns a human-readable message that describes the error. */
+    /*! \returns a human-readable message that describes the error */
     QString message() const;
 
+    /*! \returns a pointer to the underlying GError
+     * \note no copy is made */
     inline operator GError *() { return m_error; }
+
+    /*! \returns a const pointer to the underlying GError
+     * \note no copy is made */
     inline operator const GError *() const { return m_error; }
 
 private:
@@ -61,6 +68,7 @@ private:
 
 } //namespace QGlib
 
+/*! \relates QGlib::Error */
 QDebug operator<<(QDebug dbg, const QGlib::Error & error);
 
 #endif // QGLIB_ERROR_H

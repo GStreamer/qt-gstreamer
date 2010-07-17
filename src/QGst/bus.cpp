@@ -134,7 +134,7 @@ MessagePtr Bus::pop(MessageType type, ClockTime timeout)
                                                        static_cast<GstMessageType>(type)), false);
 }
 
-bool Bus::post(const QGst::MessagePtr & message)
+bool Bus::post(const MessagePtr & message)
 {
     return gst_bus_post(object<GstBus>(), gst_message_copy(message));
 }

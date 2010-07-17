@@ -19,27 +19,39 @@
 
 #include "element.h"
 #include "childproxy.h"
-#include "parse.h"
 
 namespace QGst {
 
+/*! \headerfile bin.h <QGst/Bin>
+ * \brief Wrapper class for GstBin
+ */
 class Bin : public Element, public ChildProxy
 {
     QGST_WRAPPER(Bin)
 public:
+    /*! Creates a new Bin with the specified \a name */
     static BinPtr create(const char *name = NULL);
+
+    /*! Creates a new Bin from a bin description. The syntax is the same as the one used
+     * in the gst-launch tool. Ghost pads on the bin for unlinked source or sink pads within the
+     * bin can automatically be created, if \a ghostUnlinkedPads is set to true (but only a maximum
+     * of one ghost pad for each direction will be created; if you expect multiple unlinked source
+     * pads or multiple unlinked sink pads and want them all ghosted, you will have to create the
+     * ghost pads yourself)
+     * \throws QGlib::Error when there was a problem creating the pipeline
+     */
     static BinPtr fromDescription(const char *description, bool ghostUnlinkedPads = true);
 
     bool add(const ElementPtr & element);
     bool remove(const ElementPtr & element);
 
-    /** This enum is used with getElementByName() to specify where to look for
+    /*! This enum is used with getElementByName() to specify where to look for
      * elements if an element is not found as a direct child of this Bin.
      */
     enum RecursionType { //codegen: skip=true
-        /** Recurse down into child bins (if any) */
+        /*! Recurse down into child bins (if any) */
         RecurseDown,
-        /** Recurse down to child bins and if the element is not found there as well,
+        /*! Recurse down to child bins and if the element is not found there as well,
          * recurse up the hierarchy to the parent bins (if any) and their children.
          */
         RecurseUp

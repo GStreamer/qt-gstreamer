@@ -25,6 +25,12 @@
 
 namespace QGlib {
 
+/*! \headerfile paramspec.h <QGlib/ParamSpec>
+ * \brief Wrapper class for GParamSpec
+ *
+ * GParamSpec is an object structure that encapsulates the metadata
+ * required to specify parameters, such as e.g. GObject properties.
+ */
 class ParamSpec : public RefCountedObject
 {
     QGLIB_WRAPPER(ParamSpec)

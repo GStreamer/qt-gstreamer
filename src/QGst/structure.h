@@ -24,6 +24,9 @@
 
 namespace QGst {
 
+/*! \headerfile structure.h <QGst/Structure>
+ * \brief Common base class for Structure and SharedStructure, wrappers for GstStructure
+ */
 class StructureBase
 {
 public:
@@ -61,6 +64,14 @@ protected:
 
 class SharedStructure;
 
+
+/*! \headerfile structure.h <QGst/Structure>
+ * \brief Wrapper for GstStructure
+ *
+ * \note Unlike SharedStructure, this class always keeps a private GstStructure internally
+ * which is allocated in the constructors and freed from the destructor.
+ * \sa SharedStructure
+ */
 class Structure : public StructureBase
 {
 public:
@@ -79,6 +90,18 @@ private:
     Structure(); //used in fromString()
 };
 
+
+/*! \headerfile structure.h <QGst/Structure>
+ * \brief Wrapper for shared GstStructure instances
+ *
+ * This class serves as a wrapper for shared GstStructure instances. Some functions in the
+ * GStreamer API return a pointer to some internal GstStructure and expect you to change this
+ * internal instance, not copy it and re-set it using some setter function (like all normal
+ * object-oriented APIs do), so it is necessary to have way of accessing those instances. This
+ * class wraps a GstStructure without copying it and without freeing it from the destructor,
+ * unlike Structure, which always keeps a GstStructure instance for itself.
+ * \sa Structure
+ */
 class SharedStructure : public StructureBase
 {
 public:
@@ -90,6 +113,7 @@ public:
 
 } //namespace QGst
 
+/*! \relates QGst::StructureBase */
 QDebug operator<<(QDebug debug, const QGst::StructureBase & structure);
 
 QGLIB_REGISTER_TYPE(QGst::StructureBase) //codegen: GType=GST_TYPE_STRUCTURE

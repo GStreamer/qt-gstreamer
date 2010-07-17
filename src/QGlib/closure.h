@@ -23,7 +23,7 @@
 
 namespace QGlib {
 
-/*! Wrapper class for GClosure. It contains no public methods, it is
+/* Wrapper class for GClosure. It contains no public methods, it is
  * only used internally to pass around GClosure pointers in a C++ fashion.
  */
 class Closure : public RefCountedObject

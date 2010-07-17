@@ -22,6 +22,9 @@ class QUrl;
 
 namespace QGst {
 
+/*! \interface UriHandler urihandler.h <QGst/UriHandler>
+ * \brief Wrapper class for GstURIHandler
+ */
 class UriHandler : public virtual Element
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(UriHandler, URIHandler)

@@ -26,6 +26,9 @@
 
 namespace QGlib {
 
+/*! \headerfile QGlib/object.h <QGlib/Object>
+ * \brief Wrapper class for GObject
+ */
 class Object : public RefCountedObject
 {
     QGLIB_WRAPPER(Object)

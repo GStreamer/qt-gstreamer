@@ -21,6 +21,9 @@
 
 namespace QGst {
 
+/*! \headerfile pluginfeature.h <QGst/PluginFeature>
+ * \brief Wrapper class for GstPluginFeature
+ */
 class PluginFeature : public Object
 {
     QGST_WRAPPER(PluginFeature)

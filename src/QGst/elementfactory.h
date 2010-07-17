@@ -21,6 +21,9 @@
 
 namespace QGst {
 
+/*! \headerfile elementfactory.h <QGst/ElementFactory>
+ * \brief Wrapper class for GstElementFactory
+ */
 class ElementFactory : public PluginFeature
 {
     QGST_WRAPPER(ElementFactory)

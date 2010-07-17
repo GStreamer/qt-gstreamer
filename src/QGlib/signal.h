@@ -67,6 +67,18 @@ private:
     ulong m_id;
 };
 
+/*! \headerfile signal.h <QGlib/Signal>
+ * \brief Helper class providing integration with the GObject signal system
+ *
+ * Signals are a generic notification mechanism. Each signal is bound to a
+ * certain instantiatable Type and can be emitted on any instance of this type.
+ *
+ * This class allows you to inspect, emit and connect to these signals. To inspect
+ * the signals of a certain Type, you can use the lookup() and listSignals() methods.
+ * To emit or connect a signal, use the emit() and connect() methods respectively.
+ *
+ * For more information, please read the relevant Glib documentation.
+ */
 class Signal
 {
 public:
@@ -106,9 +118,78 @@ public:
 
 #if QGLIB_HAVE_CXX0X
 
+    /*! Emits a signal on a specified \a instance with the specified arguments.
+     *
+     * This method will convert all the specified arguments to GValues using ValueBase::set()
+     * and will then call the non-templated emit() method, which is a wrapper for g_signal_emitv().
+     * The returned value from the signal (if the signal returns a value) will be converted
+     * from GValue to the type R using ValueBase::get() and will be returned. If some argument
+     * is not of the type that the signal expects, a warning will be printed to stderr at runtime
+     * and the signal will not be emitted. If the return value is not of the type that the signal
+     * returns, the signal will be emitted, but a default-constructed value for the type R will
+     * be returned and a warning will be printed to stderr.
+     *
+     * Note that since the implementation uses ValueBase::set() to convert the GValues into the
+     * specified types, the same rules that apply to ValueBase::set() apply here (i.e. you should
+     * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
+     * of GstObject*, etc...).
+     *
+     * Emitting a signal is useful for the so-called Action signals. These are meant to be emitted
+     * from the application and not connected to. They are more like dynamic methods that can be
+     * identified with a string.
+     *
+     * \note This method makes use of C++0x features (namely, variadic templates and rvalue
+     * references). If your compiler does not support them, a hacky implementation using boost's
+     * preprocessor, function and bind libraries will be compiled instead. That version has a
+     * limit of 9 arguments.
+     *
+     * \param instance The instance of the object on which the signal will be emitted. You can pass
+     * a RefPointer as an instance without any problems; it will automatically cast to void*.
+     * \param detailedSignal The name of the signal that you want to emit, with an optional
+     * detail if the signal is detailed. The detail may be specified with the following syntax:
+     * "signal::detail".
+     * \param args The arguments that will be passed to the signal.
+     * \returns The return value of the signal.
+     */
     template <typename R, typename... Args>
     static R emit(void *instance, const char *detailedSignal, Args&&... args);
 
+    /*! Connects a signal to a specified \a slot.
+     *
+     * This method will generate a set of template functions and classes that bind on a GClosure.
+     * When the signal is emitted, this GClosure will be invoked and its templated marshaller
+     * function will take care of converting the parameters of the signal (which are given as
+     * GValues) to the types that the \a slot expects. In case the types do not match, a warning
+     * will be printed to stderr at runtime and the \a slot will not be invoked. You are
+     * responsible for defining the \a slot with the correct arguments!
+     *
+     * Note that since the implementation uses ValueBase::get() to convert the GValues into the
+     * specified types, the same rules that apply to ValueBase::get() apply here (i.e. you should
+     * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
+     * of GstObject*, etc...).
+     *
+     * \note
+     * \li You can use const references for the arguments of the slot to avoid unnecessary
+     * copying of objects. The marshaller will always hold one copy of them during the execution
+     * of your \a slot.
+     * \li This method makes use of C++0x features (namely, variadic templates and rvalue
+     * references). If your compiler does not support them, a hacky implementation using boost's
+     * preprocessor, function and bind libraries will be compiled instead. That version has a
+     * limit of 9 slot arguments.
+     *
+     * \param instance The instance of the object that emits this signal. You can pass
+     * a RefPointer as an instance without any problems; it will automatically cast to void*.
+     * \param detailedSignal The name of the signal that you want to connect to, with an optional
+     * detail if the signal is detailed. The detail may be specified with the following syntax:
+     * "signal::detail".
+     * \param receiver The instance of the class on which \a slot will be invoked.
+     * \param slot A pointer to a member function that will be invoked when the signal is emitted.
+     * \param flags If ConnectAfter is specified here, this \a slot will be invoked after the
+     * default signal handler of this signal has been called. See the Glib signals documentation
+     * for more details on this parameter.
+     * \returns A SignalHandler instance, which can be used to disconnect or block this handler.
+     * Note that the return type of this function is subject to change before a stable release is made.
+     */
     template <typename T, typename R, typename... Args>
     static SignalHandler connect(void *instance, const char *detailedSignal,
                                  T *receiver, R (T::*slot)(Args...), ConnectFlags flags = 0);
@@ -150,9 +231,10 @@ public:
 
 #endif //QGLIB_HAVE_CXX0X
 
-
+    /*! \internal This method is used internally from the templated emit() method. */
     static Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
 
+    /*! \internal This method is used internally from the templated connect() method. */
     static SignalHandler connect(void *instance, const char *detailedSignal,
                                  const ClosurePtr & closure, ConnectFlags flags = 0);
 

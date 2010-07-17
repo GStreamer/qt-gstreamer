@@ -21,6 +21,9 @@
 
 namespace QGst {
 
+/*! \interface ChildProxy childproxy.h <QGst/ChildProxy>
+ * \brief Wrapper class for GstChildProxy
+ */
 class ChildProxy : public virtual Object
 {
     QGST_WRAPPER(ChildProxy)
