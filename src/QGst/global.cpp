@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "global.h"
+#include "../QGlib/error.h"
 #include <gst/gst.h>
 
 namespace QGst {
@@ -26,7 +27,10 @@ void init()
 
 void init(int *argc, char **argv[])
 {
-    gst_init(argc, argv); //TODO throw the GError
+    GError *error;
+    if (!gst_init_check(argc, argv, &error)) {
+        throw QGlib::Error(error);
+    }
 }
 
 void cleanup()
@@ -34,4 +38,4 @@ void cleanup()
     gst_deinit();
 }
 
-}
+} //namespace QGst
