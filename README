@@ -37,11 +37,10 @@ it with your sources and build it as a static library.
 ----------------
 
 QtGstreamer requires the following software to be installed in order to build:
- * CMake <http://www.cmake.org/>
- * Gstreamer <http://gstreamer.freedesktop.org/>
+ * CMake 2.6 or later <http://www.cmake.org/>
+ * Gstreamer 0.10.30 or later <http://gstreamer.freedesktop.org/>
    With its dependencies:
    - Glib / GObject <http://www.gtk.org/>
-   - libxml2 <http://xmlsoft.org/>
  * Qt 4 <http://qt.nokia.com/>
  * Automoc <svn://anonsvn.kde.org/home/kde/trunk/kdesupport/automoc/>
  * Boost (static_assert, type_traits, function, bind, preprocessor) <http://www.boost.org/>

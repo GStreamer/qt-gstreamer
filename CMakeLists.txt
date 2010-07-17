@@ -13,7 +13,6 @@ find_package(Automoc4 REQUIRED)
 find_package(GStreamer REQUIRED)
 find_package(GLIB2 REQUIRED)
 find_package(GObject REQUIRED)
-find_package(LibXml2 REQUIRED)
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
