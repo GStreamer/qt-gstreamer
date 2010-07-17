@@ -32,8 +32,8 @@ public:
 
     PadDirection direction() const;
 
-    /** This method returns the pad's parent casted to an Element.
-     * It is equivalent to pad->parent().dynamicCast< Element >();
+    /*! This method returns the pad's parent casted to an Element.
+     * It is equivalent to pad->parent().dynamicCast<QGst::Element>();
      * If no parent is set, it will return a null RefPointer.
      */
     ElementPtr parentElement() const;
@@ -44,13 +44,10 @@ public:
     PadLinkReturn link(const PadPtr & sink);
     bool unlink(const PadPtr & sink);
 
-    /** Gets the capabilities this pad can produce or consume. Note that this method doesn't
+    /*! Gets the capabilities this pad can produce or consume. Note that this method doesn't
      * necessarily return the caps set by setCaps(). This method returns all possible caps a
      * pad can operate with, using the pad's get_caps function; this returns the pad template
      * caps if not explicitly set.
-     * \note this method is equivalent to gst_pad_get_caps_reffed(), which means it returns
-     * a non-writable copy of the caps with an extra reference count on it. Use Caps::makeWritable()
-     * if you want to modify it.
      */
     CapsPtr caps() const;
     CapsPtr allowedCaps() const;
