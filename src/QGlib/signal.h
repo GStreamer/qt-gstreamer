@@ -93,8 +93,21 @@ public:
     };
     Q_DECLARE_FLAGS(SignalFlags, SignalFlag);
 
+    /*! These flags define options that can be passed to connect() to modify its behaviour. */
     enum ConnectFlag { //codegen: skip=true
-        ConnectAfter = 1
+        /*! If ConnectAfter is specified, the slot passed to connect() will be invoked after the
+         * default signal handler of this signal has been called. See the Glib signals
+         * documentation for more details on this parameter.
+         */
+        ConnectAfter = 1,
+        /*! If PassSender is specified, the slot passed to connect() will receive as the first
+         * argument a pointer to the sender of the signal. Thus, your slot should be defined
+         * like this:
+         * \code
+         * void mySlot(const QGlib::ObjectPtr & sender, const Foo & firstArgument, ...);
+         * \endcode
+         */
+        PassSender = 2
     };
     Q_DECLARE_FLAGS(ConnectFlags, ConnectFlag);
 
@@ -184,9 +197,7 @@ public:
      * "signal::detail".
      * \param receiver The instance of the class on which \a slot will be invoked.
      * \param slot A pointer to a member function that will be invoked when the signal is emitted.
-     * \param flags If ConnectAfter is specified here, this \a slot will be invoked after the
-     * default signal handler of this signal has been called. See the Glib signals documentation
-     * for more details on this parameter.
+     * \param flags See ConnectFlag.
      * \returns A SignalHandler instance, which can be used to disconnect or block this handler.
      * Note that the return type of this function is subject to change before a stable release is made.
      */

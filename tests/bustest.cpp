@@ -24,7 +24,7 @@ class BusTest : public QGstTest
 {
     Q_OBJECT
 private:
-    void messageClosure(const QGst::BusPtr &, const QGst::MessagePtr &);
+    void messageClosure(const QGst::MessagePtr &);
 
 private Q_SLOTS:
     void watchTest();
@@ -58,7 +58,7 @@ void MessagePushThread::run()
     }
 }
 
-void BusTest::messageClosure(const QGst::BusPtr &, const QGst::MessagePtr & msg)
+void BusTest::messageClosure(const QGst::MessagePtr & msg)
 {
     //we should receive this signal from the main thread
     QCOMPARE(QThread::currentThread(), QCoreApplication::instance()->thread());

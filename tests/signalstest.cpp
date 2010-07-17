@@ -46,7 +46,8 @@ void SignalsTest::closureTest()
     QGst::BinPtr bin = QGst::Bin::create("mybin");
 
     closureCalled = false;
-    QGlib::Signal::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure);
+    QGlib::Signal::connect(bin, "parent-set", this,
+                           &SignalsTest::closureTestClosure, QGlib::Signal::PassSender);
     bin->setParent(pipeline);
     QCOMPARE(closureCalled, true);
 }
@@ -82,7 +83,8 @@ void SignalsTest::emitTest()
 {
     QGst::BinPtr bin = QGst::Bin::create("mybin");
     QGlib::SignalHandler handler = QGlib::Signal::connect(bin, "notify::name",
-                                                          this, &SignalsTest::emitTestClosure);
+                                                          this, &SignalsTest::emitTestClosure,
+                                                          QGlib::Signal::PassSender);
 
     QVERIFY(handler.isConnected());
 

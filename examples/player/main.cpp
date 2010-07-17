@@ -40,8 +40,8 @@ public:
     ~Player();
 
 private:
-    void onBusSyncMessage(const QGst::BusPtr & bus, const QGst::MessagePtr & message);
-    void onNewDecodedPad(const QGst::BinPtr & decodebin, QGst::PadPtr newPad, bool isLast);
+    void onBusSyncMessage(const QGst::MessagePtr & message);
+    void onNewDecodedPad(QGst::PadPtr newPad);
     static QGst::BinPtr createAudioSinkBin();
 
     /* This smart pointer is needed to keep a reference to the underlying GstPipeline object.
@@ -83,10 +83,9 @@ Player::~Player()
      * there is no need to cleanup here. */
 }
 
-void Player::onBusSyncMessage(const QGst::BusPtr & bus, const QGst::MessagePtr & message)
+void Player::onBusSyncMessage(const QGst::MessagePtr & message)
 {
     /* WARNING this slot gets called in a different thread */
-    Q_UNUSED(bus);
     switch(message->type()) {
     case QGst::MessageEos: //End of stream. We reached the end of the file.
     case QGst::MessageError: //Some error occurred.
@@ -103,10 +102,8 @@ void Player::onBusSyncMessage(const QGst::BusPtr & bus, const QGst::MessagePtr &
 /* This method will be called every time a new "src" pad is available on the decodebin2 element.
  * Here we have to check what kind of data this pad transfers (usually it is either "audio/x-raw-*"
  * or "video/x-raw-*") and connect an appropriate sink that can handle this type of data. */
-void Player::onNewDecodedPad(const QGst::BinPtr & decodebin, QGst::PadPtr newPad, bool isLast)
+void Player::onNewDecodedPad(QGst::PadPtr newPad)
 {
-    Q_UNUSED(decodebin);
-    Q_UNUSED(isLast);
 
     QGst::CapsPtr caps = newPad->caps();
     QGst::SharedStructure structure = caps->structure(0);

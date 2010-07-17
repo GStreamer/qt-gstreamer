@@ -42,7 +42,9 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
     ClosureDataBase *cdata = static_cast<ClosureDataBase*>(closure->data);
 
     QList<Value> params;
-    for(uint i=0; i<paramValuesCount; ++i) {
+    //the signal sender is always the first argument. if we are instructed not to pass it
+    //as an argument to the slot, begin converting from paramValues[1]
+    for(uint i = cdata->passSender ? 0 : 1; i<paramValuesCount; ++i) {
         params.append(Value(&paramValues[i]));
     }
 

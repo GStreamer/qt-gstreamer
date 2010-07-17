@@ -36,9 +36,11 @@ public:
 
     typedef void (*CppMarshaller)(SharedValue &, const QList<Value> &, ClosureDataBase*);
     CppMarshaller cppMarshaller;
+    bool passSender; //whether to pass the sender instance as the first slot argument
 
 protected:
-    inline ClosureDataBase(CppMarshaller marshal) : cppMarshaller(marshal) {}
+    inline ClosureDataBase(CppMarshaller marshal, bool passSender)
+        : cppMarshaller(marshal), passSender(passSender) {}
 };
 
 
@@ -130,14 +132,14 @@ struct CppClosure<R (Args...), F>
     class ClosureData : public ClosureDataBase
     {
     public:
-        inline ClosureData(CppMarshaller marshal, const F & func)
-            : ClosureDataBase(marshal), function(func) {}
+        inline ClosureData(CppMarshaller marshal, const F & func, bool passSender)
+            : ClosureDataBase(marshal, passSender), function(func) {}
         F function;
     };
 
-    static inline ClosurePtr create(const F & function)
+    static inline ClosurePtr create(const F & function, bool passSender)
     {
-        return createCppClosure(new ClosureData(&marshaller, function));
+        return createCppClosure(new ClosureData(&marshaller, function, passSender));
     }
 
     static inline void marshaller(SharedValue & result, const QList<Value> & params, ClosureDataBase *data)
@@ -218,14 +220,14 @@ struct QGLIB_CLOSURE_IMPL_CPPCLOSUREN
     class ClosureData : public ClosureDataBase
     {
     public:
-        inline ClosureData(CppMarshaller marshal, const F & func)
-            : ClosureDataBase(marshal), function(func) {}
+        inline ClosureData(CppMarshaller marshal, const F & func, bool passSender)
+            : ClosureDataBase(marshal, passSender), function(func) {}
         F function;
     };
 
-    static ClosurePtr create(const F & function)
+    static ClosurePtr create(const F & function, bool passSender)
     {
-        return createCppClosure(new ClosureData(&marshaller, function));
+        return createCppClosure(new ClosureData(&marshaller, function, passSender));
     }
 
     static void marshaller(SharedValue & result, const QList<Value> & params, ClosureDataBase *data)

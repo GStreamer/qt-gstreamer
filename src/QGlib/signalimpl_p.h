@@ -129,7 +129,7 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
     typedef QGlib::Private::MemberFunction<T, R, Args...> F;
 
     F && f = QGlib::Private::mem_fn(slot, receiver);
-    ClosurePtr && closure = QGlib::Private::CppClosure<R (Args...), F>::create(f);
+    ClosurePtr && closure = QGlib::Private::CppClosure<R (Args...), F>::create(f, flags & PassSender);
     return connect(instance, detailedSignal, closure, flags);
 }
 
@@ -247,7 +247,7 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
     ClosurePtr closure = QGlib::Private::CppClosure<
                                         R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
                                         boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
-                                                   >::create(f);
+                                                   >::create(f, flags & PassSender);
     return connect(instance, detailedSignal, closure, flags);
 }
 
