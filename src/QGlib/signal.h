@@ -18,7 +18,6 @@
 #define QGLIB_SIGNAL_H
 
 #include "global.h"
-#include "closure.h"
 #include <QtCore/QString>
 #include <QtCore/QFlags>
 #include <QtCore/QSharedData>
@@ -259,9 +258,11 @@ private:
 } //namespace QGlib
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::SignalFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::ConnectFlags)
 
 #define IN_QGLIB_SIGNAL_H
-# include "signalimpl_p.h"
+# include "emitimpl_p.h"
+# include "connectimpl_p.h"
 #undef IN_QGLIB_SIGNAL_H
 
 #if defined(QGLIB_SIGNAL_MAX_ARGS)

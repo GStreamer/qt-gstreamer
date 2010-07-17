@@ -4,7 +4,6 @@ set(QtGstreamer_SRCS
     QGlib/paramspec.cpp
     QGlib/object.cpp
     QGlib/value.cpp
-    QGlib/closure.cpp
     QGlib/signal.cpp
     QGlib/error.cpp
 
@@ -38,10 +37,9 @@ set(INSTALLED_HEADERS
     QGlib/paramspec.h   QGlib/ParamSpec
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value
-    QGlib/closure.h
-    QGlib/closureimpl_p.h
     QGlib/signal.h      QGlib/Signal
-    QGlib/signalimpl_p.h
+    QGlib/emitimpl_p.h
+    QGlib/connectimpl_p.h
     QGlib/error.h       QGlib/Error
 
     QGst/global.h       QGst/Global
@@ -74,7 +72,6 @@ set(CODEGEN_HEADERS
     QGlib/type.h
     QGlib/paramspec.h
     QGlib/object.h
-    QGlib/closure.h
     QGlib/signal.h
 
     QGst/enums.h

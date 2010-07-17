@@ -21,11 +21,10 @@
 # endif
 
 # include "value.h"
-# include "string.h"
 # include <QtCore/QList>
 # include <QtCore/QDebug>
-# include <boost/type_traits.hpp>
 # include <stdexcept>
+# include <boost/type_traits.hpp>
 
 
 namespace QGlib {
@@ -42,6 +41,8 @@ struct EmitImpl {};
 
 namespace QGlib {
 namespace Private {
+
+//BEGIN ******** packArguments ********
 
 inline QList<Value> packArguments()
 {
@@ -60,6 +61,9 @@ QList<Value> packArguments(Arg1 && a1, Args&&... args)
     result.prepend(Value(static_cast<ConstArg1Ref>(a1)));
     return result;
 }
+
+//END ******** packArguments ********
+//BEGIN ******** EmitImpl ********
 
 template <typename R, typename... Args>
 struct EmitImpl<R (Args...)>
@@ -91,30 +95,11 @@ struct EmitImpl<void (Args...)>
     }
 };
 
-template <typename T, typename R, typename... Args>
-class MemberFunction
-{
-public:
-    inline MemberFunction(R (T::*fn)(Args...), T *obj)
-        : m_function(fn), m_object(obj) {}
-
-    inline R operator()(Args&&... args) const
-    {
-        return (m_object->*m_function)(args...);
-    }
-
-private:
-    R (T::*m_function)(Args...);
-    T *m_object;
-};
-
-template <typename T, typename R, typename... Args>
-MemberFunction<T, R, Args...> mem_fn(R (T::*fn)(Args...), T *obj)
-{
-    return MemberFunction<T, R, Args...>(fn, obj);
-}
+//END ******** EmitImpl ********
 
 } //namespace Private
+
+//BEGIN ******** Signal::emit ********
 
 template <typename R, typename... Args>
 R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
@@ -122,23 +107,14 @@ R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
     return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, args...);
 }
 
-template <typename T, typename R, typename... Args>
-SignalHandler Signal::connect(void *instance, const char *detailedSignal,
-                              T *receiver, R (T::*slot)(Args...), ConnectFlags flags)
-{
-    typedef QGlib::Private::MemberFunction<T, R, Args...> F;
-
-    F && f = QGlib::Private::mem_fn(slot, receiver);
-    ClosurePtr && closure = QGlib::Private::CppClosure<R (Args...), F>::create(f, flags & PassSender);
-    return connect(instance, detailedSignal, closure, flags);
-}
+//END ******** Signal::emit ********
 
 } //namespace QGlib
 
 # else //QGLIB_HAVE_CXX0X
 
 // include the second part of this file as many times as QGLIB_SIGNAL_MAX_ARGS specifies
-#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/signalimpl_p.h"))
+#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/emitimpl_p.h"))
 #  include BOOST_PP_ITERATE()
 #  undef BOOST_PP_ITERATION_PARAMS_1
 
@@ -150,9 +126,9 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
 /*
     This part is included from BOOST_PP_ITERATE(). It defines specializations of struct EmitImpl
     with different number of arguments as well as the multiple implementations of the non-variadic
-    Signal::emit and Signal::connect. This part is included multiple times (QGLIB_SIGNAL_MAX_ARGS
-    defines how many), and each time it defines those classes and functions with different number
-    of arguments. The concept is based on the implementation of boost::function.
+    Signal::emit. This part is included multiple times (QGLIB_SIGNAL_MAX_ARGS defines how many),
+    and each time it defines those classes and functions with different number of arguments.
+    The concept is based on the implementation of boost::function.
 */
 
 # define QGLIB_SIGNAL_IMPL_NUM_ARGS  BOOST_PP_ITERATION()
@@ -175,17 +151,17 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
 #  define QGLIB_SIGNAL_IMPL_COMMA
 # endif
 
+
+namespace QGlib {
+namespace Private {
+
+//BEGIN ******** boostpp EmitImpl ********
+
 # define QGLIB_SIGNAL_IMPL_PACK_ARGS_STEP(z, n, list) \
         list.append(Value(static_cast< typename boost::add_const< typename boost::add_reference<A ##n>::type >::type >(a ##n)));
 
 # define QGLIB_SIGNAL_IMPL_PACK_ARGS(list) \
         BOOST_PP_REPEAT(QGLIB_SIGNAL_IMPL_NUM_ARGS, QGLIB_SIGNAL_IMPL_PACK_ARGS_STEP, list)
-
-# define QGLIB_SIGNAL_IMPL_BIND_ARGS \
-        BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(QGLIB_SIGNAL_IMPL_NUM_ARGS), _)
-
-namespace QGlib {
-namespace Private {
 
 template <typename R QGLIB_SIGNAL_IMPL_COMMA
                      QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
@@ -224,7 +200,14 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
     }
 };
 
+# undef QGLIB_SIGNAL_IMPL_PACK_ARGS
+# undef QGLIB_SIGNAL_IMPL_PACK_ARGS_STEP
+
+//END ******** boostpp EmitImpl ********
+
 } //namespace Private
+
+//BEGIN ******** boostpp Signal::emit ********
 
 template <typename R QGLIB_SIGNAL_IMPL_COMMA
                      QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
@@ -234,28 +217,10 @@ R Signal::emit(void *instance, const char *detailedSignal QGLIB_SIGNAL_IMPL_FUNC
                              ::emit(instance, detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_ARGS);
 }
 
-template <typename T, typename R QGLIB_SIGNAL_IMPL_COMMA
-                                 QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
-SignalHandler Signal::connect(void *instance, const char *detailedSignal,
-                              T *receiver, R (T::*slot)(QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
-                              ConnectFlags flags)
-{
-    boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)> f
-                = boost::bind(slot, receiver QGLIB_SIGNAL_IMPL_COMMA
-                                             QGLIB_SIGNAL_IMPL_BIND_ARGS);
-
-    ClosurePtr closure = QGlib::Private::CppClosure<
-                                        R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
-                                        boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
-                                                   >::create(f, flags & PassSender);
-    return connect(instance, detailedSignal, closure, flags);
-}
+//END ******** boostpp Signal::emit ********
 
 } //namespace QGlib
 
-# undef QGLIB_SIGNAL_IMPL_BIND_ARGS
-# undef QGLIB_SIGNAL_IMPL_PACK_ARGS
-# undef QGLIB_SIGNAL_IMPL_PACK_ARGS_STEP
 # undef QGLIB_SIGNAL_IMPL_COMMA
 # undef QGLIB_SIGNAL_IMPL_FUNCTION_ARGS
 # undef QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS
