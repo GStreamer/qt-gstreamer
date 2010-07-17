@@ -45,16 +45,6 @@ void Object::unparent()
     gst_object_unparent(object<GstObject>());
 }
 
-QString Object::namePrefix() const
-{
-    return QGlib::Private::stringFromGCharPtr(gst_object_get_name_prefix(object<GstObject>()));
-}
-
-void Object::setNamePrefix(const char *prefix)
-{
-    gst_object_set_name_prefix(object<GstObject>(), prefix);
-}
-
 bool Object::isAncestorOf(const ObjectPtr & obj) const
 {
     return gst_object_has_ancestor(obj, object<GstObject>());

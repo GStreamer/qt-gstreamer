@@ -52,17 +52,6 @@ QString Caps::toString() const
     return QGlib::Private::stringFromGCharPtr(gst_caps_to_string(object<GstCaps>()));
 }
 
-//static
-CapsPtr Caps::fromXml(xmlNodePtr node)
-{
-    return CapsPtr::wrap(gst_caps_load_thyself(node), false);
-}
-
-xmlNodePtr Caps::toXml(xmlNodePtr parent) const
-{
-    return gst_caps_save_thyself(object<GstCaps>(), parent);
-}
-
 void Caps::append(const CapsPtr & caps2)
 {
     gst_caps_append(object<GstCaps>(), gst_caps_copy(caps2));

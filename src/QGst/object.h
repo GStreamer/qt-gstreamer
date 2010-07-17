@@ -36,9 +36,6 @@ public:
     bool setParent(const ObjectPtr & parent);
     void unparent();
 
-    QString namePrefix() const;
-    void setNamePrefix(const char *prefix);
-
     bool isAncestorOf(const ObjectPtr & object) const;
 
 protected:

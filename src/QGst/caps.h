@@ -38,9 +38,6 @@ public:
     static CapsPtr fromString(const char *string);
     QString toString() const;
 
-    static CapsPtr fromXml(xmlNodePtr node);
-    xmlNodePtr toXml(xmlNodePtr parent) const;
-
     void append(const CapsPtr & caps2);
     void merge(const CapsPtr & caps2);
     void setValue(const char *field, const QGlib::Value & value);
