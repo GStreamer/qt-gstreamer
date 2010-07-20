@@ -7,6 +7,7 @@
 #  GOBJECT_DEFINITIONS - Compiler switches required for using GObject
 
 # Copyright (c) 2006, Tim Beaulen <tbscope@gmail.com>
+# Copyright (c) 2008 Helio Chissini de Castro, <helio@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
@@ -20,45 +21,42 @@ ELSE (GOBJECT_INCLUDE_DIR AND GOBJECT_LIBRARIES)
 ENDIF (GOBJECT_INCLUDE_DIR AND GOBJECT_LIBRARIES)
 
 IF (NOT WIN32)
+   FIND_PACKAGE(PkgConfig REQUIRED)
    # use pkg-config to get the directories and then use these values
    # in the FIND_PATH() and FIND_LIBRARY() calls
-   FIND_PACKAGE(PkgConfig)
-   PKG_CHECK_MODULES(PC_GOBJECT gobject-2.0) 
-   #MESSAGE(STATUS "DEBUG: GObject include directory = ${GOBJECT_INCLUDE_DIRS}")
-   #MESSAGE(STATUS "DEBUG: GObject link directory = ${GOBJECT_LIBRARY_DIRS}")
-   #MESSAGE(STATUS "DEBUG: GObject CFlags = ${GOBJECT_CFLAGS}")
-   SET(GOBJECT_DEFINITIONS ${PC_GOBJECT_CFLAGS_OTHER})
+   PKG_CHECK_MODULES(PKG_GOBJECT2 REQUIRED gobject-2.0)
+   SET(GOBJECT_DEFINITIONS ${PKG_GOBJECT2_CFLAGS})
 ENDIF (NOT WIN32)
 
-FIND_PATH(GOBJECT_INCLUDE_DIR gobject.h
+FIND_PATH(GOBJECT_INCLUDE_DIR gobject/gobject.h
    PATHS
-   ${PC_GOBJECT_INCLUDEDIR}
-   ${PC_GOBJECT_INCLUDE_DIRS}
-   PATH_SUFFIXES glib-2.0/gobject/
+   ${PKG_GOBJECT2_INCLUDE_DIRS}
+   /usr/include/glib-2.0/
+   PATH_SUFFIXES glib-2.0
    )
 
 FIND_LIBRARY(_GObjectLibs NAMES gobject-2.0
    PATHS
-   ${PC_GOBJECT_LIBDIR}
-   ${PC_GOBJECT_LIBRARY_DIRS}
+   ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 FIND_LIBRARY(_GModuleLibs NAMES gmodule-2.0
    PATHS
-   ${PC_GOBJECT_LIBDIR}
-   ${PC_GOBJECT_LIBRARY_DIRS}
+   ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 FIND_LIBRARY(_GThreadLibs NAMES gthread-2.0
    PATHS
-   ${PC_GOBJECT_LIBDIR}
-   ${PC_GOBJECT_LIBRARY_DIRS}
+   ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 FIND_LIBRARY(_GLibs NAMES glib-2.0
    PATHS
-   ${PC_GOBJECT_LIBDIR}
-   ${PC_GOBJECT_LIBRARY_DIRS}
+   ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 
-SET( GOBJECT_LIBRARIES ${_GObjectLibs} ${_GModuleLibs} ${_GThreadLibs} ${_GLibs} )
+IF (WIN32)
+SET (GOBJECT_LIBRARIES ${_GObjectLibs} ${_GModuleLibs} ${_GThreadLibs} ${_GLibs})
+ELSE (WIN32)
+SET (GOBJECT_LIBRARIES ${PKG_GOBJECT2_LIBRARIES})
+ENDIF (WIN32)
 
 IF (GOBJECT_INCLUDE_DIR AND GOBJECT_LIBRARIES)
    SET(GOBJECT_FOUND TRUE)
@@ -77,4 +75,4 @@ ELSE (GOBJECT_FOUND)
     ENDIF(GObject_FIND_REQUIRED)
 ENDIF (GOBJECT_FOUND)
 
-MARK_AS_ADVANCED(GOBJECT_INCLUDE_DIR _GObjectLibs _GModuleLibs _GThreadLibs _GLibs)
+MARK_AS_ADVANCED(GOBJECT_INCLUDE_DIR GOBJECT_LIBRARIES)
