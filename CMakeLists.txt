@@ -16,6 +16,10 @@ find_package(GObject REQUIRED)
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
+if (${GSTREAMER_VERSION} VERSION_LESS "0.10.30")
+    message(FATAL_ERROR "QtGstreamer requires Gstreamer >= 0.10.30")
+endif()
+
 include(${QT_USE_FILE})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
