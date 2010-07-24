@@ -47,6 +47,9 @@ namespace QGlib {
 class SignalHandler
 {
 public:
+    inline SignalHandler()
+        : m_instance(NULL), m_id(0) {}
+
     inline bool isValid() const { return m_instance != NULL; }
 
     bool isConnected() const;
@@ -57,8 +60,6 @@ public:
 
 private:
     friend class Signal;
-    inline SignalHandler()
-        : m_instance(NULL), m_id(0) {}
     inline SignalHandler(void *instance, ulong id)
         : m_instance(instance), m_id(id) {}
 

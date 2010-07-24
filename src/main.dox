@@ -20,6 +20,13 @@
  * This namespace provides wrapper classes for GStreamer objects.
  */
 
+/*! \namespace QGst::Ui
+ * \brief Helper classes for better integration of GStreamer in graphical Qt applications
+ *
+ * This namespace provides helper classes for better integration of GStreamer
+ * in graphical Qt applications.
+ */
+
 /*! \example echo/main.cpp
  * This is a trivial example which echoes the microphone input to the output
  */

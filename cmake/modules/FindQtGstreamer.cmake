@@ -22,10 +22,11 @@ else()
     set(QtGstreamer_FIND_QUIETLY FALSE)
 endif()
 
-set(_QTGSTREAMER_LINK_TO_QTCORE_REQUIRED FALSE)
+set(_QTGSTREAMER_LINK_TO_QT_REQUIRED FALSE)
 
 if(BUILDING_QTGSTREAMER)
     set(QTGSTREAMER_LIBRARY QtGstreamer)
+    set(QTGSTREAMER_UI_LIBRARY QtGstreamerUi)
     set(QTGSTREAMER_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 else()
     # Attempt to find the generated QtGstreamerTargets.cmake in the same directory
@@ -37,28 +38,32 @@ else()
         # Normally, this path is never executed. It is just provided as a fallback in case something goes wrong.
         find_library(QTGSTREAMER_LIBRARY QtGstreamer
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
+        find_library(QTGSTREAMER_UI_LIBRARY QtGstreamerUi
+                     PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
         find_path(QTGSTREAMER_INCLUDE_DIR QGst/global.h
                   PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../include"
                   PATH_SUFFIXES QtGstreamer)
-        set(_QTGSTREAMER_LINK_TO_QTCORE_REQUIRED TRUE)
+        set(_QTGSTREAMER_LINK_TO_QT_REQUIRED TRUE)
     else()
         # Targets file found. Use imported QtGstreamer target and relative include path.
         # We assume that this file has been installed in $PREFIX/lib/QtGstreamer/,
         # so the include path should evaluate to $PREFIX/include/QtGstreamer
         include(${_QTGSTREAMER_TARGETS_FILE})
         set(QTGSTREAMER_LIBRARY QtGstreamer)
+        set(QTGSTREAMER_UI_LIBRARY QtGstreamerUi)
         get_filename_component(QTGSTREAMER_INCLUDE_DIR "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGstreamer" ABSOLUTE)
     endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(QtGstreamer DEFAULT_MSG QTGSTREAMER_INCLUDE_DIR QTGSTREAMER_LIBRARY)
+find_package_handle_standard_args(QtGstreamer DEFAULT_MSG QTGSTREAMER_INCLUDE_DIR
+                                                          QTGSTREAMER_LIBRARY QTGSTREAMER_UI_LIBRARY)
 
 if(QTGSTREAMER_FOUND)
     # Find dependencies, if not already found
     if (NOT DEFINED QT_INCLUDE_DIR)
         message(STATUS "Qt hasn't been found yet. Looking...")
-        find_package(Qt4 COMPONENTS QtCore REQUIRED)
+        find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
     endif()
 
     if (NOT DEFINED Boost_INCLUDE_DIRS)
@@ -70,10 +75,13 @@ if(QTGSTREAMER_FOUND)
     set(QTGSTREAMER_INCLUDES ${QTGSTREAMER_INCLUDE_DIR} ${QT_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
     set(QTGSTREAMER_DEFINITIONS "-DQT_NO_KEYWORDS")
 
-    if (_QTGSTREAMER_LINK_TO_QTCORE_REQUIRED)
+    if (_QTGSTREAMER_LINK_TO_QT_REQUIRED)
         set(QTGSTREAMER_LIBRARIES ${QTGSTREAMER_LIBRARY} ${QT_QTCORE_LIBRARY})
+        set(QTGSTREAMER_UI_LIBRARIES ${QTGSTREAMER_UI_LIBRARY} ${QTGSTREAMER_LIBRARY}
+                                    ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY})
     else()
         set(QTGSTREAMER_LIBRARIES ${QTGSTREAMER_LIBRARY})
+        set(QTGSTREAMER_UI_LIBRARIES ${QTGSTREAMER_UI_LIBRARY})
     endif()
 
     if (CMAKE_COMPILER_IS_GNUCXX)

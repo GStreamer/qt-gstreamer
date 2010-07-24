@@ -29,6 +29,10 @@ set(QtGstreamer_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
+set(QtGstreamerUi_SRCS
+    QGst/Ui/videowidget.cpp
+)
+
 set(INSTALLED_HEADERS
     QGlib/global.h
     QGlib/quark.h       QGlib/Quark
@@ -66,6 +70,8 @@ set(INSTALLED_HEADERS
     QGst/parse.h        QGst/Parse
     QGst/urihandler.h   QGst/UriHandler
     QGst/xoverlay.h     QGst/XOverlay
+
+    QGst/Ui/videowidget.h QGst/Ui/VideoWidget
 )
 
 set(CODEGEN_HEADERS
@@ -128,8 +134,22 @@ target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES}
 target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 
+# Build and link QtGstreamerUi
+if(STATIC_QTGSTREAMER)
+    automoc4_add_library(QtGstreamerUi STATIC ${QtGstreamerUi_SRCS})
+else()
+    automoc4_add_library(QtGstreamerUi SHARED ${QtGstreamerUi_SRCS})
+endif()
+
+set_target_properties(QtGstreamerUi PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
+                                               VERSION ${QTGSTREAMER_VERSION})
+target_link_libraries(QtGstreamerUi ${QT_QTGUI_LIBRARY} QtGstreamer)
+target_link_libraries(QtGstreamerUi LINK_INTERFACE_LIBRARIES ${QT_QTGUI_LIBRARY} QtGstreamer)
+
+
 # Install the library
 install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGstreamerTargets)
+install(TARGETS QtGstreamerUi DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGstreamerTargets)
 
 # Install the cmake scripts that are used to find the installed library from external projects
 install(EXPORT QtGstreamerTargets DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGstreamer)

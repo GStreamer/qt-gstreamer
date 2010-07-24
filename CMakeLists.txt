@@ -7,7 +7,7 @@ set(BUILDING_QTGSTREAMER TRUE)
 set(QTGSTREAMER_VERSION 0.1)
 set(QTGSTREAMER_SOVERSION 0)
 
-find_package(Qt4 COMPONENTS QtCore QtTest REQUIRED)
+find_package(Qt4 COMPONENTS QtCore QtGui QtTest REQUIRED)
 find_package(QtGstreamer REQUIRED)
 find_package(Automoc4 REQUIRED)
 find_package(GStreamer REQUIRED)
@@ -20,8 +20,6 @@ find_package(BISON REQUIRED)
 if (${GSTREAMER_VERSION} VERSION_LESS "0.10.30")
     message(FATAL_ERROR "QtGstreamer requires Gstreamer >= 0.10.30")
 endif()
-
-include(${QT_USE_FILE})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat-security -Wundef -Wpointer-arith -Wcast-align -fno-common")
