@@ -247,4 +247,14 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::StreamStatusType)
 
+namespace QGst {
+    enum StreamVolumeFormat {
+        StreamVolumeFormatLinear,
+        StreamVolumeFormatCubic,
+        StreamVolumeFormatDb
+    };
+}
+//### This enum does not have a GType upstream (yet?)
+//QGLIB_REGISTER_TYPE(QGst::StreamVolumeFormat)
+
 #endif
