@@ -105,6 +105,7 @@ set(CODEGEN_HEADERS
 
 set(CODEGEN_INCLUDES
     -Igst/gst.h
+    -Igst/interfaces/interfaces-enumtypes.h
     -Igst/interfaces/xoverlay.h
     -Igst/interfaces/streamvolume.h
 )
