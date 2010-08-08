@@ -256,4 +256,12 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::StreamVolumeFormat)
 
+namespace QGst {
+    enum ColorBalanceType {
+        ColorBalanceHardware,
+        ColorBalanceSoftware
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::ColorBalanceType)
+
 #endif

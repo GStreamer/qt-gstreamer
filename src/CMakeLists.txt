@@ -27,6 +27,7 @@ set(QtGstreamer_SRCS
     QGst/urihandler.cpp
     QGst/xoverlay.cpp
     QGst/streamvolume.cpp
+    QGst/colorbalance.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -72,6 +73,7 @@ set(INSTALLED_HEADERS
     QGst/urihandler.h   QGst/UriHandler
     QGst/xoverlay.h     QGst/XOverlay
     QGst/streamvolume.h QGst/StreamVolume
+    QGst/colorbalance.h QGst/ColorBalance
 
     QGst/Ui/videowidget.h QGst/Ui/VideoWidget
 )
@@ -101,6 +103,7 @@ set(CODEGEN_HEADERS
     QGst/urihandler.h
     QGst/xoverlay.h
     QGst/streamvolume.h
+    QGst/colorbalance.h
 )
 
 set(CODEGEN_INCLUDES
@@ -108,6 +111,7 @@ set(CODEGEN_INCLUDES
     -Igst/interfaces/interfaces-enumtypes.h
     -Igst/interfaces/xoverlay.h
     -Igst/interfaces/streamvolume.h
+    -Igst/interfaces/colorbalance.h
 )
 
 # Setup the environment
