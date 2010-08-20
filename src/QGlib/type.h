@@ -179,6 +179,28 @@ inline Type GetType()
         GetTypeImpl<T>::operator Type() { return (GTYPE); } \
     }
 
+/*! Registers the specified type \a T with the QGlib type system as a Boxed type.
+ * You can use this macro to register any boxed type in your code, in case
+ * you need to use it with an element property or with a signal.
+ *
+ * Be careful with boxed types, though, since they all are the same thing for
+ * the QGlib type system, so there is no type checking. For example, if you
+ * register both GList* and MyBoxed* and then try to call
+ * someObject->property("foo-list").get<MyBoxed*>() (supposing that this is a
+ * GList property), it will succeed, although the property is not of the
+ * MyBoxed type.
+ *
+ * \note \a T must be a pointer
+ * \sa QGLIB_REGISTER_VALUEIMPL_FOR_BOXED_TYPE
+ */
+#define QGLIB_REGISTER_BOXED_TYPE(T) \
+    namespace QGlib { \
+        template <> \
+        struct GetTypeImpl<T> { \
+            inline operator Type() { return Type::Boxed; } \
+        }; \
+    }
+
 //@}
 
 //***********************

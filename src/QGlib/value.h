@@ -219,6 +219,36 @@ struct ValueImpl
         } \
     }
 
+/*! This macro declares a specialization (with its inline implementation)
+ * for ValueImpl for the type \a T, where \a T is a Boxed type.
+ * You can use this macro to register any boxed type in your code, in case
+ * you need to use it with an element property or with a signal.
+ * You will also need to register type \a T with the type system first,
+ * using the QGLIB_REGISTER_BOXED_TYPE macro.
+ *
+ * Example:
+ * \code
+ * QGLIB_REGISTER_BOXED_TYPE(GList*)
+ * QGLIB_REGISTER_VALUEIMPL_FOR_BOXED_TYPE(GList*)
+ * \endcode
+ *
+ * \note \a T must be a pointer
+ * \sa QGLIB_REGISTER_BOXED_TYPE
+ */
+#define QGLIB_REGISTER_VALUEIMPL_FOR_BOXED_TYPE(T) \
+    namespace QGlib { \
+        template <> \
+        struct ValueImpl<T> \
+        { \
+            static T get(const ValueBase & value) { \
+                return static_cast<T>(ValueImpl_Boxed::get(value)); \
+            } \
+            static void set(ValueBase & value, T const & data) { \
+                ValueImpl_Boxed::set(value, static_cast<void*>(data)); \
+            } \
+        }; \
+    }
+
 //@}
 
 // -- template implementations --
@@ -308,6 +338,14 @@ struct ValueImpl< QFlags<T> >
     {
         ValueImpl_Flags::set(value, static_cast<uint>(data));
     }
+};
+
+// -- ValueImpl helper for using boxed types --
+
+struct ValueImpl_Boxed
+{
+    static void *get(const ValueBase & value);
+    static void set(ValueBase & value, void *data);
 };
 
 } //namespace QGlib

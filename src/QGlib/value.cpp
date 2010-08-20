@@ -185,6 +185,16 @@ void ValueImpl_Enum::set(ValueBase & value, int data)
     g_value_set_enum(value, data);
 }
 
+void *ValueImpl_Boxed::get(const ValueBase & value)
+{
+    return g_value_get_boxed(value);
+}
+
+void ValueImpl_Boxed::set(ValueBase & value, void *data)
+{
+    g_value_set_boxed(value, data);
+}
+
 //END ValueImpl internal helpers
 
 }
