@@ -25,6 +25,7 @@ set(QtGstreamer_SRCS
     QGst/bus.cpp
     QGst/parse.cpp
     QGst/urihandler.cpp
+    QGst/videoorientation.cpp
     QGst/xoverlay.cpp
     QGst/streamvolume.cpp
     QGst/colorbalance.cpp
@@ -71,6 +72,7 @@ set(INSTALLED_HEADERS
     QGst/bus.h          QGst/Bus
     QGst/parse.h        QGst/Parse
     QGst/urihandler.h   QGst/UriHandler
+    QGst/videoorientation.h   QGst/VideoOrientation
     QGst/xoverlay.h     QGst/XOverlay
     QGst/streamvolume.h QGst/StreamVolume
     QGst/colorbalance.h QGst/ColorBalance
@@ -101,6 +103,7 @@ set(CODEGEN_HEADERS
     QGst/message.h
     QGst/bus.h
     QGst/urihandler.h
+    QGst/videoorientation.h
     QGst/xoverlay.h
     QGst/streamvolume.h
     QGst/colorbalance.h
@@ -112,6 +115,7 @@ set(CODEGEN_INCLUDES
     -Igst/interfaces/xoverlay.h
     -Igst/interfaces/streamvolume.h
     -Igst/interfaces/colorbalance.h
+    -Igst/interfaces/videoorientation.h
 )
 
 # Setup the environment
