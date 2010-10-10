@@ -83,6 +83,7 @@ public:
             m_watches[bus].first->stop();
             m_watches[bus].first->deleteLater();
             m_watches.remove(bus);
+            g_object_weak_unref(G_OBJECT(bus), &BusWatchManager::onBusDestroyed, this);
         }
     }
 
@@ -92,9 +93,10 @@ private:
         BusWatchManager *self = static_cast<BusWatchManager*>(selfPtr);
         GstBus *bus = reinterpret_cast<GstBus*>(busPtr);
 
-        //set refcount to 1 to make sure the following call will remove the watch
-        self->m_watches[bus].second = 1;
-        self->removeWatch(bus);
+        //we cannot call removeWatch() here because g_object_weak_unref will complain
+        self->m_watches[bus].first->stop();
+        self->m_watches[bus].first->deleteLater();
+        self->m_watches.remove(bus);
     }
 
     QHash< GstBus*, QPair<BusWatch*, uint> > m_watches;

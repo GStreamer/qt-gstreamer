@@ -28,6 +28,7 @@ private:
 
 private Q_SLOTS:
     void watchTest();
+    void watchTestWithWatchRemoval();
 
 private:
     QEventLoop m_eventLoop;
@@ -93,6 +94,30 @@ void BusTest::watchTest()
     QCOMPARE(m_messagesReceived, 10);
 
     thread.wait(); //allow the thread to cleanup properly
+}
+
+//This is the same as watchTest(), but we remove the signal watch in the end.
+//This tests the case where the watch is removed before the bus is destroyed.
+void BusTest::watchTestWithWatchRemoval()
+{
+    MessagePushThread thread;
+    thread.bus = QGst::Bus::create();
+
+    m_messagesReceived = 0;
+    thread.bus->addSignalWatch();
+    QGlib::Signal::connect(thread.bus, "message", this, &BusTest::messageClosure);
+
+    thread.start();
+
+    //kill the event loop after 5 seconds
+    QTimer::singleShot(5000, &m_eventLoop, SLOT(quit()));
+    int code = m_eventLoop.exec();
+    QCOMPARE(code, 1); //we get 1 if we quit from messageClosure and 0 if we quit from the timer
+    QCOMPARE(m_messagesReceived, 10);
+
+    thread.wait(); //allow the thread to cleanup properly
+
+    thread.bus->removeSignalWatch();
 }
 
 QTEST_MAIN(BusTest)
