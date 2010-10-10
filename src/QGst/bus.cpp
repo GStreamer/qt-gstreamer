@@ -32,7 +32,7 @@ public:
     BusWatch(GstBus *bus)
         : QObject(), m_bus(bus)
     {
-        m_timer.start(0, this);
+        m_timer.start(10, this);
     }
 
     void stop()
