@@ -56,7 +56,7 @@ QList<Value> packArguments(Arg1 && a1, Args&&... args)
                 typename boost::add_reference<Arg1>::type
             >::type ConstArg1Ref;
 
-    QList<Value> result = packArguments(args...);
+    QList<Value> result = packArguments(std::forward<Args>(args)...);
     //prepend, since we are packing from the last to the first argument
     result.prepend(Value(static_cast<ConstArg1Ref>(a1)));
     return result;
@@ -70,7 +70,8 @@ struct EmitImpl<R (Args...)>
 {
     static inline R emit(void *instance, const char *detailedSignal, Args&&... args)
     {
-        Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
+        Value && returnValue = Signal::emit(instance, detailedSignal,
+                                            packArguments(std::forward<Args>(args)...));
 
         try {
             return returnValue.get<R>();
@@ -87,7 +88,8 @@ struct EmitImpl<void (Args...)>
 {
     static inline void emit(void *instance, const char *detailedSignal, Args&&... args)
     {
-        Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
+        Value && returnValue = Signal::emit(instance, detailedSignal,
+                                            packArguments(std::forward<Args>(args)...));
 
         if (returnValue.isValid()) {
             qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
@@ -104,7 +106,8 @@ struct EmitImpl<void (Args...)>
 template <typename R, typename... Args>
 R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
 {
-    return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, args...);
+    return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal,
+                                                       std::forward<Args>(args)...);
 }
 
 //END ******** Signal::emit ********

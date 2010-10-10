@@ -111,7 +111,7 @@ public:
 
     inline R operator()(Args&&... args) const
     {
-        return (m_object->*m_function)(args...);
+        return (m_object->*m_function)(std::forward<Args>(args)...);
     }
 
 private:
@@ -133,11 +133,12 @@ class BoundArgumentFunction
 {
 public:
     inline BoundArgumentFunction(ParentFunction && fn, Arg1 && arg)
-        : m_function(fn), m_firstArg(arg) {}
+        : m_function(std::forward<ParentFunction>(fn)),
+          m_firstArg(std::forward<Arg1>(arg)) {}
 
     inline R operator()(Args&&... args) const
     {
-        return m_function(m_firstArg, args...);
+        return m_function(std::forward<Arg1>(m_firstArg), std::forward<Args>(args)...);
     }
 
 private:
@@ -148,7 +149,7 @@ private:
 template <typename F, typename R, typename Arg1, typename... Args>
 inline BoundArgumentFunction<F, R, Arg1, Args...> partial_bind(F && f, Arg1 && a1)
 {
-    return BoundArgumentFunction<F, R, Arg1, Args...>(f, a1);
+    return BoundArgumentFunction<F, R, Arg1, Args...>(std::forward<F>(f), std::forward<Arg1>(a1));
 }
 
 //END ******** BoundArgumentFunction ********
@@ -173,8 +174,11 @@ inline void unpackAndInvoke(F && function, SharedValue & result,
     typedef BoundArgumentFunction<F, R, Arg1, Args...> F1;
 
     CleanArg1 && boundArg = argsBegin->get<CleanArg1>();
-    F1 && f = partial_bind<F, R, Arg1, Args...>(function, boundArg);
-    unpackAndInvoke< F1, R, Args... >(f, result, ++argsBegin, argsEnd);
+    F1 && f = partial_bind<F, R, Arg1, Args...>(std::forward<F>(function), std::forward<Arg1>(boundArg));
+
+    unpackAndInvoke< F1, R, Args... >(std::forward<F1>(f), result,
+                                      std::forward<QList<Value>::const_iterator>(++argsBegin),
+                                      std::forward<QList<Value>::const_iterator>(argsEnd));
 }
 
 //END ******** unpackAndInvoke ********
@@ -195,7 +199,8 @@ struct CppClosure<R (Args...), F>
                 throw std::logic_error("The signal provides less arguments than what the closure expects");
             }
 
-            unpackAndInvoke<F, R, Args...>(m_function, result, params.constBegin(), params.constEnd());
+            unpackAndInvoke<F, R, Args...>(std::forward<F>(m_function), result,
+                                           params.constBegin(), params.constEnd());
         }
 
     private:
