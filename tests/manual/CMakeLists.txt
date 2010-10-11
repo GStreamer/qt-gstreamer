@@ -10,3 +10,8 @@ target_link_libraries(qwidgetvideosinktest ${QT_QTGUI_LIBRARIES} ${QTGSTREAMER_L
 qt4_wrap_ui(VIDEOWIDGETTEST_UI videowidgettest.ui)
 automoc4_add_executable(videowidgettest videowidgettest.cpp ${VIDEOWIDGETTEST_UI})
 target_link_libraries(videowidgettest ${QTGSTREAMER_UI_LIBRARIES})
+
+
+qt4_wrap_ui(VIDEOORIENTATIONTEST_UI videoorientationtest.ui)
+automoc4_add_executable(videoorientationtest videoorientationtest.cpp ${VIDEOORIENTATIONTEST_UI})
+target_link_libraries(videoorientationtest ${QTGSTREAMER_UI_LIBRARIES})
