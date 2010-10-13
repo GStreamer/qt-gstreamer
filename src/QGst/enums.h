@@ -264,4 +264,23 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::ColorBalanceType)
 
+namespace QGst {
+    enum QueryType {
+        QueryNone = 0,
+        QueryPosition,
+        QueryDuration,
+        QueryLatency,
+        QueryJitter,
+        QueryRate,
+        QuerySeeking,
+        QuerySegment,
+        QueryConvert,
+        QueryFormats,
+        QueryBuffering,
+        QueryCustom,
+        QueryUri
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::QueryType)
+
 #endif
