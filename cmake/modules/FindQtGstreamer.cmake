@@ -85,12 +85,23 @@ if(QTGSTREAMER_FOUND)
     endif()
 
     if (CMAKE_COMPILER_IS_GNUCXX)
-        include(TestCXXAcceptsFlag)
-        check_cxx_accepts_flag("-std=c++0x" _QTGSTREAMER_HAVE_CXX0X_SUPPORT)
-        if (_QTGSTREAMER_HAVE_CXX0X_SUPPORT)
+        execute_process(COMMAND ${CMAKE_CXX_COMPILER} "-dumpversion"
+                        RESULT_VARIABLE _GCC_DUMPVERSION_RESULT
+                        OUTPUT_VARIABLE _GCC_VERSION
+                        ERROR_QUIET
+                        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+        if ((${_GCC_DUMPVERSION_RESULT} EQUAL 0)
+            AND (${_GCC_VERSION} VERSION_GREATER 4.4.99)
+            AND (NOT QTGSTREAMER_DISABLE_CXX0X))
+
+            if (NOT QTGSTREAMER_FLAGS) # be quiet if we try to find QtGStreamer multiple times
+                message(STATUS "GCC 4.5 or later detected. Enabling C++0x support in QTGSTREAMER_FLAGS.")
+            endif()
             set(QTGSTREAMER_FLAGS "-std=c++0x")
         endif()
     endif()
+
 endif()
 
 mark_as_advanced(QTGSTREAMER_LIBRARY QTGSTREAMER_INCLUDE_DIR)
