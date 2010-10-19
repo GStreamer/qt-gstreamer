@@ -77,7 +77,7 @@ public:
 
     Format format() const;
     qint64 position() const;
-    void setPosition(Format format, qint64 position);
+    void setValues(Format format, qint64 position);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -91,7 +91,7 @@ public:
 
     Format format() const;
     qint64 duration() const;
-    void setDuration(Format format, qint64 duration);
+    void setValues(Format format, qint64 duration);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -107,7 +107,7 @@ public:
     ClockTime minimumLatency() const;
     ClockTime maximumLatency() const;
 
-    void setLatency(bool live, ClockTime minimumLatency, ClockTime maximumLatency);
+    void setValues(bool live, ClockTime minimumLatency, ClockTime maximumLatency);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -124,7 +124,7 @@ public:
     qint64 segmentStart() const;
     qint64 segmentEnd() const;
 
-    void setSeeking(Format format, bool seekable, qint64 segmentStart, qint64 segmentEnd);
+    void setValues(Format format, bool seekable, qint64 segmentStart, qint64 segmentEnd);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -141,7 +141,7 @@ public:
     qint64 startValue() const;
     qint64 stopValue() const;
 
-    void setSegment(Format format, double rate, qint64 startValue, qint64 stopValue);
+    void setValues(Format format, double rate, qint64 startValue, qint64 stopValue);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -158,7 +158,7 @@ public:
     Format destinationFormat() const;
     qint64 destinationValue() const;
 
-    void setConvert(Format sourceFormat, qint64 sourcevalue, Format destinationFormat,
+    void setValues(Format sourceFormat, qint64 sourcevalue, Format destinationFormat,
                     qint64 destinationValue);
 };
 
@@ -173,7 +173,7 @@ public:
 
     QList<Format> formats() const;
 
-    void setFormats(const QList<Format> & formats);
+    void setValue(const QList<Format> & formats);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -188,21 +188,21 @@ public:
     bool isBusy() const;
     int percent() const;
 
-    void setPercent(bool busy, int percent);
+    void setValues(bool busy, int percent);
 
     BufferingMode mode() const;
     int averageIn() const;
     int averageOut() const;
     qint64 bufferingLeft() const;
 
-    void setStats(BufferingMode mode, int averageIn, int averageOut, qint64 bufferingLeft);
+    void setValues(BufferingMode mode, int averageIn, int averageOut, qint64 bufferingLeft);
 
     Format format() const;
     qint64 rangeStart() const;
     qint64 rangeStop() const;
     qint64 estimatedTotal() const;
 
-    void setRange(Format rangeFormat, qint64 rangeStart, qint64 rangeStop, qint64 estimatedTotal);
+    void setValues(Format rangeFormat, qint64 rangeStart, qint64 rangeStop, qint64 estimatedTotal);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -216,7 +216,7 @@ public:
 
     QUrl uri() const;
 
-    void setUri(const QUrl & uri);
+    void setValue(const QUrl & uri);
 };
 
 } //namespace QGst

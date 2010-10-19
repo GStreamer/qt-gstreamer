@@ -52,7 +52,7 @@ void QueryTest::positionTest()
     QCOMPARE(query->typeName(), QString("position"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
-    query->setPosition(QGst::FormatTime, 1234567);
+    query->setValues(QGst::FormatTime, 1234567);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
     QCOMPARE(query->position(), static_cast<qint64>(1234567));
@@ -65,7 +65,7 @@ void QueryTest::durationTest()
     QCOMPARE(query->typeName(), QString("duration"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
-    query->setDuration(QGst::FormatTime, 1234567);
+    query->setValues(QGst::FormatTime, 1234567);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
     QCOMPARE(query->duration(), static_cast<qint64>(1234567));
@@ -77,7 +77,7 @@ void QueryTest::latencyTest()
     QVERIFY(query->type()==QGst::QueryLatency);
     QCOMPARE(query->typeName(), QString("latency"));
 
-    query->setLatency(true, 10000, 100000);
+    query->setValues(true, 10000, 100000);
     QVERIFY(query->hasLive());
     QCOMPARE(query->minimumLatency(), static_cast<quint64>(10000));
     QCOMPARE(query->maximumLatency(), static_cast<quint64>(100000));
@@ -90,7 +90,7 @@ void QueryTest::seekingTest()
     QCOMPARE(query->typeName(), QString("seeking"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
-    query->setSeeking(QGst::FormatTime, true, 1234567, 23456789);
+    query->setValues(QGst::FormatTime, true, 1234567, 23456789);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
 
@@ -106,7 +106,7 @@ void QueryTest::segmentTest()
     QCOMPARE(query->typeName(), QString("segment"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
-    query->setSegment(QGst::FormatTime, 2.00 , 1234567, 23456789);
+    query->setValues(QGst::FormatTime, 2.00 , 1234567, 23456789);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
 
@@ -122,7 +122,7 @@ void QueryTest::convertTest()
     QVERIFY(query->type()==QGst::QueryConvert);
     QCOMPARE(query->typeName(), QString("convert"));
 
-    query->setConvert(QGst::FormatBytes, 100000 , QGst::FormatTime, 2222222);
+    query->setValues(QGst::FormatBytes, 100000 , QGst::FormatTime, 2222222);
     QVERIFY(query->sourceFormat()==QGst::FormatBytes);
     QVERIFY(query->destinationFormat()==QGst::FormatTime);
     QCOMPARE(query->sourceValue(), static_cast<qint64>(100000));
@@ -140,7 +140,7 @@ void QueryTest::formatsTest()
     formats.append(QGst::FormatTime);
     formats.append(QGst::FormatBytes);
 
-    query->setFormats(formats);
+    query->setValue(formats);
     QList<QGst::Format> answer = query->formats();
     QVERIFY(answer.count()==3);
     QVERIFY(answer.contains(QGst::FormatPercent));
@@ -157,18 +157,18 @@ void QueryTest::bufferingTest()
     QCOMPARE(query->typeName(), QString("buffering"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
-    query->setPercent(true, 85);
+    query->setValues(true, 85);
     QVERIFY(query->isBusy());
     QCOMPARE(query->percent(), 85);
 
-    query->setStats(QGst::BufferingStream, 12345, 23456, 345678);
+    query->setValues(QGst::BufferingStream, 12345, 23456, 345678);
     QVERIFY(query->mode()!=QGst::BufferingDownload);
     QVERIFY(query->mode()==QGst::BufferingStream);
     QCOMPARE(query->averageIn(), 12345);
     QCOMPARE(query->averageOut(), 23456);
     QCOMPARE(query->bufferingLeft(), static_cast<qint64>(345678));
 
-    query->setRange(QGst::FormatTime, 23456, 34567, 100000);
+    query->setValues(QGst::FormatTime, 23456, 34567, 100000);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
     QCOMPARE(query->rangeStart(), static_cast<qint64>(23456));
@@ -182,7 +182,7 @@ void QueryTest::uriTest()
     QVERIFY(query->type()==QGst::QueryUri);
     QCOMPARE(query->typeName(), QString("uri"));
 
-    query->setUri(QUrl::fromLocalFile("/bin/sh"));
+    query->setValue(QUrl::fromLocalFile("/bin/sh"));
     QCOMPARE(query->uri(), QUrl::fromLocalFile("/bin/sh"));
 }
 

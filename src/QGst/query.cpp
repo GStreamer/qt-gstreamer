@@ -80,7 +80,7 @@ qint64 PositionQuery::position() const
     return p;
 }
 
-void PositionQuery::setPosition(Format format, qint64 position)
+void PositionQuery::setValues(Format format, qint64 position)
 {
     gst_query_set_position(object<GstQuery>(), static_cast<GstFormat>(format), position);
 }
@@ -106,7 +106,7 @@ qint64 DurationQuery::duration() const
     return d;
 }
 
-void DurationQuery::setDuration(Format format, qint64 duration)
+void DurationQuery::setValues(Format format, qint64 duration)
 {
     gst_query_set_duration(object<GstQuery>(), static_cast<GstFormat>(format), duration);
 }
@@ -139,7 +139,7 @@ ClockTime LatencyQuery::maximumLatency() const
     return c;
 }
 
-void LatencyQuery::setLatency(bool live, ClockTime minimumLatency, ClockTime maximumLatency)
+void LatencyQuery::setValues(bool live, ClockTime minimumLatency, ClockTime maximumLatency)
 {
     gst_query_set_latency(object<GstQuery>(), live, minimumLatency, maximumLatency);
 }
@@ -179,7 +179,7 @@ qint64 SeekingQuery::segmentEnd() const
     return s;
 }
 
-void SeekingQuery::setSeeking(Format format, bool seekable, qint64 segmentStart, qint64 segmentEnd)
+void SeekingQuery::setValues(Format format, bool seekable, qint64 segmentStart, qint64 segmentEnd)
 {
     gst_query_set_seeking(object<GstQuery>(), static_cast<GstFormat>(format), seekable,
                           segmentStart, segmentEnd);
@@ -220,7 +220,7 @@ qint64 SegmentQuery::stopValue() const
     return s;
 }
 
-void SegmentQuery::setSegment(Format format, double rate, qint64 startValue, qint64 stopValue)
+void SegmentQuery::setValues(Format format, double rate, qint64 startValue, qint64 stopValue)
 {
     gst_query_set_segment(object<GstQuery>(), rate, static_cast<GstFormat>(format), startValue,
                           stopValue);
@@ -262,7 +262,7 @@ qint64 ConvertQuery::destinationValue() const
     return v;
 }
 
-void ConvertQuery::setConvert(Format sourceFormat, qint64 sourceValue, Format destinationFormat,
+void ConvertQuery::setValues(Format sourceFormat, qint64 sourceValue, Format destinationFormat,
                               qint64 destinationValue)
 {
     gst_query_set_convert(object<GstQuery>(), static_cast<GstFormat>(sourceFormat), sourceValue,
@@ -289,7 +289,7 @@ QList<Format> FormatsQuery::formats() const
     return formats;
 }
 
-void FormatsQuery::setFormats(const QList<Format> & formats)
+void FormatsQuery::setValue(const QList<Format> & formats)
 {
     int cnt = formats.count();
     if (cnt==0) return;
@@ -321,7 +321,7 @@ int BufferingQuery::percent() const
     return p;
 }
 
-void BufferingQuery::setPercent(bool busy, int percent)
+void BufferingQuery::setValues(bool busy, int percent)
 {
     gst_query_set_buffering_percent(object<GstQuery>(), busy, percent);
 }
@@ -355,7 +355,7 @@ qint64 BufferingQuery::bufferingLeft() const
     return l;
 }
 ;
-void BufferingQuery::setStats(BufferingMode mode, int averageIn, int averageOut,
+void BufferingQuery::setValues(BufferingMode mode, int averageIn, int averageOut,
                               qint64 bufferingLeft)
 {
     gst_query_set_buffering_stats(object<GstQuery>(), static_cast<GstBufferingMode>(mode),
@@ -390,7 +390,7 @@ qint64 BufferingQuery::estimatedTotal() const
     return r;
 }
 
-void BufferingQuery::setRange(Format rangeFormat, qint64 rangeStart, qint64 rangeStop,
+void BufferingQuery::setValues(Format rangeFormat, qint64 rangeStart, qint64 rangeStop,
                               qint64 estimatedTotal)
 {
     gst_query_set_buffering_range(object<GstQuery>(), static_cast<GstFormat>(rangeFormat),
@@ -411,7 +411,7 @@ QUrl UriQuery::uri() const
     return QUrl::fromPercentEncoding(uri);
 }
 
-void UriQuery::setUri(const QUrl & uri)
+void UriQuery::setValue(const QUrl & uri)
 {
     gst_query_set_uri(object<GstQuery>(), uri.toEncoded());
 }
