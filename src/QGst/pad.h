@@ -19,8 +19,6 @@
 
 #include "object.h"
 
-class QueryPtr;
-
 namespace QGst {
 
 /*! \headerfile pad.h <QGst/Pad>

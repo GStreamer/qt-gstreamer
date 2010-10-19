@@ -37,55 +37,57 @@ private Q_SLOTS:
 void QueryTest::baseTest()
 {
     QGst::Structure s("mystructure");
-    QGst::QueryPtr query = QGst::Query::create(QGst::QueryCustom, s);
-    QVERIFY(query->type()==QGst::QueryCustom);
+    QGst::PositionQueryPtr query = QGst::PositionQuery::create(QGst::FormatBytes);
 
     QGst::SharedStructure ss = query->structure();
     QVERIFY(ss.isValid());
     ss.setValue("myfield", 365);
     QCOMPARE(ss.value("myfield").get<int>(), 365);
-
 }
 
 void QueryTest::positionTest()
 {
     QGst::PositionQueryPtr query = QGst::PositionQuery::create(QGst::FormatBytes);
     QVERIFY(query->type()==QGst::QueryPosition);
+    QCOMPARE(query->typeName(), QString("position"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
     query->setPosition(QGst::FormatTime, 1234567);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
-    QVERIFY(query->position()==1234567);
+    QCOMPARE(query->position(), static_cast<qint64>(1234567));
 }
 
 void QueryTest::durationTest()
 {
     QGst::DurationQueryPtr query = QGst::DurationQuery::create(QGst::FormatBytes);
     QVERIFY(query->type()==QGst::QueryDuration);
+    QCOMPARE(query->typeName(), QString("duration"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
     query->setDuration(QGst::FormatTime, 1234567);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
-    QVERIFY(query->duration()==1234567);
+    QCOMPARE(query->duration(), static_cast<qint64>(1234567));
 }
 
 void QueryTest::latencyTest()
 {
     QGst::LatencyQueryPtr query = QGst::LatencyQuery::create();
     QVERIFY(query->type()==QGst::QueryLatency);
+    QCOMPARE(query->typeName(), QString("latency"));
 
     query->setLatency(true, 10000, 100000);
     QVERIFY(query->hasLive());
-    QVERIFY(query->minimumLatency()==10000);
-    QVERIFY(query->maximumLatency()==100000);
+    QCOMPARE(query->minimumLatency(), static_cast<quint64>(10000));
+    QCOMPARE(query->maximumLatency(), static_cast<quint64>(100000));
 }
 
 void QueryTest::seekingTest()
 {
     QGst::SeekingQueryPtr query = QGst::SeekingQuery::create(QGst::FormatBytes);
     QVERIFY(query->type()==QGst::QuerySeeking);
+    QCOMPARE(query->typeName(), QString("seeking"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
     query->setSeeking(QGst::FormatTime, true, 1234567, 23456789);
@@ -93,14 +95,15 @@ void QueryTest::seekingTest()
     QVERIFY(query->format()==QGst::FormatTime);
 
     QVERIFY(query->seekable());
-    QVERIFY(query->segmentStart()==1234567);
-    QVERIFY(query->segmentEnd()==23456789);
+    QCOMPARE(query->segmentStart(), static_cast<qint64>(1234567));
+    QCOMPARE(query->segmentEnd(), static_cast<qint64>(23456789));
 }
 
 void QueryTest::segmentTest()
 {
     QGst::SegmentQueryPtr query = QGst::SegmentQuery::create(QGst::FormatBytes);
     QVERIFY(query->type()==QGst::QuerySegment);
+    QCOMPARE(query->typeName(), QString("segment"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
     query->setSegment(QGst::FormatTime, 2.00 , 1234567, 23456789);
@@ -108,8 +111,8 @@ void QueryTest::segmentTest()
     QVERIFY(query->format()==QGst::FormatTime);
 
     QCOMPARE(query->rate(), 2.00);
-    QVERIFY(query->startValue()==1234567);
-    QVERIFY(query->stopValue()==23456789);
+    QCOMPARE(query->startValue(), static_cast<qint64>(1234567));
+    QCOMPARE(query->stopValue(), static_cast<qint64>(23456789));
 }
 
 void QueryTest::convertTest()
@@ -117,18 +120,20 @@ void QueryTest::convertTest()
     QGst::ConvertQueryPtr query = QGst::ConvertQuery::create(QGst::FormatBytes, 100000,
                                                              QGst::FormatTime);
     QVERIFY(query->type()==QGst::QueryConvert);
+    QCOMPARE(query->typeName(), QString("convert"));
 
     query->setConvert(QGst::FormatBytes, 100000 , QGst::FormatTime, 2222222);
     QVERIFY(query->sourceFormat()==QGst::FormatBytes);
     QVERIFY(query->destinationFormat()==QGst::FormatTime);
-    QVERIFY(query->sourceValue()==100000);
-    QVERIFY(query->destinationValue()==2222222);
+    QCOMPARE(query->sourceValue(), static_cast<qint64>(100000));
+    QCOMPARE(query->destinationValue(), static_cast<qint64>(2222222));
 }
 
 void QueryTest::formatsTest()
 {
     QGst::FormatsQueryPtr query = QGst::FormatsQuery::create();
     QVERIFY(query->type()==QGst::QueryFormats);
+    QCOMPARE(query->typeName(), QString("formats"));
 
     QList<QGst::Format> formats;
     formats.append(QGst::FormatPercent);
@@ -149,6 +154,7 @@ void QueryTest::bufferingTest()
 {
     QGst::BufferingQueryPtr query = QGst::BufferingQuery::create(QGst::FormatBytes);
     QVERIFY(query->type()==QGst::QueryBuffering);
+    QCOMPARE(query->typeName(), QString("buffering"));
     QVERIFY(query->format()==QGst::FormatBytes);
 
     query->setPercent(true, 85);
@@ -160,20 +166,21 @@ void QueryTest::bufferingTest()
     QVERIFY(query->mode()==QGst::BufferingStream);
     QCOMPARE(query->averageIn(), 12345);
     QCOMPARE(query->averageOut(), 23456);
-    QVERIFY(query->bufferingLeft()==345678);
+    QCOMPARE(query->bufferingLeft(), static_cast<qint64>(345678));
 
     query->setRange(QGst::FormatTime, 23456, 34567, 100000);
     QVERIFY(query->format()!=QGst::FormatBytes);
     QVERIFY(query->format()==QGst::FormatTime);
-    QVERIFY(query->rangeStart()==23456);
-    QVERIFY(query->rangeStop()==34567);
-    QVERIFY(query->estimatedTotal()==100000);
+    QCOMPARE(query->rangeStart(), static_cast<qint64>(23456));
+    QCOMPARE(query->rangeStop(), static_cast<qint64>(34567));
+    QCOMPARE(query->estimatedTotal(), static_cast<qint64>(100000));
 }
 
 void QueryTest::uriTest()
 {
     QGst::UriQueryPtr query = QGst::UriQuery::create();
     QVERIFY(query->type()==QGst::QueryUri);
+    QCOMPARE(query->typeName(), QString("uri"));
 
     query->setUri(QUrl::fromLocalFile("/bin/sh"));
     QCOMPARE(query->uri(), QUrl::fromLocalFile("/bin/sh"));

@@ -36,12 +36,14 @@ namespace QGst {
      * content. This allows for writing custom queries without requiring an API change while
      * allowing a wide range of different types of queries.
      *
-     * In these bindings, for convenience, each query type has its own Query subclass. This
-     * does not reflect 1-1 the native C API, where there is only one Query class with tens of
-     * 'new_foo' and 'parse_foo' methods. You can use RefPointer::dynamicCast() to cast a QueryPtr
-     * to a RefPointer of one of the Query subclasses and it will behave as expected (i.e. it will
-     * only succeed if the queries type matches the queries type that the subclass handles). Note
-     * however that the Query subclasses \em cannot be used with ValueBase::get(), since a GValue
+     * QGst::Query is the common base class for all query types.
+     *
+     * In these bindings, for convenience, each query type has its own Query subclass. The create()
+     * method in the subclasses should be used to create a query object. This does not reflect 1-1
+     * the native C API, where there is only one Query class with tens of 'new_foo' and 'parse_foo'
+     * methods.
+     *
+     * Note that the Query subclasses \em cannot be used with ValueBase::get(), since a GValue
      * will actually contain a GstQuery (the subclasses do not exist in C) and ValueBase::get()
      * is not able to do dynamic casts. As a result of that, Query subclasses also \em cannot be
      * used as arguments in slots connected to GObject signals, even though you may know that your
@@ -51,9 +53,7 @@ class Query : public MiniObject
 {
     QGST_WRAPPER(Query)
 public:
-    static QueryPtr create(QueryType type, const StructureBase & structure = SharedStructure(NULL));
-
-    QString name() const;
+    QString typeName() const;
     QueryType type() const;
 
     SharedStructure structure();
@@ -171,9 +171,9 @@ class FormatsQuery : public Query
 public:
     static FormatsQueryPtr create();
 
-    QList<Format> formats();
+    QList<Format> formats() const;
 
-    void setFormats(QList<Format> formats);
+    void setFormats(const QList<Format> & formats);
 };
 
 /*! \headerfile query.h <QGst/Query>

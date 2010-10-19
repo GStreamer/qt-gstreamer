@@ -20,8 +20,6 @@
 #include "object.h"
 #include "caps.h"
 
-class QueryPtr;
-
 namespace QGst {
 
 /*! \headerfile element.h <QGst/Element>

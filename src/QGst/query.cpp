@@ -25,15 +25,9 @@
 
 namespace QGst {
 
-QueryPtr Query::create(QueryType type, const StructureBase & structure)
+QString Query::typeName() const
 {
-    GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
-    return QueryPtr::wrap(gst_query_new_application(static_cast<GstQueryType>(type), s), false);
-}
-
-QString Query::name() const
-{
-    return GST_QUERY_TYPE_NAME(object<GstQuery>());
+    return QString::fromUtf8(GST_QUERY_TYPE_NAME(object<GstQuery>()));
 }
 
 QueryType Query::type() const
@@ -282,7 +276,7 @@ FormatsQueryPtr FormatsQuery::create()
     return FormatsQueryPtr::wrap(gst_query_new_formats(), false);
 }
 
-QList<Format> FormatsQuery::formats()
+QList<Format> FormatsQuery::formats() const
 {
     guint cnt;
     QList<Format> formats;
@@ -295,7 +289,7 @@ QList<Format> FormatsQuery::formats()
     return formats;
 }
 
-void FormatsQuery::setFormats(QList<Format> formats)
+void FormatsQuery::setFormats(const QList<Format> & formats)
 {
     int cnt = formats.count();
     if (cnt==0) return;
@@ -361,9 +355,11 @@ qint64 BufferingQuery::bufferingLeft() const
     return l;
 }
 ;
-void BufferingQuery::setStats(BufferingMode mode, int averageIn, int averageOut, qint64 bufferingLeft)
+void BufferingQuery::setStats(BufferingMode mode, int averageIn, int averageOut,
+                              qint64 bufferingLeft)
 {
-    gst_query_set_buffering_stats(object<GstQuery>(), static_cast<GstBufferingMode>(mode), averageIn, averageOut, bufferingLeft);
+    gst_query_set_buffering_stats(object<GstQuery>(), static_cast<GstBufferingMode>(mode),
+                                  averageIn, averageOut, bufferingLeft);
 }
 
 Format BufferingQuery::format() const
