@@ -17,6 +17,7 @@
 #include "pad.h"
 #include "caps.h"
 #include "element.h"
+#include "query.h"
 #include <QtCore/QDebug>
 #include <gst/gstpad.h>
 #include <gst/gstutils.h>
@@ -104,6 +105,11 @@ bool Pad::isBlocking() const
 bool Pad::setBlocked(bool blocked)
 {
     return gst_pad_set_blocked(object<GstPad>(), blocked);
+}
+
+bool Pad::query(const QueryPtr & query)
+{
+    return gst_pad_query(object<GstPad>(), query);
 }
 
 }

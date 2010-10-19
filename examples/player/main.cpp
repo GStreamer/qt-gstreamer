@@ -26,6 +26,7 @@
 #include <QGst/Structure>
 #include <QGst/Bus>
 #include <QGst/Message>
+#include <QGst/Query>
 
 /* This is a simple example of a command-line audio player. It accepts the filename of
  * an audio file as the first command line argument and then constructs a pipeline
@@ -93,6 +94,16 @@ void Player::onBusSyncMessage(const QGst::MessagePtr & message)
          * It will schedule the main event loop to exit, when execution
          * in the main thread has reached the event loop. */
         QCoreApplication::quit();
+        break;
+    case QGst::MessageAsyncDone:
+        {
+        //File prerolled, queries the pipeline to get the file duration
+        QGst::DurationQueryPtr query = QGst::DurationQuery::create(QGst::FormatTime);
+        //This will create a temporary (cast to query).
+        m_pipeline->query(query);
+
+        qDebug() << query->duration();
+        }
         break;
     default:
         break;

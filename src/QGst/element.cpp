@@ -16,6 +16,7 @@
 */
 #include "element.h"
 #include "pad.h"
+#include "query.h"
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
 
@@ -108,6 +109,11 @@ void Element::unlink(const char *srcPadName, const ElementPtr & dest, const char
 void Element::unlink(const ElementPtr & dest, const char *sinkPadName)
 {
     unlink(NULL, dest, sinkPadName);
+}
+
+void Element::query(const QueryPtr & query)
+{
+    gst_element_query(object<GstElement>(), query);
 }
 
 }

@@ -58,6 +58,8 @@ public:
     bool isBlocked() const;
     bool isBlocking() const;
     bool setBlocked(bool blocked);
+
+    bool query(const QueryPtr & query);
 };
 
 }

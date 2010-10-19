@@ -30,6 +30,7 @@ set(QtGstreamer_SRCS
     QGst/streamvolume.cpp
     QGst/colorbalance.cpp
     QGst/propertyprobe.cpp
+    QGst/query.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -78,6 +79,7 @@ set(INSTALLED_HEADERS
     QGst/streamvolume.h QGst/StreamVolume
     QGst/colorbalance.h QGst/ColorBalance
     QGst/propertyprobe.h QGst/PropertyProbe
+    QGst/query.h        QGst/Query
 
     QGst/Ui/videowidget.h QGst/Ui/VideoWidget
 )
@@ -110,6 +112,7 @@ set(CODEGEN_HEADERS
     QGst/streamvolume.h
     QGst/colorbalance.h
     QGst/propertyprobe.h
+    QGst/query.h
 )
 
 set(CODEGEN_INCLUDES

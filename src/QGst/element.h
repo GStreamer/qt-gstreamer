@@ -52,6 +52,8 @@ public:
     void unlink(const char *srcPadName, const ElementPtr & dest,
                 const char *sinkPadName = NULL);
     void unlink(const ElementPtr & dest, const char *sinkPadName = NULL);
+
+    void query(const QueryPtr & query);
 };
 
 }
