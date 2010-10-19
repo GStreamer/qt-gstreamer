@@ -127,14 +127,14 @@ bool LatencyQuery::hasLive() const
 
 ClockTime LatencyQuery::minimumLatency() const
 {
-    ClockTime c;
+    GstClockTime c;
     gst_query_parse_latency(object<GstQuery>(), NULL, &c, NULL);
     return c;
 }
 
 ClockTime LatencyQuery::maximumLatency() const
 {
-    ClockTime c;
+    GstClockTime c;
     gst_query_parse_latency(object<GstQuery>(), NULL, NULL, &c);
     return c;
 }
