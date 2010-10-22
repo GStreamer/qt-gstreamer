@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010  Collabora Multimedia.
+      @author Mauricio Piacentini <mauricio.piacentini@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -14,30 +15,34 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef QGST_PIPELINE_H
-#define QGST_PIPELINE_H
+#ifndef QGST_CLOCK_H
+#define QGST_CLOCK_H
 
-#include "bin.h"
+#include "object.h"
+
+class QTime;
 
 namespace QGst {
 
-/*! \headerfile pipeline.h <QGst/Pipeline>
- * \brief Wrapper class for GstPipeline
+/*! \headerfile clock.h <QGst/Clock>
+ * \brief Wrapper class for GstClock
  */
-class Pipeline : public Bin
+class Clock : public virtual Object
 {
-    QGST_WRAPPER(Pipeline)
+    QGST_WRAPPER(Clock)
 public:
-    static PipelinePtr create(const char *name = NULL);
+    static ClockPtr systemClock();
 
-    BusPtr bus() const;
+    ClockTime resolution() const;
+    ClockTime clockTime() const;
+    QTime time() const;
 
-    ClockPtr clock() const;
-    bool setClock(const ClockPtr & clock);
+    static QTime timeFromClockTime(ClockTime clocktime);
+    static ClockTime clockTimeFromTime(const QTime & time);
 };
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Pipeline)
+QGLIB_REGISTER_TYPE(QGst::Clock)
 
-#endif
+#endif // QGST_CLOCK_H

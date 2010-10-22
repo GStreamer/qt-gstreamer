@@ -16,6 +16,7 @@
 */
 #include "pipeline.h"
 #include "bus.h"
+#include "clock.h"
 #include <gst/gstpipeline.h>
 
 namespace QGst {
@@ -31,6 +32,16 @@ PipelinePtr Pipeline::create(const char *name)
 BusPtr Pipeline::bus() const
 {
     return BusPtr::wrap(gst_pipeline_get_bus(object<GstPipeline>()), false);
+}
+
+ClockPtr Pipeline::clock() const
+{
+    return ClockPtr::wrap(gst_pipeline_get_clock(object<GstPipeline>()), false);
+}
+
+bool Pipeline::setClock(const ClockPtr & clock)
+{
+    return gst_pipeline_set_clock(object<GstPipeline>(), clock);
 }
 
 }
