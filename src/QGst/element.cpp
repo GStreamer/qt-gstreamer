@@ -117,10 +117,10 @@ void Element::query(const QueryPtr & query)
     gst_element_query(object<GstElement>(), query);
 }
 
-ClockPtr Element::clock()
+ClockPtr Element::clock() const
 {
     if (gst_element_provides_clock(object<GstElement>())) {
-        return ClockPtr::wrap(gst_element_get_clock(object<GstElement>()));
+        return ClockPtr::wrap(gst_element_get_clock(object<GstElement>()), false);
     } else {
         return ClockPtr();
     }

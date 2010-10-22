@@ -34,9 +34,9 @@ BusPtr Pipeline::bus() const
     return BusPtr::wrap(gst_pipeline_get_bus(object<GstPipeline>()), false);
 }
 
-ClockPtr Pipeline::clock()
+ClockPtr Pipeline::clock() const
 {
-    return ClockPtr::wrap(gst_pipeline_get_clock(object<GstPipeline>()));
+    return ClockPtr::wrap(gst_pipeline_get_clock(object<GstPipeline>()), false);
 }
 
 bool Pipeline::setClock(const ClockPtr & clock)

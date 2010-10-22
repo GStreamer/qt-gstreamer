@@ -33,9 +33,9 @@ class Clock : public virtual Object
 public:
     static ClockPtr systemClock();
 
-    ClockTime resolution();
-    ClockTime clockTime();
-    QTime time();
+    ClockTime resolution() const;
+    ClockTime clockTime() const;
+    QTime time() const;
 
     static QTime timeFromClockTime(ClockTime clocktime);
     static ClockTime clockTimeFromTime(const QTime & time);

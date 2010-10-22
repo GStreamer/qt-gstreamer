@@ -32,7 +32,7 @@ public:
 
     BusPtr bus() const;
 
-    ClockPtr clock();
+    ClockPtr clock() const;
     bool setClock(const ClockPtr & clock);
 };
 

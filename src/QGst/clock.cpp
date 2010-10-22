@@ -25,22 +25,22 @@ namespace QGst {
 
 ClockPtr Clock::systemClock()
 {
-    return ClockPtr::wrap(gst_system_clock_obtain());
+    return ClockPtr::wrap(gst_system_clock_obtain(), false);
 }
 
-ClockTime Clock::clockTime()
+ClockTime Clock::clockTime() const
 {
     GstClockTime t = gst_clock_get_time(object<GstClock>());
     return t;
 }
 
-ClockTime Clock::resolution()
+ClockTime Clock::resolution() const
 {
     GstClockTime t = gst_clock_get_resolution(object<GstClock>());
     return t;
 }
 
-QTime Clock::time()
+QTime Clock::time() const
 {
     return Clock::timeFromClockTime(clockTime());
 }
