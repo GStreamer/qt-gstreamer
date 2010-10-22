@@ -17,6 +17,7 @@
 #include "element.h"
 #include "pad.h"
 #include "query.h"
+#include "clock.h"
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
 
@@ -114,6 +115,20 @@ void Element::unlink(const ElementPtr & dest, const char *sinkPadName)
 void Element::query(const QueryPtr & query)
 {
     gst_element_query(object<GstElement>(), query);
+}
+
+ClockPtr Element::clock()
+{
+    if (gst_element_provides_clock(object<GstElement>())) {
+        return ClockPtr::wrap(gst_element_get_clock(object<GstElement>()));
+    } else {
+        return ClockPtr();
+    }
+}
+
+bool Element::setClock(const ClockPtr & clock)
+{
+    return gst_element_set_clock(object<GstElement>(), clock);
 }
 
 }

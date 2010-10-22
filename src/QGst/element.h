@@ -41,6 +41,9 @@ public:
     PadPtr getRequestPad(const char *name);
     void releaseRequestPad(const PadPtr & pad);
 
+    ClockPtr clock();
+    bool setClock(const ClockPtr & clock);
+
     bool link(const char *srcPadName, const ElementPtr & dest,
               const char *sinkPadName, const CapsPtr & filter = CapsPtr());
     bool link(const char *srcPadName, const ElementPtr & dest,

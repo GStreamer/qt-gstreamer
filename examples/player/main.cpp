@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
+#include <QtCore/QTime>
 #include <QGlib/Signal>
 #include <QGst/Global>
 #include <QGst/Pipeline>
@@ -27,6 +28,7 @@
 #include <QGst/Bus>
 #include <QGst/Message>
 #include <QGst/Query>
+#include <QGst/Clock>
 
 /* This is a simple example of a command-line audio player. It accepts the filename of
  * an audio file as the first command line argument and then constructs a pipeline
@@ -102,7 +104,7 @@ void Player::onBusSyncMessage(const QGst::MessagePtr & message)
         //This will create a temporary (cast to query).
         m_pipeline->query(query);
 
-        qDebug() << query->duration();
+        qDebug() << QGst::Clock::timeFromClockTime(query->duration());
         }
         break;
     default:
