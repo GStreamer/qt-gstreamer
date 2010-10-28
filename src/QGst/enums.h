@@ -283,4 +283,22 @@ namespace QGst {
 }
 QGLIB_REGISTER_TYPE(QGst::QueryType)
 
+namespace QGst {
+    enum BufferFlag {
+        //codegen: BufferFlagReadOnly=BUFFER_FLAG_READONLY
+        BufferFlagReadOnly = MiniObjectFlagReadonly,
+        BufferFlagPreroll  = (MiniObjectFlagLast << 0),
+        BufferFlagDiscont = (MiniObjectFlagLast << 1),
+        BufferFlagInCaps = (MiniObjectFlagLast << 2),
+        BufferFlagGap = (MiniObjectFlagLast << 3),
+        BufferFlagDeltaUnit = (MiniObjectFlagLast << 4),
+        BufferFlagMedia1 = (MiniObjectFlagLast << 5),
+        BufferFlagMedia2 = (MiniObjectFlagLast << 6),
+        BufferFlagMedia3 = (MiniObjectFlagLast << 7),
+        BufferFlagLast = (MiniObjectFlagLast << 8)
+    };
+    Q_DECLARE_FLAGS(BufferFlags, BufferFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::BufferFlags)
+QGLIB_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
 #endif

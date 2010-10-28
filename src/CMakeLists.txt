@@ -32,6 +32,7 @@ set(QtGstreamer_SRCS
     QGst/propertyprobe.cpp
     QGst/query.cpp
     QGst/clock.cpp
+    QGst/buffer.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -82,6 +83,7 @@ set(INSTALLED_HEADERS
     QGst/propertyprobe.h QGst/PropertyProbe
     QGst/query.h        QGst/Query
     QGst/clock.h        QGst/Clock
+    QGst/buffer.h       QGst/Buffer
 
     QGst/Ui/videowidget.h QGst/Ui/VideoWidget
 )
@@ -116,6 +118,7 @@ set(CODEGEN_HEADERS
     QGst/propertyprobe.h
     QGst/query.h
     QGst/clock.h
+    QGst/buffer.h
 )
 
 set(CODEGEN_INCLUDES
