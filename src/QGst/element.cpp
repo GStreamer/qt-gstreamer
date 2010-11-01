@@ -18,6 +18,7 @@
 #include "pad.h"
 #include "query.h"
 #include "clock.h"
+#include "event.h"
 #include <gst/gstelement.h>
 #include <gst/gstutils.h>
 
@@ -129,6 +130,17 @@ ClockPtr Element::clock() const
 bool Element::setClock(const ClockPtr & clock)
 {
     return gst_element_set_clock(object<GstElement>(), clock);
+}
+
+bool Element::sendEvent(const EventPtr &event)
+{
+    return gst_element_send_event(object<GstElement>(), event);
+}
+
+bool Element::seek(const Format format, SeekFlags flags, quint64 position)
+{
+    return gst_element_seek_simple(object<GstElement>(), static_cast<GstFormat>(format),
+                                   static_cast<GstSeekFlags>(static_cast<int>(flags)), position);
 }
 
 }

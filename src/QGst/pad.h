@@ -60,6 +60,7 @@ public:
     bool setBlocked(bool blocked);
 
     bool query(const QueryPtr & query);
+    bool sendEvent(const EventPtr & event);
 };
 
 }
