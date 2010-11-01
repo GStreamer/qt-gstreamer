@@ -19,7 +19,6 @@
 #define QGST_BUFFER_H
 
 #include "miniobject.h"
-#include "structure.h"
 
 namespace QGst {
 
@@ -35,7 +34,7 @@ class Buffer : public MiniObject
 {
     QGST_WRAPPER(Buffer)
 public:    
-    static BufferPtr create(int size);
+    static BufferPtr create(int size = 0);
 
     quint8 * data() const;
     quint32 size() const;

@@ -100,9 +100,7 @@ void Buffer::unref()
 
 QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
     QGst::BufferPtr,
-    //TODO: should we copy? Caps and Message do it differently right now
     QGst::BufferPtr::wrap(GST_BUFFER(gst_value_get_buffer(value))),
-    //QGst::BufferPtr::wrap(gst_buffer_copy(gst_value_get_buffer(value)), false),
     gst_value_set_buffer(value, GST_MINI_OBJECT(static_cast<GstBuffer*>(data)))
 )    
 
