@@ -45,11 +45,7 @@ public:
     {
         WId windowId = widget()->winId(); //create a new X window (if we are on X11 with alien widgets)
         QApplication::syncX(); //inform other applications about the new window (on X11)
-#ifdef Q_OS_WIN
-        m_sink->setWindowId(reinterpret_cast<ulong>(windowId));
-#else
-        m_sink->setWindowId(windowId);
-#endif
+        m_sink->setWindowHandle(windowId);
 
         widget()->installEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, true);
@@ -59,7 +55,7 @@ public:
 
     virtual ~XOverlayRenderer()
     {
-        m_sink->setWindowId(0);
+        m_sink->setWindowHandle(0);
         widget()->removeEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, false);
         widget()->setAttribute(Qt::WA_PaintOnScreen, false);

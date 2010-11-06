@@ -25,9 +25,9 @@ void XOverlay::expose()
     gst_x_overlay_expose(object<GstXOverlay>());
 }
 
-void XOverlay::setWindowId(ulong id)
+void XOverlay::setWindowHandle(WId id)
 {
-    gst_x_overlay_set_xwindow_id(object<GstXOverlay>(), id);
+    gst_x_overlay_set_window_handle(object<GstXOverlay>(), id);
 }
 
 void XOverlay::setHandleEvents(bool enabled)

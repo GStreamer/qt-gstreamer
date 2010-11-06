@@ -18,6 +18,8 @@
 #define QGST_XOVERLAY_H
 
 #include "element.h"
+#include <QtGui/qwindowdefs.h>
+
 class QRect;
 
 namespace QGst {
@@ -30,7 +32,7 @@ class XOverlay : public Element
     QGST_WRAPPER(XOverlay)
 public:
     void expose();
-    void setWindowId(ulong id);
+    void setWindowHandle(WId id);
     void setHandleEvents(bool enabled);
     bool setRenderRectangle(int x, int y, int width, int height);
     bool setRenderRectangle(const QRect & rect);
