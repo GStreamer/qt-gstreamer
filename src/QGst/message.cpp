@@ -154,6 +154,22 @@ QString InfoMessage::debugMessage() const
 
 //********************************************************
 
+TagMessagePtr TagMessage::create(const ObjectPtr & source, const TagList & taglist)
+{
+    GstMessage *m = gst_message_new_tag(source, gst_tag_list_copy(taglist));
+    return TagMessagePtr::wrap(m, false);
+}
+
+TagList TagMessage::taglist() const
+{
+    GstTagList * t;
+    gst_message_parse_tag(object<GstMessage>(), &t);
+    //TagList destructor will take ownership and free the GstTagList when done
+    return TagList(t);
+}
+
+//********************************************************
+
 BufferingMessagePtr BufferingMessage::create(const ObjectPtr & source, int percent)
 {
     GstMessage *m = gst_message_new_buffering(source, percent);

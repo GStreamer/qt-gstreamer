@@ -19,6 +19,7 @@
 
 #include "miniobject.h"
 #include "structure.h"
+#include "taglist.h"
 
 namespace QGst {
 
@@ -110,7 +111,17 @@ public:
     QString debugMessage() const;
 };
 
-//TODO TagMessage
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageTag
+ */
+class TagMessage : public Message
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(TagMessage, Message)
+public:
+    static TagMessagePtr create(const ObjectPtr & source, const TagList & taglist);
+
+    TagList taglist() const;
+};
 
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageBuffering
@@ -320,6 +331,7 @@ QGST_REGISTER_SUBCLASS(Message, Eos)
 QGST_REGISTER_SUBCLASS(Message, Error)
 QGST_REGISTER_SUBCLASS(Message, Warning)
 QGST_REGISTER_SUBCLASS(Message, Info)
+QGST_REGISTER_SUBCLASS(Message, Tag)
 QGST_REGISTER_SUBCLASS(Message, Buffering)
 QGST_REGISTER_SUBCLASS(Message, StateChanged)
 QGST_REGISTER_SUBCLASS(Message, StepDone)

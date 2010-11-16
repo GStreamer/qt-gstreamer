@@ -19,6 +19,7 @@
 #include <QGst/Event>
 #include <QGst/Object>
 #include <QGst/Message>
+#include <QGst/TagList>
 
 class EventTest : public QGstTest
 {
@@ -36,6 +37,7 @@ private Q_SLOTS:
     void navigationTest();
     void latencyTest();
     void stepTest();
+    void tagListTest();
 };
 
 void EventTest::baseTest()
@@ -189,6 +191,19 @@ void EventTest::stepTest()
     QVERIFY(evt->flush());
     QVERIFY(!evt->intermediate());
 };
+
+void EventTest::tagListTest()
+{
+    QGst::TagList tl;
+    tl.setTitle("abc");
+    QGst::TagEventPtr evt = QGst::TagEvent::create(tl);
+
+    QVERIFY(evt->type()==QGst::EventTag);
+    QCOMPARE(evt->typeName(), QString("tag"));
+
+    QGst::TagList tl2 = evt->taglist();
+    QCOMPARE(tl.title(), tl2.title());
+}
 
 QTEST_APPLESS_MAIN(EventTest)
 

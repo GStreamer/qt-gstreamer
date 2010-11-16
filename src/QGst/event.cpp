@@ -147,6 +147,22 @@ qint64 NewSegmentEvent::position() const
 
 //********************************************************
 
+TagEventPtr TagEvent::create(const TagList & taglist)
+{
+    GstEvent * e = gst_event_new_tag(gst_tag_list_copy(taglist));
+    return TagEventPtr::wrap(e, false);
+}
+
+TagList TagEvent::taglist() const
+{
+    GstTagList * t;
+    gst_event_parse_tag(object<GstEvent>(), &t);
+    //TagList destructor will take ownership and free the GstTagList when done
+    return TagList(t);
+}
+
+//********************************************************
+
 BufferSizeEventPtr BufferSizeEvent::create(Format format, qint64 minSize, qint64 maxSize,
                                            bool isAsync)
 {

@@ -21,6 +21,7 @@
 #include "miniobject.h"
 #include "structure.h"
 #include "clocktime.h"
+#include "taglist.h"
 
 namespace QGst {
 
@@ -118,7 +119,17 @@ public:
     qint64 position() const;
 };
 
-//TODO GST_EVENT_TAG
+/*! \headerfile event.h <QGst/Event>
+ * \brief Wrapper class for events of type QGst::TagEvent
+ */
+class TagEvent : public Event
+{
+    QGST_WRAPPER_DIFFERENT_C_CLASS(TagEvent, Event)
+public:
+    static TagEventPtr create(const TagList & taglist);
+
+    TagList taglist() const;
+};
 
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::BufferSizeEvent
@@ -136,7 +147,7 @@ public:
 };
 
 /*! \headerfile event.h <QGst/Event>
- * \brief Wrapper class for events of type QGst::BufferSizeEvent
+ * \brief Wrapper class for events of type QGst::SinkMessageEvent
  */
 class QTGSTREAMER_EXPORT SinkMessageEvent : public Event
 {
@@ -226,7 +237,7 @@ QGST_REGISTER_SUBCLASS(Event, FlushStart)
 QGST_REGISTER_SUBCLASS(Event, FlushStop)
 QGST_REGISTER_SUBCLASS(Event, Eos)
 QGST_REGISTER_SUBCLASS(Event, NewSegment)
-//TODO QGST_REGISTER_SUBCLASS(Event, Tag)
+QGST_REGISTER_SUBCLASS(Event, Tag)
 QGST_REGISTER_SUBCLASS(Event, BufferSize)
 QGST_REGISTER_SUBCLASS(Event, SinkMessage)
 QGST_REGISTER_SUBCLASS(Event, Qos)

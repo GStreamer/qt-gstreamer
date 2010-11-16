@@ -366,4 +366,32 @@ namespace QGst {
 }
 QGST_REGISTER_TYPE(QGst::SeekType)
 
+namespace QGst {
+    enum TagMergeMode {
+        TagMergeUndefined,
+        TagMergeReplaceAll,
+        TagMergeReplace,
+        TagMergeAppend,
+        TagMergePrepend,
+        TagMergeKeep,
+        TagMergeKeepAll,
+        // add more
+        TagMergeCount
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::TagMergeMode)
+
+namespace QGst {
+    enum TagFlag {
+        TagFlagUndefined,
+        TagFlagMeta,
+        TagFlagEncoded,
+        TagFlagDecoded,
+        TagFlagCount
+    };
+    Q_DECLARE_FLAGS(TagFlags, TagFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::TagFlags)
+QGLIB_REGISTER_TYPE(QGst::TagFlags) //codegen: GType=GST_TYPE_TAG_FLAG
+
 #endif
