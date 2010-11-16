@@ -69,9 +69,11 @@ class TagList
 {
 public:
     TagList();
-    TagList(GstTagList *taglist);
+    TagList(const GstTagList *taglist);
     TagList(const TagList & other);
     virtual ~TagList();
+
+    TagList & operator=(const TagList & other);
 
     bool isValid() const;
     bool isEmpty() const;

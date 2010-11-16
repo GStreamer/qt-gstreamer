@@ -62,7 +62,7 @@ TagList::TagList()
 {
 }
 
-TagList::TagList(GstTagList *taglist)
+TagList::TagList(const GstTagList *taglist)
     : m_taglist(gst_tag_list_copy(taglist))
 {
 }
@@ -77,6 +77,13 @@ TagList::~TagList()
 TagList::TagList(const TagList & other)
     : m_taglist(gst_tag_list_copy(other.m_taglist))
 {
+}
+
+TagList & TagList::operator=(const TagList & other)
+{
+    gst_tag_list_free(m_taglist);
+    m_taglist = gst_tag_list_copy(other.m_taglist);
+    return *this;
 }
 
 bool TagList::isValid() const
