@@ -78,7 +78,7 @@ public:
     bool isEmpty() const;
 
     void insertList(const TagList & other, TagMergeMode mode = TagMergeAppend);
-    TagList mergeList(const TagList & other, TagMergeMode mode = TagMergeAppend);
+    TagList mergeList(const TagList & other, TagMergeMode mode = TagMergeAppend) const;
 
     QGlib::Value tagValue(const QString & tag, int index = 0) const;
     void setTagValue(const QString & tag, const QGlib::Value & value,

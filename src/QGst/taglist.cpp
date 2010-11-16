@@ -95,9 +95,16 @@ void TagList::insertList(const TagList & other, TagMergeMode mode)
     gst_tag_list_insert(m_taglist, other.m_taglist, static_cast<GstTagMergeMode>(mode));
 }
 
-TagList TagList::mergeList(const TagList & other, TagMergeMode mode)
+TagList TagList::mergeList(const TagList & other, TagMergeMode mode) const
 {
-    return gst_tag_list_merge(m_taglist, other.m_taglist, static_cast<GstTagMergeMode>(mode));
+    GstTagList *taglist = gst_tag_list_merge(m_taglist, other.m_taglist,
+                                             static_cast<GstTagMergeMode>(mode));
+
+    //avoid copying the merged taglist by freeing the new one and assigning this one to m_taglist
+    TagList tl;
+    gst_tag_list_free(tl.m_taglist);
+    tl.m_taglist = taglist;
+    return tl;
 }
 
 QGlib::Value TagList::tagValue(const QString & tag, int index) const
