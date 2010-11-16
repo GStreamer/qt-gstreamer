@@ -63,15 +63,14 @@ TagList::TagList()
 }
 
 TagList::TagList(const GstTagList *taglist)
-    : m_taglist(gst_tag_list_copy(taglist))
+    : m_taglist(taglist && gst_is_tag_list(taglist)
+                ? gst_tag_list_copy(taglist) : gst_tag_list_new())
 {
 }
 
 TagList::~TagList()
 {
-    if (m_taglist) {
-        gst_tag_list_free(m_taglist);
-    }
+    gst_tag_list_free(m_taglist);
 }
 
 TagList::TagList(const TagList & other)
@@ -84,11 +83,6 @@ TagList & TagList::operator=(const TagList & other)
     gst_tag_list_free(m_taglist);
     m_taglist = gst_tag_list_copy(other.m_taglist);
     return *this;
-}
-
-bool TagList::isValid() const
-{
-    return gst_is_tag_list(m_taglist);
 }
 
 bool TagList::isEmpty() const
@@ -991,10 +985,6 @@ void TagList::setDateTime(const QDateTime & value)
 QDebug operator<<(QDebug debug, const QGst::TagList & taglist)
 {
     debug.nospace() << "QGst::TagList";
-    if (taglist.isValid()) {
-        debug.nospace() << "( TagList with " << gst_structure_n_fields(taglist) << " elements )";
-    } else {
-        debug.nospace() << "(<invalid>)";
-    }
+    debug.nospace() << "( TagList with " << gst_structure_n_fields(taglist) << " elements )";
     return debug.space();
 }

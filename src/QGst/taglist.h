@@ -75,7 +75,6 @@ public:
 
     TagList & operator=(const TagList & other);
 
-    bool isValid() const;
     bool isEmpty() const;
 
     void insertList(const TagList & other, TagMergeMode mode = TagMergeAppend);
