@@ -242,14 +242,14 @@ double QosEvent::proportion() const
 
 ClockTimeDiff QosEvent::diff() const
 {
-    ClockTimeDiff c;
+    GstClockTimeDiff c;
     gst_event_parse_qos(object<GstEvent>(), NULL, &c, NULL);
     return c;
 }
 
 ClockTime QosEvent::timestamp() const
 {
-    ClockTime c;
+    GstClockTime c;
     gst_event_parse_qos(object<GstEvent>(), NULL, NULL, &c);
     return c;
 }
