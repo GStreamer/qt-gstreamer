@@ -58,7 +58,7 @@ public:
 
     void query(const QueryPtr & query);
     bool sendEvent(const EventPtr & event);
-    bool seek(const Format format, SeekFlags flags, quint64 position);
+    bool seek(Format format, SeekFlags flags, quint64 position);
 };
 
 }
