@@ -18,6 +18,7 @@
 #include "caps.h"
 #include "element.h"
 #include "query.h"
+#include "event.h"
 #include <QtCore/QDebug>
 #include <gst/gstpad.h>
 #include <gst/gstutils.h>
@@ -110,6 +111,11 @@ bool Pad::setBlocked(bool blocked)
 bool Pad::query(const QueryPtr & query)
 {
     return gst_pad_query(object<GstPad>(), query);
+}
+
+bool Pad::sendEvent(const EventPtr &event)
+{
+    return gst_pad_send_event(object<GstPad>(), event);
 }
 
 }

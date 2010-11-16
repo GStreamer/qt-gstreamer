@@ -29,6 +29,7 @@
 #include <QGst/Message>
 #include <QGst/Query>
 #include <QGst/Clock>
+#include <QGst/Event>
 
 /* This is a simple example of a command-line audio player. It accepts the filename of
  * an audio file as the first command line argument and then constructs a pipeline
@@ -104,7 +105,23 @@ void Player::onBusSyncMessage(const QGst::MessagePtr & message)
         //This will create a temporary (cast to query).
         m_pipeline->query(query);
 
-        qDebug() << QGst::Clock::timeFromClockTime(query->duration());
+        //qDebug() << QGst::Clock::timeFromClockTime(query->duration());
+
+        /*Set the pipeline to seek to 6 seconds in the stream and play until it reaches 15 secs
+         * Notice that using element->seek() is probably better in most cases
+         *
+        QGst::SeekEventPtr evt = QGst::SeekEvent::create(1.0, QGst::FormatTime,
+                                                     QGst::SeekFlagNone,
+                                                     QGst::SeekTypeSet,
+                                                     QGst::Clock::clockTimeFromTime(QTime(0,0,6)),
+                                                     QGst::SeekTypeSet,
+                                                     QGst::Clock::clockTimeFromTime(QTime(0,0,15))
+                                                     );
+        m_pipeline->sendEvent(evt);*/
+
+        /* this is the simple seek version
+        m_pipeline->seek(QGst::FormatTime, QGst::SeekFlagNone,
+                         QGst::Clock::clockTimeFromTime(QTime(0,0,15)) );*/
         }
         break;
     default:

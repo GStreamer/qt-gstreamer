@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010  Collabora Multimedia.
+      @author Mauricio Piacentini <mauricio.piacentini@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -301,4 +303,67 @@ namespace QGst {
 }
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::BufferFlags)
 QGLIB_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
+
+
+namespace QGst {
+    enum EventTypeFlag {
+        EventTypeUpstream = 1 << 0,
+        EventTypeDownstream = 1 << 1,
+        EventTypeSerialized = 1 << 2,
+        EventTypeBoth = (EventTypeUpstream | EventTypeDownstream)
+    };
+    Q_DECLARE_FLAGS(EventTypeFlags, EventTypeFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::EventTypeFlags)
+QGLIB_REGISTER_TYPE(QGst::EventTypeFlags)
+
+namespace QGst {
+    enum EventType {
+        //codegen: EventNewSegment=EVENT_NEWSEGMENT, EventBufferSize=EVENT_BUFFERSIZE
+        EventUnknown = (0 << 4),
+        EventFlushStart = (1 << 4) | EventTypeBoth,
+        EventFlushStop = (2 << 4) | EventTypeBoth | EventTypeSerialized,
+        EventEos = (5 << 4) | EventTypeDownstream | EventTypeSerialized,
+        EventNewSegment = (6 << 4) | EventTypeDownstream | EventTypeSerialized,
+        EventTag = (7 << 4) | EventTypeDownstream | EventTypeSerialized,
+        EventBufferSize = (8 << 4) | EventTypeDownstream | EventTypeSerialized,
+        EventSinkMessage = (9 << 4) | EventTypeDownstream | EventTypeSerialized,
+        EventQos = (15 << 4) | EventTypeUpstream,
+        EventSeek = (16 << 4) | EventTypeUpstream,
+        EventNavigation = (17 << 4) | EventTypeUpstream,
+        EventLatency = (18 << 4) | EventTypeUpstream,
+        EventStep = (19 << 4) | EventTypeUpstream,
+        EventCustomUpstream = (32 << 4) | EventTypeUpstream,
+        EventCustomDownstream = (32 << 4) | EventTypeDownstream | EventTypeSerialized,
+        EventCustomDownstreamOob = (32 << 4) | EventTypeDownstream,
+        EventCustomBoth = (32 << 4) | EventTypeBoth | EventTypeSerialized,
+        EventCustomBothOob = (32 << 4) | EventTypeBoth
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::EventType)
+
+namespace QGst {
+    enum SeekFlag {
+        SeekFlagNone = 0,
+        SeekFlagFlush = (1 << 0),
+        SeekFlagAccurate = (1 << 1),
+        SeekFlagKeyUnit = (1 << 2),
+        SeekFlagSegment = (1 << 3),
+        SeekFlagSkip = (1 << 4)
+    };
+    Q_DECLARE_FLAGS(SeekFlags, SeekFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::SeekFlags)
+QGLIB_REGISTER_TYPE(QGst::SeekFlags)
+
+namespace QGst {
+    enum SeekType {
+        SeekTypeNone = 0,
+        SeekTypeCur = 1,
+        SeekTypeSet = 2,
+        SeekTypeEnd = 3
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::SeekType)
+
 #endif
