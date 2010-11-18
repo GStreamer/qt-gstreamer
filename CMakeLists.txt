@@ -8,6 +8,8 @@ set(QTGSTREAMER_VERSION 0.1)
 set(QTGSTREAMER_SOVERSION 0)
 
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" ON)
+option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
+option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
 
 find_package(Qt4 COMPONENTS QtCore QtGui QtTest REQUIRED)
 find_package(QtGstreamer REQUIRED)
@@ -30,8 +32,14 @@ endif ()
 add_subdirectory(codegen)
 add_subdirectory(src)
 add_subdirectory(elements)
-add_subdirectory(tests)
-add_subdirectory(examples)
+
+if (QTGSTREAMER_TESTS)
+    add_subdirectory(tests)
+endif()
+
+if (QTGSTREAMER_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 # Add uninstall target. Taken from the KDE4 scripts
 configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/cmake_uninstall.cmake.in" "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake" @ONLY)
