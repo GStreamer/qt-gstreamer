@@ -7,6 +7,8 @@ set(BUILDING_QTGSTREAMER TRUE)
 set(QTGSTREAMER_VERSION 0.1)
 set(QTGSTREAMER_SOVERSION 0)
 
+option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" ON)
+
 find_package(Qt4 COMPONENTS QtCore QtGui QtTest REQUIRED)
 find_package(QtGstreamer REQUIRED)
 find_package(Automoc4 REQUIRED)

@@ -150,7 +150,7 @@ add_custom_command(OUTPUT gen.cpp
 
 
 # Build and link QtGstreamer
-if(STATIC_QTGSTREAMER)
+if(QTGSTREAMER_STATIC)
     automoc4_add_library(QtGstreamer STATIC ${QtGstreamer_SRCS})
 else()
     automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
@@ -164,7 +164,7 @@ target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 
 # Build and link QtGstreamerUi
-if(STATIC_QTGSTREAMER)
+if(QTGSTREAMER_STATIC)
     automoc4_add_library(QtGstreamerUi STATIC ${QtGstreamerUi_SRCS})
 else()
     automoc4_add_library(QtGstreamerUi SHARED ${QtGstreamerUi_SRCS})
