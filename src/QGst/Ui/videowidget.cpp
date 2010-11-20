@@ -45,7 +45,11 @@ public:
     {
         WId windowId = widget()->winId(); //create a new X window (if we are on X11 with alien widgets)
         QApplication::syncX(); //inform other applications about the new window (on X11)
-        m_sink->setWindowId(static_cast<ulong>(windowId)); //### cast needs checking on non-X11 platforms
+#ifdef Q_OS_WIN
+        m_sink->setWindowId(reinterpret_cast<ulong>(windowId));
+#else
+        m_sink->setWindowId(windowId);
+#endif
 
         widget()->installEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, true);
