@@ -293,11 +293,12 @@ void FormatsQuery::setValue(const QList<Format> & formats)
 {
     int cnt = formats.count();
     if (cnt==0) return;
-    GstFormat f[cnt];
+    GstFormat *f = new GstFormat[cnt];
     for (int i=0; i<cnt; i++) {
         f[i] = static_cast<GstFormat>(formats.at(i));
     }
     gst_query_set_formatsv(object<GstQuery>(), cnt, f);
+    delete [] f;
 }
 
 //********************************************************
