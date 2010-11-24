@@ -53,11 +53,6 @@ public:
 
     BufferPtr copy() const;
 
-protected:
-    //Workaround while waiting for global refCount hash, REMOVE in the near future
-    virtual void ref();
-    virtual void unref();
-
 };
 
 } //namespace QGst

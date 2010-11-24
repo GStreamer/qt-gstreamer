@@ -45,20 +45,6 @@ const SharedStructure Query::structure() const
     return SharedStructure(gst_query_get_structure(object<GstQuery>()));
 }
 
-void Query::ref()
-{
-    //We are not supposed to ref() query objects created with gst_query_new_* methods
-    //Workaround while the global hash is not implemented for refcounting
-    //gst_query_ref(object<GstQuery>());
-}
-
-void Query::unref()
-{
-    //We have to unref() the object only once
-    //Workaround while the global hash is not implemented for refcounting, leak for now
-    //gst_query_unref(object<GstQuery>());
-}
-
 //********************************************************
 
 PositionQueryPtr PositionQuery::create(Format format)

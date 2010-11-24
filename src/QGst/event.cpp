@@ -74,20 +74,6 @@ EventPtr Event::copy() const
     return EventPtr::wrap(gst_event_copy(object<GstEvent>()), false);
 }
 
-void Event::ref()
-{
-    //We are not supposed to ref() query objects created with gst_event_new_* methods
-    //Workaround while the global hash is not implemented for refcounting
-    //gst_event_ref(object<GstEvent>());
-}
-
-void Event::unref()
-{
-    //We have to unref() the object only once
-    //Workaround while the global hash is not implemented for refcounting, leak for now
-    //gst_event_unref(object<GstEvent>());
-}
-
 //********************************************************
 
 FlushStartEventPtr FlushStartEvent::create()

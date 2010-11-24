@@ -59,11 +59,6 @@ public:
     SharedStructure structure();
     const SharedStructure structure() const;
 
-protected:
-    //Workaround while waiting for global refCount hash, REMOVE in the near future
-    virtual void ref();
-    virtual void unref();
-
 };
 
 /*! \headerfile query.h <QGst/Query>

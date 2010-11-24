@@ -70,10 +70,6 @@ public:
 
     EventPtr copy() const;
 
-protected:
-    //Workaround while waiting for global refCount hash, REMOVE in the near future
-    virtual void ref();
-    virtual void unref();
 };
 
 /*! \headerfile event.h <QGst/Event>

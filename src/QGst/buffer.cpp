@@ -83,18 +83,6 @@ BufferPtr Buffer::copy() const
     return BufferPtr::wrap(gst_buffer_copy(object<GstBuffer>()), false);
 }
 
-void Buffer::ref()
-{
-    //Workaround while the global hash is not implemented for refcounting
-    //gst_buffer_ref(object<GstBuffer>());
-}
-
-void Buffer::unref()
-{
-    //Workaround while the global hash is not implemented for refcounting, leak for now
-    //gst_buffer_unref(object<GstBuffer>());
-}
-
 
 } //namespace QGst
 
