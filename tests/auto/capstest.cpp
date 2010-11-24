@@ -46,6 +46,11 @@ void CapsTest::simpleTest()
     ss.setValue("width", 400);
     qDebug() << caps;
 
+    //Check access with temporaries
+    caps->structure(0).setValue("width", 800);
+    QCOMPARE(caps->structure(0).value("width").get<int>(), 800);
+
+    //Note: GStreamer will thrown an assertion on the line below, this is expected
     QVERIFY(!caps->structure(1).isValid());
 }
 
@@ -90,20 +95,21 @@ void CapsTest::writabilityTest()
 
     {
         QGst::CapsPtr caps2 = caps;
-        QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 2);
+        QCOMPARE(GST_CAPS_REFCOUNT_VALUE(caps), 1);
         QVERIFY(static_cast<GstCaps*>(caps2) == static_cast<GstCaps*>(caps));
-
-        (void)caps2->structure(0); //non-const method, so makeWritable() is called internally
-        QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
-        QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps2) == 1);
-        QVERIFY(static_cast<GstCaps*>(caps2) != static_cast<GstCaps*>(caps));
     }
 
     GstCaps *oldPtr = caps;
     QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
-    (void)caps->structure(0); //non-const method, so makeWritable() is called internally
+    //Increase external refcount to lock it
+    gst_caps_ref(oldPtr);
     QVERIFY(oldPtr == static_cast<GstCaps*>(caps));
-    QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
+    QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 2);
+    QVERIFY(!caps->isWritable());
+
+    caps->makeWritable(); //creates a copy
+    QVERIFY(caps->isWritable());
+    QVERIFY(oldPtr != static_cast<GstCaps*>(caps)); //no longer same gstcaps object
 }
 
 QTEST_APPLESS_MAIN(CapsTest)
