@@ -68,10 +68,11 @@ public:
     CapsPtr copy() const;
     CapsPtr copyNth(uint index) const;
 
+    void makeWritable();
+
 protected:
     virtual void ref();
     virtual void unref();
-    virtual void makeWritable();
 };
 
 }

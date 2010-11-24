@@ -125,7 +125,6 @@ protected:
 
     virtual void ref() = 0;
     virtual void unref() = 0;
-    virtual void makeWritable() {}
 
     template <class T>
     inline T* object();
@@ -139,7 +138,6 @@ protected:
 template <class T>
 inline T* RefCountedObject::object()
 {
-    makeWritable();
     return static_cast<T*>(m_object);
 }
 
