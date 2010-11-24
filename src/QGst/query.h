@@ -216,64 +216,17 @@ public:
 
 } //namespace QGst
 
-
-#define QGST_QUERY_SUBCLASS_REGISTER_CONVERTERS(CLASS, QUERYTYPE) \
-    namespace QGlib { \
-    namespace Private { \
-        template <> \
-        struct CanConvertTo<CLASS> \
-        { \
-            static inline bool from(void *instance) \
-            { \
-                return (Type::fromInstance(instance).isA(GetType<QGst::Query>()) && \
-                        QGst::QueryPtr::wrap(static_cast<GstQuery*>(instance))->type() \
-                        == QUERYTYPE); \
-            } \
-            /* NO 'static inline bool from(Type t)' to disallow usage from Value::get */ \
-            /* ValueBase::get is not supposed to provide dynamic_cast capabilities */ \
-        }; \
-        \
-        template <> \
-        struct CanConvertFrom<CLASS##Ptr> \
-        { \
-            static inline bool to(Type t) \
-            { \
-                return GetType<QGst::Query>().isA(t); \
-            } \
-        }; \
-    } /* namespace Private */ \
-    } /* namespace QGlib */
-
-#define QGST_QUERY_SUBCLASS_REGISTER_VALUEIMPL(CLASSPTR, QUERYTYPE) \
-    namespace QGlib { \
-        template<> \
-        struct ValueImpl<CLASSPTR> \
-        { \
-            static void set(ValueBase & value, const CLASSPTR & data) { \
-                ValueImpl<QGst::QueryPtr>::set(value, data); \
-            } \
-        }; \
-    } /* namespace QGlib */
-
-#define QGST_REGISTER_QUERY_SUBCLASS(TYPE) \
-    QGST_QUERY_SUBCLASS_REGISTER_CONVERTERS(QGst::TYPE##Query, QGst::Query##TYPE) \
-    QGST_QUERY_SUBCLASS_REGISTER_VALUEIMPL(QGst::TYPE##QueryPtr, QGst::Query##TYPE)
-
 QGLIB_REGISTER_TYPE(QGst::Query)
 QGLIB_REGISTER_VALUEIMPL(QGst::QueryPtr)
-QGST_REGISTER_QUERY_SUBCLASS(Position)
-QGST_REGISTER_QUERY_SUBCLASS(Duration)
-QGST_REGISTER_QUERY_SUBCLASS(Latency)
-QGST_REGISTER_QUERY_SUBCLASS(Seeking)
-QGST_REGISTER_QUERY_SUBCLASS(Segment)
-QGST_REGISTER_QUERY_SUBCLASS(Convert)
-QGST_REGISTER_QUERY_SUBCLASS(Formats)
-QGST_REGISTER_QUERY_SUBCLASS(Buffering)
-QGST_REGISTER_QUERY_SUBCLASS(Uri)
-
-#undef QGST_REGISTER_QUERY_SUBCLASS
-#undef QGST_QUERY_SUBCLASS_REGISTER_VALUEIMPL
-#undef QGST_QUERY_SUBCLASS_REGISTER_CONVERTERS
+QGST_REGISTER_SUBCLASS(Query, Position)
+QGST_REGISTER_SUBCLASS(Query, Duration)
+QGST_REGISTER_SUBCLASS(Query, Latency)
+QGST_REGISTER_SUBCLASS(Query, Seeking)
+QGST_REGISTER_SUBCLASS(Query, Segment)
+QGST_REGISTER_SUBCLASS(Query, Convert)
+QGST_REGISTER_SUBCLASS(Query, Formats)
+QGST_REGISTER_SUBCLASS(Query, Buffering)
+QGST_REGISTER_SUBCLASS(Query, Uri)
 
 /*! \relates QGst::Query */
 QDebug operator<<(QDebug debug, QGst::QueryType type);

@@ -318,71 +318,25 @@ public:
 
 } //namespace QGst
 
-
-#define QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS(CLASS, MSGTYPE) \
-    namespace QGlib { \
-    namespace Private { \
-        template <> \
-        struct CanConvertTo<CLASS> \
-        { \
-            static inline bool from(void *instance) \
-            { \
-                return (Type::fromInstance(instance).isA(GetType<QGst::Message>()) && \
-                        QGst::MessagePtr::wrap(static_cast<GstMessage*>(instance))->type() == MSGTYPE); \
-            } \
-            /* NO 'static inline bool from(Type t)' to disallow usage from Value::get */ \
-            /* ValueBase::get is not supposed to provide dynamic_cast capabilities */ \
-        }; \
-        \
-        template <> \
-        struct CanConvertFrom<CLASS##Ptr> \
-        { \
-            static inline bool to(Type t) \
-            { \
-                return GetType<QGst::Message>().isA(t); \
-            } \
-        }; \
-    } /* namespace Private */ \
-    } /* namespace QGlib */
-
-#define QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL(CLASSPTR, MSGTYPE) \
-    namespace QGlib { \
-        template<> \
-        struct ValueImpl<CLASSPTR> \
-        { \
-            static void set(ValueBase & value, const CLASSPTR & data) { \
-                ValueImpl<QGst::MessagePtr>::set(value, data); \
-            } \
-        }; \
-    } /* namespace QGlib */
-
-#define QGST_REGISTER_MESSAGE_SUBCLASS(TYPE) \
-    QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS(QGst::TYPE##Message, QGst::Message##TYPE) \
-    QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL(QGst::TYPE##MessagePtr, QGst::Message##TYPE)
-
 QGLIB_REGISTER_TYPE(QGst::Message)
 QGLIB_REGISTER_VALUEIMPL(QGst::MessagePtr)
-QGST_REGISTER_MESSAGE_SUBCLASS(Eos)
-QGST_REGISTER_MESSAGE_SUBCLASS(Error)
-QGST_REGISTER_MESSAGE_SUBCLASS(Warning)
-QGST_REGISTER_MESSAGE_SUBCLASS(Info)
-QGST_REGISTER_MESSAGE_SUBCLASS(Buffering)
-QGST_REGISTER_MESSAGE_SUBCLASS(StateChanged)
-QGST_REGISTER_MESSAGE_SUBCLASS(StepDone)
-QGST_REGISTER_MESSAGE_SUBCLASS(StreamStatus)
-QGST_REGISTER_MESSAGE_SUBCLASS(Application)
-QGST_REGISTER_MESSAGE_SUBCLASS(Element)
-QGST_REGISTER_MESSAGE_SUBCLASS(SegmentDone)
-QGST_REGISTER_MESSAGE_SUBCLASS(Duration)
-QGST_REGISTER_MESSAGE_SUBCLASS(Latency)
-QGST_REGISTER_MESSAGE_SUBCLASS(AsyncDone)
-QGST_REGISTER_MESSAGE_SUBCLASS(RequestState)
-QGST_REGISTER_MESSAGE_SUBCLASS(StepStart)
-QGST_REGISTER_MESSAGE_SUBCLASS(Qos)
-
-#undef QGST_REGISTER_MESSAGE_SUBCLASS
-#undef QGST_MESSAGE_SUBCLASS_REGISTER_VALUEIMPL
-#undef QGST_MESSAGE_SUBCLASS_REGISTER_CONVERTERS
+QGST_REGISTER_SUBCLASS(Message, Eos)
+QGST_REGISTER_SUBCLASS(Message, Error)
+QGST_REGISTER_SUBCLASS(Message, Warning)
+QGST_REGISTER_SUBCLASS(Message, Info)
+QGST_REGISTER_SUBCLASS(Message, Buffering)
+QGST_REGISTER_SUBCLASS(Message, StateChanged)
+QGST_REGISTER_SUBCLASS(Message, StepDone)
+QGST_REGISTER_SUBCLASS(Message, StreamStatus)
+QGST_REGISTER_SUBCLASS(Message, Application)
+QGST_REGISTER_SUBCLASS(Message, Element)
+QGST_REGISTER_SUBCLASS(Message, SegmentDone)
+QGST_REGISTER_SUBCLASS(Message, Duration)
+QGST_REGISTER_SUBCLASS(Message, Latency)
+QGST_REGISTER_SUBCLASS(Message, AsyncDone)
+QGST_REGISTER_SUBCLASS(Message, RequestState)
+QGST_REGISTER_SUBCLASS(Message, StepStart)
+QGST_REGISTER_SUBCLASS(Message, Qos)
 
 /*! \relates QGst::Message */
 QDebug operator<<(QDebug debug, QGst::MessageType type);

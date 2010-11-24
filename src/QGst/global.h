@@ -33,6 +33,48 @@
     QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
     QGST_WRAPPER_REFPOINTER_DECLARATION(Class)
 
+#define QGST_SUBCLASS_REGISTER_CONVERTERS(BASECLASS, TYPE) \
+    namespace QGlib { \
+    namespace Private { \
+        template <> \
+        struct CanConvertTo<QGst::TYPE##BASECLASS> \
+        { \
+            static inline bool from(void *instance) \
+            { \
+                return (Type::fromInstance(instance).isA(GetType<QGst::BASECLASS>()) && \
+                        QGst::BASECLASS##Ptr::wrap(static_cast<Gst##BASECLASS *>(instance))->type() \
+                        == QGst::BASECLASS##TYPE); \
+            } \
+            /* NO 'static inline bool from(Type t)' to disallow usage from Value::get */ \
+            /* ValueBase::get is not supposed to provide dynamic_cast capabilities */ \
+        }; \
+        \
+        template <> \
+        struct CanConvertFrom<QGst::TYPE##BASECLASS##Ptr> \
+        { \
+            static inline bool to(Type t) \
+            { \
+                return GetType<QGst::BASECLASS>().isA(t); \
+            } \
+        }; \
+    } /* namespace Private */ \
+    } /* namespace QGlib */
+
+#define QGST_SUBCLASS_REGISTER_VALUEIMPL(BASECLASS, TYPE) \
+    namespace QGlib { \
+        template<> \
+        struct ValueImpl<QGst::TYPE##BASECLASS##Ptr> \
+        { \
+            static void set(ValueBase & value, const QGst::TYPE##BASECLASS##Ptr & data) { \
+                ValueImpl<QGst::BASECLASS##Ptr>::set(value, data); \
+            } \
+        }; \
+    } /* namespace QGlib */
+
+#define QGST_REGISTER_SUBCLASS(BASECLASS, TYPE) \
+    QGST_SUBCLASS_REGISTER_CONVERTERS(BASECLASS, TYPE) \
+        QGST_SUBCLASS_REGISTER_VALUEIMPL(BASECLASS, TYPE)
+
 QGST_WRAPPER_DECLARATION(Bin)
 QGST_WRAPPER_DECLARATION(Bus)
 QGST_WRAPPER_DECLARATION(Caps)

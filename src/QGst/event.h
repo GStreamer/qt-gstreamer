@@ -224,66 +224,20 @@ public:
 
 } //namespace QGst
 
-
-#define QGST_EVENT_SUBCLASS_REGISTER_CONVERTERS(CLASS, EVTTYPE) \
-    namespace QGlib { \
-    namespace Private { \
-        template <> \
-        struct CanConvertTo<CLASS> \
-        { \
-            static inline bool from(void *instance) \
-            { \
-                return (Type::fromInstance(instance).isA(GetType<QGst::Event>()) && \
-                        QGst::EventPtr::wrap(static_cast<GstEvent*>(instance))->type() == EVTTYPE); \
-            } \
-            /* NO 'static inline bool from(Type t)' to disallow usage from Value::get */ \
-            /* ValueBase::get is not supposed to provide dynamic_cast capabilities */ \
-        }; \
-        \
-        template <> \
-        struct CanConvertFrom<CLASS##Ptr> \
-        { \
-            static inline bool to(Type t) \
-            { \
-                return GetType<QGst::Event>().isA(t); \
-            } \
-        }; \
-    } /* namespace Private */ \
-    } /* namespace QGlib */
-
-#define QGST_EVENT_SUBCLASS_REGISTER_VALUEIMPL(CLASSPTR, EVTTYPE) \
-    namespace QGlib { \
-        template<> \
-        struct ValueImpl<CLASSPTR> \
-        { \
-            static void set(ValueBase & value, const CLASSPTR & data) { \
-                ValueImpl<QGst::EventPtr>::set(value, data); \
-            } \
-        }; \
-    } /* namespace QGlib */
-
-#define QGST_REGISTER_EVENT_SUBCLASS(TYPE) \
-    QGST_EVENT_SUBCLASS_REGISTER_CONVERTERS(QGst::TYPE##Event, QGst::Event##TYPE) \
-    QGST_EVENT_SUBCLASS_REGISTER_VALUEIMPL(QGst::TYPE##EventPtr, QGst::Event##TYPE)
-
 QGLIB_REGISTER_TYPE(QGst::Event)
 QGLIB_REGISTER_VALUEIMPL(QGst::EventPtr)
-QGST_REGISTER_EVENT_SUBCLASS(FlushStart)
-QGST_REGISTER_EVENT_SUBCLASS(FlushStop)
-QGST_REGISTER_EVENT_SUBCLASS(Eos)
-QGST_REGISTER_EVENT_SUBCLASS(NewSegment)
-//TODO QGST_REGISTER_EVENT_SUBCLASS(Tag)
-QGST_REGISTER_EVENT_SUBCLASS(BufferSize)
-QGST_REGISTER_EVENT_SUBCLASS(SinkMessage)
-QGST_REGISTER_EVENT_SUBCLASS(Qos)
-QGST_REGISTER_EVENT_SUBCLASS(Seek)
-QGST_REGISTER_EVENT_SUBCLASS(Navigation)
-QGST_REGISTER_EVENT_SUBCLASS(Latency)
-QGST_REGISTER_EVENT_SUBCLASS(Step)
-
-#undef QGST_REGISTER_EVENT_SUBCLASS
-#undef QGST_EVENT_SUBCLASS_REGISTER_VALUEIMPL
-#undef QGST_EVENT_SUBCLASS_REGISTER_CONVERTERS
+QGST_REGISTER_SUBCLASS(Event, FlushStart)
+QGST_REGISTER_SUBCLASS(Event, FlushStop)
+QGST_REGISTER_SUBCLASS(Event, Eos)
+QGST_REGISTER_SUBCLASS(Event, NewSegment)
+//TODO QGST_REGISTER_SUBCLASS(Event, Tag)
+QGST_REGISTER_SUBCLASS(Event, BufferSize)
+QGST_REGISTER_SUBCLASS(Event, SinkMessage)
+QGST_REGISTER_SUBCLASS(Event, Qos)
+QGST_REGISTER_SUBCLASS(Event, Seek)
+QGST_REGISTER_SUBCLASS(Event, Navigation)
+QGST_REGISTER_SUBCLASS(Event, Latency)
+QGST_REGISTER_SUBCLASS(Event, Step)
 
 /*! \relates QGst::Event */
 QDebug operator<<(QDebug debug, QGst::EventType type);
