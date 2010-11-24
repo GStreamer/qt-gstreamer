@@ -127,6 +127,11 @@ bool Caps::isFixed() const
     return gst_caps_is_fixed(object<GstCaps>());
 }
 
+bool Caps::isWritable() const
+{
+    return (GST_CAPS_REFCOUNT_VALUE(object<GstCaps>()) == 1);
+}
+
 bool Caps::equals(const CapsPtr & caps2) const
 {
     return gst_caps_is_equal(object<GstCaps>(), caps2);

@@ -68,6 +68,7 @@ public:
     CapsPtr copy() const;
     CapsPtr copyNth(uint index) const;
 
+    bool isWritable() const;
     void makeWritable();
 
 protected:
