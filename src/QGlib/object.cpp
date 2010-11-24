@@ -72,9 +72,11 @@ void Object::setPropertyValue(const char *name, const ValueBase & value)
     g_object_set_property(object<GObject>(), name, value);
 }
 
-void Object::ref()
+void Object::ref(bool increaseRef)
 {
-    g_object_ref(m_object);
+    if (increaseRef) {
+        g_object_ref(m_object);
+    }
 }
 
 void Object::unref()

@@ -38,7 +38,7 @@ class Closure : public RefCountedObject
 {
     QGLIB_WRAPPER(Closure)
 
-    virtual void ref();
+    virtual void ref(bool increaseRef);
     virtual void unref();
 };
 

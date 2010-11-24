@@ -231,9 +231,11 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
 //END ******** Signal::emit ********
 //BEGIN ******** Closure ********
 
-void Closure::ref()
+void Closure::ref(bool increaseRef)
 {
-    g_closure_ref(static_cast<GClosure*>(m_object));
+    if (increaseRef) {
+        g_closure_ref(static_cast<GClosure*>(m_object));
+    }
 }
 
 void Closure::unref()

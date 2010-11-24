@@ -60,7 +60,7 @@ public:
     ParamSpecPtr redirectTarget() const;
 
 protected:
-    virtual void ref();
+    virtual void ref(bool increaseRef);
     virtual void unref();
 };
 

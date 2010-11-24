@@ -41,7 +41,7 @@ public:
     void setPropertyValue(const char *name, const ValueBase & value);
 
 protected:
-    virtual void ref();
+    virtual void ref(bool increaseRef);
     virtual void unref();
 };
 

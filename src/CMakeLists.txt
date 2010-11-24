@@ -8,6 +8,7 @@ set(QtGstreamer_SRCS
     QGlib/error.cpp
 
     QGst/global.cpp
+    QGst/objectstore.cpp
     QGst/structs.cpp
     QGst/structure.cpp
     QGst/caps.cpp

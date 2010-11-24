@@ -17,6 +17,7 @@
 #include "caps.h"
 #include "structure.h"
 #include "../QGlib/string_p.h"
+#include "objectstore_p.h"
 #include <QtCore/QDebug>
 #include <gst/gstcaps.h>
 #include <gst/gstvalue.h>
@@ -182,19 +183,44 @@ CapsPtr Caps::copyNth(uint index) const
     return CapsPtr::wrap(gst_caps_copy_nth(object<GstCaps>(), index), false);
 }
 
-void Caps::ref()
+void Caps::ref(bool increaseRef)
 {
-    gst_caps_ref(GST_CAPS(m_object));
+    if (Private::ObjectStore::put(m_object)) {
+        if (increaseRef) {
+            gst_caps_ref(GST_CAPS(m_object));
+        }
+    }
 }
 
 void Caps::unref()
 {
-    gst_caps_unref(GST_CAPS(m_object));
+    if (Private::ObjectStore::take(m_object)) {
+        gst_caps_unref(GST_CAPS(m_object));
+    }
 }
 
 void Caps::makeWritable()
 {
-    m_object = gst_caps_make_writable(GST_CAPS(m_object));
+    if (!isWritable()) {
+        //m_object will change, need to deal with the reference count properly
+        unref();
+
+        /*
+        * Calling gst_*_make_writable() below is tempting but wrong, as the above unref() might have
+        * dropped the gst refcount from 2 to 1 temporarily. When this happens gst_*_make_writable()
+        * will do nothing, return the same object, and the refcount will go back to 2 when we ref()
+        * it again below.
+        * So the right thing to do is to copy() here to make sure we get a new object in this case.
+        *
+        * Note that if the external refCount is 1 then the gst_*_make_writable() semantics is
+        * preserved (nothing is copied, same object is used) as we tested for this condition
+        * before entering this code path.
+        */
+        m_object = gst_caps_copy(GST_CAPS(m_object));
+
+        //Manage our reference count for the new m_object
+        ref(false);
+    }
 }
 
 } //namespace QGst

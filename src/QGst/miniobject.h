@@ -41,7 +41,7 @@ public:
     void unsetFlag(MiniObjectFlag flag);
 
 protected:
-    virtual void ref();
+    virtual void ref(bool increaseRef);
     virtual void unref();
 };
 

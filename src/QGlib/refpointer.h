@@ -123,7 +123,7 @@ protected:
 
     virtual ~RefCountedObject() {}
 
-    virtual void ref() = 0;
+    virtual void ref(bool increaseRef) = 0;
     virtual void unref() = 0;
 
     template <class T>
@@ -203,7 +203,7 @@ void RefPointer<T>::assign(const RefPointer<X> & other)
     if (!other.isNull()) {
         m_class = new T();
         m_class->m_object = other.m_class->m_object;
-        static_cast<RefCountedObject*>(m_class)->ref();
+        static_cast<RefCountedObject*>(m_class)->ref(true);
     }
 }
 
@@ -225,9 +225,7 @@ RefPointer<T> RefPointer<T>::wrap(typename T::CType *nativePtr, bool increaseRef
     if (nativePtr != NULL) {
         ptr.m_class = new T();
         ptr.m_class->m_object = nativePtr;
-        if (increaseRef) {
-            static_cast<RefCountedObject*>(ptr.m_class)->ref();
-        }
+        static_cast<RefCountedObject*>(ptr.m_class)->ref(increaseRef);
     }
     return ptr;
 }

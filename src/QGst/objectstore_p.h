@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010  Collabora Multimedia.
+      @author Mauricio Piacentini <mauricio.piacentini@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -14,37 +15,24 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef QGST_OBJECT_H
-#define QGST_OBJECT_H
+#ifndef QGST_OBJECTSTORE_H
+#define QGST_OBJECTSTORE_H
 
-#include "global.h"
-#include "../QGlib/object.h"
+/* WARNING: This header should only be included from
+ * QtGstreamer source files and should not be installed */
 
 namespace QGst {
+namespace Private {
 
-/*! \headerfile QGst/object.h <QGst/Object>
- * \brief Wrapper class for GstObject
- */
-class Object : public virtual QGlib::Object
+class ObjectStore
 {
-    QGST_WRAPPER(Object)
 public:
-    QString name() const;
-    bool setName(const char *name);
-
-    ObjectPtr parent() const;
-    bool setParent(const ObjectPtr & parent);
-    void unparent();
-
-    bool isAncestorOf(const ObjectPtr & object) const;
-
-protected:
-    virtual void ref(bool increaseRef);
-    virtual void unref();
+    static bool put(const void * ptr);
+    static bool take(const void * ptr);
+    static bool isEmpty();
 };
 
 }
+} //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Object)
-
-#endif // QGST_OBJECT_H
+#endif

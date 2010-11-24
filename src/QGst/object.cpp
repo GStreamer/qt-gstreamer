@@ -50,9 +50,11 @@ bool Object::isAncestorOf(const ObjectPtr & obj) const
     return gst_object_has_ancestor(obj, object<GstObject>());
 }
 
-void Object::ref()
+void Object::ref(bool increaseRef)
 {
-    gst_object_ref(m_object);
+    if (increaseRef) {
+        gst_object_ref(m_object);
+    }
 }
 
 void Object::unref()

@@ -71,9 +71,11 @@ ParamSpecPtr ParamSpec::redirectTarget() const
     return ParamSpecPtr::wrap(g_param_spec_get_redirect_target(object<GParamSpec>()));
 }
 
-void ParamSpec::ref()
+void ParamSpec::ref(bool increaseRef)
 {
-    g_param_spec_ref(G_PARAM_SPEC(m_object));
+    if (increaseRef) {
+        g_param_spec_ref(G_PARAM_SPEC(m_object));
+    }
 }
 
 void ParamSpec::unref()
