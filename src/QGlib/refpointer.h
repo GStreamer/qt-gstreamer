@@ -251,12 +251,16 @@ inline bool RefPointer<T>::operator!() const
 template <class T>
 inline T *RefPointer<T>::operator->()
 {
+    Q_ASSERT_X(!isNull() ,"RefPointer::operator->()",
+               "Attempted to dereference a null pointer");
     return m_class;
 }
 
 template <class T>
 inline const T *RefPointer<T>::operator->() const
 {
+    Q_ASSERT_X(!isNull(), "RefPointer::operator->() const",
+               "Attempted to dereference a null pointer");
     return m_class;
 }
 
