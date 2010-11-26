@@ -18,14 +18,15 @@
 #define QGSTTEST_H
 
 #include <QtTest/QtTest>
+#include <QGst/Global>
 #include <gst/gst.h>
 
 class QGstTest : public QObject
 {
     Q_OBJECT
 private Q_SLOTS:
-    void initTestCase() { gst_init(NULL, NULL); }
-    void cleanupTestCase() { gst_deinit(); }
+    void initTestCase() { QGst::init(); }
+    void cleanupTestCase() { QGst::cleanup(); }
 };
 
 #endif
