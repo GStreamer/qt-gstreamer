@@ -74,7 +74,7 @@ struct EmitImpl<R (Args...)>
                                             packArguments(std::forward<Args>(args)...));
 
         try {
-            return returnValue.get<R>();
+            return ValueImpl<R>::get(returnValue);
         } catch(const std::logic_error &) {
             qCritical() << "Error during emission of signal" << detailedSignal
                         << "The returned value from emit is of different type than the one requested";
@@ -178,7 +178,7 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
         Value returnValue = Signal::emit(instance, detailedSignal, values);
 
         try {
-            return returnValue.get<R>();
+            return ValueImpl<R>::get(returnValue);
         } catch(const std::logic_error &) {
             qCritical() << "Error during emission of signal" << detailedSignal
                         << "The returned value from emit is of different type than the one requested";

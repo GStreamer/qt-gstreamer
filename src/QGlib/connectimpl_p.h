@@ -80,7 +80,7 @@ struct CppClosure {};
 template <typename Function, typename R>
 struct invoker
 {
-    static inline void invoke(const Function & f, SharedValue & result) { result.set<R>(f()); }
+    static inline void invoke(const Function & f, SharedValue & result) { ValueImpl<R>::set(result, f()); }
 };
 
 template <typename Function>
@@ -173,7 +173,7 @@ inline void unpackAndInvoke(F && function, SharedValue & result,
             >::type CleanArg1;
     typedef BoundArgumentFunction<F, R, Arg1, Args...> F1;
 
-    CleanArg1 && boundArg = argsBegin->get<CleanArg1>();
+    CleanArg1 && boundArg = ValueImpl<CleanArg1>::get(*argsBegin);
     F1 && f = partial_bind<F, R, Arg1, Args...>(std::forward<F>(function), std::forward<Arg1>(boundArg));
 
     unpackAndInvoke< F1, R, Args... >(std::forward<F1>(f), result,
@@ -286,6 +286,9 @@ namespace Private {
 
 # define QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP(z, n, list) \
     ,list.at(n).get< typename boost::remove_const< typename boost::remove_reference<A ##n>::type >::type >()
+
+# define QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP(z, n, list) \
+    ,ValueImpl< typename boost::remove_const< typename boost::remove_reference<A ##n>::type >::type >::get(list.at(n))
 
 # define QGLIB_SIGNAL_IMPL_UNPACK_ARGS(list) \
     BOOST_PP_REPEAT(QGLIB_SIGNAL_IMPL_NUM_ARGS, QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP, list)
