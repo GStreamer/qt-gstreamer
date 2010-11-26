@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -18,8 +20,91 @@
 #include "string.h"
 #include <glib-object.h>
 #include <QtCore/QDebug>
+#include <QtCore/QReadWriteLock>
 
 namespace QGlib {
+namespace Private {
+
+class Dispatcher
+{
+public:
+    Dispatcher();
+
+    ValueVTable getVTable(Type t) const;
+    void setVTable(Type t, const ValueVTable & vtable);
+
+private:
+    mutable QReadWriteLock lock;
+    QHash<Type, ValueVTable> dispatchTable;
+};
+
+Dispatcher::Dispatcher()
+{
+#define DECLARE_VTABLE(T, NICK, GTYPE) \
+    struct ValueVTable_##NICK \
+    { \
+        static void get(const ValueBase & value, void *data) \
+        { \
+            *reinterpret_cast<T*>(data) = g_value_get_##NICK(value); \
+        }; \
+        \
+        static void set(ValueBase & value, const void *data) \
+        { \
+            g_value_set_##NICK(value, *reinterpret_cast<T const *>(data)); \
+        }; \
+    }; \
+    setVTable(GTYPE, ValueVTable(ValueVTable_##NICK::set, ValueVTable_##NICK::get));
+
+    DECLARE_VTABLE(char, char, Type::Char)
+    DECLARE_VTABLE(unsigned char, uchar, Type::Uchar)
+    DECLARE_VTABLE(bool, boolean, Type::Boolean)
+    DECLARE_VTABLE(int, int, Type::Int)
+    DECLARE_VTABLE(unsigned int, uint, Type::Uint)
+    DECLARE_VTABLE(long, long, Type::Long)
+    DECLARE_VTABLE(unsigned long, ulong, Type::Ulong)
+    DECLARE_VTABLE(qint64, int64, Type::Int64)
+    DECLARE_VTABLE(quint64, uint64, Type::Uint64)
+    DECLARE_VTABLE(int, enum, Type::Enum);
+    DECLARE_VTABLE(uint, flags, Type::Flags)
+    DECLARE_VTABLE(float, float, Type::Float)
+    DECLARE_VTABLE(double, double, Type::Double)
+    DECLARE_VTABLE(QByteArray, string, Type::String)
+    DECLARE_VTABLE(void*, pointer, Type::Pointer)
+    DECLARE_VTABLE(void*, boxed, Type::Boxed)
+    DECLARE_VTABLE(GParamSpec*, param, Type::Param)
+    DECLARE_VTABLE(void*, object, Type::Object)
+    DECLARE_VTABLE(QGlib::Type, gtype, GetType<QGlib::Type>())
+
+#undef DECLARE_VTABLE
+}
+
+ValueVTable Dispatcher::getVTable(Type t) const
+{
+    QReadLocker l(&lock);
+
+    if (dispatchTable.contains(t)) {
+        return dispatchTable[t];
+    }
+
+    while (t.isDerived()) {
+        t = t.parent();
+        if (dispatchTable.contains(t)) {
+            return dispatchTable[t];
+        }
+    }
+
+    return ValueVTable();
+}
+
+void Dispatcher::setVTable(Type t, const ValueVTable & vtable)
+{
+    QWriteLocker l(&lock);
+    dispatchTable[t] = vtable;
+}
+
+} //namespace Private
+
+Q_GLOBAL_STATIC(Private::Dispatcher, s_dispatcher);
 
 //BEGIN ValueBase
 
@@ -62,6 +147,70 @@ Value ValueBase::transformTo(Type t) const
     dest.init(t);
     g_value_transform(m_value, dest.m_value);
     return dest;
+}
+
+//static
+void ValueBase::registerValueVTable(Type type, const ValueVTable & vtable)
+{
+    s_dispatcher()->setVTable(type, vtable);
+}
+
+void ValueBase::getData(Type dataType, void *data) const
+{
+    if (!isValid()) {
+        throw InvalidValueException();
+    } else if (g_value_type_compatible(type(), dataType)) {
+        ValueVTable vtable = s_dispatcher()->getVTable(dataType);
+        if (vtable.get != NULL) {
+            vtable.get(*this, data);
+        } else {
+            throw std::logic_error("Unable to handle the given type. Type is not registered");
+        }
+    } else if (dataType.isValueType() && g_value_type_transformable(type(), dataType)) {
+        Value v;
+        v.init(dataType);
+
+        if (!g_value_transform(m_value, v.m_value)) {
+            throw InvalidTypeException();
+        }
+
+        try {
+            v.getData(dataType, data);
+        } catch (const InvalidTypeException &) {
+            Q_ASSERT(false); //This must never happen
+        }
+    } else {
+        throw InvalidTypeException();
+    }
+}
+
+void ValueBase::setData(Type dataType, const void *data)
+{
+    if (!isValid()) {
+        throw InvalidValueException();
+    } else if (g_value_type_compatible(dataType, type())) {
+        ValueVTable vtable = s_dispatcher()->getVTable(dataType);
+        if (vtable.set != NULL) {
+            vtable.set(*this, data);
+        } else {
+            throw std::logic_error("Unable to handle the given type. Type is not registered");
+        }
+    } else if (dataType.isValueType() && g_value_type_transformable(dataType, type())) {
+        Value v;
+        v.init(dataType);
+
+        try {
+            v.setData(dataType, data);
+        } catch (const InvalidTypeException &) {
+            Q_ASSERT(false); //This must never happen
+        }
+
+        if (!g_value_transform(v.m_value, m_value)) {
+            throw InvalidTypeException();
+        }
+    } else {
+        throw InvalidTypeException();
+    }
 }
 
 //END ValueBase
@@ -164,42 +313,7 @@ SharedValue & SharedValue::operator=(const SharedValue & other)
 
 //END SharedValue
 
-
-//BEGIN ValueImpl internal helpers
-
-uint ValueImpl_Flags::get(const ValueBase & value)
-{
-    return g_value_get_flags(value);
-}
-
-void ValueImpl_Flags::set(ValueBase & value, uint data)
-{
-    g_value_set_flags(value, data);
-}
-
-int ValueImpl_Enum::get(const ValueBase & value)
-{
-    return g_value_get_enum(value);
-}
-
-void ValueImpl_Enum::set(ValueBase & value, int data)
-{
-    g_value_set_enum(value, data);
-}
-
-void *ValueImpl_Boxed::get(const ValueBase & value)
-{
-    return g_value_get_boxed(value);
-}
-
-void ValueImpl_Boxed::set(ValueBase & value, void *data)
-{
-    g_value_set_boxed(value, data);
-}
-
-//END ValueImpl internal helpers
-
-}
+} //namespace QGlib
 
 
 QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
@@ -225,25 +339,3 @@ QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
         return debug.space();
     }
 }
-
-#define SHORT_VALUEIMPL_IMPLEMENTATION(T, NICK) \
-    QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(T, g_value_get_##NICK(value), g_value_set_##NICK(value, data))
-
-SHORT_VALUEIMPL_IMPLEMENTATION(bool, boolean)
-SHORT_VALUEIMPL_IMPLEMENTATION(char, char)
-SHORT_VALUEIMPL_IMPLEMENTATION(unsigned char, uchar)
-SHORT_VALUEIMPL_IMPLEMENTATION(int, int)
-SHORT_VALUEIMPL_IMPLEMENTATION(unsigned int, uint)
-SHORT_VALUEIMPL_IMPLEMENTATION(long, long)
-SHORT_VALUEIMPL_IMPLEMENTATION(unsigned long, ulong)
-SHORT_VALUEIMPL_IMPLEMENTATION(qint64, int64)
-SHORT_VALUEIMPL_IMPLEMENTATION(quint64, uint64)
-SHORT_VALUEIMPL_IMPLEMENTATION(float, float)
-SHORT_VALUEIMPL_IMPLEMENTATION(double, double)
-SHORT_VALUEIMPL_IMPLEMENTATION(void*, pointer)
-SHORT_VALUEIMPL_IMPLEMENTATION(QGlib::Type, gtype)
-SHORT_VALUEIMPL_IMPLEMENTATION(const char*, string)
-SHORT_VALUEIMPL_IMPLEMENTATION(QByteArray, string)
-
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(QString, QString::fromUtf8(g_value_get_string(value)),
-                                        g_value_set_string(value, data.toUtf8().constData()))
