@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -16,7 +18,9 @@
 */
 #include "qgsttest.h"
 #include <QGlib/Value>
-#include <QGst/Object>
+#include <QGst/Bin>
+#include <QGst/Message>
+#include <limits>
 
 class ValueTest : public QGstTest
 {
@@ -24,7 +28,14 @@ class ValueTest : public QGstTest
 private Q_SLOTS:
     void intTest();
     void stringTest();
+    void stringLiteralTest();
+    void constCharTest();
     void enumTest();
+    void flagsTest();
+    void objectTest();
+    void miniObjectTest();
+    void capsTest();
+    void conversionsTest();
     void copyTest();
     void castTest();
     void qdebugTest();
@@ -50,6 +61,21 @@ void ValueTest::stringTest()
     QCOMPARE(v.get<QString>(), QString::fromUtf8("Γειά σου κόσμε"));
 }
 
+void ValueTest::stringLiteralTest()
+{
+    QGlib::Value v("Hello world");
+    QCOMPARE(v.type(), QGlib::GetType<QString>());
+    QCOMPARE(v.get<QString>(), QString("Hello world"));
+}
+
+void ValueTest::constCharTest()
+{
+    const char *foo = "Hello world";
+    QGlib::Value v(foo);
+    QCOMPARE(v.type(), QGlib::GetType<QString>());
+    QCOMPARE(v.get<QString>(), QString("Hello world"));
+}
+
 void ValueTest::enumTest()
 {
     QGlib::Value v;
@@ -58,6 +84,76 @@ void ValueTest::enumTest()
     QVERIFY(v.isValid());
     QCOMPARE(v.type(), QGlib::GetType<QGst::PadDirection>());
     QCOMPARE(v.get<QGst::PadDirection>(), QGst::PadSink);
+}
+
+void ValueTest::flagsTest()
+{
+    QGlib::Value v(QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
+    QCOMPARE(v.type(), QGlib::GetType<QGst::PadFlags>());
+    QCOMPARE(v.get<QGst::PadFlags>(), QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
+}
+
+void ValueTest::objectTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create();
+    QGlib::Value v(bin);
+    QCOMPARE(v.type(), QGlib::GetType<QGst::Bin>());
+    QCOMPARE(static_cast<GstBin*>(v.get<QGst::BinPtr>()), static_cast<GstBin*>(bin));
+}
+
+void ValueTest::miniObjectTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create();
+    QGst::EosMessagePtr msg = QGst::EosMessage::create(bin);
+    QGlib::Value v;
+    v.init<QGst::Message>();
+    v.set(msg);
+    QCOMPARE(v.type(), QGlib::GetType<QGst::Message>());
+    QCOMPARE(static_cast<GstMessage*>(v.get<QGst::MessagePtr>()), static_cast<GstMessage*>(msg));
+}
+
+void ValueTest::capsTest()
+{
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-rgb");
+    QGlib::Value v(caps);
+    QCOMPARE(v.type(), QGlib::GetType<QGst::Caps>());
+    QCOMPARE(static_cast<GstCaps*>(v.get<QGst::CapsPtr>()), static_cast<GstCaps*>(caps));
+    QCOMPARE(v.get<QGst::CapsPtr>()->toString(), QString("video/x-raw-rgb"));
+    QCOMPARE(v.get<QString>(), QString("video/x-raw-rgb"));
+}
+
+void ValueTest::conversionsTest()
+{
+    QGlib::Value v;
+    v.init<QGst::PadDirection>();
+
+    v.set(1);
+    QCOMPARE(v.get<int>(), 1);
+    QCOMPARE(v.get<uint>(), 1U);
+    QCOMPARE(v.get<QGst::PadDirection>(), QGst::PadSrc);
+    QCOMPARE(v.get<QString>(), QString("GST_PAD_SRC"));
+
+    v.set(2U);
+    QCOMPARE(v.get<int>(), 2);
+    QCOMPARE(v.get<uint>(), 2U);
+    QCOMPARE(v.get<QGst::PadDirection>(), QGst::PadSink);
+    QCOMPARE(v.get<QString>(), QString("GST_PAD_SINK"));
+
+
+    v.init<uint>();
+
+    v.set(100); //setting int here, not uint
+    QCOMPARE(v.get<int>(), 100);
+    QCOMPARE(v.get<uint>(), 100U);
+    QCOMPARE(v.get<long>(), 100L);
+    QCOMPARE(v.get<ulong>(), 100UL);
+    QCOMPARE(v.get<qint64>(), Q_INT64_C(100));
+    QCOMPARE(v.get<quint64>(), Q_UINT64_C(100));
+    QCOMPARE(v.get<QString>(), QString("100"));
+
+    v.set(-1);
+    QCOMPARE(v.get<int>(), -1);
+    QCOMPARE(v.get<uint>(), std::numeric_limits<uint>::max());
 }
 
 void ValueTest::copyTest()
