@@ -30,6 +30,13 @@
 
 namespace QGlib {
 
+/*! This structure holds the set and get methods that are used internally
+ * by ValueBase to handle data of a specific type. If you want to provide
+ * support for a custom type, you need to write two such methods, create
+ * a new ValueVTable instance that holds pointers to them and register it
+ * using ValueBase::registerValueVTable().
+ * \sa \ref value_design
+ */
 struct ValueVTable
 {
     typedef void (*SetFunction)(ValueBase & value, const void *data);
@@ -49,12 +56,6 @@ struct ValueVTable
 class ValueBase
 {
 public:
-    /*! \headerfile value.h <QGlib/Value>
-     * Exception thrown from ValueBase::set and ValueBase::get when the ValueBase
-     * instance on which they are being called has not been initialized. You can
-     * check if a ValueBase instance has been initialized with ValueBase::isValid()
-     * and if is actually a Value instance, you can initialize it by calling Value::init().
-     */
     class InvalidValueException : public std::logic_error
     {
     public:
@@ -62,11 +63,6 @@ public:
             : std::logic_error("This ValueBase instance has not been initialized") {}
     };
 
-    /*! \headerfile value.h <QGlib/Value>
-     * Exception thrown from ValueBase::set and ValueBase::get when the ValueBase
-     * instance on which they are being called has been initialized to hold a different
-     * type than the one that is being accessed.
-     */
     class InvalidTypeException : public std::logic_error
     {
     public:
@@ -94,9 +90,9 @@ public:
      * \code
      * GstObject *object = value.get<GstObject*>(); //will cause compilation error
      * \endcode
-     * \throws InvalidValueException if this instance is invalid (see isValid())
-     * \throws InvalidTypeException if the type T does not match the type stored
-     * in this GValue instance.
+     * If the underlying stored value is not of the type T, this method will attempt
+     * to convert it to type T. If this is not possible, a default constructed value
+     * will be returned.
      */
     template <typename T> T get() const;
 
@@ -104,9 +100,10 @@ public:
      * As with get(), the bindings take care of calling the appropriate g_value_set_*
      * method depending on the type T, but note that this is only meant to be used
      * with the types of the bindings.
-     * \throws InvalidValueException if this instance is invalid (see isValid())
-     * \throws InvalidTypeException if the type T does not match the type that this
-     * GValue instance has been initialized to hold.
+     *
+     * If this GValue instance has been initialized to hold a different type of data
+     * than T, a conversion to the correct type() will be attempted. If the conversion
+     * fails, the GValue will remain unaffected.
      * \sa get()
      */
     template <typename T> void set(const T & data);
@@ -124,16 +121,34 @@ public:
     inline operator GValue*() { return m_value; }
     inline operator const GValue*() const { return m_value; }
 
-    /*! \internal */
+    /*! Registers the given ValueVTable \a vtable for the given \a type.
+     * This is provided to let you add support for a custom type, if necessary.
+     * You should normally not need to do that, as most types are handled
+     * by the handlers of their parent types.
+     * \sa \ref value_design
+     */
     static void registerValueVTable(Type type, const ValueVTable & vtable);
 
 protected:
     template <typename T>
     friend struct ValueImpl;
 
-    /*! \internal */
+    /*! Retrieves the data from this GValue and places it into the memory position
+     * pointed to by \a data. \a dataType indicates the actual data type of \a data
+     * and is used, among others, to cast \a data back to the actual C++ type that
+     * it points to and assign it.
+     * \note This method should only be accessed from ValueImpl.
+     * \sa \ref value_design
+     */
     void getData(Type dataType, void *data) const;
-    /*! \internal */
+
+    /*! Sets the data of this GValue to be the data pointed to by \a data.
+     * \a dataType indicates the actual data type of \a data and is used,
+     * among others, to cast \a data back to the actual C++ type that
+     * it points to and retrieve its value.
+     * \note This method should only be accessed from ValueImpl.
+     * \sa \ref value_design
+     */
     void setData(Type dataType, const void *data);
 
 
@@ -200,11 +215,13 @@ public:
 };
 
 
-/*! This class provides the implementation for the ValueBase::get() and ValueBase::set() methods.
- * If you want to provide support for a custom type, you should provide a template specialization
- * of this class that sets and gets data to the underlying GValue for your custom type.
- * The default implementation expects T to be an enum.
- * \sa QGLIB_REGISTER_VALUEIMPL
+/*! This struct provides the implementation for the ValueBase::get() and ValueBase::set() methods.
+ * If you want to provide support for a custom type, you may want to provide a template
+ * specialization of this class to handle your type in a different way than the default
+ * implementation. You should normally not need to be concerned at all with this.
+ * \note this struct is declared as friend in ValueBase and as a result it has access to
+ * ValueBase::setData() and ValueBase::getData()
+ * \sa \ref value_design
  */
 template <typename T>
 struct ValueImpl
