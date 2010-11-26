@@ -45,17 +45,6 @@
                         QGst::BASECLASS##Ptr::wrap(static_cast<Gst##BASECLASS *>(instance))->type() \
                         == QGst::BASECLASS##TYPE); \
             } \
-            /* NO 'static inline bool from(Type t)' to disallow usage from Value::get */ \
-            /* ValueBase::get is not supposed to provide dynamic_cast capabilities */ \
-        }; \
-        \
-        template <> \
-        struct CanConvertFrom<QGst::TYPE##BASECLASS##Ptr> \
-        { \
-            static inline bool to(Type t) \
-            { \
-                return GetType<QGst::BASECLASS>().isA(t); \
-            } \
         }; \
     } /* namespace Private */ \
     } /* namespace QGlib */
