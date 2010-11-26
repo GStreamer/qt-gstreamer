@@ -20,7 +20,6 @@
 #include "global.h"
 #include "../QGlib/refpointer.h"
 #include "../QGlib/type.h"
-#include "../QGlib/value.h"
 
 namespace QGst {
 
@@ -48,6 +47,5 @@ protected:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::MiniObject)
-QGLIB_REGISTER_VALUEIMPL(QGst::MiniObjectPtr)
 
 #endif

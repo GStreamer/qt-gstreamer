@@ -84,15 +84,4 @@ void Object::unref()
     g_object_unref(m_object);
 }
 
-
-ObjectPtr ValueImpl_Object::get(const ValueBase & value)
-{
-    return ObjectPtr::wrap(static_cast<GObject*>(g_value_get_object(value)));
-}
-
-void ValueImpl_Object::set(ValueBase & value, const ObjectPtr & data)
-{
-    g_value_set_object(value, static_cast<GObject*>(data));
-}
-
 }

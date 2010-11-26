@@ -20,6 +20,10 @@
 
 namespace QGst {
 
+namespace Private {
+    void registerValueVTables();
+}
+
 void init()
 {
     init(NULL, NULL);
@@ -31,6 +35,7 @@ void init(int *argc, char **argv[])
     if (!gst_init_check(argc, argv, &error)) {
         throw QGlib::Error(error);
     }
+    Private::registerValueVTables();
 }
 
 void cleanup()

@@ -57,31 +57,6 @@ void Object::setProperty(const char *name, const T & value)
     }
 }
 
-// -- ValueImpl specialization for GObject-derived classes --
-
-struct ValueImpl_Object
-{
-    static ObjectPtr get(const ValueBase & value);
-    static void set(ValueBase & value, const ObjectPtr & data);
-};
-
-template <typename T>
-struct ValueImpl< RefPointer<T> >
-{
-    QGLIB_STATIC_ASSERT((boost::is_base_of<Object, T>::value),
-                        "No QGlib::ValueImpl<T> specialization has been registered for this type");
-
-    static inline RefPointer<T> get(const ValueBase & value)
-    {
-        return ValueImpl_Object::get(value).dynamicCast<T>();
-    }
-
-    static inline void set(ValueBase & value, const RefPointer<T> & data)
-    {
-        ValueImpl_Object::set(value, data);
-    }
-};
-
 } //namespace QGlib
 
 QGLIB_REGISTER_TYPE(QGlib::Object)

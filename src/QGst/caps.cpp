@@ -225,12 +225,6 @@ void Caps::makeWritable()
 
 } //namespace QGst
 
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
-    QGst::CapsPtr,
-    QGst::CapsPtr::wrap(gst_caps_copy(gst_value_get_caps(value)), false),
-    gst_value_set_caps(value, data)
-)
-
 QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps)
 {
     debug.nospace() << "QGst::Caps(" << caps->toString() << ")";

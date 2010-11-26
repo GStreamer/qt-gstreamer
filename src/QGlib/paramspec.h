@@ -69,6 +69,5 @@ protected:
 QGLIB_REGISTER_TYPE(QGlib::ParamSpec) //codegen: GType=G_TYPE_PARAM
 QGLIB_REGISTER_TYPE(QGlib::ParamSpec::ParamFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::ParamSpec::ParamFlags)
-QGLIB_REGISTER_VALUEIMPL(QGlib::ParamSpecPtr)
 
 #endif

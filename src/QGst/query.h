@@ -217,7 +217,6 @@ public:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Query)
-QGLIB_REGISTER_VALUEIMPL(QGst::QueryPtr)
 QGST_REGISTER_SUBCLASS(Query, Position)
 QGST_REGISTER_SUBCLASS(Query, Duration)
 QGST_REGISTER_SUBCLASS(Query, Latency)

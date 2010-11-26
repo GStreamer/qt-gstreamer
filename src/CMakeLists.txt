@@ -9,7 +9,7 @@ set(QtGstreamer_SRCS
 
     QGst/global.cpp
     QGst/objectstore.cpp
-    QGst/structs.cpp
+    QGst/value.cpp
     QGst/structure.cpp
     QGst/caps.cpp
     QGst/miniobject.cpp

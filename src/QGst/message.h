@@ -319,7 +319,6 @@ public:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Message)
-QGLIB_REGISTER_VALUEIMPL(QGst::MessagePtr)
 QGST_REGISTER_SUBCLASS(Message, Eos)
 QGST_REGISTER_SUBCLASS(Message, Error)
 QGST_REGISTER_SUBCLASS(Message, Warning)

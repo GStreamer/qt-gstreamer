@@ -83,8 +83,4 @@ void ParamSpec::unref()
     g_param_spec_unref(G_PARAM_SPEC(m_object));
 }
 
-}
-
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(QGlib::ParamSpecPtr,
-                                        ParamSpecPtr::wrap(g_value_get_param(value)),
-                                        g_value_set_param(value, data))
+} //namespace QGlib

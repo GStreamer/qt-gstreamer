@@ -18,7 +18,6 @@
 #define QGST_STRUCTS_H
 
 #include "../QGlib/type.h"
-#include "../QGlib/value.h"
 
 namespace QGst {
 
@@ -67,7 +66,6 @@ namespace QGst {
     };
 }
 QGLIB_REGISTER_TYPE(QGst::Fourcc)
-QGLIB_REGISTER_VALUEIMPL(QGst::Fourcc)
 
 namespace QGst {
     /*! \headerfile structs.h <QGst/Fraction>
@@ -84,7 +82,6 @@ namespace QGst {
     };
 }
 QGLIB_REGISTER_TYPE(QGst::Fraction)
-QGLIB_REGISTER_VALUEIMPL(QGst::Fraction)
 
 namespace QGst {
     namespace Private {
@@ -123,8 +120,5 @@ namespace QGst {
 QGLIB_REGISTER_TYPE(QGst::IntRange)
 QGLIB_REGISTER_TYPE(QGst::DoubleRange)
 QGLIB_REGISTER_TYPE(QGst::FractionRange)
-QGLIB_REGISTER_VALUEIMPL(QGst::IntRange)
-QGLIB_REGISTER_VALUEIMPL(QGst::DoubleRange)
-QGLIB_REGISTER_VALUEIMPL(QGst::FractionRange)
 
 #endif // QGST_STRUCTS_H

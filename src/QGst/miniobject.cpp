@@ -91,9 +91,3 @@ void MiniObject::makeWritable()
 }
 
 } //namespace QGst
-
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
-    QGst::MiniObjectPtr,
-    QGst::MiniObjectPtr::wrap(gst_value_get_mini_object(value)),
-    gst_value_set_mini_object(value, data)
-)

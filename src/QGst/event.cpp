@@ -373,12 +373,6 @@ bool StepEvent::intermediate() const
 
 } //namespace QGst
 
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
-    QGst::EventPtr,
-    QGst::EventPtr::wrap(GST_EVENT(gst_value_get_mini_object(value))),
-    gst_value_set_mini_object(value, GST_MINI_OBJECT(static_cast<GstEvent*>(data)))
-)
-
 QDebug operator<<(QDebug debug, QGst::EventType type)
 {
     debug.nospace() << gst_event_type_get_name(static_cast<GstEventType>(type));

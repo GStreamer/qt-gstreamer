@@ -83,14 +83,7 @@ BufferPtr Buffer::copy() const
     return BufferPtr::wrap(gst_buffer_copy(object<GstBuffer>()), false);
 }
 
-
 } //namespace QGst
-
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
-    QGst::BufferPtr,
-    QGst::BufferPtr::wrap(GST_BUFFER(gst_value_get_buffer(value))),
-    gst_value_set_buffer(value, GST_MINI_OBJECT(static_cast<GstBuffer*>(data)))
-)    
 
 QDebug operator<<(QDebug debug, const QGst::BufferPtr & buffer)
 {

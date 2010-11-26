@@ -407,12 +407,6 @@ void UriQuery::setValue(const QUrl & uri)
 
 } //namespace QGst
 
-QGLIB_REGISTER_VALUEIMPL_IMPLEMENTATION(
-    QGst::QueryPtr,
-    QGst::QueryPtr::wrap(GST_QUERY(gst_value_get_mini_object(value))),
-    gst_value_set_mini_object(value, GST_MINI_OBJECT(static_cast<GstQuery*>(data)))
-)
-
 QDebug operator<<(QDebug debug, QGst::QueryType type)
 {
     debug.nospace() << gst_query_type_get_name(static_cast<GstQueryType>(type));
