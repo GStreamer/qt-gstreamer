@@ -276,6 +276,13 @@ QGLIB_REGISTER_NATIVE_TYPE(const char*, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QByteArray, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QString, Type::String)
 
+namespace QGlib {
+    template <int N>
+    struct GetTypeImpl<char[N]> {
+        inline operator Type() { return Type::String; };
+    };
+}
+
 #undef QGLIB_REGISTER_NATIVE_TYPE
 
 QGLIB_REGISTER_TYPE(QGlib::Type) //codegen: GType=G_TYPE_GTYPE
