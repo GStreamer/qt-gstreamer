@@ -241,7 +241,7 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
 #  include <boost/bind.hpp>
 
 // include the second part of this file as many times as QGLIB_SIGNAL_MAX_ARGS specifies
-#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/connectimpl_p.h"))
+#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/connectimpl.h"))
 #  include BOOST_PP_ITERATE()
 
 #  undef BOOST_PP_ITERATION_PARAMS_1

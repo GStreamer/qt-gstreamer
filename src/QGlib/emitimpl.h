@@ -117,7 +117,7 @@ R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
 # else //QGLIB_HAVE_CXX0X
 
 // include the second part of this file as many times as QGLIB_SIGNAL_MAX_ARGS specifies
-#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/emitimpl_p.h"))
+#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/emitimpl.h"))
 #  include BOOST_PP_ITERATE()
 #  undef BOOST_PP_ITERATION_PARAMS_1
 

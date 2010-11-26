@@ -262,8 +262,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::SignalFlags)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::ConnectFlags)
 
 #define IN_QGLIB_SIGNAL_H
-# include "emitimpl_p.h"
-# include "connectimpl_p.h"
+# include "emitimpl.h"
+# include "connectimpl.h"
 #undef IN_QGLIB_SIGNAL_H
 
 #if defined(QGLIB_SIGNAL_MAX_ARGS)

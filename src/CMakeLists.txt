@@ -51,8 +51,8 @@ set(INSTALLED_HEADERS
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value
     QGlib/signal.h      QGlib/Signal
-    QGlib/emitimpl_p.h
-    QGlib/connectimpl_p.h
+    QGlib/emitimpl.h
+    QGlib/connectimpl.h
     QGlib/error.h       QGlib/Error
 
     QGst/global.h       QGst/Global
