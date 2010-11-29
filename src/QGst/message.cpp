@@ -91,7 +91,12 @@ QGlib::Error ErrorMessage::error() const
 QString ErrorMessage::debugMessage() const
 {
     gchar *debug;
-    gst_message_parse_error(object<GstMessage>(), NULL, &debug);
+    GError *e;
+    //Passing a NULL pointer for the GError is not supported
+    gst_message_parse_error(object<GstMessage>(), &e, &debug);
+    if (e) {
+        g_error_free (e);
+    }
     return QGlib::Private::stringFromGCharPtr(debug);
 }
 
@@ -115,7 +120,12 @@ QGlib::Error WarningMessage::error() const
 QString WarningMessage::debugMessage() const
 {
     gchar *debug;
-    gst_message_parse_warning(object<GstMessage>(), NULL, &debug);
+    GError *e;
+    //Passing a NULL pointer for the GError is not supported
+    gst_message_parse_warning(object<GstMessage>(), &e, &debug);
+    if (e) {
+        g_error_free (e);
+    }
     return QGlib::Private::stringFromGCharPtr(debug);
 }
 
@@ -139,7 +149,12 @@ QGlib::Error InfoMessage::error() const
 QString InfoMessage::debugMessage() const
 {
     gchar *debug;
-    gst_message_parse_info(object<GstMessage>(), NULL, &debug);
+    GError *e;
+    //Passing a NULL pointer for the GError is not supported
+    gst_message_parse_info(object<GstMessage>(), &e, &debug);
+    if (e) {
+        g_error_free (e);
+    }
     return QGlib::Private::stringFromGCharPtr(debug);
 }
 
