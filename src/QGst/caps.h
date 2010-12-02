@@ -47,8 +47,8 @@ public:
     StructurePtr internalStructure(uint index);
     const StructurePtr internalStructure(uint index) const;
 
-    void appendStructure(const StructureBase & structure);
-    void mergeStructure(const StructureBase & structure);
+    void appendStructure(const Structure & structure);
+    void mergeStructure(const Structure & structure);
     void removeStructure(uint index);
 
     uint size() const;

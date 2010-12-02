@@ -23,7 +23,7 @@
 
 namespace QGst {
 
-EventPtr Event::create(EventType type, const StructureBase & structure)
+EventPtr Event::create(EventType type, const Structure & structure)
 {
     GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
     return EventPtr::wrap(gst_event_new_custom(static_cast<GstEventType>(type), s), false);
@@ -303,7 +303,7 @@ qint64 SeekEvent::stop() const
 
 //********************************************************
 
-NavigationEventPtr NavigationEvent::create(const StructureBase & structure)
+NavigationEventPtr NavigationEvent::create(const Structure & structure)
 {
     GstStructure * s = structure.isValid() ? gst_structure_copy(structure) : NULL;
     GstEvent * e = gst_event_new_navigation(s);

@@ -88,12 +88,12 @@ const StructurePtr Caps::internalStructure(uint index) const
     return StructurePtr(new SharedStructure(gst_caps_get_structure(object<GstCaps>(), index)));
 }
 
-void Caps::appendStructure(const StructureBase & structure)
+void Caps::appendStructure(const Structure & structure)
 {
     gst_caps_append_structure(object<GstCaps>(), gst_structure_copy(structure));
 }
 
-void Caps::mergeStructure(const StructureBase & structure)
+void Caps::mergeStructure(const Structure & structure)
 {
     gst_caps_merge_structure(object<GstCaps>(), gst_structure_copy(structure));
 }

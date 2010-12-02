@@ -23,7 +23,7 @@
 
 namespace QGst {
 
-MessagePtr Message::create(MessageType type, const ObjectPtr & source, const StructureBase & structure)
+MessagePtr Message::create(MessageType type, const ObjectPtr & source, const Structure & structure)
 {
     GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
     return MessagePtr::wrap(gst_message_new_custom(static_cast<GstMessageType>(type), source, s), false);
@@ -333,7 +333,7 @@ void StreamStatusMessage::setStreamStatusObject(const QGlib::ValueBase & obj)
 
 //********************************************************
 
-ApplicationMessagePtr ApplicationMessage::create(const ObjectPtr & source, const StructureBase & structure)
+ApplicationMessagePtr ApplicationMessage::create(const ObjectPtr & source, const Structure & structure)
 {
     GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
     return ApplicationMessagePtr::wrap(gst_message_new_application(source, s), false);
@@ -341,7 +341,7 @@ ApplicationMessagePtr ApplicationMessage::create(const ObjectPtr & source, const
 
 //********************************************************
 
-ElementMessagePtr ElementMessage::create(const ObjectPtr & source, const StructureBase & structure)
+ElementMessagePtr ElementMessage::create(const ObjectPtr & source, const Structure & structure)
 {
     GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
     return ElementMessagePtr::wrap(gst_message_new_element(source, s), false);

@@ -48,7 +48,7 @@ class Message : public MiniObject
     QGST_WRAPPER(Message)
 public:
     static MessagePtr create(MessageType type, const ObjectPtr & source,
-                             const StructureBase & structure = SharedStructure(NULL));
+                             const Structure & structure = SharedStructure(NULL));
 
     ObjectPtr source() const;
     quint64 timestamp() const;
@@ -196,7 +196,7 @@ class ApplicationMessage : public Message
     QGST_WRAPPER_DIFFERENT_C_CLASS(ApplicationMessage, Message)
 public:
     static ApplicationMessagePtr create(const ObjectPtr & source,
-                                        const StructureBase & structure = SharedStructure(NULL));
+                                        const Structure & structure = SharedStructure(NULL));
 };
 
 /*! \headerfile message.h <QGst/Message>
@@ -207,7 +207,7 @@ class ElementMessage : public Message
     QGST_WRAPPER_DIFFERENT_C_CLASS(ElementMessage, Message)
 public:
     static ElementMessagePtr create(const ObjectPtr & source,
-                                    const StructureBase & structure = SharedStructure(NULL));
+                                    const Structure & structure = SharedStructure(NULL));
 };
 
 //maybe do: SEGMENT_START (internal)

@@ -126,7 +126,6 @@ QGST_WRAPPER_REFPOINTER_DECLARATION(StepEvent)
 QGST_WRAPPER_DECLARATION(StreamVolume)
 QGST_WRAPPER_GSTCLASS_DECLARATION(Structure)
 namespace QGst {
-    class StructureBase;
     class Structure;
     class SharedStructure;
     typedef QSharedPointer<SharedStructure> StructurePtr;

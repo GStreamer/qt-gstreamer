@@ -25,11 +25,25 @@
 namespace QGst {
 
 /*! \headerfile structure.h <QGst/Structure>
- * \brief Common base class for Structure and SharedStructure, wrappers for GstStructure
+ * \brief Wrapper for GstStructure
+ *
+ * \note Unlike SharedStructure, this class always keeps a private GstStructure internally
+ * which is allocated in the constructors and freed from the destructor.
+ * \sa SharedStructure
  */
-class StructureBase
+
+class Structure
 {
 public:
+    Structure();
+    Structure(const char *name);
+    Structure(GstStructure *structure);
+    Structure(const GstStructure *structure);
+    Structure(const Structure & other);
+    virtual ~Structure();
+
+    Structure & operator=(const Structure & other);
+
     bool isValid() const;
 
     QString name() const;
@@ -48,6 +62,7 @@ public:
     void removeAllFields();
 
     QString toString() const; //FIXME maybe call it serialize()?
+    static Structure fromString(const char *str);
 
     inline operator GstStructure*() { return m_structure; }
     inline operator const GstStructure*() const { return m_structure; }
@@ -55,39 +70,8 @@ public:
     //TODO iterators, gst_structure_fixate_*, quark methods
 
 protected:
-    StructureBase(GstStructure *structure);
-    virtual ~StructureBase();
-    Q_DISABLE_COPY(StructureBase);
-
     GstStructure *m_structure;
-};
 
-class SharedStructure;
-
-
-/*! \headerfile structure.h <QGst/Structure>
- * \brief Wrapper for GstStructure
- *
- * \note Unlike SharedStructure, this class always keeps a private GstStructure internally
- * which is allocated in the constructors and freed from the destructor.
- * \sa SharedStructure
- */
-class Structure : public StructureBase
-{
-public:
-    explicit Structure(const char *name);
-    explicit Structure(const GstStructure *structure);
-    Structure(const SharedStructure & other);
-    Structure(const Structure & other);
-    virtual ~Structure();
-
-    Structure & operator=(const SharedStructure & other);
-    Structure & operator=(const Structure & other);
-
-    static Structure fromString(const char *str);
-
-private:
-    Structure(); //used in fromString()
 };
 
 
@@ -102,21 +86,22 @@ private:
  * unlike Structure, which always keeps a GstStructure instance for itself.
  * \sa Structure
  */
-class SharedStructure : public StructureBase
+class SharedStructure : public Structure
 {
 public:
     SharedStructure(GstStructure *structure);
-    SharedStructure(const SharedStructure & other);
     virtual ~SharedStructure();
-    SharedStructure & operator=(const SharedStructure & other);
+
+protected:
+    Q_DISABLE_COPY(SharedStructure);
+
 };
 
 } //namespace QGst
 
 /*! \relates QGst::StructureBase */
-QDebug operator<<(QDebug debug, const QGst::StructureBase & structure);
+QDebug operator<<(QDebug debug, const QGst::Structure & structure);
 
-QGLIB_REGISTER_TYPE(QGst::StructureBase) //codegen: GType=GST_TYPE_STRUCTURE
 QGLIB_REGISTER_TYPE(QGst::Structure)
 QGLIB_REGISTER_TYPE(QGst::SharedStructure) //codegen: GType=GST_TYPE_STRUCTURE
 
