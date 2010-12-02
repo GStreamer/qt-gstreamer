@@ -41,8 +41,12 @@ QString Structure::name() const
 
 void Structure::setName(const char *name)
 {
-    Q_ASSERT(isValid());
-    gst_structure_set_name(m_structure, name);
+    if (!isValid()) {
+        //lazy construction
+        m_structure = gst_structure_empty_new(name);
+    } else {
+        gst_structure_set_name(m_structure, name);
+    }
 }
 
 QGlib::Value Structure::value(const char *fieldName) const
