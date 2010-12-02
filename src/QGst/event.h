@@ -55,7 +55,7 @@ class Event : public MiniObject
     QGST_WRAPPER(Event)
 public:
     static EventPtr create(EventType type,
-                           const Structure & structure = SharedStructure(NULL));
+                           const Structure & structure = Structure());
 
     ObjectPtr source() const;
     quint64 timestamp() const;
@@ -190,7 +190,7 @@ class NavigationEvent : public Event
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(NavigationEvent, Event)
 public:
-    static NavigationEventPtr create(const Structure & structure  = SharedStructure(NULL));
+    static NavigationEventPtr create(const Structure & structure  = Structure());
 };
 
 /*! \headerfile event.h <QGst/Event>
