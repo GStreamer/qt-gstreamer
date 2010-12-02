@@ -19,6 +19,7 @@
 
 #include "enums.h"
 #include <QtCore/QtGlobal>
+#include <QtCore/QSharedPointer>
 
 #define QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
     typedef struct _Gst##Class Gst##Class;
@@ -128,6 +129,7 @@ namespace QGst {
     class StructureBase;
     class Structure;
     class SharedStructure;
+    typedef QSharedPointer<SharedStructure> StructurePtr;
 }
 QGST_WRAPPER_GSTCLASS_DECLARATION(URIHandler)
 QGST_WRAPPER_REFPOINTER_DECLARATION(UriHandler)
