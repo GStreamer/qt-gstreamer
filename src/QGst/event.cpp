@@ -49,12 +49,12 @@ QString Event::typeName() const
     return QString::fromUtf8(GST_EVENT_TYPE_NAME(object<GstQuery>()));
 }
 
-SharedStructure Event::structure()
+SharedStructure Event::internalStructure()
 {
     return SharedStructure(object<GstEvent>()->structure);
 }
 
-const SharedStructure Event::structure() const
+const SharedStructure Event::internalStructure() const
 {
     return SharedStructure(object<GstEvent>()->structure);
 }

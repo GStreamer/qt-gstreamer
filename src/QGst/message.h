@@ -54,8 +54,8 @@ public:
     quint64 timestamp() const;
     MessageType type() const;
 
-    SharedStructure structure();
-    const SharedStructure structure() const;
+    SharedStructure internalStructure();
+    const SharedStructure internalStructure() const;
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);

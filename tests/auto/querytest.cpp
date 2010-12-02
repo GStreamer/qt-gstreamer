@@ -39,7 +39,7 @@ void QueryTest::baseTest()
     QGst::Structure s("mystructure");
     QGst::PositionQueryPtr query = QGst::PositionQuery::create(QGst::FormatBytes);
 
-    QGst::SharedStructure ss = query->structure();
+    QGst::SharedStructure ss = query->internalStructure();
     QVERIFY(ss.isValid());
     ss.setValue("myfield", 365);
     QCOMPARE(ss.value("myfield").get<int>(), 365);

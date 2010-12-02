@@ -56,8 +56,8 @@ public:
     QString typeName() const;
     QueryType type() const;
 
-    SharedStructure structure();
-    const SharedStructure structure() const;
+    SharedStructure internalStructure();
+    const SharedStructure internalStructure() const;
 
 };
 

@@ -136,7 +136,7 @@ void Player::onNewDecodedPad(QGst::PadPtr newPad)
 {
 
     QGst::CapsPtr caps = newPad->caps();
-    QGst::SharedStructure structure = caps->structure(0);
+    QGst::SharedStructure structure = caps->internalStructure(0);
 
     /* The caps' first structure's name tells us what kind of data the pad transfers.
      * Here we want to handle either audio/x-raw-int or audio/x-raw-float. Both types

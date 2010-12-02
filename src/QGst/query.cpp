@@ -35,12 +35,12 @@ QueryType Query::type() const
     return static_cast<QueryType>(GST_QUERY_TYPE(object<GstQuery>()));
 }
 
-SharedStructure Query::structure()
+SharedStructure Query::internalStructure()
 {
     return SharedStructure(gst_query_get_structure(object<GstQuery>()));
 }
 
-const SharedStructure Query::structure() const
+const SharedStructure Query::internalStructure() const
 {
     return SharedStructure(gst_query_get_structure(object<GstQuery>()));
 }

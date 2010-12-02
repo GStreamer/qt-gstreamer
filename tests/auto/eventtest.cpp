@@ -46,7 +46,7 @@ void EventTest::baseTest()
     QVERIFY(evt->type()==QGst::EventCustomDownstream);
     QCOMPARE(evt->typeName(), QString("custom-downstream"));
 
-    QGst::SharedStructure ss = evt->structure();
+    QGst::SharedStructure ss = evt->internalStructure();
     QVERIFY(ss.isValid());
 
     ss.setValue("myfield", 365);
@@ -70,7 +70,7 @@ void EventTest::copyTest()
     QCOMPARE(evt->type(), evt2->type());
     QCOMPARE(evt->timestamp(), evt2->timestamp());
 
-    QGst::SharedStructure ss = evt2->structure();
+    QGst::SharedStructure ss = evt2->internalStructure();
     QVERIFY(ss.isValid());
     QCOMPARE(ss.value("myfield").get<int>(), 365);
 }
@@ -163,7 +163,7 @@ void EventTest::navigationTest()
     QVERIFY(evt->type()==QGst::EventNavigation);
     QCOMPARE(evt->typeName(), QString("navigation"));
 
-    QGst::SharedStructure ss = evt->structure();
+    QGst::SharedStructure ss = evt->internalStructure();
     QVERIFY(ss.isValid());
     QCOMPARE(ss.value("myfield").get<int>(), 365);
 }

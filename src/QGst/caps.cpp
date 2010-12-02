@@ -78,12 +78,12 @@ void Caps::truncate()
     gst_caps_truncate(object<GstCaps>());
 }
 
-SharedStructure Caps::structure(uint index)
+SharedStructure Caps::internalStructure(uint index)
 {
     return SharedStructure(gst_caps_get_structure(object<GstCaps>(), index));
 }
 
-const SharedStructure Caps::structure(uint index) const
+const SharedStructure Caps::internalStructure(uint index) const
 {
     return SharedStructure(gst_caps_get_structure(object<GstCaps>(), index));
 }
