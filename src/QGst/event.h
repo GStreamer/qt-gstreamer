@@ -62,8 +62,8 @@ public:
     EventType type() const;
     QString typeName() const;
 
-    SharedStructure internalStructure();
-    const SharedStructure internalStructure() const;
+    StructurePtr internalStructure();
+    const StructurePtr internalStructure() const;
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);

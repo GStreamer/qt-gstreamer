@@ -136,13 +136,13 @@ void Player::onNewDecodedPad(QGst::PadPtr newPad)
 {
 
     QGst::CapsPtr caps = newPad->caps();
-    QGst::SharedStructure structure = caps->internalStructure(0);
+    QGst::StructurePtr structure = caps->internalStructure(0);
 
     /* The caps' first structure's name tells us what kind of data the pad transfers.
      * Here we want to handle either audio/x-raw-int or audio/x-raw-float. Both types
      * can be handled by the audioconvert element that is contained in the audioSinkBin,
      * so there is no need to handle them separately */
-    if (structure.name().contains("audio/x-raw")) {
+    if (structure->name().contains("audio/x-raw")) {
         QGst::BinPtr audioSinkBin = createAudioSinkBin();
         m_pipeline->add(audioSinkBin);
 

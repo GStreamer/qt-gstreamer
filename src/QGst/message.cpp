@@ -44,14 +44,14 @@ MessageType Message::type() const
     return static_cast<MessageType>(GST_MESSAGE_TYPE(object<GstMessage>()));
 }
 
-SharedStructure Message::internalStructure()
+StructurePtr Message::internalStructure()
 {
-    return SharedStructure(object<GstMessage>()->structure);
+    return StructurePtr(new SharedStructure(object<GstMessage>()->structure));
 }
 
-const SharedStructure Message::internalStructure() const
+const StructurePtr Message::internalStructure() const
 {
-    return SharedStructure(object<GstMessage>()->structure);
+    return StructurePtr(new SharedStructure(object<GstMessage>()->structure));
 }
 
 quint32 Message::sequenceNumber() const

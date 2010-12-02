@@ -44,8 +44,8 @@ public:
     bool simplify();
     void truncate();
 
-    SharedStructure internalStructure(uint index);
-    const SharedStructure internalStructure(uint index) const;
+    StructurePtr internalStructure(uint index);
+    const StructurePtr internalStructure(uint index) const;
 
     void appendStructure(const StructureBase & structure);
     void mergeStructure(const StructureBase & structure);

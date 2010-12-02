@@ -35,14 +35,14 @@ QueryType Query::type() const
     return static_cast<QueryType>(GST_QUERY_TYPE(object<GstQuery>()));
 }
 
-SharedStructure Query::internalStructure()
+StructurePtr Query::internalStructure()
 {
-    return SharedStructure(gst_query_get_structure(object<GstQuery>()));
+    return StructurePtr(new SharedStructure(gst_query_get_structure(object<GstQuery>())));
 }
 
-const SharedStructure Query::internalStructure() const
+const StructurePtr Query::internalStructure() const
 {
-    return SharedStructure(gst_query_get_structure(object<GstQuery>()));
+    return StructurePtr(new SharedStructure(gst_query_get_structure(object<GstQuery>())));
 }
 
 //********************************************************

@@ -40,18 +40,18 @@ void CapsTest::simpleTest()
     caps->setValue("height", 240);
     qDebug() << caps;
 
-    QGst::SharedStructure ss = caps->internalStructure(0);
-    QVERIFY(ss.isValid());
+    QGst::StructurePtr ss = caps->internalStructure(0);
+    QVERIFY(ss->isValid());
     qDebug() << ss;
-    ss.setValue("width", 400);
+    ss->setValue("width", 400);
     qDebug() << caps;
 
     //Check access with temporaries
-    caps->internalStructure(0).setValue("width", 800);
-    QCOMPARE(caps->internalStructure(0).value("width").get<int>(), 800);
+    caps->internalStructure(0)->setValue("width", 800);
+    QCOMPARE(caps->internalStructure(0)->value("width").get<int>(), 800);
 
     //Note: GStreamer will thrown an assertion on the line below, this is expected
-    QVERIFY(!caps->internalStructure(1).isValid());
+    QVERIFY(!caps->internalStructure(1)->isValid());
 }
 
 void CapsTest::anyTest()
