@@ -57,12 +57,12 @@ void StructureTest::copyTest()
     QGst::Structure s("mystructure");
     s.setValue("intfield", 10);
 
-    QGst::SharedStructure ss(s);
+    QGst::Structure ss(s);
     QVERIFY(ss.isValid());
     QCOMPARE(ss.value("intfield").get<int>(), 10);
 
     ss.setValue("intfield", 20);
-    QCOMPARE(s.value("intfield").get<int>(), 20);
+    QCOMPARE(s.value("intfield").get<int>(), 10);
 
     {
         QGst::Structure s2(ss);
@@ -70,27 +70,14 @@ void StructureTest::copyTest()
         QCOMPARE(s2.value("intfield").get<int>(), 20);
 
         s2.setValue("intfield", 30);
-        QCOMPARE(s.value("intfield").get<int>(), 20);
+        QCOMPARE(s.value("intfield").get<int>(), 10);
         QCOMPARE(ss.value("intfield").get<int>(), 20);
         QCOMPARE(s2.value("intfield").get<int>(), 30);
 
         s2 = s;
-        QCOMPARE(s2.value("intfield").get<int>(), 20);
+        QCOMPARE(s2.value("intfield").get<int>(), 10);
     }
 
-    {
-        QGst::Structure s2(s);
-        QVERIFY(s2.isValid());
-        QCOMPARE(s2.value("intfield").get<int>(), 20);
-
-        s2.setValue("intfield", 30);
-        QCOMPARE(s.value("intfield").get<int>(), 20);
-        QCOMPARE(ss.value("intfield").get<int>(), 20);
-        QCOMPARE(s2.value("intfield").get<int>(), 30);
-
-        s2 = ss;
-        QCOMPARE(s2.value("intfield").get<int>(), 20);
-    }
 }
 
 QTEST_APPLESS_MAIN(StructureTest)
