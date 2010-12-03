@@ -12,6 +12,7 @@ option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
 
 find_package(Qt4 COMPONENTS QtCore QtGui QtTest REQUIRED)
+find_package(Boost REQUIRED)
 find_package(QtGstreamer REQUIRED)
 find_package(Automoc4 REQUIRED)
 find_package(GStreamer 0.10.30 REQUIRED)
