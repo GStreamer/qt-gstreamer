@@ -91,10 +91,17 @@ protected:
 class SharedStructure : public Structure
 {
 public:
-    SharedStructure(GstStructure *structure);
     virtual ~SharedStructure();
 
-protected:
+private:
+    //Only these classes can call our constructor, others should use a StructurePtr passed to them
+    friend class Caps;
+    friend class Message;
+    friend class Event;
+    friend class Query;
+
+    SharedStructure(GstStructure *structure);
+
     Q_DISABLE_COPY(SharedStructure);
 
 };
