@@ -137,6 +137,7 @@ set(CODEGEN_INCLUDES
 
 # Setup the environment
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GSTREAMER_INCLUDE_DIR}
+                    ${GSTREAMER_INTERFACES_INCLUDE_DIR}
                     ${GLIB2_INCLUDE_DIR} ${QTGSTREAMER_INCLUDES})
 add_definitions(${QTGSTREAMER_DEFINITIONS} -DGST_DISABLE_DEPRECATED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
@@ -159,8 +160,8 @@ endif()
 
 set_target_properties(QtGstreamer PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
                                              VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARIES}
-                                  ${GSTREAMER_INTERFACE_LIBRARY} ${GOBJECT_LIBRARIES})
+target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARY}
+                                  ${GSTREAMER_INTERFACES_LIBRARY} ${GOBJECT_LIBRARIES})
 target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 

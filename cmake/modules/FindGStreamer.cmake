@@ -3,72 +3,118 @@
 #
 #  GSTREAMER_FOUND - system has GStreamer
 #  GSTREAMER_INCLUDE_DIR - the GStreamer include directory
-#  GSTREAMER_LIBRARIES - the libraries needed to use GStreamer
-#  GSTREAMER_DEFINITIONS - Compiler switches required for using GStreamer
-#  GSTREAMER_VERSION - the version of GStreamer
-
-# Copyright (c) 2006, Tim Beaulen <tbscope@gmail.com>
-# Copyright (c) 2008 Helio Chissini de Castro, <helio@kde.org>
+#  GSTREAMER_LIBRARY - the main GStreamer library
+#
+#  And for all the plugin libraries specified in the COMPONENTS
+#  of find_package, this module will define:
+#
+#  GSTREAMER_<plugin_lib>_LIBRARY_FOUND - system has <plugin_lib>
+#  GSTREAMER_<plugin_lib>_LIBRARY - the <plugin_lib> library
+#  GSTREAMER_<plugin_lib>_INCLUDE_DIR - the <plugin_lib> include directory
+#
+# Copyright (c) 2010, Collabora Ltd.
+#   @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-# TODO: Other versions --> GSTREAMER_X_Y_FOUND (Example: GSTREAMER_0_8_FOUND and GSTREAMER_0_10_FOUND etc)
+if (GSTREAMER_INCLUDE_DIR AND GSTREAMER_LIBRARY)
+    set(GStreamer_FIND_QUIETLY TRUE)
+else()
+    set(GStreamer_FIND_QUIETLY FALSE)
+endif()
 
-IF (GSTREAMER_INCLUDE_DIR AND GSTREAMER_LIBRARIES AND GSTREAMER_BASE_LIBRARY AND GSTREAMER_INTERFACE_LIBRARY)
-   # in cache already
-   SET(GStreamer_FIND_QUIETLY TRUE)
-ELSE (GSTREAMER_INCLUDE_DIR AND GSTREAMER_LIBRARIES AND GSTREAMER_BASE_LIBRARY AND GSTREAMER_INTERFACE_LIBRARY)
-   SET(GStreamer_FIND_QUIETLY FALSE)
-ENDIF (GSTREAMER_INCLUDE_DIR AND GSTREAMER_LIBRARIES AND GSTREAMER_BASE_LIBRARY AND GSTREAMER_INTERFACE_LIBRARY)
+set(GSTREAMER_ABI_VERSION "0.10")
 
-IF (NOT WIN32)
-   FIND_PACKAGE(PkgConfig REQUIRED)
-   # use pkg-config to get the directories and then use these values
-   # in the FIND_PATH() and FIND_LIBRARY() calls
-   # don't make this check required - otherwise you can't use macro_optional_find_package on this one
-   PKG_CHECK_MODULES(PKG_GSTREAMER gstreamer-0.10)
-   SET(GSTREAMER_VERSION ${PKG_GSTREAMER_VERSION})
-   SET(GSTREAMER_DEFINITIONS ${PKG_GSTREAMER_CFLAGS})
-ENDIF (NOT WIN32)
 
-FIND_PATH(GSTREAMER_INCLUDE_DIR gst/gst.h
-   PATHS
-   ${PKG_GSTREAMER_INCLUDE_DIRS}
-   PATH_SUFFIXES gstreamer-0.10
-   )
+# Find the main library
+find_package(PkgConfig)
 
-FIND_LIBRARY(GSTREAMER_LIBRARIES NAMES gstreamer-0.10
-   PATHS
-   ${PKG_GSTREAMER_LIBRARY_DIRS}
-   )
+if (PKG_CONFIG_FOUND)
+    pkg_check_modules(PKG_GSTREAMER gstreamer-${GSTREAMER_ABI_VERSION})
+endif()
 
-FIND_LIBRARY(GSTREAMER_BASE_LIBRARY NAMES gstbase-0.10
-   PATHS
-   ${PKG_GSTREAMER_LIBRARY_DIRS}
-   )
+find_library(GSTREAMER_LIBRARY
+             NAMES gstreamer-${GSTREAMER_ABI_VERSION}
+             PATHS ${PKG_GSTREAMER_LIBRARY_DIRS})
 
-FIND_LIBRARY(GSTREAMER_INTERFACE_LIBRARY NAMES gstinterfaces-0.10
-   PATHS
-   ${PKG_GSTREAMER_LIBRARY_DIRS}
-   )
+find_path(GSTREAMER_INCLUDE_DIR
+          gst/gst.h
+          PATHS ${PKG_GSTREAMER_INCLUDE_DIRS}
+          PATH_SUFFIXES gstreamer-${GSTREAMER_ABI_VERSION})
 
-IF (GSTREAMER_INCLUDE_DIR)
-ELSE (GSTREAMER_INCLUDE_DIR)
-   MESSAGE(STATUS "GStreamer: WARNING: include dir not found")
-ENDIF (GSTREAMER_INCLUDE_DIR)
+mark_as_advanced(GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR)
 
-IF (GSTREAMER_LIBRARIES)
-ELSE (GSTREAMER_LIBRARIES)
-   MESSAGE(STATUS "GStreamer: WARNING: library not found")
-ENDIF (GSTREAMER_LIBRARIES)
 
-IF (GSTREAMER_INTERFACE_LIBRARY)
-ELSE (GSTREAMER_INTERFACE_LIBRARY)
-   MESSAGE(STATUS "GStreamer: WARNING: interface library not found")
-ENDIF (GSTREAMER_INTERFACE_LIBRARY)
+# Find additional libraries
+include(MacroFindGStreamerLibrary)
 
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GStreamer  DEFAULT_MSG  GSTREAMER_LIBRARIES GSTREAMER_INCLUDE_DIR GSTREAMER_BASE_LIBRARY GSTREAMER_INTERFACE_LIBRARY)
+macro(_find_gst_component _name _header)
+    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION})
+    set(_GSTREAMER_EXTRA_VARIABLES ${_GSTREAMER_EXTRA_VARIABLES}
+                                    GSTREAMER_${_name}_LIBRARY GSTREAMER_${_name}_INCLUDE_DIR)
+endmacro()
 
-MARK_AS_ADVANCED(GSTREAMER_INCLUDE_DIR GSTREAMER_LIBRARIES GSTREAMER_BASE_LIBRARY GSTREAMER_INTERFACE_LIBRARY)
+foreach(_component ${GStreamer_FIND_COMPONENTS})
+    if (${_component} STREQUAL "base")
+        _find_gst_component(BASE gstbasesink.h)
+    elseif (${_component} STREQUAL "check")
+        _find_gst_component(CHECK gstcheck.h)
+    elseif (${_component} STREQUAL "controller")
+        _find_gst_component(CONTROLLER gstcontroller.h)
+    elseif (${_component} STREQUAL "dataprotocol")
+        _find_gst_component(DATAPROTOCOL dataprotocol.h)
+    elseif (${_component} STREQUAL "net")
+        _find_gst_component(NET gstnet.h)
+    else()
+        message (AUTHOR_WARNING "FindGStreamerPluginsBase.cmake: Invalid component \"${_component}\" was specified")
+    endif()
+endforeach()
+
+
+# Version check
+if (GStreamer_FIND_VERSION)
+    if (PKG_GSTREAMER_FOUND)
+        if("${PKG_GSTREAMER_VERSION}" VERSION_LESS "${GStreamer_FIND_VERSION}")
+            message(STATUS "Found GStreamer version ${PKG_GSTREAMER_VERSION}, but at least version ${GStreamer_FIND_VERSION} is required")
+            set(GSTREAMER_VERSION_COMPATIBLE FALSE)
+        else()
+            set(GSTREAMER_VERSION_COMPATIBLE TRUE)
+        endif()
+    elseif(GSTREAMER_INCLUDE_DIR)
+        include(CheckCXXSourceCompiles)
+
+        set(CMAKE_REQUIRED_INCLUDES ${GSTREAMER_INCLUDE_DIR})
+        string(REPLACE "." "," _comma_version ${GStreamer_FIND_VERSION})
+        # Hack to invalidate the cached value
+        set(GSTREAMER_VERSION_COMPATIBLE GSTREAMER_VERSION_COMPATIBLE)
+
+        check_cxx_source_compiles("
+#define G_BEGIN_DECLS
+#define G_END_DECLS
+#include <gst/gstversion.h>
+
+#if GST_CHECK_VERSION(${_comma_version})
+int main() { return 0; }
+#else
+# error \"GStreamer version incompatible\"
+#endif
+" GSTREAMER_VERSION_COMPATIBLE)
+
+        if (NOT GSTREAMER_VERSION_COMPATIBLE)
+            message(STATUS "GStreamer ${GStreamer_FIND_VERSION} is required, but the version found is older")
+        endif()
+    else()
+        # We didn't find gstreamer at all
+        set(GSTREAMER_VERSION_COMPATIBLE FALSE)
+    endif()
+else()
+    # No version constrain was specified, thus we consider the version compatible
+    set(GSTREAMER_VERSION_COMPATIBLE TRUE)
+endif()
+
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(GStreamer DEFAULT_MSG
+                                  GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR
+                                  GSTREAMER_VERSION_COMPATIBLE ${_GSTREAMER_EXTRA_VARIABLES})
