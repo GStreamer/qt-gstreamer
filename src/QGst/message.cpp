@@ -563,6 +563,12 @@ quint64 QosMessage::dropped() const
     return p;
 }
 
+void QosMessage::setStats(Format format, quint64 processed, quint64 dropped)
+{
+    gst_message_set_qos_stats(object<GstMessage>(), static_cast<GstFormat>(format), processed,
+                              dropped);
+}
+
 } //namespace QGst
 
 QDebug operator<<(QDebug debug, QGst::MessageType type)
