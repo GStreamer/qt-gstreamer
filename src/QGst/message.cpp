@@ -162,7 +162,8 @@ QString InfoMessage::debugMessage() const
 
 BufferingMessagePtr BufferingMessage::create(const ObjectPtr & source, int percent)
 {
-    return BufferingMessagePtr::wrap(gst_message_new_buffering(source, percent));
+    GstMessage *m = gst_message_new_buffering(source, percent);
+    return BufferingMessagePtr::wrap(m, false);
 }
 
 int BufferingMessage::percent() const
