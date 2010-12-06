@@ -308,7 +308,7 @@ StreamStatusMessagePtr StreamStatusMessage::create(const ObjectPtr & source,
     return StreamStatusMessagePtr::wrap(m, false);
 }
 
-StreamStatusType StreamStatusMessage::type() const
+StreamStatusType StreamStatusMessage::statusType() const
 {
     GstStreamStatusType t;
     gst_message_parse_stream_status(object<GstMessage>(), &t, NULL);

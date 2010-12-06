@@ -179,10 +179,9 @@ void MessageTest::streamStatusMessageTest()
                                                                          QGst::StreamStatusTypeStop,
                                                                          pipe);
 
-    //FIX: type() in StreamStatusMessage overloads global type, redefine it
-    //QVERIFY(msg->type()==QGst::MessageStreamStatus);
+    QVERIFY(msg->type()==QGst::MessageStreamStatus);
 
-    QVERIFY(msg->type()==QGst::StreamStatusTypeStop);
+    QVERIFY(msg->statusType()==QGst::StreamStatusTypeStop);
     QVERIFY(msg->owner()==pipe);
 
     QGlib::Value v(78);

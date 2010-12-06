@@ -182,7 +182,7 @@ public:
     static StreamStatusMessagePtr create(const ObjectPtr & source,
                                          StreamStatusType type, const ElementPtr & owner);
 
-    StreamStatusType type() const;
+    StreamStatusType statusType() const;
     ElementPtr owner() const;
     QGlib::Value streamStatusObject() const;
     void setStreamStatusObject(const QGlib::ValueBase & object);
