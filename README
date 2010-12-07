@@ -38,7 +38,7 @@ it with your sources and build it as a static library.
 
 QtGstreamer requires the following software to be installed in order to build:
  * CMake 2.6 or later <http://www.cmake.org/>
- * Gstreamer 0.10.30 or later <http://gstreamer.freedesktop.org/>
+ * GStreamer 0.10.31 or later <http://gstreamer.freedesktop.org/>
    With its dependencies:
    - Glib / GObject <http://www.gtk.org/>
  * Qt 4 <http://qt.nokia.com/>

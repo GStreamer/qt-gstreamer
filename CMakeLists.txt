@@ -27,17 +27,17 @@ find_package(Automoc4)
 macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"
                                  "https://projects.kde.org/projects/kdesupport/automoc" TRUE "0.9.88")
 
-find_package(GStreamer 0.10.30)
+find_package(GStreamer 0.10.31)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
-                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.30")
+                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
 
-find_package(GStreamerPluginsBase 0.10.30 COMPONENTS interfaces video)
+find_package(GStreamerPluginsBase 0.10.31 COMPONENTS interfaces video)
 macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
                                                 "Required to build QtGStreamer"
-                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.30")
+                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
                                                 "Used for building the qwidgetvideosink element"
-                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.30")
+                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.31")
 
 find_package(GLIB2)
 macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
