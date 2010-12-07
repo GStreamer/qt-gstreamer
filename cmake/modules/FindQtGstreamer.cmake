@@ -33,7 +33,7 @@ else()
     get_filename_component(_QTGSTREAMER_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
     find_file(_QTGSTREAMER_TARGETS_FILE QtGstreamerTargets.cmake PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
 
-    if(_QTGSTREAMER_TARGETS_FILE-NOTFOUND)
+    if(NOT _QTGSTREAMER_TARGETS_FILE)
         # Targets file not found. Do a typical search for QtGstreamer.
         # Normally, this path is never executed. It is just provided as a fallback in case something goes wrong.
         find_library(QTGSTREAMER_LIBRARY QtGstreamer
