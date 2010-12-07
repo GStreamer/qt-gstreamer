@@ -11,16 +11,48 @@ option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" ON)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
 
-find_package(Qt4 COMPONENTS QtCore QtGui QtTest REQUIRED)
-find_package(Boost REQUIRED)
+
+include(MacroLogFeature)
+
+find_package(Qt4 COMPONENTS QtCore QtGui QtTest)
+macro_log_feature(QT4_FOUND "Qt 4" "Required for building everything" "http://qt.nokia.com/" TRUE "4.5")
+
+find_package(Boost)
+macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.40")
+
+# this just sets the QTGSTREAMER_* cmake variables
 find_package(QtGstreamer REQUIRED)
-find_package(Automoc4 REQUIRED)
-find_package(GStreamer 0.10.30 REQUIRED)
-find_package(GStreamerPluginsBase 0.10.30 COMPONENTS interfaces video REQUIRED)
-find_package(GLIB2 REQUIRED)
-find_package(GObject REQUIRED)
-find_package(FLEX REQUIRED)
-find_package(BISON REQUIRED)
+
+find_package(Automoc4)
+macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"
+                                 "https://projects.kde.org/projects/kdesupport/automoc" TRUE "0.9.88")
+
+find_package(GStreamer 0.10.30)
+macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
+                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.30")
+
+find_package(GStreamerPluginsBase 0.10.30 COMPONENTS interfaces video)
+macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
+                                                "Required to build QtGStreamer"
+                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.30")
+macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
+                                                "Used for building the qwidgetvideosink element"
+                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.30")
+
+find_package(GLIB2)
+macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
+
+find_package(GObject)
+macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
+
+find_package(FLEX)
+macro_log_feature(FLEX_FOUND "Flex" "Required to build codegen, a helper code generator"
+                             "http://flex.sourceforge.net/" TRUE)
+
+find_package(BISON)
+macro_log_feature(BISON_FOUND "Bison" "Required to build codegen, a helper code generator"
+                              "http://www.gnu.org/software/bison/" TRUE)
+
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat-security -Wundef -Wpointer-arith -Wcast-align -fno-common")
@@ -44,3 +76,7 @@ add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/cmake_uni
 
 # Add doc target
 include(UseDoxygen)
+macro_log_feature(DOXYGEN_FOUND "Doxygen" "Used to generate the API documentation"
+                                "http://www.doxygen.org/" FALSE)
+
+macro_display_feature_log()
