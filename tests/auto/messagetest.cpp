@@ -68,6 +68,7 @@ void MessageTest::eosMessageTest()
     QGst::EosMessagePtr msg = QGst::EosMessage::create(QGst::ObjectPtr());
 
     QVERIFY(msg->type()==QGst::MessageEos);
+    QCOMPARE(msg->typeName(), QString("eos"));
 }
 
 void MessageTest::errorMessageTest()
@@ -79,6 +80,7 @@ void MessageTest::errorMessageTest()
                                                            debugString.toUtf8());
 
     QVERIFY(msg->type()==QGst::MessageError);
+    QCOMPARE(msg->typeName(), QString("error"));
 
     QGlib::Error msgerr(msg->error());
     QCOMPARE(err.code(), msgerr.code());
@@ -96,6 +98,7 @@ void MessageTest::warningMessageTest()
                                                            debugString.toUtf8());
 
     QVERIFY(msg->type()==QGst::MessageWarning);
+    QCOMPARE(msg->typeName(), QString("warning"));
 
     QGlib::Error msgerr(msg->error());
     QCOMPARE(err.code(), msgerr.code());
@@ -113,6 +116,7 @@ void MessageTest::infoMessageTest()
                                                            debugString.toUtf8());
 
     QVERIFY(msg->type()==QGst::MessageInfo);
+    QCOMPARE(msg->typeName(), QString("info"));
 
     QGlib::Error msgerr(msg->error());
     QCOMPARE(err.code(), msgerr.code());
@@ -129,6 +133,8 @@ void MessageTest::bufferingMessageTest()
     QGst::BufferingMessagePtr msg = QGst::BufferingMessage::create(bus, 75);
 
     QVERIFY(msg->type()==QGst::MessageBuffering);
+    QCOMPARE(msg->typeName(), QString("buffering"));
+
     QCOMPARE(msg->percent(), 75);
 
     msg->setStats(QGst::BufferingDownload, 123, 456, 12345678);
@@ -148,6 +154,7 @@ void MessageTest::stateChangedMessageTest()
                                                                          QGst::StatePlaying);
 
     QVERIFY(msg->type()==QGst::MessageStateChanged);
+    QCOMPARE(msg->typeName(), QString("state-changed"));
 
     QCOMPARE(msg->oldState(), QGst::StatePaused);
     QCOMPARE(msg->newState(), QGst::StateReady);
@@ -162,6 +169,7 @@ void MessageTest::stepDoneMessageTest()
                                                                  false, 1234567, false);
 
     QVERIFY(msg->type()==QGst::MessageStepDone);
+    QCOMPARE(msg->typeName(), QString("step-done"));
 
     QVERIFY(msg->format()==QGst::FormatBytes);
     QCOMPARE(msg->amount(), static_cast<quint64>(4567));
@@ -180,6 +188,7 @@ void MessageTest::streamStatusMessageTest()
                                                                          pipe);
 
     QVERIFY(msg->type()==QGst::MessageStreamStatus);
+    QCOMPARE(msg->typeName(), QString("stream-status"));
 
     QVERIFY(msg->statusType()==QGst::StreamStatusTypeStop);
     QVERIFY(msg->owner()==pipe);
@@ -196,6 +205,7 @@ void MessageTest::applicationMessageTest()
     QGst::ApplicationMessagePtr msg = QGst::ApplicationMessage::create(QGst::ObjectPtr(), s);
 
     QVERIFY(msg->type()==QGst::MessageApplication);
+    QCOMPARE(msg->typeName(), QString("application"));
 
     QVERIFY(msg->internalStructure()->isValid());
     QCOMPARE(msg->internalStructure()->value("width").get<int>(), 365);
@@ -208,6 +218,7 @@ void MessageTest::elementMessageTest()
     QGst::ElementMessagePtr msg = QGst::ElementMessage::create(QGst::ObjectPtr(), s);
 
     QVERIFY(msg->type()==QGst::MessageElement);
+    QCOMPARE(msg->typeName(), QString("element"));
 
     QVERIFY(msg->internalStructure()->isValid());
     QCOMPARE(msg->internalStructure()->value("myfield").get<double>(), 56.56);
@@ -219,6 +230,7 @@ void MessageTest::segmentDoneMessageTest()
                                                                        QGst::FormatTime, 4567898);
 
     QVERIFY(msg->type()==QGst::MessageSegmentDone);
+    QCOMPARE(msg->typeName(), QString("segment-done"));
 
     QVERIFY(msg->format()==QGst::FormatTime);
     QCOMPARE(msg->position(), static_cast<qint64>(4567898));
@@ -230,6 +242,7 @@ void MessageTest::durationMessageTest()
                                                                        QGst::FormatBytes, 1456788);
 
     QVERIFY(msg->type()==QGst::MessageDuration);
+    QCOMPARE(msg->typeName(), QString("duration"));
 
     QVERIFY(msg->format()==QGst::FormatBytes);
     QCOMPARE(msg->duration(), static_cast<qint64>(1456788));
@@ -240,6 +253,7 @@ void MessageTest::latencyMessageTest()
     QGst::LatencyMessagePtr msg = QGst::LatencyMessage::create(QGst::ObjectPtr());
 
     QVERIFY(msg->type()==QGst::MessageLatency);
+    QCOMPARE(msg->typeName(), QString("latency"));
 }
 
 void MessageTest::asyncDoneMessageTest()
@@ -247,6 +261,7 @@ void MessageTest::asyncDoneMessageTest()
     QGst::AsyncDoneMessagePtr msg = QGst::AsyncDoneMessage::create(QGst::ObjectPtr());
 
     QVERIFY(msg->type()==QGst::MessageAsyncDone);
+    QCOMPARE(msg->typeName(), QString("async-done"));
 }
 
 void MessageTest::requestStateMessageTest()
@@ -255,6 +270,7 @@ void MessageTest::requestStateMessageTest()
                                                                          QGst::StatePlaying);
 
     QVERIFY(msg->type()==QGst::MessageRequestState);
+    QCOMPARE(msg->typeName(), QString("request-state"));
 
     QCOMPARE(msg->state(), QGst::StatePlaying);
 }
@@ -267,6 +283,7 @@ void MessageTest::stepStartMessageTest()
                                                                  false);
 
     QVERIFY(msg->type()==QGst::MessageStepStart);
+    QCOMPARE(msg->typeName(), QString("step-start"));
 
     QVERIFY(msg->format()==QGst::FormatBytes);
     QCOMPARE(msg->isActive(), true);
@@ -283,6 +300,7 @@ void MessageTest::qosMessageTest()
                                                                  234543, 56787654);
 
     QVERIFY(msg->type()==QGst::MessageQos);
+    QCOMPARE(msg->typeName(), QString("qos"));
 
     QVERIFY(msg->live());
     QCOMPARE(msg->runningTime(), static_cast<quint64>(345678));

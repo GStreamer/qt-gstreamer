@@ -39,6 +39,11 @@ quint64 Message::timestamp() const
     return object<GstMessage>()->timestamp;
 }
 
+QString Message::typeName() const
+{
+    return QString::fromUtf8(GST_MESSAGE_TYPE_NAME(object<GstMessage>()));
+}
+
 MessageType Message::type() const
 {
     return static_cast<MessageType>(GST_MESSAGE_TYPE(object<GstMessage>()));

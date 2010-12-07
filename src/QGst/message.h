@@ -52,6 +52,7 @@ public:
 
     ObjectPtr source() const;
     quint64 timestamp() const;
+    QString typeName() const;
     MessageType type() const;
 
     StructurePtr internalStructure();
