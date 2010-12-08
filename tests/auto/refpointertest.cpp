@@ -28,7 +28,6 @@ private Q_SLOTS:
     void refTest2();
     void dynamicCastTest();
     void messageDynamicCastTest();
-    void compilationTest();
 };
 
 void RefPointerTest::refTest1()
@@ -80,58 +79,6 @@ void RefPointerTest::messageDynamicCastTest()
     QVERIFY(!msg.isNull());
     QVERIFY(!msg.dynamicCast<QGst::ApplicationMessage>().isNull());
     QVERIFY(msg.dynamicCast<QGst::EosMessage>().isNull());
-}
-
-static void testMethod(const QGlib::ObjectPtr & obj)
-{
-    QVERIFY(!obj.dynamicCast<QGst::Bin>().isNull());
-};
-
-void RefPointerTest::compilationTest()
-{
-    //This is mostly a compilation test. If it compiles, it's fine, if it doesn't, there is a problem.
-    QGst::BinPtr bin = QGst::Bin::create();
-
-    {
-        //operator=()
-        QGst::ObjectPtr obj = bin;
-        QVERIFY(!obj.dynamicCast<QGst::Bin>().isNull());
-    }
-
-    {
-        //copy constructor
-        QGst::ObjectPtr obj(bin);
-        QVERIFY(!obj.dynamicCast<QGst::Bin>().isNull());
-    }
-
-    {
-        //implicit cast
-        testMethod(bin);
-    }
-
-#if 0
-    {
-        QGst::ObjectPtr obj = bin;
-        QGst::BinPtr bin2 = obj; //should fail to compile
-    }
-#endif
-
-    {
-        const QGst::ObjectPtr obj = bin;
-        (void)obj->name(); //should work
-#if 0
-        obj->setName("foo"); //should fail to compile
-#endif
-    }
-
-    //test staticCast
-    {
-#if 0
-        QGst::MessagePtr message = bin.staticCast<QGst::Message>(); //should fail to compile
-#endif
-        QGst::ElementPtr element = bin.staticCast<QGst::Element>();
-        QGst::PipelinePtr pipeline = bin.staticCast<QGst::Pipeline>();
-    }
 }
 
 QTEST_APPLESS_MAIN(RefPointerTest)
