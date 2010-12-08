@@ -29,7 +29,9 @@ ElementPtr launch(const char* description)
     if (error) {
         throw QGlib::Error(error);
     }
-    gst_object_ref_sink(e);
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return ElementPtr::wrap(e, false);
 }
 
@@ -40,7 +42,9 @@ ElementPtr launch(const char *argv[])
     if (error) {
         throw QGlib::Error(error);
     }
-    gst_object_ref_sink(e);
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return ElementPtr::wrap(e, false);
 }
 

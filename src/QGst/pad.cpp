@@ -29,7 +29,9 @@ namespace QGst {
 PadPtr Pad::create(PadDirection direction, const char *name)
 {
     GstPad *pad = gst_pad_new(name, static_cast<GstPadDirection>(direction));
-    gst_object_ref_sink(pad);
+    if (pad) {
+        gst_object_ref_sink(pad);
+    }
     return PadPtr::wrap(pad, false);
 }
 

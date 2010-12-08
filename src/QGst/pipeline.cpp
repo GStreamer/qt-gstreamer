@@ -25,7 +25,9 @@ namespace QGst {
 PipelinePtr Pipeline::create(const char *name)
 {
     GstElement *p = gst_pipeline_new(name);
-    gst_object_ref_sink(p);
+    if (p) {
+        gst_object_ref_sink(p);
+    }
     return PipelinePtr::wrap(GST_PIPELINE(p), false);
 }
 

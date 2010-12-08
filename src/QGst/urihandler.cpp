@@ -31,7 +31,9 @@ bool UriHandler::protocolIsSupported(UriType type, const char *protocol)
 UriHandlerPtr UriHandler::makeFromUri(UriType type, const QUrl & uri, const char *elementName)
 {
     GstElement *e = gst_element_make_from_uri(static_cast<GstURIType>(type), uri.toEncoded(), elementName);
-    gst_object_ref_sink(e);
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return UriHandlerPtr::wrap(GST_URI_HANDLER(e), false);
 }
 

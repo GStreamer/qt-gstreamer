@@ -111,7 +111,9 @@ Q_GLOBAL_STATIC(Private::BusWatchManager, s_watchManager)
 BusPtr Bus::create()
 {
     GstBus *bus = gst_bus_new();
-    gst_object_ref_sink(bus);
+    if (bus) {
+        gst_object_ref_sink(bus);
+    }
     return BusPtr::wrap(bus, false);
 }
 

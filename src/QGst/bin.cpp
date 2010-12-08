@@ -26,7 +26,9 @@ namespace QGst {
 BinPtr Bin::create(const char *name)
 {
     GstElement *bin = gst_bin_new(name);
-    gst_object_ref_sink(bin);
+    if (bin) {
+        gst_object_ref_sink(bin);
+    }
     return BinPtr::wrap(GST_BIN(bin), false);
 }
 
@@ -39,7 +41,9 @@ BinPtr Bin::fromDescription(const char *description, bool ghostUnlinkedPads)
     if (error) {
         throw QGlib::Error(error);
     }
-    gst_object_ref_sink(e);
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return BinPtr::wrap(GST_BIN(e), false);
 }
 

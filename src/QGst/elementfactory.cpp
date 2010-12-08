@@ -32,7 +32,9 @@ ElementFactoryPtr ElementFactory::find(const char *factoryName)
 ElementPtr ElementFactory::make(const char *factoryName, const char *elementName)
 {
     GstElement *e = gst_element_factory_make(factoryName, elementName);
-    gst_object_ref_sink(e);
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return ElementPtr::wrap(e, false);
 }
 
@@ -89,7 +91,9 @@ bool ElementFactory::canSrcCaps(const CapsPtr & caps) const
 ElementPtr ElementFactory::create(const char *elementName) const
 {
     GstElement *e = gst_element_factory_create(object<GstElementFactory>(), elementName);
-    gst_object_ref_sink(e);
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return ElementPtr::wrap(e, false);
 }
 
