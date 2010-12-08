@@ -11,6 +11,14 @@ set(CMAKE_REQUIRED_INCLUDES ${QTGSTREAMER_INCLUDES})
 set(CMAKE_REQUIRED_DEFINITIONS ${QTGSTREAMER_DEFINITIONS})
 set(CMAKE_REQUIRED_FLAGS "${QTGSTREAMER_FLAGS}")
 
+if (QTGSTREAMER_STATIC)
+    find_package(GStreamer REQUIRED)
+    find_package(GStreamerPluginsBase COMPONENTS interfaces REQUIRED)
+    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES}
+                                 ${GSTREAMER_LIBRARY}
+                                 ${GSTREAMER_INTERFACES_LIBRARY})
+endif()
+
 message("********* Begin running compilation tests *********")
 include(CompilationTests.cmake)
 evaluate_cxx_compilation_test_results()
