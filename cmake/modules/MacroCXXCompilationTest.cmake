@@ -91,7 +91,7 @@ macro(cxx_compilation_test _name _expect_fail _source)
     if((${_name}_COMPILES AND NOT ${_name}_SHOULD_FAIL) OR (NOT ${_name}_COMPILES AND ${_name}_SHOULD_FAIL))
       list(APPEND CXX_COMPILATION_TESTS_SUCCEEDED ${_name})
       message("PASS   : ${_name}")
-      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CompilationTest.log
+      file(APPEND ${CMAKE_BINARY_DIR}/CompilationTests.log
         "C++ compilation test ${_name} succeded with the following output:\n"
         "${OUTPUT}\n"
         "Should fail: ${${_name}_SHOULD_FAIL}\n"
@@ -100,7 +100,7 @@ macro(cxx_compilation_test _name _expect_fail _source)
       message("FAIL   : ${_name}")
       list(APPEND CXX_COMPILATION_TESTS_FAILED ${_name})
       set(CXX_COMPILATION_TESTS_HAVE_FAILURE 1)
-      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CompilationTest.log
+      file(APPEND ${CMAKE_BINARY_DIR}/CompilationTests.log
         "C++ compilation test ${_name} failed with the following output:\n"
         "${OUTPUT}\n"
         "Should fail: ${${_name}_SHOULD_FAIL}\n"
