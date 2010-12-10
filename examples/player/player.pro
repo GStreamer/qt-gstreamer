@@ -21,4 +21,5 @@ DEFINES += QT_NO_KEYWORDS
 QT -= gui
 
 # Input
-SOURCES += main.cpp
+HEADERS += movieplayer.h player.h
+SOURCES += main.cpp movieplayer.cpp player.cpp
