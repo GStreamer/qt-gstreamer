@@ -29,13 +29,13 @@
 
 /* This is a simple example of a command-line player. It accepts the URI of
  * an media file as the first command line argument and then constructs a pipeline
- * that uses playbin2 to decode the stream. 
+ * that uses playbin2 to decode the stream.
  * In the future this example will perhaps gain a simple GUI. */
 
 class Player : public QGst::Ui::VideoWidget
 {
     Q_OBJECT;
-    public:
+public:
     Player(QWidget *parent = 0);
     ~Player();
 
@@ -46,7 +46,7 @@ class Player : public QGst::Ui::VideoWidget
 
     /* Everything is compiled with QT_NO_KEYWORDS because otherwise Signals::emit wouldn't compile
      * so use Q_SLOTS instead of "slots" */
-    public Q_SLOTS:
+public Q_SLOTS:
     void stop();
     void play();
     void pause();
@@ -57,7 +57,7 @@ Q_SIGNALS:
     void positionChanged(QTime);
     void stateChanged(QGst::State state);
 
-    private:
+private:
     void busMessage(const QGst::MessagePtr & message);
     void elementAdded(const QGst::ElementPtr & element);
     void handleStateChange(QGst::StateChangedMessagePtr);
