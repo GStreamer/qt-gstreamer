@@ -169,14 +169,6 @@ void Player::busMessage(const QGst::MessagePtr & message) {
         case QGst::MessageError: //Some error occurred.
             /*TODO: send a message to UI */
             break;
-        case QGst::MessageAsyncDone:
-            {
-                //File prerolled, queries the pipeline to get the file duration
-                QGst::DurationQueryPtr query = QGst::DurationQuery::create(QGst::FormatTime);
-                //This will create a temporary (cast to query).
-                m_pipeline->query(query);
-            }
-            break;
         case QGst::MessageStateChanged:
             if(QGlib::Type::fromInstance(message->source()).
                     isA(QGlib::GetType<QGst::Pipeline>())) 
