@@ -405,17 +405,16 @@ void UriQuery::setValue(const QUrl & uri)
 
 //********************************************************
 
-} //namespace QGst
-
-QDebug operator<<(QDebug debug, QGst::QueryType type)
+QDebug operator<<(QDebug debug, QueryType type)
 {
     debug.nospace() << gst_query_type_get_name(static_cast<GstQueryType>(type));
     return debug.space();
 }
 
-QDebug operator<<(QDebug debug, const QGst::QueryPtr & query)
+QDebug operator<<(QDebug debug, const QueryPtr & query)
 {
     debug.nospace() << "QGst::Query(Type: " << query->type() << ")";
     return debug.space();
 }
 
+} //namespace QGst

@@ -223,10 +223,10 @@ void Caps::makeWritable()
     }
 }
 
-} //namespace QGst
-
-QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps)
+QDebug operator<<(QDebug debug, const CapsPtr & caps)
 {
     debug.nospace() << "QGst::Caps(" << caps->toString() << ")";
     return debug.space();
 }
+
+} //namespace QGst

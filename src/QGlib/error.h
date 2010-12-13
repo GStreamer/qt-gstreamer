@@ -66,9 +66,9 @@ private:
     GError *m_error;
 };
 
-} //namespace QGlib
-
 /*! \relates QGlib::Error */
-QDebug operator<<(QDebug dbg, const QGlib::Error & error);
+QDebug operator<<(QDebug dbg, const Error & error);
+
+} //namespace QGlib
 
 #endif // QGLIB_ERROR_H

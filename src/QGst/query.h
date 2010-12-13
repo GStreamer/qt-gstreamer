@@ -214,6 +214,12 @@ public:
     void setValue(const QUrl & uri);
 };
 
+/*! \relates QGst::Query */
+QDebug operator<<(QDebug debug, QueryType type);
+
+/*! \relates QGst::Query */
+QDebug operator<<(QDebug debug, const QueryPtr & query);
+
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Query)
@@ -226,11 +232,5 @@ QGST_REGISTER_SUBCLASS(Query, Convert)
 QGST_REGISTER_SUBCLASS(Query, Formats)
 QGST_REGISTER_SUBCLASS(Query, Buffering)
 QGST_REGISTER_SUBCLASS(Query, Uri)
-
-/*! \relates QGst::Query */
-QDebug operator<<(QDebug debug, QGst::QueryType type);
-
-/*! \relates QGst::Query */
-QDebug operator<<(QDebug debug, const QGst::QueryPtr & query);
 
 #endif

@@ -308,10 +308,7 @@ SharedValue & SharedValue::operator=(const SharedValue & other)
 
 //END SharedValue
 
-} //namespace QGlib
-
-
-QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
+QDebug & operator<<(QDebug debug, const ValueBase & value)
 {
     debug.nospace() << "QGlib::ValueBase";
     if(!value.isValid()) {
@@ -334,3 +331,5 @@ QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value)
         return debug.space();
     }
 }
+
+} //namespace QGlib

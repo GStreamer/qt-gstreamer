@@ -575,16 +575,16 @@ void QosMessage::setStats(Format format, quint64 processed, quint64 dropped)
                               dropped);
 }
 
-} //namespace QGst
-
-QDebug operator<<(QDebug debug, QGst::MessageType type)
+QDebug operator<<(QDebug debug, MessageType type)
 {
     debug.nospace() << gst_message_type_get_name(static_cast<GstMessageType>(type));
     return debug.space();
 }
 
-QDebug operator<<(QDebug debug, const QGst::MessagePtr & message)
+QDebug operator<<(QDebug debug, const MessagePtr & message)
 {
     debug.nospace() << "QGst::Message(Type: " << message->type() << ")";
     return debug.space();
 }
+
+} //namespace QGst

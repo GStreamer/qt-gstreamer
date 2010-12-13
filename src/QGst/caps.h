@@ -76,11 +76,11 @@ protected:
     virtual void unref();
 };
 
+/*! \relates QGst::Caps */
+QDebug operator<<(QDebug debug, const CapsPtr & caps);
+
 }
 
 QGLIB_REGISTER_TYPE(QGst::Caps)
-
-/*! \relates QGst::Caps */
-QDebug operator<<(QDebug debug, const QGst::CapsPtr & caps);
 
 #endif

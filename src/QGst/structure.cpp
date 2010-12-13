@@ -169,9 +169,7 @@ SharedStructure::~SharedStructure()
 
 //END SharedStructure
 
-} //namespace QGst
-
-QDebug operator<<(QDebug debug, const QGst::Structure & structure)
+QDebug operator<<(QDebug debug, const Structure & structure)
 {
     debug.nospace() << "QGst::StructureBase";
     if (structure.isValid()) {
@@ -181,3 +179,5 @@ QDebug operator<<(QDebug debug, const QGst::Structure & structure)
     }
     return debug.space();
 }
+
+} //namespace QGst

@@ -222,6 +222,12 @@ public:
     bool intermediate() const;
 };
 
+/*! \relates QGst::Event */
+QDebug operator<<(QDebug debug, EventType type);
+
+/*! \relates QGst::Event */
+QDebug operator<<(QDebug debug, const EventPtr & event);
+
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Event)
@@ -237,11 +243,5 @@ QGST_REGISTER_SUBCLASS(Event, Seek)
 QGST_REGISTER_SUBCLASS(Event, Navigation)
 QGST_REGISTER_SUBCLASS(Event, Latency)
 QGST_REGISTER_SUBCLASS(Event, Step)
-
-/*! \relates QGst::Event */
-QDebug operator<<(QDebug debug, QGst::EventType type);
-
-/*! \relates QGst::Event */
-QDebug operator<<(QDebug debug, const QGst::EventPtr & event);
 
 #endif

@@ -106,10 +106,10 @@ private:
 
 };
 
-} //namespace QGst
-
 /*! \relates QGst::StructureBase */
-QDebug operator<<(QDebug debug, const QGst::Structure & structure);
+QDebug operator<<(QDebug debug, const Structure & structure);
+
+} //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Structure)
 QGLIB_REGISTER_TYPE(QGst::SharedStructure) //codegen: GType=GST_TYPE_STRUCTURE

@@ -70,9 +70,9 @@ QString Error::message() const
     return QString::fromUtf8(m_error->message);
 }
 
-} //namespace QGlib
-
-QDebug operator<<(QDebug dbg, const QGlib::Error & error)
+QDebug operator<<(QDebug dbg, const Error & error)
 {
     return dbg << error.message();
 }
+
+} //namespace QGlib

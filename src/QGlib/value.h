@@ -402,10 +402,13 @@ public:
 };
 
 } //namespace Private
-} //namespace QGlib
+
+// -- QDebug operator --
 
 /*! \relates QGlib::ValueBase */
-QDebug & operator<<(QDebug debug, const QGlib::ValueBase & value);
+QDebug & operator<<(QDebug debug, const ValueBase & value);
+
+} //namespace QGlib
 
 QGLIB_REGISTER_TYPE(QGlib::ValueBase) //codegen: GType=G_TYPE_VALUE
 QGLIB_REGISTER_TYPE(QGlib::Value)
