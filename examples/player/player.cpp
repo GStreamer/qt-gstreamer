@@ -99,13 +99,13 @@ void Player::setPosition(QTime pos) {
             QGst::SeekTypeSet, QGst::Clock::clockTimeFromTime(pos),
             QGst::SeekTypeNone, -1);
 
-    m_pipeline.dynamicCast<QGst::Element>()->sendEvent(evt);
+    m_pipeline->sendEvent(evt);
 }
 
 QTime Player::position() {
     if(m_pipeline){
         QGst::PositionQueryPtr query = QGst::PositionQuery::create(QGst::FormatTime);
-        m_pipeline.dynamicCast<QGst::Element>()->query(query);
+        m_pipeline->query(query);
         return QGst::Clock::timeFromClockTime(query->position());
     }
     return QTime(0, 0, 0, 0);
@@ -123,8 +123,7 @@ QTime Player::length() {
 QGst::State Player::state() {
     QGst::State state;
     if(!m_pipeline || 
-        m_pipeline.dynamicCast<QGst::Element>()->getState(&state, NULL, 1e9) != 
-        QGst::StateChangeSuccess)
+        m_pipeline->getState(&state, NULL, 1e9) != QGst::StateChangeSuccess)
     {
         state = QGst::StateNull;
     }
@@ -144,7 +143,8 @@ void Player::handleStateChange(QGst::StateChangedMessagePtr scm) {
                 if(sink){
                     setVideoSink(sink);
                     QGst::ChildProxyPtr proxy = sink.dynamicCast<QGst::ChildProxy>();
-                    proxy->childByIndex(0)->setProperty("force-aspect-ratio", true);
+                    if (proxy)
+                        proxy->childByIndex(0)->setProperty("force-aspect-ratio", true);
                 }
             } else
                 m_positionTimer.stop();
