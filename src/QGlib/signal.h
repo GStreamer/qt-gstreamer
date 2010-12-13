@@ -207,38 +207,22 @@ public:
 
 #else //QGLIB_HAVE_CXX0X
 
-    //versions that take no arguments
-    template <typename R>
-    static R emit(void *instance, const char *detailedSignal);
-
-    template <typename T, typename R>
-    static SignalHandler connect(void *instance, const char *detailedSignal,
-                                 T *receiver, R (T::*slot)(), ConnectFlags flags = 0);
-
-# define QGLIB_SIGNAL_TMPL_PARAMS(n) \
-        BOOST_PP_ENUM_PARAMS(n, typename A)
-
-# define QGLIB_SIGNAL_TMPL_ARGS(n) \
-        BOOST_PP_ENUM_PARAMS(n, A)
-
 # define QGLIB_SIGNAL_EMIT_DECLARATION(z, n, data) \
-    template <typename R, QGLIB_SIGNAL_TMPL_PARAMS(n) > \
-    static R emit(void *instance, const char *detailedSignal, QGLIB_SIGNAL_TMPL_ARGS(n));
+    template <typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
+    static R emit(void *instance, const char *detailedSignal \
+                  BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(n, A, a) );
 
 # define QGLIB_SIGNAL_CONNECT_DECLARATION(z, n, data) \
-    template <typename T, typename R, QGLIB_SIGNAL_TMPL_PARAMS(n) > \
+    template <typename T, typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
     static SignalHandler connect(void *instance, const char *detailedSignal, \
-                                 T *receiver, R (T::*slot)(QGLIB_SIGNAL_TMPL_ARGS(n)), \
+                                 T *receiver, R (T::*slot)(BOOST_PP_ENUM_PARAMS(n, A)), \
                                  ConnectFlags flags = 0);
 
-    //versions that take from 1 to QGLIB_SIGNAL_MAX_ARGS arguments
-    BOOST_PP_REPEAT_FROM_TO(1, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_EMIT_DECLARATION, dummy)
-    BOOST_PP_REPEAT_FROM_TO(1, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_CONNECT_DECLARATION, dummy)
+    BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_EMIT_DECLARATION, dummy)
+    BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_CONNECT_DECLARATION, dummy)
 
 # undef QGLIB_SIGNAL_CONNECT_DECLARATION
 # undef QGLIB_SIGNAL_EMIT_DECLARATION
-# undef QGLIB_SIGNAL_TMPL_ARGS
-# undef QGLIB_SIGNAL_TMPL_PARAMS
 
 #endif //QGLIB_HAVE_CXX0X
 

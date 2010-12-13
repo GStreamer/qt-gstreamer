@@ -261,20 +261,17 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
     The concept is based on the implementation of boost::function.
 */
 
-# define QGLIB_SIGNAL_IMPL_NUM_ARGS  BOOST_PP_ITERATION()
+# define QGLIB_SIGNAL_IMPL_NUM_ARGS \
+    BOOST_PP_ITERATION()
 
-# define QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS \
-        BOOST_PP_ENUM_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, typename A)
+# define QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS \
+    BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, typename A)
+
+# define QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS \
+    BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A)
 
 # define QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS \
-        BOOST_PP_ENUM_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A)
-
-# if QGLIB_SIGNAL_IMPL_NUM_ARGS > 0
-#  define QGLIB_SIGNAL_IMPL_COMMA ,
-# else
-#  define QGLIB_SIGNAL_IMPL_COMMA
-# endif
-
+    BOOST_PP_ENUM_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A)
 
 namespace QGlib {
 namespace Private {
@@ -282,19 +279,19 @@ namespace Private {
 //BEGIN ******** boostpp CppClosure ********
 
 # define QGLIB_SIGNAL_IMPL_CPPCLOSUREN \
-        BOOST_PP_CAT(CppClosure, QGLIB_SIGNAL_IMPL_NUM_ARGS)
+    BOOST_PP_CAT(CppClosure, QGLIB_SIGNAL_IMPL_NUM_ARGS)
 
 # define QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP(z, n, list) \
-    ,list.at(n).get< typename boost::remove_const< typename boost::remove_reference<A ##n>::type >::type >()
-
-# define QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP(z, n, list) \
-    ,ValueImpl< typename boost::remove_const< typename boost::remove_reference<A ##n>::type >::type >::get(list.at(n))
+    ,ValueImpl< \
+        typename boost::remove_const< \
+            typename boost::remove_reference<A ##n>::type \
+        >::type \
+    >::get(list.at(n))
 
 # define QGLIB_SIGNAL_IMPL_UNPACK_ARGS(list) \
     BOOST_PP_REPEAT(QGLIB_SIGNAL_IMPL_NUM_ARGS, QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP, list)
 
-template <typename F, typename R QGLIB_SIGNAL_IMPL_COMMA
-                                 QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
+template <typename F, typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
 struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
 {
     class ClosureData : public ClosureDataBase
@@ -329,11 +326,9 @@ struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
 };
 
 //partial specialization of struct CppClosure to support the CppClosure<R (Args...), F> syntax
-template <typename F, typename R  QGLIB_SIGNAL_IMPL_COMMA
-                                  QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
+template <typename F, typename R  QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
 struct CppClosure<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS), F>
-    : public QGLIB_SIGNAL_IMPL_CPPCLOSUREN< F, R  QGLIB_SIGNAL_IMPL_COMMA
-                                                   QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS >
+    : public QGLIB_SIGNAL_IMPL_CPPCLOSUREN< F, R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS >
 {
 };
 
@@ -348,17 +343,16 @@ struct CppClosure<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS), F>
 //BEGIN ******** bostpp Signal::connect ********
 
 # define QGLIB_SIGNAL_IMPL_BIND_ARGS \
-        BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(QGLIB_SIGNAL_IMPL_NUM_ARGS), _)
+    BOOST_PP_COMMA_IF(QGLIB_SIGNAL_IMPL_NUM_ARGS) \
+    BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(QGLIB_SIGNAL_IMPL_NUM_ARGS), _)
 
-template <typename T, typename R QGLIB_SIGNAL_IMPL_COMMA
-                                 QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
+template <typename T, typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
 SignalHandler Signal::connect(void *instance, const char *detailedSignal,
                               T *receiver, R (T::*slot)(QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
                               ConnectFlags flags)
 {
     boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)> f
-                = boost::bind(slot, receiver QGLIB_SIGNAL_IMPL_COMMA
-                                             QGLIB_SIGNAL_IMPL_BIND_ARGS);
+                = boost::bind(slot, receiver QGLIB_SIGNAL_IMPL_BIND_ARGS);
 
     ClosurePtr closure = QGlib::Private::CppClosure<
                                         R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
@@ -373,9 +367,9 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
 
 } //namespace QGlib
 
-# undef QGLIB_SIGNAL_IMPL_COMMA
 # undef QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS
-# undef QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS
+# undef QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS
+# undef QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS
 # undef QGLIB_SIGNAL_IMPL_NUM_ARGS
 
 #endif // !defined(BOOST_PP_IS_ITERATING) || !BOOST_PP_IS_ITERATING
