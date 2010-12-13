@@ -96,6 +96,7 @@ set(CODEGEN_HEADERS
     QGlib/paramspec.h
     QGlib/object.h
     QGlib/signal.h
+    QGlib/value.h
 
     QGst/enums.h
     QGst/structs.h
