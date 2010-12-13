@@ -208,12 +208,7 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
             g_value_unset(&returnValue);
         }
     } catch (const QString & msg) {
-        QString instanceName;
-        SharedValue instanceValue(&values[0]);
-        if (instanceValue.type().isInstantiatable() && instanceValue.canTransformTo(Type::String)) {
-            //instances can be transformed to strings for debugging purposes
-            instanceName = instanceValue.transformTo(Type::String).get<QString>();
-        }
+        QString instanceName = SharedValue(&values[0]).get<QString>();
 
         qCritical() << "Error during emission of signal" << detailedSignal
                     << "on object"<< instanceName << ":" << msg;
@@ -282,12 +277,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
             }
         }
 
-        QString instanceName;
-        const Value & instanceValue = params.at(0);
-        if (instanceValue.type().isInstantiatable() && instanceValue.canTransformTo(Type::String)) {
-            //instances can be transformed to strings for debugging purposes
-            instanceName = instanceValue.transformTo(Type::String).get<QString>();
-        }
+        QString instanceName = params.at(0).get<QString>();
 
         //attempt to determine the cause of the failure
         QString msg;
