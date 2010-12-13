@@ -266,7 +266,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
     try {
         SharedValue result(returnValue);
         cdata->marshaller(result, params);
-    } catch (const std::logic_error & e) {
+    } catch (const std::exception & e) {
         QString signalName;
         if (hint != NULL) {
             GSignalInvocationHint *ihint = static_cast<GSignalInvocationHint*>(hint);
@@ -293,13 +293,13 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
         QString msg;
         try {
             //dynamic_cast will throw an std::bad_cast if it fails
-            dynamic_cast<const ValueBase::InvalidTypeException &>(e);
+            dynamic_cast<const InvalidTypeException &>(e);
             //cast succeded, e is indeed an InvalidTypeException
             msg = QLatin1String("One or more of the arguments of the signal are of different "
                                 "type than the type that the closure expects");
         } catch (...) {
             try {
-                dynamic_cast<const ValueBase::InvalidValueException &>(e);
+                dynamic_cast<const InvalidValueException &>(e);
                 //cast succeded, e is indeed an InvalidValueException
                 //this is most likely to happen because the signal returns void
                 //but the closure returns something non-void. check this first.

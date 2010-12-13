@@ -52,13 +52,12 @@ inline QList<Value> packArguments()
 template <typename Arg1, typename... Args>
 QList<Value> packArguments(Arg1 && a1, Args&&... args)
 {
-    typedef typename boost::add_const<
-                typename boost::add_reference<Arg1>::type
-            >::type ConstArg1Ref;
-
     QList<Value> result = packArguments(std::forward<Args>(args)...);
+    Value v;
+    v.init<Arg1>();
+    ValueImpl<Arg1>::set(v, a1);
     //prepend, since we are packing from the last to the first argument
-    result.prepend(Value(static_cast<ConstArg1Ref>(a1)));
+    result.prepend(v);
     return result;
 }
 
@@ -70,14 +69,12 @@ struct EmitImpl<R (Args...)>
 {
     static inline R emit(void *instance, const char *detailedSignal, Args&&... args)
     {
-        Value && returnValue = Signal::emit(instance, detailedSignal,
-                                            packArguments(std::forward<Args>(args)...));
-
         try {
+            Value && returnValue = Signal::emit(instance, detailedSignal,
+                                                packArguments(std::forward<Args>(args)...));
             return ValueImpl<R>::get(returnValue);
-        } catch(const std::logic_error &) {
-            qCritical() << "Error during emission of signal" << detailedSignal
-                        << "The returned value from emit is of different type than the one requested";
+        } catch(const std::exception & e) {
+            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
             return R();
         }
     }
@@ -88,11 +85,15 @@ struct EmitImpl<void (Args...)>
 {
     static inline void emit(void *instance, const char *detailedSignal, Args&&... args)
     {
-        Value && returnValue = Signal::emit(instance, detailedSignal,
-                                            packArguments(std::forward<Args>(args)...));
+        try {
+            Value && returnValue = Signal::emit(instance, detailedSignal,
+                                                packArguments(std::forward<Args>(args)...));
 
-        if (returnValue.isValid()) {
-            qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
+            if (returnValue.isValid()) {
+                qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
+            }
+        } catch(const std::exception & e) {
+            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
         }
     }
 };
@@ -161,7 +162,12 @@ namespace Private {
 //BEGIN ******** boostpp EmitImpl ********
 
 # define QGLIB_SIGNAL_IMPL_PACK_ARGS_STEP(z, n, list) \
-        list.append(Value(static_cast< typename boost::add_const< typename boost::add_reference<A ##n>::type >::type >(a ##n)));
+    { \
+        Value v; \
+        v.init<A##n>(); \
+        ValueImpl<A##n>::set(v, a##n); \
+        list.append(v); \
+    }
 
 # define QGLIB_SIGNAL_IMPL_PACK_ARGS(list) \
         BOOST_PP_REPEAT(QGLIB_SIGNAL_IMPL_NUM_ARGS, QGLIB_SIGNAL_IMPL_PACK_ARGS_STEP, list)
@@ -173,15 +179,13 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
     static inline R emit(void *instance, const char *detailedSignal
                          QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
     {
-        QList<Value> values;
-        QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-        Value returnValue = Signal::emit(instance, detailedSignal, values);
-
         try {
+            QList<Value> values;
+            QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
+            Value returnValue = Signal::emit(instance, detailedSignal, values);
             return ValueImpl<R>::get(returnValue);
-        } catch(const std::logic_error &) {
-            qCritical() << "Error during emission of signal" << detailedSignal
-                        << "The returned value from emit is of different type than the one requested";
+        } catch(const std::exception & e) {
+            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
             return R();
         }
     }
@@ -193,12 +197,15 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
     static inline void emit(void *instance, const char *detailedSignal
                             QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
     {
-        QList<Value> values;
-        QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-        Value returnValue = Signal::emit(instance, detailedSignal, values);
-
-        if (returnValue.isValid()) {
-            qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
+        try {
+            QList<Value> values;
+            QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
+            Value returnValue = Signal::emit(instance, detailedSignal, values);
+            if (returnValue.isValid()) {
+                qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
+            }
+        } catch(const std::exception & e) {
+            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
         }
     }
 };

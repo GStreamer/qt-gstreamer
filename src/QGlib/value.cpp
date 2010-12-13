@@ -158,58 +158,53 @@ void ValueBase::registerValueVTable(Type type, const ValueVTable & vtable)
 void ValueBase::getData(Type dataType, void *data) const
 {
     if (!isValid()) {
-        throw InvalidValueException();
+        throw Private::InvalidValueException();
     } else if (g_value_type_compatible(type(), dataType)) {
         ValueVTable vtable = s_dispatcher()->getVTable(dataType);
         if (vtable.get != NULL) {
             vtable.get(*this, data);
         } else {
-            throw std::logic_error("Unable to handle the given type. Type is not registered");
+            throw Private::UnregisteredTypeException(dataType.name().toStdString());
         }
     } else if (dataType.isValueType() && g_value_type_transformable(type(), dataType)) {
         Value v;
         v.init(dataType);
 
         if (!g_value_transform(m_value, v.m_value)) {
-            throw InvalidTypeException();
+            throw Private::TransformationFailedException(type().name().toStdString(),
+                                                         dataType.name().toStdString());
         }
 
-        try {
-            v.getData(dataType, data);
-        } catch (const InvalidTypeException &) {
-            Q_ASSERT(false); //This must never happen
-        }
+        v.getData(dataType, data);
     } else {
-        throw InvalidTypeException();
+        throw Private::InvalidTypeException(dataType.name().toStdString(),
+                                            type().name().toStdString());
     }
 }
 
 void ValueBase::setData(Type dataType, const void *data)
 {
     if (!isValid()) {
-        throw InvalidValueException();
+        throw Private::InvalidValueException();
     } else if (g_value_type_compatible(dataType, type())) {
         ValueVTable vtable = s_dispatcher()->getVTable(dataType);
         if (vtable.set != NULL) {
             vtable.set(*this, data);
         } else {
-            throw std::logic_error("Unable to handle the given type. Type is not registered");
+            throw Private::UnregisteredTypeException(dataType.name().toStdString());
         }
     } else if (dataType.isValueType() && g_value_type_transformable(dataType, type())) {
         Value v;
         v.init(dataType);
-
-        try {
-            v.setData(dataType, data);
-        } catch (const InvalidTypeException &) {
-            Q_ASSERT(false); //This must never happen
-        }
+        v.setData(dataType, data);
 
         if (!g_value_transform(v.m_value, m_value)) {
-            throw InvalidTypeException();
+            throw Private::TransformationFailedException(dataType.name().toStdString(),
+                                                         type().name().toStdString());
         }
     } else {
-        throw InvalidTypeException();
+        throw Private::InvalidTypeException(dataType.name().toStdString(),
+                                            type().name().toStdString());
     }
 }
 

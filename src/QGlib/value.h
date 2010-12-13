@@ -56,21 +56,6 @@ struct ValueVTable
 class ValueBase
 {
 public:
-    class InvalidValueException : public std::logic_error
-    {
-    public:
-        inline InvalidValueException()
-            : std::logic_error("This ValueBase instance has not been initialized") {}
-    };
-
-    class InvalidTypeException : public std::logic_error
-    {
-    public:
-        inline InvalidTypeException()
-            : std::logic_error("This ValueBase instance has been initialized to hold a different "
-                                 "type of data than the one that you are trying to access") {}
-    };
-
     /*! \returns whether this ValueBase instance wraps a valid GValue instance or not */
     bool isValid() const;
 
@@ -380,6 +365,43 @@ struct ValueImpl<QString>
     }
 };
 
+// -- Exceptions thrown from getData/setData --
+
+namespace Private {
+
+class InvalidValueException : public std::logic_error
+{
+public:
+    inline InvalidValueException()
+        : std::logic_error("This Value instance has not been initialized") {}
+};
+
+class InvalidTypeException : public std::logic_error
+{
+public:
+    inline InvalidTypeException(const std::string & dataType, const std::string & valueType)
+        : std::logic_error("Unable to handle value type \"" + dataType +
+                           "\". This Value instance has been initialized to hold values of type \""
+                           + valueType + "\" and no conversion is possible") {}
+};
+
+class UnregisteredTypeException : public std::logic_error
+{
+public:
+    inline UnregisteredTypeException(const std::string & typeName)
+        : std::logic_error("Unable to handle unregistered type \"" + typeName + "\"") {}
+};
+
+class TransformationFailedException : public std::runtime_error
+{
+public:
+    inline TransformationFailedException(const std::string & srcTypeName,
+                                         const std::string & destTypeName)
+        : std::runtime_error("Failed to transform value from type \""
+                             + srcTypeName + "\" to type \"" + destTypeName + "\"") {}
+};
+
+} //namespace Private
 } //namespace QGlib
 
 /*! \relates QGlib::ValueBase */
