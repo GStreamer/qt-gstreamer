@@ -51,7 +51,7 @@ QGLIB_REGISTER_TYPE\(    { yy_push_state(REGISTER_TYPE); return REGISTER_TYPE_BE
     .                    { yyerror(codegen, "Syntax error in QGLIB_REGISTER_TYPE"); }
 }
 
-enum                     { yy_push_state(ENUM); return ENUM_KEYWORD; }
+[[:space:]]enum          { yy_push_state(ENUM); return ENUM_KEYWORD; }
 <ENUM>{
     \{                   { return LEFT_BRACE; }
     \}                   { return RIGHT_BRACE; }
@@ -91,14 +91,14 @@ enum                     { yy_push_state(ENUM); return ENUM_KEYWORD; }
     .
 }
 
-namespace                { yy_push_state(NAMESPACE); }
+[[:space:]]namespace     { yy_push_state(NAMESPACE); }
 <NAMESPACE>{
     {id}                 { codegen->setCurrentNameSpace(yytext); yy_pop_state(); }
     [[:space:]]*
     .                    { yyerror(codegen, "Expected identifier after namespace keyword"); }
 }
 
-class                    { yy_push_state(CLASS); }
+[[:space:]]class         { yy_push_state(CLASS); }
 <CLASS>{
     {id}                 { codegen->setCurrentClass(yytext); yy_pop_state(); }
     [[:space:]]*
