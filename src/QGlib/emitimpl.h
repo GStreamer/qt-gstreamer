@@ -50,9 +50,9 @@ inline QList<Value> packArguments()
 }
 
 template <typename Arg1, typename... Args>
-QList<Value> packArguments(Arg1 && a1, Args&&... args)
+QList<Value> packArguments(const Arg1 & a1, const Args & ... args)
 {
-    QList<Value> result = packArguments(std::forward<Args>(args)...);
+    QList<Value> result = packArguments(args...);
     Value v;
     v.init<Arg1>();
     ValueImpl<Arg1>::set(v, a1);
@@ -67,11 +67,10 @@ QList<Value> packArguments(Arg1 && a1, Args&&... args)
 template <typename R, typename... Args>
 struct EmitImpl<R (Args...)>
 {
-    static inline R emit(void *instance, const char *detailedSignal, Args&&... args)
+    static inline R emit(void *instance, const char *detailedSignal, const Args & ... args)
     {
         try {
-            Value && returnValue = Signal::emit(instance, detailedSignal,
-                                                packArguments(std::forward<Args>(args)...));
+            Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
             qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
@@ -83,11 +82,10 @@ struct EmitImpl<R (Args...)>
 template <typename... Args>
 struct EmitImpl<void (Args...)>
 {
-    static inline void emit(void *instance, const char *detailedSignal, Args&&... args)
+    static inline void emit(void *instance, const char *detailedSignal, const Args & ... args)
     {
         try {
-            Value && returnValue = Signal::emit(instance, detailedSignal,
-                                                packArguments(std::forward<Args>(args)...));
+            Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
 
             if (returnValue.isValid()) {
                 qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
@@ -105,10 +103,9 @@ struct EmitImpl<void (Args...)>
 //BEGIN ******** Signal::emit ********
 
 template <typename R, typename... Args>
-R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
+R Signal::emit(void *instance, const char *detailedSignal, const Args & ... args)
 {
-    return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal,
-                                                       std::forward<Args>(args)...);
+    return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, args...);
 }
 
 //END ******** Signal::emit ********
@@ -151,7 +148,7 @@ R Signal::emit(void *instance, const char *detailedSignal, Args&&... args)
     BOOST_PP_ENUM_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A)
 
 # define QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS \
-    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A, a)
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, const A, & a)
 
 # define QGLIB_SIGNAL_IMPL_FUNCTION_ARGS \
     BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, a)

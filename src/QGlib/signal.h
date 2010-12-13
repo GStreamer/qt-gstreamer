@@ -165,7 +165,7 @@ public:
      * \returns The return value of the signal.
      */
     template <typename R, typename... Args>
-    static R emit(void *instance, const char *detailedSignal, Args&&... args);
+    static R emit(void *instance, const char *detailedSignal, const Args & ... args);
 
     /*! Connects a signal to a specified \a slot.
      *
@@ -210,7 +210,7 @@ public:
 # define QGLIB_SIGNAL_EMIT_DECLARATION(z, n, data) \
     template <typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
     static R emit(void *instance, const char *detailedSignal \
-                  BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(n, A, a) );
+                  BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(n, const A, & a) );
 
 # define QGLIB_SIGNAL_CONNECT_DECLARATION(z, n, data) \
     template <typename T, typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
