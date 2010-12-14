@@ -73,7 +73,6 @@ public:
     inline Value(const T & data);
 
     Value(const Value & other);
-    Value(const SharedValue & other);
 
     virtual ~Value();
 
@@ -142,7 +141,7 @@ public:
      */
     static void registerValueVTable(Type type, const ValueVTable & vtable);
 
-protected:
+private:
     template <typename T>
     friend struct ValueImpl;
 
@@ -165,27 +164,6 @@ protected:
     void setData(Type dataType, const void *data);
 
     GValue *m_value;
-};
-
-/*! \headerfile value.h <QGlib/Value>
- * \brief Wrapper class for shared GValue instances
- *
- * This class serves as a wrapper for shared GValue instances. Some functions in the GStreamer
- * API return a pointer to some internal GValue and expect you to change this internal instance,
- * not copy it and re-set it using some setter function (like all normal object-oriented APIs do),
- * so it is necessary to have way of accessing those instances. This class wraps a GValue without
- * copying it and without freeing it from the destructor, unlike Value, which always keeps a
- * GValue instance for itself.
- * \sa Value
- */
-class SharedValue : public Value
-{
-public:
-    explicit SharedValue(GValue *gvalue);
-    virtual ~SharedValue();
-
-private:
-    Q_DISABLE_COPY(SharedValue);
 };
 
 
@@ -399,6 +377,5 @@ QDebug & operator<<(QDebug debug, const Value & value);
 } //namespace QGlib
 
 QGLIB_REGISTER_TYPE(QGlib::Value)
-QGLIB_REGISTER_TYPE(QGlib::SharedValue) //codegen: GType=G_TYPE_VALUE
 
 #endif

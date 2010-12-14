@@ -52,7 +52,7 @@ class ClosureDataBase
 {
 public:
     inline virtual ~ClosureDataBase() {}
-    virtual void marshaller(SharedValue &, const QList<Value> &) = 0;
+    virtual void marshaller(Value &, const QList<Value> &) = 0;
 
     bool passSender; //whether to pass the sender instance as the first slot argument
 
@@ -80,13 +80,13 @@ struct CppClosure {};
 template <typename Function, typename R>
 struct invoker
 {
-    static inline void invoke(const Function & f, SharedValue & result) { ValueImpl<R>::set(result, f()); }
+    static inline void invoke(const Function & f, Value & result) { ValueImpl<R>::set(result, f()); }
 };
 
 template <typename Function>
 struct invoker<Function, void>
 {
-    static inline void invoke(const Function & f, SharedValue &) { f(); }
+    static inline void invoke(const Function & f, Value &) { f(); }
 };
 
 //END ******** invoker ********
@@ -156,7 +156,7 @@ inline BoundArgumentFunction<F, R, Arg1, Args...> partial_bind(F && f, Arg1 && a
 //BEGIN ******** unpackAndInvoke ********
 
 template <typename F, typename R>
-inline void unpackAndInvoke(F && function, SharedValue & result,
+inline void unpackAndInvoke(F && function, Value & result,
                             QList<Value>::const_iterator &&,
                             QList<Value>::const_iterator &&)
 {
@@ -164,7 +164,7 @@ inline void unpackAndInvoke(F && function, SharedValue & result,
 }
 
 template <typename F, typename R, typename Arg1, typename... Args>
-inline void unpackAndInvoke(F && function, SharedValue & result,
+inline void unpackAndInvoke(F && function, Value & result,
                             QList<Value>::const_iterator && argsBegin,
                             QList<Value>::const_iterator && argsEnd)
 {
@@ -193,7 +193,7 @@ struct CppClosure<R (Args...), F>
         inline ClosureData(const F & func, bool passSender)
             : ClosureDataBase(passSender), m_function(func) {}
 
-        virtual void marshaller(SharedValue & result, const QList<Value> & params)
+        virtual void marshaller(Value & result, const QList<Value> & params)
         {
             if (static_cast<unsigned int>(params.size()) < sizeof...(Args)) {
                 throw std::logic_error("The signal provides less arguments than what the closure expects");
@@ -303,7 +303,7 @@ struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
         inline ClosureData(const F & func, bool passSender)
             : ClosureDataBase(passSender), m_function(func) {}
 
-        virtual void marshaller(SharedValue & result, const QList<Value> & params)
+        virtual void marshaller(Value & result, const QList<Value> & params)
         {
             if (params.size() < QGLIB_SIGNAL_IMPL_NUM_ARGS) {
                 throw std::logic_error("The signal provides less arguments than what the closure expects");

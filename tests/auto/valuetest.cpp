@@ -158,45 +158,19 @@ void ValueTest::conversionsTest()
 
 void ValueTest::copyTest()
 {
-    QGlib::Value v(10);
+    QGlib::Value v(20);
 
-    QGlib::SharedValue sv(v);
-    QVERIFY(sv.isValid());
-    QCOMPARE(sv.type(), QGlib::GetType<int>());
-    QCOMPARE(sv.get<int>(), 10);
+    QGlib::Value v2(v);
+    QVERIFY(v2.isValid());
+    QCOMPARE(v2.type(), QGlib::GetType<int>());
+    QCOMPARE(v2.get<int>(), 20);
 
-    sv.set(20);
+    v2.set(30);
     QCOMPARE(v.get<int>(), 20);
+    QCOMPARE(v2.get<int>(), 30);
 
-    {
-        QGlib::Value v2(sv);
-        QVERIFY(v2.isValid());
-        QCOMPARE(v2.type(), QGlib::GetType<int>());
-        QCOMPARE(v2.get<int>(), 20);
-
-        v2.set(30);
-        QCOMPARE(v.get<int>(), 20);
-        QCOMPARE(sv.get<int>(), 20);
-        QCOMPARE(v2.get<int>(), 30);
-
-        v2 = v;
-        QCOMPARE(v2.get<int>(), 20);
-    }
-
-    {
-        QGlib::Value v2(v);
-        QVERIFY(v2.isValid());
-        QCOMPARE(v2.type(), QGlib::GetType<int>());
-        QCOMPARE(v2.get<int>(), 20);
-
-        v2.set(30);
-        QCOMPARE(v.get<int>(), 20);
-        QCOMPARE(sv.get<int>(), 20);
-        QCOMPARE(v2.get<int>(), 30);
-
-        v2 = sv;
-        QCOMPARE(v2.get<int>(), 20);
-    }
+    v2 = v;
+    QCOMPARE(v2.get<int>(), 20);
 }
 
 void ValueTest::castTest()

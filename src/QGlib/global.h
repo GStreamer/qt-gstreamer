@@ -30,7 +30,6 @@ namespace QGlib {
 
 class Error;
 class Value;
-class SharedValue;
 class Quark;
 class Type;
 class Signal;

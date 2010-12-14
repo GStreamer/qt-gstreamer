@@ -106,7 +106,6 @@ void Dispatcher::setVTable(Type t, const ValueVTable & vtable)
 
 Q_GLOBAL_STATIC(Private::Dispatcher, s_dispatcher);
 
-//BEGIN Value
 
 Value::Value()
     : m_value(NULL)
@@ -123,12 +122,6 @@ Value::Value(const GValue *gvalue)
 }
 
 Value::Value(const Value & other)
-    : m_value(NULL)
-{
-    operator=(other);
-}
-
-Value::Value(const SharedValue & other)
     : m_value(NULL)
 {
     operator=(other);
@@ -256,23 +249,6 @@ void Value::setData(Type dataType, const void *data)
     }
 }
 
-//END Value
-
-//BEGIN SharedValue
-
-SharedValue::SharedValue(GValue *gvalue)
-    : Value()
-{
-    m_value = gvalue;
-}
-
-SharedValue::~SharedValue()
-{
-    m_value = NULL;
-}
-
-
-//END SharedValue
 
 QDebug & operator<<(QDebug debug, const Value & value)
 {
