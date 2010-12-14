@@ -43,12 +43,12 @@ Dispatcher::Dispatcher()
 #define DECLARE_VTABLE(T, NICK, GTYPE) \
     struct ValueVTable_##NICK \
     { \
-        static void get(const ValueBase & value, void *data) \
+        static void get(const Value & value, void *data) \
         { \
             *reinterpret_cast<T*>(data) = g_value_get_##NICK(value); \
         }; \
         \
-        static void set(ValueBase & value, const void *data) \
+        static void set(Value & value, const void *data) \
         { \
             g_value_set_##NICK(value, *reinterpret_cast<T const *>(data)); \
         }; \
@@ -106,41 +106,89 @@ void Dispatcher::setVTable(Type t, const ValueVTable & vtable)
 
 Q_GLOBAL_STATIC(Private::Dispatcher, s_dispatcher);
 
-//BEGIN ValueBase
+//BEGIN Value
 
-ValueBase::ValueBase(GValue* val)
-    : m_value(val)
+Value::Value()
+    : m_value(NULL)
 {
 }
 
-ValueBase::~ValueBase()
+Value::Value(const GValue *gvalue)
+    : m_value(NULL)
 {
+    if (gvalue) {
+        init(G_VALUE_TYPE(gvalue));
+        g_value_copy(gvalue, m_value);
+    }
 }
 
-bool ValueBase::isValid() const
+Value::Value(const Value & other)
+    : m_value(NULL)
+{
+    operator=(other);
+}
+
+Value::Value(const SharedValue & other)
+    : m_value(NULL)
+{
+    operator=(other);
+}
+
+Value::~Value()
+{
+    if (m_value) {
+        g_value_unset(m_value);
+        g_slice_free(GValue, m_value);
+    }
+}
+
+Value & Value::operator=(const Value & other)
+{
+    if (other.isValid()) {
+        init(other.type());
+        g_value_copy(other, m_value);
+    } else if (m_value) {
+        g_value_unset(m_value);
+        g_slice_free(GValue, m_value);
+        m_value = NULL;
+    }
+    return *this;
+}
+
+void Value::init(Type type)
+{
+    if (m_value) {
+        g_value_unset(m_value);
+    } else {
+        m_value = g_slice_new0(GValue);
+    }
+    g_value_init(m_value, type);
+}
+
+bool Value::isValid() const
 {
     return m_value != NULL;
 }
 
-void ValueBase::reset()
+void Value::reset()
 {
     if (m_value) {
         g_value_reset(m_value);
     }
 }
 
-Type ValueBase::type() const
+Type Value::type() const
 {
     Q_ASSERT(isValid());
     return G_VALUE_TYPE(m_value);
 }
 
-bool ValueBase::canTransformTo(Type t) const
+bool Value::canTransformTo(Type t) const
 {
     return m_value ? g_value_type_transformable(type(), t) : false;
 }
 
-Value ValueBase::transformTo(Type t) const
+Value Value::transformTo(Type t) const
 {
     Q_ASSERT(isValid());
     Value dest;
@@ -150,12 +198,12 @@ Value ValueBase::transformTo(Type t) const
 }
 
 //static
-void ValueBase::registerValueVTable(Type type, const ValueVTable & vtable)
+void Value::registerValueVTable(Type type, const ValueVTable & vtable)
 {
     s_dispatcher()->setVTable(type, vtable);
 }
 
-void ValueBase::getData(Type dataType, void *data) const
+void Value::getData(Type dataType, void *data) const
 {
     if (!isValid()) {
         throw Private::InvalidValueException();
@@ -182,7 +230,7 @@ void ValueBase::getData(Type dataType, void *data) const
     }
 }
 
-void ValueBase::setData(Type dataType, const void *data)
+void Value::setData(Type dataType, const void *data)
 {
     if (!isValid()) {
         throw Private::InvalidValueException();
@@ -208,109 +256,27 @@ void ValueBase::setData(Type dataType, const void *data)
     }
 }
 
-//END ValueBase
-
-//BEGIN Value
-
-Value::Value()
-    : ValueBase(NULL)
-{
-}
-
-Value::Value(const GValue *gvalue)
-    : ValueBase(NULL)
-{
-    if (gvalue) {
-        init(G_VALUE_TYPE(gvalue));
-        g_value_copy(gvalue, m_value);
-    }
-}
-
-Value::Value(const SharedValue & other)
-    : ValueBase(NULL)
-{
-    operator=(other);
-}
-
-Value::Value(const Value & other)
-    : ValueBase(NULL)
-{
-    operator=(other);
-}
-
-Value::~Value()
-{
-    if (m_value) {
-        g_value_unset(m_value);
-        g_slice_free(GValue, m_value);
-    }
-}
-
-Value & Value::operator=(const SharedValue & other)
-{
-    if (other.isValid()) {
-        init(other.type());
-        g_value_copy(other, m_value);
-    } else if (m_value) {
-        g_value_unset(m_value);
-        g_slice_free(GValue, m_value);
-        m_value = NULL;
-    }
-    return *this;
-}
-
-Value & Value::operator=(const Value & other)
-{
-    if (other.isValid()) {
-        init(other.type());
-        g_value_copy(other, m_value);
-    } else if (m_value) {
-        g_value_unset(m_value);
-        g_slice_free(GValue, m_value);
-        m_value = NULL;
-    }
-    return *this;
-}
-
-void Value::init(Type type)
-{
-    if (m_value) {
-        g_value_unset(m_value);
-    } else {
-        m_value = g_slice_new0(GValue);
-    }
-    g_value_init(m_value, type);
-}
-
 //END Value
 
 //BEGIN SharedValue
 
 SharedValue::SharedValue(GValue *gvalue)
-    : ValueBase(gvalue)
+    : Value()
 {
-}
-
-SharedValue::SharedValue(const SharedValue & other)
-    : ValueBase(other.m_value)
-{
+    m_value = gvalue;
 }
 
 SharedValue::~SharedValue()
 {
+    m_value = NULL;
 }
 
-SharedValue & SharedValue::operator=(const SharedValue & other)
-{
-    m_value = other.m_value;
-    return *this;
-}
 
 //END SharedValue
 
-QDebug & operator<<(QDebug debug, const ValueBase & value)
+QDebug & operator<<(QDebug debug, const Value & value)
 {
-    debug.nospace() << "QGlib::ValueBase";
+    debug.nospace() << "QGlib::Value";
     if(!value.isValid()) {
         debug << "(<invalid>)";
         return debug.space();

@@ -55,7 +55,7 @@
         template<> \
         struct ValueImpl<QGst::TYPE##BASECLASS##Ptr> \
         { \
-            static void set(ValueBase & value, const QGst::TYPE##BASECLASS##Ptr & data) { \
+            static void set(Value & value, const QGst::TYPE##BASECLASS##Ptr & data) { \
                 ValueImpl<QGst::BASECLASS##Ptr>::set(value, data); \
             } \
         }; \

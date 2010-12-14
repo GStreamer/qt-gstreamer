@@ -67,7 +67,7 @@ Value Object::property(const char *name) const
     return result;
 }
 
-void Object::setPropertyValue(const char *name, const ValueBase & value)
+void Object::setPropertyValue(const char *name, const Value & value)
 {
     g_object_set_property(object<GObject>(), name, value);
 }

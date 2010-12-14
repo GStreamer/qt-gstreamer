@@ -28,93 +28,93 @@ void registerValueVTables()
 {
     struct ValueVTable_MiniObject
     {
-        static void get(const QGlib::ValueBase & value, void *data)
+        static void get(const QGlib::Value & value, void *data)
         {
             *reinterpret_cast<GstMiniObject**>(data) = gst_value_get_mini_object(value);
         };
 
-        static void set(QGlib::ValueBase & value, const void *data)
+        static void set(QGlib::Value & value, const void *data)
         {
             gst_value_set_mini_object(value, *reinterpret_cast<GstMiniObject* const *>(data));
         };
     };
-    QGlib::ValueBase::registerValueVTable(QGlib::GetType<MiniObject>(),
+    QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
             QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
 
 
     struct ValueVTable_Fourcc
     {
-        static void get(const QGlib::ValueBase & value, void *data)
+        static void get(const QGlib::Value & value, void *data)
         {
             reinterpret_cast<Fourcc*>(data)->value.as_integer = gst_value_get_fourcc(value);
         };
 
-        static void set(QGlib::ValueBase & value, const void *data)
+        static void set(QGlib::Value & value, const void *data)
         {
             gst_value_set_fourcc(value, reinterpret_cast<Fourcc const *>(data)->value.as_integer);
         };
     };
-    QGlib::ValueBase::registerValueVTable(QGlib::GetType<Fourcc>(),
+    QGlib::Value::registerValueVTable(QGlib::GetType<Fourcc>(),
             QGlib::ValueVTable(ValueVTable_Fourcc::set, ValueVTable_Fourcc::get));
 
 
     struct ValueVTable_Fraction
     {
-        static void get(const QGlib::ValueBase & value, void *data)
+        static void get(const QGlib::Value & value, void *data)
         {
             reinterpret_cast<Fraction*>(data)->numerator = gst_value_get_fraction_numerator(value);
             reinterpret_cast<Fraction*>(data)->denominator = gst_value_get_fraction_denominator(value);
         };
 
-        static void set(QGlib::ValueBase & value, const void *data)
+        static void set(QGlib::Value & value, const void *data)
         {
             gst_value_set_fraction(value, reinterpret_cast<Fraction const *>(data)->numerator,
                                           reinterpret_cast<Fraction const *>(data)->denominator);
         };
     };
-    QGlib::ValueBase::registerValueVTable(QGlib::GetType<Fraction>(),
+    QGlib::Value::registerValueVTable(QGlib::GetType<Fraction>(),
             QGlib::ValueVTable(ValueVTable_Fraction::set, ValueVTable_Fraction::get));
 
 
     struct ValueVTable_IntRange
     {
-        static void get(const QGlib::ValueBase & value, void *data)
+        static void get(const QGlib::Value & value, void *data)
         {
             reinterpret_cast<IntRange*>(data)->start = gst_value_get_int_range_min(value);
             reinterpret_cast<IntRange*>(data)->end = gst_value_get_int_range_max(value);
         };
 
-        static void set(QGlib::ValueBase & value, const void *data)
+        static void set(QGlib::Value & value, const void *data)
         {
             gst_value_set_int_range(value, reinterpret_cast<IntRange const *>(data)->start,
                                            reinterpret_cast<IntRange const *>(data)->end);
         };
     };
-    QGlib::ValueBase::registerValueVTable(QGlib::GetType<IntRange>(),
+    QGlib::Value::registerValueVTable(QGlib::GetType<IntRange>(),
             QGlib::ValueVTable(ValueVTable_IntRange::set, ValueVTable_IntRange::get));
 
 
     struct ValueVTable_DoubleRange
     {
-        static void get(const QGlib::ValueBase & value, void *data)
+        static void get(const QGlib::Value & value, void *data)
         {
             reinterpret_cast<DoubleRange*>(data)->start = gst_value_get_double_range_min(value);
             reinterpret_cast<DoubleRange*>(data)->end = gst_value_get_double_range_max(value);
         };
 
-        static void set(QGlib::ValueBase & value, const void *data)
+        static void set(QGlib::Value & value, const void *data)
         {
             gst_value_set_double_range(value, reinterpret_cast<DoubleRange const *>(data)->start,
                                               reinterpret_cast<DoubleRange const *>(data)->end);
         };
     };
-    QGlib::ValueBase::registerValueVTable(QGlib::GetType<DoubleRange>(),
+    QGlib::Value::registerValueVTable(QGlib::GetType<DoubleRange>(),
             QGlib::ValueVTable(ValueVTable_DoubleRange::set, ValueVTable_DoubleRange::get));
 
 
     struct ValueVTable_FractionRange
     {
-        static void get(const QGlib::ValueBase & value, void *data)
+        static void get(const QGlib::Value & value, void *data)
         {
             reinterpret_cast<FractionRange*>(data)->start.numerator =
                 gst_value_get_fraction_numerator(gst_value_get_fraction_range_min(value));
@@ -126,7 +126,7 @@ void registerValueVTables()
                 gst_value_get_fraction_denominator(gst_value_get_fraction_range_max(value));
         };
 
-        static void set(QGlib::ValueBase & value, const void *data)
+        static void set(QGlib::Value & value, const void *data)
         {
             gst_value_set_fraction_range_full(value,
                     reinterpret_cast<FractionRange const *>(data)->start.numerator,
@@ -135,7 +135,7 @@ void registerValueVTables()
                     reinterpret_cast<FractionRange const *>(data)->end.denominator);
         };
     };
-    QGlib::ValueBase::registerValueVTable(QGlib::GetType<FractionRange>(),
+    QGlib::Value::registerValueVTable(QGlib::GetType<FractionRange>(),
             QGlib::ValueVTable(ValueVTable_FractionRange::set, ValueVTable_FractionRange::get));
 }
 

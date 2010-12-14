@@ -43,8 +43,8 @@ namespace QGst {
      * the native C API, where there is only one Query class with tens of 'new_foo' and 'parse_foo'
      * methods.
      *
-     * Note that the Query subclasses \em cannot be used with ValueBase::get(), since a GValue
-     * will actually contain a GstQuery (the subclasses do not exist in C) and ValueBase::get()
+     * Note that the Query subclasses \em cannot be used with Value::get(), since a GValue
+     * will actually contain a GstQuery (the subclasses do not exist in C) and Value::get()
      * is not able to do dynamic casts. As a result of that, Query subclasses also \em cannot be
      * used as arguments in slots connected to GObject signals, even though you may know that your
      * slot will only be called with that type of queries.

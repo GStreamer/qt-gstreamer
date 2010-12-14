@@ -332,7 +332,7 @@ QGlib::Value StreamStatusMessage::streamStatusObject() const
     return QGlib::Value(gst_message_get_stream_status_object(object<GstMessage>()));
 }
 
-void StreamStatusMessage::setStreamStatusObject(const QGlib::ValueBase & obj)
+void StreamStatusMessage::setStreamStatusObject(const QGlib::Value & obj)
 {
     gst_message_set_stream_status_object(object<GstMessage>(), obj);
 }

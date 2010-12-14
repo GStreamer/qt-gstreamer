@@ -37,8 +37,8 @@ namespace QGst {
  * 'new_foo' and 'parse_foo' methods. You can use RefPointer::dynamicCast() to cast a MessagePtr
  * to a RefPointer of one of the Message subclasses and it will behave as expected (i.e. it will
  * only succeed if the message type matches the message type that the subclass handles). Note
- * however that the Message subclasses \em cannot be used with ValueBase::get(), since a GValue
- * will actually contain a GstMessage (the subclasses do not exist in C) and ValueBase::get()
+ * however that the Message subclasses \em cannot be used with Value::get(), since a GValue
+ * will actually contain a GstMessage (the subclasses do not exist in C) and Value::get()
  * is not able to do dynamic casts. As a result of that, Message subclasses also \em cannot be
  * used as arguments in slots connected to GObject signals, even though you may know that your
  * slot will only be called with that type of message.
@@ -186,7 +186,7 @@ public:
     StreamStatusType statusType() const;
     ElementPtr owner() const;
     QGlib::Value streamStatusObject() const;
-    void setStreamStatusObject(const QGlib::ValueBase & object);
+    void setStreamStatusObject(const QGlib::Value & object);
 };
 
 /*! \headerfile message.h <QGst/Message>

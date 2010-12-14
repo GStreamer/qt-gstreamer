@@ -44,8 +44,8 @@ namespace QGst {
  * 'new_foo' and 'parse_foo' methods. You can use RefPointer::dynamicCast() to cast a EventPtr
  * to a RefPointer of one of the Event subclasses and it will behave as expected (i.e. it will
  * only succeed if the event type matches the event type that the subclass handles). Note
- * however that the Event subclasses \em cannot be used with ValueBase::get(), since a GValue
- * will actually contain a GstEvent (the subclasses do not exist in C) and ValueBase::get()
+ * however that the Event subclasses \em cannot be used with Value::get(), since a GValue
+ * will actually contain a GstEvent (the subclasses do not exist in C) and Value::get()
  * is not able to do dynamic casts. As a result of that, Event subclasses also \em cannot be
  * used as arguments in slots connected to GObject signals, even though you may know that your
  * slot will only be called with that type of event.

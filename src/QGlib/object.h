@@ -38,7 +38,7 @@ public:
 
     Value property(const char *name) const;
     template <class T> void setProperty(const char *name, const T & value);
-    void setPropertyValue(const char *name, const ValueBase & value);
+    void setPropertyValue(const char *name, const Value & value);
 
 protected:
     virtual void ref(bool increaseRef);

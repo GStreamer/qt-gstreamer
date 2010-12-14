@@ -31,16 +31,16 @@
 namespace QGlib {
 
 /*! This structure holds the set and get methods that are used internally
- * by ValueBase to handle data of a specific type. If you want to provide
+ * by Value to handle data of a specific type. If you want to provide
  * support for a custom type, you need to write two such methods, create
  * a new ValueVTable instance that holds pointers to them and register it
- * using ValueBase::registerValueVTable().
+ * using Value::registerValueVTable().
  * \sa \ref value_design
  */
 struct ValueVTable
 {
-    typedef void (*SetFunction)(ValueBase & value, const void *data);
-    typedef void (*GetFunction)(const ValueBase & value, void *data);
+    typedef void (*SetFunction)(Value & value, const void *data);
+    typedef void (*GetFunction)(const Value & value, void *data);
 
     inline ValueVTable() : set(NULL), get(NULL) {}
     inline ValueVTable(SetFunction s, GetFunction g) : set(s), get(g) {}
@@ -51,12 +51,40 @@ struct ValueVTable
 
 
 /*! \headerfile value.h <QGlib/Value>
- * \brief Common base class for Value and SharedValue, wrappers for GValue
+ * \brief Wrapper class for GValue
+ *
+ * This class serves as a wrapper for GValue. GValue is a data type that can hold different
+ * types of values inside, like a QVariant.
+ * To set a value, you must first initialize this Value using one of the init() methods
+ * (preferably the template one) in order to tell it what kind of value it is going to hold.
+ * Once initialized to hold a specific type, you can use the set() and get() methods to set and
+ * get values of this type only. Attempting to use another type will assert. To change the type
+ * that this value holds, you can call the init() method again at any time. In this case, though,
+ * any held value will be lost.
  */
-class ValueBase
+class Value
 {
 public:
-    /*! \returns whether this ValueBase instance wraps a valid GValue instance or not */
+    Value();
+
+    explicit Value(const GValue *gvalue);
+
+    template <typename T>
+    inline Value(const T & data);
+
+    Value(const Value & other);
+    Value(const SharedValue & other);
+
+    virtual ~Value();
+
+    Value & operator=(const Value & other);
+
+    void init(Type type);
+
+    template <typename T>
+    inline void init();
+
+    /*! \returns whether this Value instance wraps a valid GValue instance or not */
     bool isValid() const;
 
     /*! Clears the current value in this GValue instance and resets it to the
@@ -136,47 +164,7 @@ protected:
      */
     void setData(Type dataType, const void *data);
 
-
-    ValueBase(GValue *val);
-    virtual ~ValueBase();
-    Q_DISABLE_COPY(ValueBase)
-
     GValue *m_value;
-};
-
-/*! \headerfile value.h <QGlib/Value>
- * \brief Wrapper class for GValue
- *
- * This class serves as a wrapper for GValue. GValue is a data type that can hold different
- * types of values inside, like a QVariant.
- * To set a value, you must first initialize this Value using one of the init() methods
- * (preferably the template one) in order to tell it what kind of value it is going to hold.
- * Once initialized to hold a specific type, you can use the set() and get() methods to set and
- * get values of this type only. Attempting to use another type will assert. To change the type
- * that this value holds, you can call the init() method again at any time. In this case, though,
- * any held value will be lost.
- * \note Unlike SharedValue, this class always keeps a private GValue internally which is
- * allocated in the constructors and freed from the destructor.
- * \sa SharedValue
- */
-class Value : public ValueBase
-{
-public:
-    Value();
-    explicit Value(const GValue *gvalue);
-    template <typename T>
-    inline Value(const T & data);
-    Value(const SharedValue & other);
-    Value(const Value & other);
-    virtual ~Value();
-
-    Value & operator=(const SharedValue & other);
-    Value & operator=(const Value & other);
-
-    void init(Type type);
-
-    template <typename T>
-    inline void init();
 };
 
 /*! \headerfile value.h <QGlib/Value>
@@ -190,58 +178,37 @@ public:
  * GValue instance for itself.
  * \sa Value
  */
-class SharedValue : public ValueBase
+class SharedValue : public Value
 {
 public:
     explicit SharedValue(GValue *gvalue);
-    SharedValue(const SharedValue & other);
     virtual ~SharedValue();
-    SharedValue & operator=(const SharedValue & other);
+
+private:
+    Q_DISABLE_COPY(SharedValue);
 };
 
 
-/*! This struct provides the implementation for the ValueBase::get() and ValueBase::set() methods.
+/*! This struct provides the implementation for the Value::get() and Value::set() methods.
  * If you want to provide support for a custom type, you may want to provide a template
  * specialization of this class to handle your type in a different way than the default
  * implementation. You should normally not need to be concerned at all with this.
- * \note this struct is declared as friend in ValueBase and as a result it has access to
- * ValueBase::setData() and ValueBase::getData()
+ * \note this struct is declared as friend in Value and as a result it has access to
+ * Value::setData() and Value::getData()
  * \sa \ref value_design
  */
 template <typename T>
 struct ValueImpl
 {
-    static inline T get(const ValueBase & value);
-    static inline void set(ValueBase & value, const T & data);
+    static inline T get(const Value & value);
+    static inline void set(Value & value, const T & data);
 };
 
 // -- template implementations --
 
 template <typename T>
-T ValueBase::get() const
-{
-    try {
-        return ValueImpl<T>::get(*this);
-    } catch (const std::exception & e) {
-        qWarning() << "QGlib::ValueBase::get:" << e.what();
-        return T();
-    }
-}
-
-template <typename T>
-void ValueBase::set(const T & data)
-{
-    try {
-        ValueImpl<T>::set(*this, data);
-    } catch (const std::exception & e) {
-        qWarning() << "QGlib::ValueBase::set:" << e.what();
-    }
-}
-
-
-template <typename T>
 inline Value::Value(const T & data)
-    : ValueBase(NULL)
+    : m_value(NULL)
 {
     init<T>();
     set(data);
@@ -253,10 +220,31 @@ inline void Value::init()
     init(GetType<T>());
 }
 
+template <typename T>
+T Value::get() const
+{
+    try {
+        return ValueImpl<T>::get(*this);
+    } catch (const std::exception & e) {
+        qWarning() << "QGlib::Value::get:" << e.what();
+        return T();
+    }
+}
+
+template <typename T>
+void Value::set(const T & data)
+{
+    try {
+        ValueImpl<T>::set(*this, data);
+    } catch (const std::exception & e) {
+        qWarning() << "QGlib::Value::set:" << e.what();
+    }
+}
+
 // -- default ValueImpl implementation --
 
 template <typename T>
-inline T ValueImpl<T>::get(const ValueBase & value)
+inline T ValueImpl<T>::get(const Value & value)
 {
     //Use int for enums, T for everything else
     typename boost::mpl::if_<
@@ -269,7 +257,7 @@ inline T ValueImpl<T>::get(const ValueBase & value)
 }
 
 template <typename T>
-inline void ValueImpl<T>::set(ValueBase & value, const T & data)
+inline void ValueImpl<T>::set(Value & value, const T & data)
 {
     //Use const int for enums, const T for everything else
     typename boost::mpl::if_<
@@ -285,14 +273,14 @@ inline void ValueImpl<T>::set(ValueBase & value, const T & data)
 template <class T>
 struct ValueImpl< QFlags<T> >
 {
-    static inline QFlags<T> get(const ValueBase & value)
+    static inline QFlags<T> get(const Value & value)
     {
         uint flags;
         value.getData(GetType< QFlags<T> >(), &flags);
         return QFlags<T>(QFlag(flags));
     }
 
-    static inline void set(ValueBase & value, const QFlags<T> & data)
+    static inline void set(Value & value, const QFlags<T> & data)
     {
         uint flags = data;
         value.setData(GetType< QFlags<T> >(), &flags);
@@ -304,14 +292,14 @@ struct ValueImpl< QFlags<T> >
 template <class T>
 struct ValueImpl< RefPointer<T> >
 {
-    static inline RefPointer<T> get(const ValueBase & value)
+    static inline RefPointer<T> get(const Value & value)
     {
         typename T::CType *gobj;
         value.getData(GetType<T>(), &gobj);
         return RefPointer<T>::wrap(gobj);
     }
 
-    static inline void set(ValueBase & value, const RefPointer<T> & data)
+    static inline void set(Value & value, const RefPointer<T> & data)
     {
         typename T::CType *gobj = static_cast<typename T::CType*>(data);
         value.setData(GetType<T>(), &gobj);
@@ -325,7 +313,7 @@ struct ValueImpl<char[N]>
 {
     //No get method, obviously.
 
-    static inline void set(ValueBase & value, const char (&data)[N])
+    static inline void set(Value & value, const char (&data)[N])
     {
         QByteArray str = QByteArray::fromRawData(data, N);
         value.setData(Type::String, &str);
@@ -339,7 +327,7 @@ struct ValueImpl<const char*>
 {
     //No get method, obviously.
 
-    static inline void set(ValueBase & value, const char *data)
+    static inline void set(Value & value, const char *data)
     {
         QByteArray str = QByteArray::fromRawData(data, qstrlen(data));
         value.setData(Type::String, &str);
@@ -351,14 +339,14 @@ struct ValueImpl<const char*>
 template <>
 struct ValueImpl<QString>
 {
-    static inline QString get(const ValueBase & value)
+    static inline QString get(const Value & value)
     {
         QByteArray str;
         value.getData(Type::String, &str);
         return QString::fromUtf8(str);
     }
 
-    static inline void set(ValueBase & value, const QString & data)
+    static inline void set(Value & value, const QString & data)
     {
         QByteArray str = data.toUtf8();
         value.setData(Type::String, &str);
@@ -405,12 +393,11 @@ public:
 
 // -- QDebug operator --
 
-/*! \relates QGlib::ValueBase */
-QDebug & operator<<(QDebug debug, const ValueBase & value);
+/*! \relates QGlib::Value */
+QDebug & operator<<(QDebug debug, const Value & value);
 
 } //namespace QGlib
 
-QGLIB_REGISTER_TYPE(QGlib::ValueBase) //codegen: GType=G_TYPE_VALUE
 QGLIB_REGISTER_TYPE(QGlib::Value)
 QGLIB_REGISTER_TYPE(QGlib::SharedValue) //codegen: GType=G_TYPE_VALUE
 

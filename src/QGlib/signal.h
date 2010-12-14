@@ -133,17 +133,17 @@ public:
 
     /*! Emits a signal on a specified \a instance with the specified arguments.
      *
-     * This method will convert all the specified arguments to GValues using ValueBase::set()
+     * This method will convert all the specified arguments to GValues using Value::set()
      * and will then call the non-templated emit() method, which is a wrapper for g_signal_emitv().
      * The returned value from the signal (if the signal returns a value) will be converted
-     * from GValue to the type R using ValueBase::get() and will be returned. If some argument
+     * from GValue to the type R using Value::get() and will be returned. If some argument
      * is not of the type that the signal expects, a warning will be printed to stderr at runtime
      * and the signal will not be emitted. If the return value is not of the type that the signal
      * returns, the signal will be emitted, but a default-constructed value for the type R will
      * be returned and a warning will be printed to stderr.
      *
-     * Note that since the implementation uses ValueBase::set() to convert the GValues into the
-     * specified types, the same rules that apply to ValueBase::set() apply here (i.e. you should
+     * Note that since the implementation uses Value::set() to convert the GValues into the
+     * specified types, the same rules that apply to Value::set() apply here (i.e. you should
      * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
      * of GstObject*, etc...).
      *
@@ -176,8 +176,8 @@ public:
      * will be printed to stderr at runtime and the \a slot will not be invoked. You are
      * responsible for defining the \a slot with the correct arguments!
      *
-     * Note that since the implementation uses ValueBase::get() to convert the GValues into the
-     * specified types, the same rules that apply to ValueBase::get() apply here (i.e. you should
+     * Note that since the implementation uses Value::get() to convert the GValues into the
+     * specified types, the same rules that apply to Value::get() apply here (i.e. you should
      * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
      * of GstObject*, etc...).
      *

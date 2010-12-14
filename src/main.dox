@@ -41,13 +41,13 @@
  * determine if it can be directly assigned to the GValue or if it needs conversion.
  * If it can be directly assigned, a dispatcher that holds set/get methods for the various
  * GTypes is used to get the appropriate set/get method that knows how to convert void* back
- * to the original type and handle it. A method (ValueBase::registerValueVTable()) is
+ * to the original type and handle it. A method (Value::registerValueVTable()) is
  * provided to register additional such methods from client code, if necessary.
  * If a conversion is required, it is handled by g_value_transform. This of course means
  * that an intermediate GValue that holds the given GType is created and transformed
  * accordingly.
  *
- * Between ValueBase::set/get and ValueBase::setData/getData, there is an intermediate layer,
+ * Between Value::set/get and Value::setData/getData, there is an intermediate layer,
  * struct ValueImpl<T>. This struct provides the actual implementation of set() and get().
  * This is provided as an external template, so that it is possible to specialize it for
  * specific C++ types that need special handling. Examples include RefPointer<T>, QFlags<T>,
