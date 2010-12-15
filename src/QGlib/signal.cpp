@@ -204,11 +204,11 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
         g_signal_emitv(values, signal.id(), detail, &returnValue);
 
         if (G_IS_VALUE(&returnValue)) {
-            result = Value(static_cast<const GValue*>(&returnValue));
+            result = Value(&returnValue);
             g_value_unset(&returnValue);
         }
     } catch (const QString & msg) {
-        QString instanceName = Value(static_cast<const GValue*>(&values[0])).get<QString>();
+        QString instanceName = Value(&values[0]).toString();
 
         qCritical() << "Error during emission of signal" << detailedSignal
                     << "on object"<< instanceName << ":" << msg;
@@ -259,7 +259,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
     }
 
     try {
-        Value result(static_cast<const GValue*>(returnValue));
+        Value result(returnValue);
         cdata->marshaller(result, params);
 
         if (returnValue) {
