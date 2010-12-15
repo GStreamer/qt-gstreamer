@@ -56,14 +56,14 @@ void ValueTest::stringTest()
     v.init<QString>();
     v.set(QString::fromUtf8("Γειά σου κόσμε"));
     QCOMPARE(v.type(), QGlib::GetType<QString>());
-    QByteArray b = v.get<QByteArray>();
+    QByteArray b = v.toByteArray();
     QCOMPARE(QString::fromUtf8(b), QString::fromUtf8("Γειά σου κόσμε"));
     QCOMPARE(v.get<QString>(), QString::fromUtf8("Γειά σου κόσμε"));
 }
 
 void ValueTest::stringLiteralTest()
 {
-    QGlib::Value v("Hello world");
+    QGlib::Value v = QGlib::Value::create("Hello world");
     QCOMPARE(v.type(), QGlib::GetType<QString>());
     QCOMPARE(v.get<QString>(), QString("Hello world"));
 }
@@ -71,7 +71,7 @@ void ValueTest::stringLiteralTest()
 void ValueTest::constCharTest()
 {
     const char *foo = "Hello world";
-    QGlib::Value v(foo);
+    QGlib::Value v = QGlib::Value::create(foo);
     QCOMPARE(v.type(), QGlib::GetType<QString>());
     QCOMPARE(v.get<QString>(), QString("Hello world"));
 }
@@ -88,7 +88,7 @@ void ValueTest::enumTest()
 
 void ValueTest::flagsTest()
 {
-    QGlib::Value v(QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
+    QGlib::Value v = QGlib::Value::create(QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
     QCOMPARE(v.type(), QGlib::GetType<QGst::PadFlags>());
     QCOMPARE(v.get<QGst::PadFlags>(), QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
 }
@@ -96,7 +96,7 @@ void ValueTest::flagsTest()
 void ValueTest::objectTest()
 {
     QGst::BinPtr bin = QGst::Bin::create();
-    QGlib::Value v(bin);
+    QGlib::Value v = QGlib::Value::create(bin);
     QCOMPARE(v.type(), QGlib::GetType<QGst::Bin>());
     QCOMPARE(static_cast<GstBin*>(v.get<QGst::BinPtr>()), static_cast<GstBin*>(bin));
 }
@@ -115,7 +115,7 @@ void ValueTest::miniObjectTest()
 void ValueTest::capsTest()
 {
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-rgb");
-    QGlib::Value v(caps);
+    QGlib::Value v = QGlib::Value::create(caps);
     QCOMPARE(v.type(), QGlib::GetType<QGst::Caps>());
     QCOMPARE(static_cast<GstCaps*>(v.get<QGst::CapsPtr>()), static_cast<GstCaps*>(caps));
     QCOMPARE(v.get<QGst::CapsPtr>()->toString(), QString("video/x-raw-rgb"));
@@ -143,13 +143,13 @@ void ValueTest::conversionsTest()
     v.init<uint>();
 
     v.set(100); //setting int here, not uint
-    QCOMPARE(v.get<int>(), 100);
-    QCOMPARE(v.get<uint>(), 100U);
-    QCOMPARE(v.get<long>(), 100L);
-    QCOMPARE(v.get<ulong>(), 100UL);
-    QCOMPARE(v.get<qint64>(), Q_INT64_C(100));
-    QCOMPARE(v.get<quint64>(), Q_UINT64_C(100));
-    QCOMPARE(v.get<QString>(), QString("100"));
+    QCOMPARE(v.toInt(), 100);
+    QCOMPARE(v.toUInt(), 100U);
+    QCOMPARE(v.toLong(), 100L);
+    QCOMPARE(v.toULong(), 100UL);
+    QCOMPARE(v.toInt64(), Q_INT64_C(100));
+    QCOMPARE(v.toUInt64(), Q_UINT64_C(100));
+    QCOMPARE(v.toString(), QString("100"));
 
     v.set(-1);
     QCOMPARE(v.get<int>(), -1);
@@ -183,9 +183,9 @@ void ValueTest::castTest()
 
 void ValueTest::qdebugTest()
 {
-    qDebug() << QGlib::Value(10);
-    qDebug() << QGlib::Value(QByteArray("Hello world"));
-    qDebug() << QGlib::Value(QGlib::ObjectPtr());
+    qDebug() << QGlib::Value::create(10);
+    qDebug() << QGlib::Value::create(QByteArray("Hello world"));
+    qDebug() << QGlib::Value::create(QGlib::ObjectPtr());
 }
 
 

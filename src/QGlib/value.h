@@ -68,15 +68,30 @@ public:
     Value();
 
     explicit Value(const GValue *gvalue);
+    explicit Value(Type type);
 
-    template <typename T>
-    inline Value(const T & data);
+    Value(bool val);
+    Value(char val);
+    Value(uchar val);
+    Value(int val);
+    Value(uint val);
+    Value(long val);
+    Value(ulong val);
+    Value(qint64 val);
+    Value(quint64 val);
+    Value(float val);
+    Value(double val);
+    Value(const char *val);
+    Value(const QByteArray & val);
+    Value(const QString & val);
 
     Value(const Value & other);
+    Value & operator=(const Value & other);
 
     virtual ~Value();
 
-    Value & operator=(const Value & other);
+    template <typename T>
+    static inline Value create(const T & data);
 
     void init(Type type);
 
@@ -88,7 +103,7 @@ public:
 
     /*! Clears the current value in this GValue instance and resets it to the
      * default value (as if the GValue had just been initialized). */
-    void reset();
+    void clear();
 
     /*! Retrieves the value stored in this GValue instance, as the specified type T.
      * The bindings take care of calling the appropriate g_value_get_* method depending
@@ -102,11 +117,16 @@ public:
      * \code
      * GstObject *object = value.get<GstObject*>(); //will cause compilation error
      * \endcode
+     *
      * If the underlying stored value is not of the type T, this method will attempt
      * to convert it to type T. If this is not possible, a default constructed value
      * will be returned.
+     *
+     * If \a ok has been specified, it is set to true if the value was retrieved
+     * successfully or false if there was an error (probably conversion error) and
+     * a default constructed value has been returned.
      */
-    template <typename T> T get() const;
+    template <typename T> T get(bool *ok = NULL) const;
 
     /*! Sets this GValue instance to hold the specified \a data.
      * As with get(), the bindings take care of calling the appropriate g_value_set_*
@@ -119,6 +139,18 @@ public:
      * \sa get()
      */
     template <typename T> void set(const T & data);
+
+    inline bool toBool(bool *ok = NULL) const { return get<bool>(ok); }
+    inline char toChar(bool *ok = NULL) const { return get<char>(ok); }
+    inline uchar toUChar(bool *ok = NULL) const { return get<uchar>(ok); }
+    inline int toInt(bool *ok = NULL) const { return get<int>(ok); }
+    inline uint toUInt(bool *ok = NULL) const { return get<uint>(ok); }
+    inline long toLong(bool *ok = NULL) const { return get<long>(ok); }
+    inline ulong toULong(bool *ok = NULL) const { return get<ulong>(ok); }
+    inline qint64 toInt64(bool *ok = NULL) const { return get<qint64>(ok); }
+    inline quint64 toUInt64(bool *ok = NULL) const { return get<quint64>(ok); }
+    inline QByteArray toByteArray(bool *ok = NULL) const { return get<QByteArray>(ok); }
+    inline QString toString(bool *ok = NULL) const { return get<QString>(ok); }
 
     /*! \returns the type that this GValue instance has been initialized to hold */
     Type type() const;
@@ -184,12 +216,14 @@ struct ValueImpl
 
 // -- template implementations --
 
+//static
 template <typename T>
-inline Value::Value(const T & data)
-    : m_value(NULL)
+inline Value Value::create(const T & data)
 {
-    init<T>();
-    set(data);
+    Value v;
+    v.init<T>();
+    v.set(data);
+    return v;
 }
 
 template <typename T>
@@ -199,11 +233,18 @@ inline void Value::init()
 }
 
 template <typename T>
-T Value::get() const
+T Value::get(bool *ok) const
 {
+    if (ok) {
+        *ok = true;
+    }
+
     try {
         return ValueImpl<T>::get(*this);
     } catch (const std::exception & e) {
+        if (ok) {
+            *ok = false;
+        }
         qWarning() << "QGlib::Value::get:" << e.what();
         return T();
     }

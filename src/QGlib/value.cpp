@@ -18,6 +18,7 @@
 */
 #include "value.h"
 #include "string.h"
+#include <boost/type_traits.hpp>
 #include <glib-object.h>
 #include <QtCore/QDebug>
 #include <QtCore/QReadWriteLock>
@@ -121,18 +122,45 @@ Value::Value(const GValue *gvalue)
     }
 }
 
+Value::Value(Type type)
+    : m_value(NULL)
+{
+    init(type);
+}
+
+#define VALUE_CONSTRUCTOR(T) \
+    Value::Value(T val) \
+        : m_value(NULL) \
+    { \
+        init< \
+            boost::remove_const< \
+                boost::remove_reference<T>::type \
+            >::type \
+        >(); \
+        set(val); \
+    }
+
+VALUE_CONSTRUCTOR(bool)
+VALUE_CONSTRUCTOR(char)
+VALUE_CONSTRUCTOR(uchar)
+VALUE_CONSTRUCTOR(int)
+VALUE_CONSTRUCTOR(uint)
+VALUE_CONSTRUCTOR(long)
+VALUE_CONSTRUCTOR(ulong)
+VALUE_CONSTRUCTOR(qint64)
+VALUE_CONSTRUCTOR(quint64)
+VALUE_CONSTRUCTOR(float)
+VALUE_CONSTRUCTOR(double)
+VALUE_CONSTRUCTOR(const char *)
+VALUE_CONSTRUCTOR(const QByteArray &)
+VALUE_CONSTRUCTOR(const QString &)
+
+#undef VALUE_CONSTRUCTOR
+
 Value::Value(const Value & other)
     : m_value(NULL)
 {
     operator=(other);
-}
-
-Value::~Value()
-{
-    if (m_value) {
-        g_value_unset(m_value);
-        g_slice_free(GValue, m_value);
-    }
 }
 
 Value & Value::operator=(const Value & other)
@@ -146,6 +174,14 @@ Value & Value::operator=(const Value & other)
         m_value = NULL;
     }
     return *this;
+}
+
+Value::~Value()
+{
+    if (m_value) {
+        g_value_unset(m_value);
+        g_slice_free(GValue, m_value);
+    }
 }
 
 void Value::init(Type type)
@@ -163,7 +199,7 @@ bool Value::isValid() const
     return m_value != NULL;
 }
 
-void Value::reset()
+void Value::clear()
 {
     if (m_value) {
         g_value_reset(m_value);

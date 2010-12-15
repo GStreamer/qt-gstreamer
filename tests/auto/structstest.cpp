@@ -48,7 +48,7 @@ void StructsTest::fourccTest()
     QCOMPARE(f.value.as_bytes.fourth, 'G');
     QCOMPARE(f.value.as_integer, GST_STR_FOURCC("MJPG"));
 
-    QGlib::Value v(f);
+    QGlib::Value v = QGlib::Value::create(f);
     f = v.get<QGst::Fourcc>();
     QCOMPARE(f.value.as_bytes.first, 'M');
     QCOMPARE(f.value.as_bytes.second, 'J');
@@ -63,7 +63,7 @@ void StructsTest::fractionTest()
     QCOMPARE(f.numerator, 25);
     QCOMPARE(f.denominator, 1);
 
-    QGlib::Value v(f);
+    QGlib::Value v = QGlib::Value::create(f);
     f = v.get<QGst::Fraction>();
     QCOMPARE(f.numerator, 25);
     QCOMPARE(f.denominator, 1);
@@ -75,7 +75,7 @@ void StructsTest::doubleRangeTest()
     QCOMPARE(r.start, 1.0);
     QCOMPARE(r.end, 2.0);
 
-    QGlib::Value v(r);
+    QGlib::Value v = QGlib::Value::create(r);
     r = v.get<QGst::DoubleRange>();
     QCOMPARE(r.start, 1.0);
     QCOMPARE(r.end, 2.0);
@@ -87,7 +87,7 @@ void StructsTest::fractionRangeTest()
     QCOMPARE(r.start.numerator, 1);
     QCOMPARE(r.end.numerator, 25);
 
-    QGlib::Value v(r);
+    QGlib::Value v = QGlib::Value::create(r);
     r = v.get<QGst::FractionRange>();
     QCOMPARE(r.start.numerator, 1);
     QCOMPARE(r.end.numerator, 25);
