@@ -18,6 +18,7 @@
 */
 #include "value.h"
 #include "string.h"
+#include <cstring>
 #include <boost/type_traits.hpp>
 #include <glib-object.h>
 #include <QtCore/QDebug>
@@ -107,30 +108,70 @@ void Dispatcher::setVTable(Type t, const ValueVTable & vtable)
 
 Q_GLOBAL_STATIC(Private::Dispatcher, s_dispatcher);
 
+// -- Value::Data --
+
+struct Value::Data : public QSharedData
+{
+    Data();
+    Data(const Data & other);
+    ~Data();
+
+    inline Type type() const { return G_VALUE_TYPE(&m_value); }
+    inline GValue *value() { return &m_value; }
+    inline const GValue *value() const { return &m_value; }
+
+    GValue m_value;
+};
+
+Value::Data::Data()
+    : QSharedData()
+{
+    std::memset(&m_value, 0, sizeof(GValue));
+}
+
+Value::Data::Data(const Value::Data & other)
+    : QSharedData(other)
+{
+    std::memset(&m_value, 0, sizeof(GValue));
+
+    if (other.type() != Type::Invalid) {
+        g_value_init(value(), other.type());
+        g_value_copy(other.value(), value());
+    }
+}
+
+Value::Data::~Data()
+{
+    if (type() != Type::Invalid) {
+        g_value_unset(value());
+    }
+}
+
+// -- Value --
 
 Value::Value()
-    : m_value(NULL)
+    : d(new Data)
 {
 }
 
 Value::Value(const GValue *gvalue)
-    : m_value(NULL)
+    : d(new Data)
 {
-    if (gvalue) {
+    if (gvalue && G_IS_VALUE(gvalue)) {
         init(G_VALUE_TYPE(gvalue));
-        g_value_copy(gvalue, m_value);
+        g_value_copy(gvalue, d->value());
     }
 }
 
 Value::Value(Type type)
-    : m_value(NULL)
+    : d(new Data)
 {
     init(type);
 }
 
 #define VALUE_CONSTRUCTOR(T) \
     Value::Value(T val) \
-        : m_value(NULL) \
+        : d(new Data) \
     { \
         init< \
             boost::remove_const< \
@@ -158,72 +199,68 @@ VALUE_CONSTRUCTOR(const QString &)
 #undef VALUE_CONSTRUCTOR
 
 Value::Value(const Value & other)
-    : m_value(NULL)
+    : d(other.d)
 {
-    operator=(other);
 }
 
 Value & Value::operator=(const Value & other)
 {
-    if (other.isValid()) {
-        init(other.type());
-        g_value_copy(other, m_value);
-    } else if (m_value) {
-        g_value_unset(m_value);
-        g_slice_free(GValue, m_value);
-        m_value = NULL;
-    }
+    d = other.d;
     return *this;
 }
 
 Value::~Value()
 {
-    if (m_value) {
-        g_value_unset(m_value);
-        g_slice_free(GValue, m_value);
-    }
 }
 
 void Value::init(Type type)
 {
-    if (m_value) {
-        g_value_unset(m_value);
-    } else {
-        m_value = g_slice_new0(GValue);
+    if (isValid()) {
+        g_value_unset(d->value());
     }
-    g_value_init(m_value, type);
+    g_value_init(d->value(), type);
 }
 
 bool Value::isValid() const
 {
-    return m_value != NULL;
+    return d->type() != Type::Invalid;
 }
 
 void Value::clear()
 {
-    if (m_value) {
-        g_value_reset(m_value);
+    if (isValid()) {
+        g_value_reset(d->value());
     }
 }
 
 Type Value::type() const
 {
-    Q_ASSERT(isValid());
-    return G_VALUE_TYPE(m_value);
+    return d->type();
 }
 
 bool Value::canTransformTo(Type t) const
 {
-    return m_value ? g_value_type_transformable(type(), t) : false;
+    return isValid() ? g_value_type_transformable(type(), t) : false;
 }
 
 Value Value::transformTo(Type t) const
 {
-    Q_ASSERT(isValid());
     Value dest;
     dest.init(t);
-    g_value_transform(m_value, dest.m_value);
+    if (isValid()) {
+        g_value_transform(d->value(), dest.d->value());
+    }
     return dest;
+}
+
+Value::operator GValue* ()
+{
+    return d->value();
+}
+
+Value::operator const GValue * () const
+{
+    return d->value();
 }
 
 //static
@@ -247,7 +284,7 @@ void Value::getData(Type dataType, void *data) const
         Value v;
         v.init(dataType);
 
-        if (!g_value_transform(m_value, v.m_value)) {
+        if (!g_value_transform(d->value(), v.d->value())) {
             throw Private::TransformationFailedException(type().name().toStdString(),
                                                          dataType.name().toStdString());
         }
@@ -275,7 +312,7 @@ void Value::setData(Type dataType, const void *data)
         v.init(dataType);
         v.setData(dataType, data);
 
-        if (!g_value_transform(v.m_value, m_value)) {
+        if (!g_value_transform(v.d->value(), d->value())) {
             throw Private::TransformationFailedException(dataType.name().toStdString(),
                                                          type().name().toStdString());
         }

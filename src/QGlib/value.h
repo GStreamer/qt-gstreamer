@@ -27,6 +27,7 @@
 #include <stdexcept>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
+#include <QtCore/QSharedData>
 
 namespace QGlib {
 
@@ -162,8 +163,8 @@ public:
      * Possible transformations are, for example, int to float, int to string, etc... */
     Value transformTo(Type type) const;
 
-    inline operator GValue*() { return m_value; }
-    inline operator const GValue*() const { return m_value; }
+    operator GValue*();
+    operator const GValue*() const;
 
     /*! Registers the given ValueVTable \a vtable for the given \a type.
      * This is provided to let you add support for a custom type, if necessary.
@@ -195,7 +196,8 @@ private:
      */
     void setData(Type dataType, const void *data);
 
-    GValue *m_value;
+    struct Data;
+    QSharedDataPointer<Data> d;
 };
 
 
