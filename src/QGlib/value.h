@@ -247,7 +247,6 @@ T Value::get(bool *ok) const
         if (ok) {
             *ok = false;
         }
-        qWarning() << "QGlib::Value::get:" << e.what();
         return T();
     }
 }
