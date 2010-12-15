@@ -330,16 +330,15 @@ QDebug & operator<<(QDebug debug, const Value & value)
         debug << "(<invalid>)";
         return debug.space();
     } else {
-        QString str;
-        if (value.type().fundamental() == QGlib::Type::String) {
-            str = value.get<QString>();
-        } else if (value.canTransformTo(QGlib::Type::String)) {
-            str = value.transformTo(QGlib::Type::String).get<QString>();
-        } else if (g_value_fits_pointer(value)) {
-            quintptr ptr = reinterpret_cast<quintptr>(g_value_peek_pointer(value));
-            str = QString(QLatin1String("0x%1")).arg(ptr, sizeof(quintptr)*2, 16, QLatin1Char('0'));
-        } else {
-            str = QLatin1String("<unknown value>");
+        QString str = value.toString();
+        if (str.isEmpty()) {
+            if (g_value_fits_pointer(value)) {
+                quintptr ptr = reinterpret_cast<quintptr>(g_value_peek_pointer(value));
+                str = QString(QLatin1String("0x%1")).arg(ptr, sizeof(quintptr)*2,
+                                                         16, QLatin1Char('0'));
+            } else {
+                str = QLatin1String("<unknown value>");
+            }
         }
 
         debug << "(" << value.type().name() << ", " << str << ")";
