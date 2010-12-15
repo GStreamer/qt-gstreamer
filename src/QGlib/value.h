@@ -56,60 +56,107 @@ struct ValueVTable
  *
  * This class serves as a wrapper for GValue. GValue is a data type that can hold different
  * types of values inside, like a QVariant.
- * To set a value, you must first initialize this Value using one of the init() methods
- * (preferably the template one) in order to tell it what kind of value it is going to hold.
- * Once initialized to hold a specific type, you can use the set() and get() methods to set and
- * get values of this type only. Attempting to use another type will assert. To change the type
- * that this value holds, you can call the init() method again at any time. In this case, though,
- * any held value will be lost.
+ *
+ * A Value object holds a single value of a single type() at a time. To create a new Value,
+ * use the static create() method or one of the constructors. To get the held value, use
+ * the template get() method or one of the toT() functions (ex. toInt()).
+ *
+ * To set a value to an invalid Value (on which isValid() returns false), you must first
+ * initialize this Value using one of the init() methods (preferably the template one) in order
+ * to tell it what kind of value it is going to hold. Once initialized to hold a specific type,
+ * you can use the set() method to set a value. To change the type that this value holds, you
+ * can call the init() method again at any time. In this case, though, any previously held value
+ * will be lost.
+ *
+ * \note This class is implicitly shared.
  */
 class Value
 {
 public:
+    /*! Creates a new invalid Value \sa isValid() */
     Value();
 
+    /*! Creates a new Value that holds a copy of the given \a gvalue */
     explicit Value(const GValue *gvalue);
+
+    /*! Creates a new Value and initializes it to hold values of the given \a type.
+     * This is equivalent to:
+     * \code
+     * Value v;
+     * v.init(type);
+     * \endcode
+     */
     explicit Value(Type type);
 
-    Value(bool val);
-    Value(char val);
-    Value(uchar val);
-    Value(int val);
-    Value(uint val);
-    Value(long val);
-    Value(ulong val);
-    Value(qint64 val);
-    Value(quint64 val);
-    Value(float val);
-    Value(double val);
-    Value(const char *val);
-    Value(const QByteArray & val);
-    Value(const QString & val);
+    Value(bool val); ///< Creates a new Value of Type::Bool and sets it to hold \a val
+    Value(char val); ///< Creates a new Value of Type::Char and sets it to hold \a val
+    Value(uchar val); ///< Creates a new Value of Type::Uchar and sets it to hold \a val
+    Value(int val); ///< Creates a new Value of Type::Int and sets it to hold \a val
+    Value(uint val); ///< Creates a new Value of Type::Uint and sets it to hold \a val
+    Value(long val); ///< Creates a new Value of Type::Long and sets it to hold \a val
+    Value(ulong val); ///< Creates a new Value of Type::Ulong and sets it to hold \a val
+    Value(qint64 val); ///< Creates a new Value of Type::Int64 and sets it to hold \a val
+    Value(quint64 val); ///< Creates a new Value of Type::Uint64 and sets it to hold \a val
+    Value(float val); ///< Creates a new Value of Type::Float and sets it to hold \a val
+    Value(double val); ///< Creates a new Value of Type::Double and sets it to hold \a val
+    Value(const char *val); ///< Creates a new Value of Type::String and sets it to hold \a val
+    Value(const QByteArray & val); ///< Creates a new Value of Type::String and sets it to hold \a val
+    Value(const QString & val); ///< Creates a new Value of Type::String and sets it to hold \a val
 
     Value(const Value & other);
     Value & operator=(const Value & other);
 
     virtual ~Value();
 
+
+    /*! Creates a new Value that is intialized to hold data
+     * of type T and sets it to hold \a data.
+     * \note T must be a type registered with the QtGLib type system. Attempting
+     * to use a type that is not properly registered will fail to compile.
+     */
     template <typename T>
     static inline Value create(const T & data);
 
+
+    /*! Initializes or re-initializes this Value to hold data of the given \a type.
+     * If this Value was previously holding any data, this data will be freed.
+     */
     void init(Type type);
 
+    /*! Initializes or re-initializes this Value to hold data of type T.
+     * If this Value was previously holding any data, this data will be freed.
+     * \note T must be a type registered with the QtGLib type system. Attempting
+     * to use a type that is not properly registered will fail to compile.
+     */
     template <typename T>
     inline void init();
 
-    /*! \returns whether this Value instance wraps a valid GValue instance or not */
+
+    /*! \returns whether this Value instance is initialized to hold a certain type
+     * \sa init() */
     bool isValid() const;
 
-    /*! Clears the current value in this GValue instance and resets it to the
-     * default value (as if the GValue had just been initialized). */
+    /*! \returns the type that this Value instance has been initialized to hold */
+    Type type() const;
+
+    /*! \returns whether it is possible to transform this Value to a Value of another type */
+    bool canTransformTo(Type type) const;
+
+    /*! Transforms the current value into a value of the specified \a type, if possible.
+     * Possible transformations are, for example, int to float, int to string, etc...
+     * The original Value remains unaffected and the transformed Value is returned.
+    */
+    Value transformTo(Type type) const;
+
+    /*! Clears the current value in this Value instance and resets it to the
+     * default value (as if the Value had just been initialized). */
     void clear();
 
-    /*! Retrieves the value stored in this GValue instance, as the specified type T.
+
+    /*! Retrieves the value stored in this Value instance, as the specified type T.
      * The bindings take care of calling the appropriate g_value_get_* method depending
      * on the type T. Note though that this is only meant to be used with the types of
-     * the bindings, not their C types. This means that if for example the GValue has
+     * the bindings, not their C types. This means that if for example the Value has
      * been initialized to hold a GstObject pointer, you can use:
      * \code
      * QGst::ObjectPtr object = value.get<QGst::ObjectPtr>();
@@ -129,42 +176,62 @@ public:
      */
     template <typename T> T get(bool *ok = NULL) const;
 
-    /*! Sets this GValue instance to hold the specified \a data.
+    /*! Sets this Value instance to hold the specified \a data.
      * As with get(), the bindings take care of calling the appropriate g_value_set_*
      * method depending on the type T, but note that this is only meant to be used
      * with the types of the bindings.
      *
-     * If this GValue instance has been initialized to hold a different type of data
+     * If this Value instance has been initialized to hold a different type of data
      * than T, a conversion to the correct type() will be attempted. If the conversion
-     * fails, the GValue will remain unaffected.
+     * fails, the Value will remain unaffected and a warning will be printed.
      * \sa get()
      */
     template <typename T> void set(const T & data);
 
+
+    /*! Returns the held value as a bool. Equivalent to get<bool>(ok); \sa get() */
     inline bool toBool(bool *ok = NULL) const { return get<bool>(ok); }
+
+    /*! Returns the held value as a char. Equivalent to get<char>(ok); \sa get() */
     inline char toChar(bool *ok = NULL) const { return get<char>(ok); }
+
+    /*! Returns the held value as a uchar. Equivalent to get<uchar>(ok); \sa get() */
     inline uchar toUChar(bool *ok = NULL) const { return get<uchar>(ok); }
+
+    /*! Returns the held value as an int. Equivalent to get<int>(ok); \sa get() */
     inline int toInt(bool *ok = NULL) const { return get<int>(ok); }
+
+    /*! Returns the held value as a uint. Equivalent to get<uint>(ok); \sa get() */
     inline uint toUInt(bool *ok = NULL) const { return get<uint>(ok); }
+
+    /*! Returns the held value as a long. Equivalent to get<long>(ok); \sa get() */
     inline long toLong(bool *ok = NULL) const { return get<long>(ok); }
+
+    /*! Returns the held value as a ulong. Equivalent to get<ulong>(ok); \sa get() */
     inline ulong toULong(bool *ok = NULL) const { return get<ulong>(ok); }
+
+    /*! Returns the held value as a qint64. Equivalent to get<qint64>(ok); \sa get() */
     inline qint64 toInt64(bool *ok = NULL) const { return get<qint64>(ok); }
+
+    /*! Returns the held value as a quint64. Equivalent to get<quint64>(ok); \sa get() */
     inline quint64 toUInt64(bool *ok = NULL) const { return get<quint64>(ok); }
+
+    /*! Returns the held value as a QByteAray. Equivalent to get<QByteArray>(ok); \sa get() */
     inline QByteArray toByteArray(bool *ok = NULL) const { return get<QByteArray>(ok); }
+
+    /*! Returns the held value as a QString. Equivalent to get<QString>(ok); \sa get() */
     inline QString toString(bool *ok = NULL) const { return get<QString>(ok); }
 
-    /*! \returns the type that this GValue instance has been initialized to hold */
-    Type type() const;
 
-    /*! \returns whether it is possible to transform this GValue to a GValue of another type. */
-    bool canTransformTo(Type type) const;
-
-    /*! Transforms the current value into a value of the specified \a type, if possible.
-     * Possible transformations are, for example, int to float, int to string, etc... */
-    Value transformTo(Type type) const;
-
+    /*! This is a cast operator that gives access to the underlying GValue instance.
+     * It is provided for convenience, to be able to pass this Value as argument to C
+     * functions that expect a GValue pointer. Use this feature with care. Do not store
+     * the pointer, as it may go away at any time. This Value instance keeps control of
+     * this pointer. If you need to store it, use g_value_copy() to copy it first.
+     */
     operator GValue*();
-    operator const GValue*() const;
+    operator const GValue*() const; ///< \overload
+
 
     /*! Registers the given ValueVTable \a vtable for the given \a type.
      * This is provided to let you add support for a custom type, if necessary.
@@ -178,7 +245,7 @@ private:
     template <typename T>
     friend struct ValueImpl;
 
-    /*! Retrieves the data from this GValue and places it into the memory position
+    /*! Retrieves the data from this Value and places it into the memory position
      * pointed to by \a data. \a dataType indicates the actual data type of \a data
      * and is used, among others, to cast \a data back to the actual C++ type that
      * it points to and assign it.
@@ -187,7 +254,7 @@ private:
      */
     void getData(Type dataType, void *data) const;
 
-    /*! Sets the data of this GValue to be the data pointed to by \a data.
+    /*! Sets the data of this Value to be the data pointed to by \a data.
      * \a dataType indicates the actual data type of \a data and is used,
      * among others, to cast \a data back to the actual C++ type that
      * it points to and retrieve its value.

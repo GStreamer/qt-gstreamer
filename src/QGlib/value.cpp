@@ -226,13 +226,6 @@ bool Value::isValid() const
     return d->type() != Type::Invalid;
 }
 
-void Value::clear()
-{
-    if (isValid()) {
-        g_value_reset(d->value());
-    }
-}
-
 Type Value::type() const
 {
     return d->type();
@@ -251,6 +244,13 @@ Value Value::transformTo(Type t) const
         g_value_transform(d->value(), dest.d->value());
     }
     return dest;
+}
+
+void Value::clear()
+{
+    if (isValid()) {
+        g_value_reset(d->value());
+    }
 }
 
 Value::operator GValue* ()
