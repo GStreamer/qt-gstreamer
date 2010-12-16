@@ -35,6 +35,7 @@ private Q_SLOTS:
     void objectTest();
     void miniObjectTest();
     void capsTest();
+    void valueTest();
     void conversionsTest();
     void copyTest();
     void castTest();
@@ -120,6 +121,27 @@ void ValueTest::capsTest()
     QCOMPARE(static_cast<GstCaps*>(v.get<QGst::CapsPtr>()), static_cast<GstCaps*>(caps));
     QCOMPARE(v.get<QGst::CapsPtr>()->toString(), QString("video/x-raw-rgb"));
     QCOMPARE(v.get<QString>(), QString("video/x-raw-rgb"));
+}
+
+void ValueTest::valueTest()
+{
+    QGlib::Value v;
+    QCOMPARE(v.isValid(), false);
+    QCOMPARE(v.type(), QGlib::Type(QGlib::Type::Invalid));
+
+    v = 2;
+    QCOMPARE(v.isValid(), true);
+    QCOMPARE(v.type(), QGlib::GetType<int>());
+
+    v.set(QGlib::Value::create("foobar"));
+    QCOMPARE(v.isValid(), true);
+    QCOMPARE(v.type(), QGlib::GetType<const char*>());
+    QCOMPARE(v.toByteArray(), QByteArray("foobar"));
+
+    QGlib::Value v2 = v.get<QGlib::Value>();
+    QCOMPARE(v2.isValid(), true);
+    QCOMPARE(v2.type(), QGlib::GetType<const char*>());
+    QCOMPARE(v2.toByteArray(), QByteArray("foobar"));
 }
 
 void ValueTest::conversionsTest()

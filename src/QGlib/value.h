@@ -440,6 +440,22 @@ struct ValueImpl<QString>
     }
 };
 
+// -- ValueImpl specialization for Value --
+
+template <>
+struct ValueImpl<Value>
+{
+    static inline Value get(const Value & value)
+    {
+        return value;
+    }
+
+    static inline void set(Value & value, const Value & data)
+    {
+        value = data;
+    }
+};
+
 // -- Exceptions thrown from getData/setData --
 
 namespace Private {
