@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -113,6 +115,37 @@ Type Type::nextBase(Type rootType) const
 bool Type::isA(Type is_a_type) const
 {
     return g_type_is_a(m_type, is_a_type);
+}
+
+static inline QList<Type> gtypeArrayToList(GType *array, uint n)
+{
+    QList<Type> result;
+    for(uint i = 0; i<n; ++i) {
+        result.append(array[i]);
+    }
+    g_free(array);
+    return result;
+}
+
+QList<Type> Type::children() const
+{
+    uint n;
+    GType *a = g_type_children(m_type, &n);
+    return gtypeArrayToList(a, n);
+}
+
+QList<Type> Type::interfaces() const
+{
+    uint n;
+    GType *a = g_type_interfaces(m_type, &n);
+    return gtypeArrayToList(a, n);
+}
+
+QList<Type> Type::interfacePrerequisites() const
+{
+    uint n;
+    GType *a = g_type_interface_prerequisites(m_type, &n);
+    return gtypeArrayToList(a, n);
 }
 
 void *Type::quarkData(const Quark & qname) const

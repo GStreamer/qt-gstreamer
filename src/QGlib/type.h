@@ -18,6 +18,7 @@
 #define QGLIB_TYPE_H
 
 #include "global.h"
+#include <QtCore/QList>
 
 namespace QGlib {
 
@@ -98,11 +99,11 @@ public:
     uint depth() const;
     Type nextBase(Type rootType) const;
     bool isA(Type is_a_type) const;
-#if 0
+
     QList<Type> children() const;
     QList<Type> interfaces() const;
-    QList<Type> interfacePrequisities() const;
-#endif
+    QList<Type> interfacePrerequisites() const;
+
     void *quarkData(const Quark & qname) const;
     void setQuarkData(const Quark & qname, void *data);
 
