@@ -36,6 +36,7 @@ private Q_SLOTS:
     void miniObjectTest();
     void capsTest();
     void valueTest();
+    void interfaceTest();
     void conversionsTest();
     void copyTest();
     void castTest();
@@ -142,6 +143,20 @@ void ValueTest::valueTest()
     QCOMPARE(v2.isValid(), true);
     QCOMPARE(v2.type(), QGlib::GetType<const char*>());
     QCOMPARE(v2.toByteArray(), QByteArray("foobar"));
+}
+
+void ValueTest::interfaceTest()
+{
+    QGlib::Value v;
+    v.init<QGst::ChildProxy>();
+    QCOMPARE(v.type(), QGlib::GetType<QGst::ChildProxy>());
+
+    QGst::ChildProxyPtr childProxy = QGst::Bin::create();
+    v.set(childProxy);
+
+    QGst::ChildProxyPtr cp2 = v.get<QGst::ChildProxyPtr>();
+    QVERIFY(!cp2.isNull());
+    QCOMPARE(static_cast<GstChildProxy*>(childProxy), static_cast<GstChildProxy*>(cp2));
 }
 
 void ValueTest::conversionsTest()

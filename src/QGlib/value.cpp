@@ -82,6 +82,25 @@ Dispatcher::Dispatcher()
 
 ValueVTable Dispatcher::getVTable(Type t) const
 {
+    //if the type is an interface, try to find its
+    //instantiatable prerequisite and get the vtable
+    //of this instantiatable type instead.
+    if (t.isInterface()) {
+        QList<Type> prerequisites = t.interfacePrerequisites();
+        Q_FOREACH(Type prereq, prerequisites) {
+            if (prereq.isInstantiatable()) {
+                t = prereq;
+            }
+        }
+
+        //Check if the prerequisite was found and
+        //bail out if not, since such interfaces
+        //are not compatible with GValue.
+        if (!t.isInstantiatable()) {
+            return ValueVTable();
+        }
+    }
+
     QReadLocker l(&lock);
 
     if (dispatchTable.contains(t)) {
