@@ -21,6 +21,7 @@
 #include <QtCore/QDir>
 #include <QtGui/QApplication>
 #include <QGlib/Signal>
+#include <QGlib/Error>
 #include <QGst/Global>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
@@ -143,56 +144,54 @@ QGst::State Player::state()
 
 void Player::handleStateChange(QGst::StateChangedMessagePtr scm)
 {
+    QGst::ElementPtr pipeSink;
+
     switch (scm->newState()) {
     case QGst::StatePlaying:
-        Q_EMIT positionChanged(position());
-        m_positionTimer.start(500);
+        if (QGlib::Type::fromInstance(scm->source()).isA(QGlib::GetType<QGst::Pipeline>())) {
+            m_positionTimer.start(500);
+        }
         break;
     case QGst::StatePaused:
-        if (scm->oldState() == QGst::StateReady) {
-            QGst::ElementPtr sink =
-                m_pipeline->property("video-sink").get<QGst::ElementPtr>();
-            if (sink) {
-                setVideoSink(sink);
-                QGst::ChildProxyPtr proxy = sink.dynamicCast<QGst::ChildProxy>();
-                if (proxy) {
-                    proxy->childByIndex(0)->setProperty("force-aspect-ratio", true);
-                }
-            }
-        } else
+        if(scm->oldState() == QGst::StatePlaying) {
             m_positionTimer.stop();
+        }
         break;
     case QGst::StateReady:
-        if (scm->oldState() == QGst::StatePaused) {
-            /* Remove the sink now to avoid inter-thread issues with Qt
-               for the next time the pipeline goes to StatePlaying */
+        pipeSink = m_pipeline->property("video-sink").get<QGst::ElementPtr>();
+        if(scm->oldState() == QGst::StatePaused) {
+            /* Remove the sink now to avoid inter-thread issues with Qt */
             setVideoSink(QGst::ElementPtr());
+        } else if (!videoSink() && pipeSink) {
+            setVideoSink(pipeSink);
+            QGst::ChildProxyPtr proxy = pipeSink.dynamicCast<QGst::ChildProxy>();
+            if (proxy) {
+                proxy->childByIndex(0)->setProperty("force-aspect-ratio", true);
+            }
         }
         break;
     default:
         break;
     }
+
+    Q_EMIT stateChanged(scm->newState());
 }
 
 void Player::busMessage(const QGst::MessagePtr & message)
 {
+    QGst::ElementPtr src = message->source().dynamicCast<QGst::Element>();
+
     switch (message->type()) {
     case QGst::MessageEos: //End of stream. We reached the end of the file.
         qDebug() << "got eos";
         m_pipeline->setState(QGst::StateReady);
         break;
     case QGst::MessageError: //Some error occurred.
-        /*TODO: send a message to UI */
+        qDebug() << message.dynamicCast<QGst::ErrorMessage>()->error().message();
         break;
     case QGst::MessageStateChanged:
-        if (QGlib::Type::fromInstance(message->source()).
-                isA(QGlib::GetType<QGst::Pipeline>())) {
-            QGst::StateChangedMessagePtr scm =
-                message.dynamicCast<QGst::StateChangedMessage>();
-            handleStateChange(scm);
-            Q_EMIT stateChanged(scm->newState());
-        }
-
+            handleStateChange(
+                message.dynamicCast<QGst::StateChangedMessage>());
         break;
     default:
         break;

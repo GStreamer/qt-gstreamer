@@ -105,6 +105,12 @@ void MediaApp::posChanged()
 {
     QTime length = player->length();
     QTime curpos = player->position();
+
+    if (player->state() == QGst::StateReady) {
+        length = QTime(0, 0, 0, 0);
+        curpos = QTime(0, 0, 0, 0);
+    }
+
     posLabel->setText(curpos.toString() + "/" + length.toString());
 
     if (length != QTime(0, 0, 0, 0)) {
@@ -123,10 +129,6 @@ void MediaApp::stateChanged()
     playButton->setEnabled(player->state() != QGst::StatePlaying);
     pauseButton->setEnabled(player->state() == QGst::StatePlaying);
     stopButton->setEnabled(player->state() != QGst::StateReady);
-    if (player->state() == QGst::StateReady) {
-        posLabel->setText("00:00:00/00:00:00");
-        posSlider->setValue(0);
-    }
 }
 
 void MediaApp::setPos(int value)

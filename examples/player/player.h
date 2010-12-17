@@ -59,7 +59,6 @@ Q_SIGNALS:
 
 private:
     void busMessage(const QGst::MessagePtr & message);
-    void elementAdded(const QGst::ElementPtr & element);
     void handleStateChange(QGst::StateChangedMessagePtr);
     QGst::XOverlayPtr binVideoSink(QGst::BinPtr & bin);
 
