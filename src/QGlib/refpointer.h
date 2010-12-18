@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +25,35 @@
 #include <boost/type_traits.hpp>
 
 namespace QGlib {
+namespace Private {
+
+template <class T, class X>
+struct RefPointerEqualityCheck {};
+
+template <class T, class X>
+struct RefPointerEqualityCheck<T, RefPointer<X> >
+{
+    static inline bool check(const RefPointer<T> & self, const RefPointer<X> & other)
+    {
+        if (self.m_class && other.m_class) {
+            return self.m_class->m_object == other.m_class->m_object;
+        } else {
+            return self.isNull() && other.isNull();
+        }
+    }
+};
+
+template <class T, class X>
+struct RefPointerEqualityCheck<T, X*>
+{
+    static inline bool check(const RefPointer<T> & self, X* const & other)
+    {
+        return self.m_class ? self.m_class->m_object == other : !other;
+    }
+};
+
+} //namespace Private
+
 
 /*! \headerfile refpointer.h <QGlib/RefPointer>
  * \brief Smart pointer class for working with wrapper classes that support reference counting
@@ -62,6 +93,11 @@ public:
     inline RefPointer<T> & operator=(const RefPointer<T> & other);
     template <class X>
     inline RefPointer<T> & operator=(const RefPointer<X> & other);
+
+    template <class X>
+    bool operator==(const X & other) const;
+    template <class X>
+    bool operator!=(const X & other) const;
 
     void clear();
 
@@ -107,6 +143,8 @@ public:
 
 private:
     template <class X> friend class RefPointer;
+    template <class X, class Y> friend struct Private::RefPointerEqualityCheck;
+
     template <class X>
     void assign(const RefPointer<X> & other);
 
@@ -120,6 +158,7 @@ class RefCountedObject
 {
 protected:
     template <class T> friend class RefPointer;
+    template <class T, class X> friend struct Private::RefPointerEqualityCheck;
 
     virtual ~RefCountedObject() {}
 
@@ -205,6 +244,34 @@ void RefPointer<T>::assign(const RefPointer<X> & other)
         m_class->m_object = other.m_class->m_object;
         static_cast<RefCountedObject*>(m_class)->ref(true);
     }
+}
+
+template <class T>
+template <class X>
+bool RefPointer<T>::operator==(const X & other) const
+{
+    return Private::RefPointerEqualityCheck<T, X>::check(*this, other);
+}
+
+template <class T>
+template <class X>
+bool RefPointer<T>::operator!=(const X & other) const
+{
+    return !Private::RefPointerEqualityCheck<T, X>::check(*this, other);
+}
+
+/*! \relates QGlib::RefPointer */
+template <class T, class X>
+bool operator==(const X & other, const RefPointer<T> & self)
+{
+    return Private::RefPointerEqualityCheck<T, X>::check(self, other);
+}
+
+/*! \relates QGlib::RefPointer */
+template <class T, class X>
+bool operator!=(const X & other, const RefPointer<T> & self)
+{
+    return !Private::RefPointerEqualityCheck<T, X>::check(self, other);
 }
 
 template <class T>

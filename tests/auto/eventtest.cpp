@@ -53,7 +53,7 @@ void EventTest::baseTest()
     QCOMPARE(ss->value("myfield").get<int>(), 365);
 
     QVERIFY(evt->timestamp());
-    QVERIFY(evt->source()==NULL);
+    QVERIFY(evt->source().isNull());
 
     evt->setSequenceNumber(123445);
     QCOMPARE(evt->sequenceNumber(), static_cast<quint32>(123445));

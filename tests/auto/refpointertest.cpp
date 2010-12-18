@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -28,6 +30,7 @@ private Q_SLOTS:
     void refTest2();
     void dynamicCastTest();
     void messageDynamicCastTest();
+    void equalityTest();
 };
 
 void RefPointerTest::refTest1()
@@ -79,6 +82,46 @@ void RefPointerTest::messageDynamicCastTest()
     QVERIFY(!msg.isNull());
     QVERIFY(!msg.dynamicCast<QGst::ApplicationMessage>().isNull());
     QVERIFY(msg.dynamicCast<QGst::EosMessage>().isNull());
+}
+
+void RefPointerTest::equalityTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create();
+    QGst::ElementPtr element = bin;
+    QVERIFY(element == bin);
+    QVERIFY(bin == element);
+    QVERIFY(bin == bin);
+
+    GstElement *e = element;
+    QVERIFY(e == element);
+    QVERIFY(element == e);
+    QVERIFY(bin == e);
+    QVERIFY(e == bin);
+
+    e++;
+    QVERIFY(e != element);
+    QVERIFY(element != e);
+    QVERIFY(bin != e);
+    QVERIFY(e != bin);
+
+    e = NULL;
+    QVERIFY(e != element);
+    QVERIFY(element != e);
+    QVERIFY(bin != e);
+    QVERIFY(e != bin);
+
+    element.clear();
+    QVERIFY(element != bin);
+    QVERIFY(bin != element);
+    QVERIFY(e == element);
+    QVERIFY(element == e);
+
+    bin.clear();
+    QVERIFY(element == bin);
+    QVERIFY(bin == element);
+    QVERIFY(bin == bin);
+    QVERIFY(bin == e);
+    QVERIFY(e == bin);
 }
 
 QTEST_APPLESS_MAIN(RefPointerTest)
