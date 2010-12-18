@@ -174,7 +174,9 @@ void Player::handleStateChange(QGst::StateChangedMessagePtr scm)
         break;
     }
 
-    Q_EMIT stateChanged(scm->newState());
+    if (QGlib::Type::fromInstance(scm->source()).isA(QGlib::GetType<QGst::Pipeline>())) {
+        Q_EMIT stateChanged(state());
+    }
 }
 
 void Player::busMessage(const QGst::MessagePtr & message)
