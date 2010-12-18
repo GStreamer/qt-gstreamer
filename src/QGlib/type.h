@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -19,8 +21,27 @@
 
 #include "global.h"
 #include <QtCore/QList>
+#include <boost/mpl/if.hpp>
 
+/*
+ * This is a re-definition of GType inside the QGlib::Private namespace.
+ * It is used in the headers to avoid including <glib-object.h>.
+ *
+ * According to gtype.h, GType is ulong in C++ for historic reasons,
+ * but only if sizeof(size_t) == sizeof(ulong). This template trick
+ * here attempts to express the same logic wigh C++ templates.
+ */
 namespace QGlib {
+namespace Private {
+    typedef boost::mpl::if_c<
+        sizeof(size_t) == sizeof(unsigned long),
+        unsigned long,
+        QIntegerForSizeof<size_t>::Unsigned
+    >::type GType;
+} //namespace Private
+} //namespace QGlib
+
+namespace QGlib { //closing and re-opening namespace QGlib is required to trick codegen
 
 /*! \headerfile type.h <QGlib/Type>
  * \brief Wrapper class for GType
@@ -67,13 +88,13 @@ public:
     };
 
     inline Type() : m_type(0) {}
-    inline Type(unsigned long gtype) : m_type(gtype) {}
+    inline Type(Private::GType gtype) : m_type(gtype) {}
     inline Type(FundamentalType ftype) : m_type(ftype) {}
     inline Type(const Type & other) : m_type(other.m_type) {}
 
     inline Type & operator=(Type other);
     inline bool operator==(Type other) const;
-    inline operator unsigned long() const { return m_type; }
+    inline operator Private::GType() const { return m_type; }
 
     template<class T>
     static Type fromInstance(const RefPointer<T> & instance);
@@ -108,7 +129,7 @@ public:
     void setQuarkData(const Quark & qname, void *data);
 
 private:
-    unsigned long m_type;
+    Private::GType m_type;
 };
 
 inline Type & Type::operator=(Type other)
