@@ -103,22 +103,24 @@ void MediaApp::openFile(const QString &fileName)
 
 void MediaApp::posChanged()
 {
-    QTime length = player->length();
-    QTime curpos = player->position();
+    QTime length;
+    QTime curpos;
 
-    if (player->state() == QGst::StateReady) {
-        length = QTime(0, 0, 0, 0);
-        curpos = QTime(0, 0, 0, 0);
+    if (player->state() != QGst::StateReady && 
+            player->state() != QGst::StateNull)
+    {
+        length = player->length();
+        curpos = player->position();
     }
 
     posLabel->setText(curpos.toString() + "/" + length.toString());
 
-    if (length != QTime(0, 0, 0, 0)) {
-        posSlider->setValue(curpos.msecsTo(QTime(0, 0, 0, 0)) * 100 /
-                            length.msecsTo(QTime(0, 0, 0, 0)));
+    if (length != QTime()) {
+        posSlider->setValue(curpos.msecsTo(QTime()) * 100 /
+                            length.msecsTo(QTime()));
     }
 
-    if (curpos != QTime(0, 0, 0, 0)) {
+    if (curpos != QTime()) {
         posLabel->setEnabled(true);
         posSlider->setEnabled(true);
     }
@@ -133,9 +135,9 @@ void MediaApp::stateChanged()
 
 void MediaApp::setPos(int value)
 {
-    quint64 length = -player->length().msecsTo(QTime(0, 0, 0, 0));
+    quint64 length = -player->length().msecsTo(QTime());
     if (length != 0 && value > 0) {
-        QTime pos(0, 0, 0, 0);
+        QTime pos;
         pos = pos.addMSecs(length * value / 100);
         player->setPosition(pos);
     }
