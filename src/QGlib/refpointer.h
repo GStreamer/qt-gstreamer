@@ -102,7 +102,6 @@ public:
     void clear();
 
     inline bool isNull() const;
-    inline operator bool() const;
     inline bool operator!() const;
     inline T *operator->();
     inline const T *operator->() const;
@@ -301,12 +300,6 @@ template <class T>
 inline bool RefPointer<T>::isNull() const
 {
     return m_class == NULL;
-}
-
-template <class T>
-inline RefPointer<T>::operator bool() const
-{
-    return m_class != NULL;
 }
 
 template <class T>

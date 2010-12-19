@@ -93,4 +93,30 @@ int main()
 }
 ")
 
+cxx_compilation_test(refpointer_test_integral_cast SHOULD_FAIL "
+#include <QGlib/Object>
+#include <iostream>
+
+void func(int b) { std::cout << b; }
+
+int main()
+{
+    QGlib::ObjectPtr ptr;
+    func(ptr);
+}
+")
+
+cxx_compilation_test(refpointer_test_bool_cast SHOULD_COMPILE "
+#include <QGlib/Object>
+#include <iostream>
+
+int main()
+{
+    QGlib::ObjectPtr ptr;
+    if (ptr) {
+        std::cout << \"foo\";
+    }
+}
+")
+
 ######### END RefPointer tests ########
