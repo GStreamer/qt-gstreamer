@@ -74,11 +74,6 @@ struct RefPointerEqualityCheck<T, X*>
  * \code
  * QGst::ElementPtr element;
  * \endcode
- *
- * For reference-counted classes that also have the concept of writability only when their
- * reference count is 1 (like GstMiniObject and GstCaps), this class also automatically
- * takes care of making a copy of the object when you are trying to access a non-const
- * method. This is similar to Qt's implicit sharing technique.
  */
 template <class T>
 class RefPointer
@@ -103,8 +98,7 @@ public:
 
     inline bool isNull() const;
     inline bool operator!() const;
-    inline T *operator->();
-    inline const T *operator->() const;
+    inline T *operator->() const;
 
     /*! Cast operator that implicitly casts the smart pointer to the pointer type
      * of the underlying C instance. For example, RefPointer<QGst::Element> will cast
@@ -165,19 +159,10 @@ protected:
     virtual void unref() = 0;
 
     template <class T>
-    inline T* object();
-
-    template <class T>
     inline T* object() const;
 
     void *m_object;
 };
-
-template <class T>
-inline T* RefCountedObject::object()
-{
-    return static_cast<T*>(m_object);
-}
 
 template <class T>
 inline T* RefCountedObject::object() const
@@ -309,15 +294,7 @@ inline bool RefPointer<T>::operator!() const
 }
 
 template <class T>
-inline T *RefPointer<T>::operator->()
-{
-    Q_ASSERT_X(!isNull() ,"RefPointer::operator->()",
-               "Attempted to dereference a null pointer");
-    return m_class;
-}
-
-template <class T>
-inline const T *RefPointer<T>::operator->() const
+inline T *RefPointer<T>::operator->() const
 {
     Q_ASSERT_X(!isNull(), "RefPointer::operator->() const",
                "Attempted to dereference a null pointer");
