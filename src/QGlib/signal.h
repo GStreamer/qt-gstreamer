@@ -232,15 +232,6 @@ BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_CON
 
 #endif //QGLIB_HAVE_CXX0X
 
-
-/*! \internal This method is used internally from the templated emit() method. */
-Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
-
-/*! \internal This method is used internally from the templated connect() method. */
-SignalHandler connect(void *instance, const char *detailedSignal,
-                      const ClosurePtr & closure, ConnectFlags flags = 0);
-
-
 } //namespace QGlib
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::SignalFlags)

@@ -148,82 +148,6 @@ QList<Signal> Signal::listSignals(Type type)
 }
 
 //END ******** Signal ********
-//BEGIN ******** QGlib::emit ********
-
-//static
-Value emit(void *instance, const char *detailedSignal, const QList<Value> & args)
-{
-    Value result;
-    Type itype = Type::fromInstance(instance);
-    QStringList signalParts = QString::fromUtf8(detailedSignal).split(QLatin1String("::"));
-    Quark detail;
-    if (signalParts.size() > 1) {
-        detail = Quark(signalParts[1]);
-    }
-
-    //initialize arguments array
-    GValue *values = new GValue[args.size() + 1];
-    memset(values, 0, sizeof(GValue) * (args.size() + 1));
-
-    //set instance
-    g_value_init(&values[0], itype);
-    g_value_set_instance(&values[0], instance);
-
-    try {
-        //find the signal and perform sanity checks
-        Signal signal = Signal::lookup(signalParts[0].toUtf8(), itype);
-        if (!signal.isValid()) {
-            throw QString(QLatin1String("Could not find any signal named %1 "
-                                        "on this instance type")).arg(signalParts[0]);
-        }
-
-        QList<Type> paramTypes = signal.paramTypes();
-        if (paramTypes.size() != args.size()) {
-            throw QString(QLatin1String("The number of arguments that the signal accepts differ "
-                                        "from the number of arguments provided to emit"));
-        }
-
-        //set arguments
-        for(int i=0; i<args.size(); i++) {
-            if (!paramTypes[i].isA(args[i].type())) {
-                throw QString(QLatin1String("Argument %1 provided to emit is not of the "
-                                            "type that the signal expects")).arg(i);
-            } else {
-                g_value_init(&values[i+1], args[i].type());
-                g_value_copy(args[i], &values[i+1]);
-            }
-        }
-
-        //initialize return value
-        GValue returnValue = QGLIB_G_VALUE_INITIALIZER;
-        if (signal.returnType() != Type::None) {
-            g_value_init(&returnValue, signal.returnType());
-        }
-
-        //emit the signal
-        g_signal_emitv(values, signal.id(), detail, &returnValue);
-
-        if (G_IS_VALUE(&returnValue)) {
-            result = Value(&returnValue);
-            g_value_unset(&returnValue);
-        }
-    } catch (const QString & msg) {
-        QString instanceName = Value(&values[0]).toString();
-
-        qCritical() << "Error during emission of signal" << detailedSignal
-                    << "on object"<< instanceName << ":" << msg;
-    }
-
-    //cleanup
-    for(int i=0; i<args.size() + 1; i++) {
-        g_value_unset(&values[i]);
-    }
-    delete[] values;
-
-    return result;
-}
-
-//END ******** QGlib::emit ********
 //BEGIN ******** Closure ********
 
 void Closure::ref(bool increaseRef)
@@ -331,12 +255,8 @@ ClosurePtr createCppClosure(ClosureDataBase *closureData)
 }
 
 //END ******** Closure internals ********
+//BEGIN ******** connect ********
 
-} //namespace Private
-
-//BEGIN ******** QGlib::connect ********
-
-//static
 SignalHandler connect(void *instance, const char *detailedSignal,
                       const ClosurePtr & closure, ConnectFlags flags)
 {
@@ -345,6 +265,82 @@ SignalHandler connect(void *instance, const char *detailedSignal,
     return SignalHandler(instance, id);
 }
 
-//END ******** QGlib::connect ********
+//END ******** connect ********
+//BEGIN ******** emit ********
 
+Value emit(void *instance, const char *detailedSignal, const QList<Value> & args)
+{
+    Value result;
+    Type itype = Type::fromInstance(instance);
+    QStringList signalParts = QString::fromUtf8(detailedSignal).split(QLatin1String("::"));
+    Quark detail;
+    if (signalParts.size() > 1) {
+        detail = Quark(signalParts[1]);
+    }
+
+    //initialize arguments array
+    GValue *values = new GValue[args.size() + 1];
+    memset(values, 0, sizeof(GValue) * (args.size() + 1));
+
+    //set instance
+    g_value_init(&values[0], itype);
+    g_value_set_instance(&values[0], instance);
+
+    try {
+        //find the signal and perform sanity checks
+        Signal signal = Signal::lookup(signalParts[0].toUtf8(), itype);
+        if (!signal.isValid()) {
+            throw QString(QLatin1String("Could not find any signal named %1 "
+                                        "on this instance type")).arg(signalParts[0]);
+        }
+
+        QList<Type> paramTypes = signal.paramTypes();
+        if (paramTypes.size() != args.size()) {
+            throw QString(QLatin1String("The number of arguments that the signal accepts differ "
+                                        "from the number of arguments provided to emit"));
+        }
+
+        //set arguments
+        for(int i=0; i<args.size(); i++) {
+            if (!paramTypes[i].isA(args[i].type())) {
+                throw QString(QLatin1String("Argument %1 provided to emit is not of the "
+                                            "type that the signal expects")).arg(i);
+            } else {
+                g_value_init(&values[i+1], args[i].type());
+                g_value_copy(args[i], &values[i+1]);
+            }
+        }
+
+        //initialize return value
+        GValue returnValue = QGLIB_G_VALUE_INITIALIZER;
+        if (signal.returnType() != Type::None) {
+            g_value_init(&returnValue, signal.returnType());
+        }
+
+        //emit the signal
+        g_signal_emitv(values, signal.id(), detail, &returnValue);
+
+        if (G_IS_VALUE(&returnValue)) {
+            result = Value(&returnValue);
+            g_value_unset(&returnValue);
+        }
+    } catch (const QString & msg) {
+        QString instanceName = Value(&values[0]).toString();
+
+        qCritical() << "Error during emission of signal" << detailedSignal
+                    << "on object"<< instanceName << ":" << msg;
+    }
+
+    //cleanup
+    for(int i=0; i<args.size() + 1; i++) {
+        g_value_unset(&values[i]);
+    }
+    delete[] values;
+
+    return result;
+}
+
+//END ******** emit ********
+
+} //namespace Private
 } //namespace QGlib

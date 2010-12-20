@@ -30,6 +30,9 @@
 namespace QGlib {
 namespace Private {
 
+/*! This method is used internally from the templated emit() method. */
+Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
+
 template <typename Signature>
 struct EmitImpl {};
 
@@ -70,7 +73,7 @@ struct EmitImpl<R (Args...)>
     static inline R emit(void *instance, const char *detailedSignal, const Args & ... args)
     {
         try {
-            Value && returnValue = QGlib::emit(instance, detailedSignal, packArguments(args...));
+            Value && returnValue = Private::emit(instance, detailedSignal, packArguments(args...));
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
             qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
@@ -85,7 +88,7 @@ struct EmitImpl<void (Args...)>
     static inline void emit(void *instance, const char *detailedSignal, const Args & ... args)
     {
         try {
-            Value && returnValue = QGlib::emit(instance, detailedSignal, packArguments(args...));
+            Value && returnValue = Private::emit(instance, detailedSignal, packArguments(args...));
 
             if (returnValue.isValid()) {
                 qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
@@ -179,7 +182,7 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
         try {
             QList<Value> values;
             QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-            Value returnValue = QGlib::emit(instance, detailedSignal, values);
+            Value returnValue = Private::emit(instance, detailedSignal, values);
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
             qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
@@ -197,7 +200,7 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
         try {
             QList<Value> values;
             QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-            Value returnValue = QGlib::emit(instance, detailedSignal, values);
+            Value returnValue = Private::emit(instance, detailedSignal, values);
             if (returnValue.isValid()) {
                 qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
             }

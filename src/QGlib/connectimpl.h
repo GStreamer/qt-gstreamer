@@ -70,6 +70,9 @@ protected:
  */
 ClosurePtr createCppClosure(ClosureDataBase *data); //implemented in signal.cpp
 
+/*! This method is used internally from the templated connect() method. */
+SignalHandler connect(void *instance, const char *detailedSignal,
+                      const ClosurePtr & closure, ConnectFlags flags);
 
 template <typename Function, typename Signature>
 struct CppClosure {};
@@ -227,7 +230,7 @@ SignalHandler connect(void *instance, const char *detailedSignal,
 
     F && f = QGlib::Private::mem_fn(slot, receiver);
     ClosurePtr && closure = QGlib::Private::CppClosure<F, R (Args...)>::create(f, flags & PassSender);
-    return connect(instance, detailedSignal, closure, flags);
+    return Private::connect(instance, detailedSignal, closure, flags);
 }
 
 //END ******** QGlib::connect ********
@@ -359,7 +362,7 @@ SignalHandler connect(void *instance, const char *detailedSignal,
             R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)
         >::create(f, flags & PassSender);
 
-    return connect(instance, detailedSignal, closure, flags);
+    return Private::connect(instance, detailedSignal, closure, flags);
 }
 
 # undef QGLIB_SIGNAL_IMPL_BIND_ARGS
