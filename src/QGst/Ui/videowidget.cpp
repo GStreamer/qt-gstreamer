@@ -119,10 +119,10 @@ public:
             childAdded(sink->childByIndex(i));
         }
 
-        m_childAddedHandler = QGlib::Signal::connect(sink, "child-added",
-                                                     this, &ProxyRenderer::childAdded);
-        m_childRemovedHandler = QGlib::Signal::connect(sink, "child-removed",
-                                                       this, &ProxyRenderer::childRemoved);
+        m_childAddedHandler = QGlib::connect(sink, "child-added",
+                                             this, &ProxyRenderer::childAdded);
+        m_childRemovedHandler = QGlib::connect(sink, "child-removed",
+                                               this, &ProxyRenderer::childRemoved);
     }
 
     virtual ~ProxyRenderer()

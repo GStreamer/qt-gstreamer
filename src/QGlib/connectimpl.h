@@ -217,11 +217,11 @@ struct CppClosure<F, R (Args...)>
 
 } //namespace Private
 
-//BEGIN ******** Signal::connect ********
+//BEGIN ******** QGlib::connect ********
 
 template <typename T, typename R, typename... Args>
-SignalHandler Signal::connect(void *instance, const char *detailedSignal,
-                              T *receiver, R (T::*slot)(Args...), ConnectFlags flags)
+SignalHandler connect(void *instance, const char *detailedSignal,
+                      T *receiver, R (T::*slot)(Args...), ConnectFlags flags)
 {
     typedef QGlib::Private::MemberFunction<T, R, Args...> F;
 
@@ -230,7 +230,7 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
     return connect(instance, detailedSignal, closure, flags);
 }
 
-//END ******** Signal::connect ********
+//END ******** QGlib::connect ********
 
 } //namespace QGlib
 
@@ -340,16 +340,16 @@ struct CppClosure<F, R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 
 } //namespace Private
 
-//BEGIN ******** bostpp Signal::connect ********
+//BEGIN ******** bostpp QGlib::connect ********
 
 # define QGLIB_SIGNAL_IMPL_BIND_ARGS \
     BOOST_PP_COMMA_IF(QGLIB_SIGNAL_IMPL_NUM_ARGS) \
     BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(QGLIB_SIGNAL_IMPL_NUM_ARGS), _)
 
 template <typename T, typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
-SignalHandler Signal::connect(void *instance, const char *detailedSignal,
-                              T *receiver, R (T::*slot)(QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
-                              ConnectFlags flags)
+SignalHandler connect(void *instance, const char *detailedSignal,
+                      T *receiver, R (T::*slot)(QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
+                      ConnectFlags flags)
 {
     boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)> f
                 = boost::bind(slot, receiver QGLIB_SIGNAL_IMPL_BIND_ARGS);
@@ -364,7 +364,7 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
 
 # undef QGLIB_SIGNAL_IMPL_BIND_ARGS
 
-//END ******** bostpp Signal::connect ********
+//END ******** bostpp QGlib::connect ********
 
 } //namespace QGlib
 

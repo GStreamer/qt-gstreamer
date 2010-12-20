@@ -65,7 +65,7 @@ Player::Player(const QString & fileName)
     QGst::ElementPtr decodebin = QGst::ElementFactory::make("decodebin2");
 
     filesrc->setProperty("location", fileName);
-    QGlib::Signal::connect(decodebin, "new-decoded-pad", this, &Player::onNewDecodedPad);
+    QGlib::connect(decodebin, "new-decoded-pad", this, &Player::onNewDecodedPad);
 
     m_pipeline->add(filesrc);
     m_pipeline->add(decodebin);
@@ -73,7 +73,7 @@ Player::Player(const QString & fileName)
 
     QGst::BusPtr bus = m_pipeline->bus();
     bus->enableSyncMessageEmission();
-    QGlib::Signal::connect(bus, "sync-message", this, &Player::onBusSyncMessage);
+    QGlib::connect(bus, "sync-message", this, &Player::onBusSyncMessage);
 
     m_pipeline->setState(QGst::StatePlaying);
 }

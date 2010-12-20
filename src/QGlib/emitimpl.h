@@ -70,7 +70,7 @@ struct EmitImpl<R (Args...)>
     static inline R emit(void *instance, const char *detailedSignal, const Args & ... args)
     {
         try {
-            Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
+            Value && returnValue = QGlib::emit(instance, detailedSignal, packArguments(args...));
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
             qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
@@ -85,7 +85,7 @@ struct EmitImpl<void (Args...)>
     static inline void emit(void *instance, const char *detailedSignal, const Args & ... args)
     {
         try {
-            Value && returnValue = Signal::emit(instance, detailedSignal, packArguments(args...));
+            Value && returnValue = QGlib::emit(instance, detailedSignal, packArguments(args...));
 
             if (returnValue.isValid()) {
                 qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
@@ -100,15 +100,15 @@ struct EmitImpl<void (Args...)>
 
 } //namespace Private
 
-//BEGIN ******** Signal::emit ********
+//BEGIN ******** QGlib::emit ********
 
 template <typename R, typename... Args>
-R Signal::emit(void *instance, const char *detailedSignal, const Args & ... args)
+R emit(void *instance, const char *detailedSignal, const Args & ... args)
 {
     return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, args...);
 }
 
-//END ******** Signal::emit ********
+//END ******** QGlib::emit ********
 
 } //namespace QGlib
 
@@ -127,7 +127,7 @@ R Signal::emit(void *instance, const char *detailedSignal, const Args & ... args
 /*
     This part is included from BOOST_PP_ITERATE(). It defines specializations of struct EmitImpl
     with different number of arguments as well as the multiple implementations of the non-variadic
-    Signal::emit. This part is included multiple times (QGLIB_SIGNAL_MAX_ARGS defines how many),
+    QGlib::emit. This part is included multiple times (QGLIB_SIGNAL_MAX_ARGS defines how many),
     and each time it defines those classes and functions with different number of arguments.
     The concept is based on the implementation of boost::function.
 */
@@ -179,7 +179,7 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
         try {
             QList<Value> values;
             QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-            Value returnValue = Signal::emit(instance, detailedSignal, values);
+            Value returnValue = QGlib::emit(instance, detailedSignal, values);
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
             qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
@@ -197,7 +197,7 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
         try {
             QList<Value> values;
             QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-            Value returnValue = Signal::emit(instance, detailedSignal, values);
+            Value returnValue = QGlib::emit(instance, detailedSignal, values);
             if (returnValue.isValid()) {
                 qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
             }
@@ -214,16 +214,16 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 
 } //namespace Private
 
-//BEGIN ******** boostpp Signal::emit ********
+//BEGIN ******** boostpp QGlib::emit ********
 
 template <typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
-R Signal::emit(void *instance, const char *detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
+R emit(void *instance, const char *detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
 {
     return QGlib::Private::EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
                              ::emit(instance, detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_ARGS);
 }
 
-//END ******** boostpp Signal::emit ********
+//END ******** boostpp QGlib::emit ********
 
 } //namespace QGlib
 

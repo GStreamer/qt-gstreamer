@@ -32,10 +32,10 @@
 //Qt's emit will clash
 #if defined(emit)
 # if defined(Q_CC_GNU)
-#  warning "The emit keyword is defined and will be undefined here to compile QGlib::Signal::emit."
+#  warning "The emit keyword is defined and will be undefined here to compile QGlib::emit."
 #  warning "It is recommended to compile your project with QT_NO_KEYWORDS defined."
 # elif defined(Q_CC_MSVC)
-#  pragma message("Warning: The emit keyword is defined and will be undefined here to compile QGlib::Signal::emit.")
+#  pragma message("Warning: The emit keyword is defined and will be undefined here to compile QGlib::emit.")
 #  pragma message("Warning: It is recommended to compile your project with QT_NO_KEYWORDS defined.")
 # endif
 # undef emit
@@ -58,11 +58,10 @@ public:
     void block();
     void unblock();
 
-private:
-    friend class Signal;
     inline SignalHandler(void *instance, ulong id)
         : m_instance(instance), m_id(id) {}
 
+private:
     void *m_instance;
     ulong m_id;
 };
@@ -93,24 +92,6 @@ public:
     };
     Q_DECLARE_FLAGS(SignalFlags, SignalFlag);
 
-    /*! These flags define options that can be passed to connect() to modify its behaviour. */
-    enum ConnectFlag { //codegen: skip=true
-        /*! If ConnectAfter is specified, the slot passed to connect() will be invoked after the
-         * default signal handler of this signal has been called. See the Glib signals
-         * documentation for more details on this parameter.
-         */
-        ConnectAfter = 1,
-        /*! If PassSender is specified, the slot passed to connect() will receive as the first
-         * argument a pointer to the sender of the signal. Thus, your slot should be defined
-         * like this:
-         * \code
-         * void mySlot(const QGlib::ObjectPtr & sender, const Foo & firstArgument, ...);
-         * \endcode
-         */
-        PassSender = 2
-    };
-    Q_DECLARE_FLAGS(ConnectFlags, ConnectFlag);
-
     Signal(const Signal & other);
     Signal & operator=(const Signal & other);
     virtual ~Signal();
@@ -128,111 +109,6 @@ public:
     static Signal lookup(const char *name, Type type);
     static QList<Signal> listSignals(Type type);
 
-
-#if QGLIB_HAVE_CXX0X
-
-    /*! Emits a signal on a specified \a instance with the specified arguments.
-     *
-     * This method will convert all the specified arguments to GValues using Value::set()
-     * and will then call the non-templated emit() method, which is a wrapper for g_signal_emitv().
-     * The returned value from the signal (if the signal returns a value) will be converted
-     * from GValue to the type R using Value::get() and will be returned. If some argument
-     * is not of the type that the signal expects, a warning will be printed to stderr at runtime
-     * and the signal will not be emitted. If the return value is not of the type that the signal
-     * returns, the signal will be emitted, but a default-constructed value for the type R will
-     * be returned and a warning will be printed to stderr.
-     *
-     * Note that since the implementation uses Value::set() to convert the GValues into the
-     * specified types, the same rules that apply to Value::set() apply here (i.e. you should
-     * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
-     * of GstObject*, etc...).
-     *
-     * Emitting a signal is useful for the so-called Action signals. These are meant to be emitted
-     * from the application and not connected to. They are more like dynamic methods that can be
-     * identified with a string.
-     *
-     * \note This method makes use of C++0x features (namely, variadic templates and rvalue
-     * references). If your compiler does not support them, a hacky implementation using boost's
-     * preprocessor, function and bind libraries will be compiled instead. That version has a
-     * limit of 9 arguments.
-     *
-     * \param instance The instance of the object on which the signal will be emitted. You can pass
-     * a RefPointer as an instance without any problems; it will automatically cast to void*.
-     * \param detailedSignal The name of the signal that you want to emit, with an optional
-     * detail if the signal is detailed. The detail may be specified with the following syntax:
-     * "signal::detail".
-     * \param args The arguments that will be passed to the signal.
-     * \returns The return value of the signal.
-     */
-    template <typename R, typename... Args>
-    static R emit(void *instance, const char *detailedSignal, const Args & ... args);
-
-    /*! Connects a signal to a specified \a slot.
-     *
-     * This method will generate a set of template functions and classes that bind on a GClosure.
-     * When the signal is emitted, this GClosure will be invoked and its templated marshaller
-     * function will take care of converting the parameters of the signal (which are given as
-     * GValues) to the types that the \a slot expects. In case the types do not match, a warning
-     * will be printed to stderr at runtime and the \a slot will not be invoked. You are
-     * responsible for defining the \a slot with the correct arguments!
-     *
-     * Note that since the implementation uses Value::get() to convert the GValues into the
-     * specified types, the same rules that apply to Value::get() apply here (i.e. you should
-     * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
-     * of GstObject*, etc...).
-     *
-     * \note
-     * \li You can use const references for the arguments of the slot to avoid unnecessary
-     * copying of objects. The marshaller will always hold one copy of them during the execution
-     * of your \a slot.
-     * \li This method makes use of C++0x features (namely, variadic templates and rvalue
-     * references). If your compiler does not support them, a hacky implementation using boost's
-     * preprocessor, function and bind libraries will be compiled instead. That version has a
-     * limit of 9 slot arguments.
-     *
-     * \param instance The instance of the object that emits this signal. You can pass
-     * a RefPointer as an instance without any problems; it will automatically cast to void*.
-     * \param detailedSignal The name of the signal that you want to connect to, with an optional
-     * detail if the signal is detailed. The detail may be specified with the following syntax:
-     * "signal::detail".
-     * \param receiver The instance of the class on which \a slot will be invoked.
-     * \param slot A pointer to a member function that will be invoked when the signal is emitted.
-     * \param flags See ConnectFlag.
-     * \returns A SignalHandler instance, which can be used to disconnect or block this handler.
-     * Note that the return type of this function is subject to change before a stable release is made.
-     */
-    template <typename T, typename R, typename... Args>
-    static SignalHandler connect(void *instance, const char *detailedSignal,
-                                 T *receiver, R (T::*slot)(Args...), ConnectFlags flags = 0);
-
-#else //QGLIB_HAVE_CXX0X
-
-# define QGLIB_SIGNAL_EMIT_DECLARATION(z, n, data) \
-    template <typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
-    static R emit(void *instance, const char *detailedSignal \
-                  BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(n, const A, & a) );
-
-# define QGLIB_SIGNAL_CONNECT_DECLARATION(z, n, data) \
-    template <typename T, typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
-    static SignalHandler connect(void *instance, const char *detailedSignal, \
-                                 T *receiver, R (T::*slot)(BOOST_PP_ENUM_PARAMS(n, A)), \
-                                 ConnectFlags flags = 0);
-
-    BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_EMIT_DECLARATION, dummy)
-    BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_CONNECT_DECLARATION, dummy)
-
-# undef QGLIB_SIGNAL_CONNECT_DECLARATION
-# undef QGLIB_SIGNAL_EMIT_DECLARATION
-
-#endif //QGLIB_HAVE_CXX0X
-
-    /*! \internal This method is used internally from the templated emit() method. */
-    static Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
-
-    /*! \internal This method is used internally from the templated connect() method. */
-    static SignalHandler connect(void *instance, const char *detailedSignal,
-                                 const ClosurePtr & closure, ConnectFlags flags = 0);
-
 private:
     Signal(uint id);
 
@@ -240,10 +116,135 @@ private:
     QSharedDataPointer<Private> d;
 };
 
+
+/*! These flags define options that can be passed to connect() to modify its behaviour. */
+enum ConnectFlag { //codegen: skip=true
+    /*! If ConnectAfter is specified, the slot passed to connect() will be invoked after the
+     * default signal handler of this signal has been called. See the Glib signals
+     * documentation for more details on this parameter.
+     */
+    ConnectAfter = 1,
+    /*! If PassSender is specified, the slot passed to connect() will receive as the first
+     * argument a pointer to the sender of the signal. Thus, your slot should be defined
+     * like this:
+     * \code
+     * void mySlot(const QGlib::ObjectPtr & sender, const Foo & firstArgument, ...);
+     * \endcode
+     */
+    PassSender = 2
+};
+Q_DECLARE_FLAGS(ConnectFlags, ConnectFlag);
+
+#if QGLIB_HAVE_CXX0X
+
+/*! Emits a signal on a specified \a instance with the specified arguments.
+ *
+ * This method will convert all the specified arguments to GValues using Value::set()
+ * and will then call the non-templated emit() method, which is a wrapper for g_signal_emitv().
+ * The returned value from the signal (if the signal returns a value) will be converted
+ * from GValue to the type R using Value::get() and will be returned. If some argument
+ * is not of the type that the signal expects, a warning will be printed to stderr at runtime
+ * and the signal will not be emitted. If the return value is not of the type that the signal
+ * returns, the signal will be emitted, but a default-constructed value for the type R will
+ * be returned and a warning will be printed to stderr.
+ *
+ * Note that since the implementation uses Value::set() to convert the GValues into the
+ * specified types, the same rules that apply to Value::set() apply here (i.e. you should
+ * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
+ * of GstObject*, etc...).
+ *
+ * Emitting a signal is useful for the so-called Action signals. These are meant to be emitted
+ * from the application and not connected to. They are more like dynamic methods that can be
+ * identified with a string.
+ *
+ * \note This method makes use of C++0x features (namely, variadic templates and rvalue
+ * references). If your compiler does not support them, a hacky implementation using boost's
+ * preprocessor, function and bind libraries will be compiled instead. That version has a
+ * limit of 9 arguments.
+ *
+ * \param instance The instance of the object on which the signal will be emitted. You can pass
+ * a RefPointer as an instance without any problems; it will automatically cast to void*.
+ * \param detailedSignal The name of the signal that you want to emit, with an optional
+ * detail if the signal is detailed. The detail may be specified with the following syntax:
+ * "signal::detail".
+ * \param args The arguments that will be passed to the signal.
+ * \returns The return value of the signal.
+ */
+template <typename R, typename... Args>
+R emit(void *instance, const char *detailedSignal, const Args & ... args);
+
+/*! Connects a signal to a specified \a slot.
+ *
+ * This method will generate a set of template functions and classes that bind on a GClosure.
+ * When the signal is emitted, this GClosure will be invoked and its templated marshaller
+ * function will take care of converting the parameters of the signal (which are given as
+ * GValues) to the types that the \a slot expects. In case the types do not match, a warning
+ * will be printed to stderr at runtime and the \a slot will not be invoked. You are
+ * responsible for defining the \a slot with the correct arguments!
+ *
+ * Note that since the implementation uses Value::get() to convert the GValues into the
+ * specified types, the same rules that apply to Value::get() apply here (i.e. you should
+ * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
+ * of GstObject*, etc...).
+ *
+ * \note
+ * \li You can use const references for the arguments of the slot to avoid unnecessary
+ * copying of objects. The marshaller will always hold one copy of them during the execution
+ * of your \a slot.
+ * \li This method makes use of C++0x features (namely, variadic templates and rvalue
+ * references). If your compiler does not support them, a hacky implementation using boost's
+ * preprocessor, function and bind libraries will be compiled instead. That version has a
+ * limit of 9 slot arguments.
+ *
+ * \param instance The instance of the object that emits this signal. You can pass
+ * a RefPointer as an instance without any problems; it will automatically cast to void*.
+ * \param detailedSignal The name of the signal that you want to connect to, with an optional
+ * detail if the signal is detailed. The detail may be specified with the following syntax:
+ * "signal::detail".
+ * \param receiver The instance of the class on which \a slot will be invoked.
+ * \param slot A pointer to a member function that will be invoked when the signal is emitted.
+ * \param flags See ConnectFlag.
+ * \returns A SignalHandler instance, which can be used to disconnect or block this handler.
+ * Note that the return type of this function is subject to change before a stable release is made.
+ */
+template <typename T, typename R, typename... Args>
+SignalHandler connect(void *instance, const char *detailedSignal,
+                      T *receiver, R (T::*slot)(Args...), ConnectFlags flags = 0);
+
+#else //QGLIB_HAVE_CXX0X
+
+# define QGLIB_SIGNAL_EMIT_DECLARATION(z, n, data) \
+    template <typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
+    R emit(void *instance, const char *detailedSignal \
+           BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(n, const A, & a) );
+
+# define QGLIB_SIGNAL_CONNECT_DECLARATION(z, n, data) \
+    template <typename T, typename R BOOST_PP_ENUM_TRAILING_PARAMS(n, typename A) > \
+    SignalHandler connect(void *instance, const char *detailedSignal, \
+                          T *receiver, R (T::*slot)(BOOST_PP_ENUM_PARAMS(n, A)), \
+                          ConnectFlags flags = 0);
+
+BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_EMIT_DECLARATION, dummy)
+BOOST_PP_REPEAT_FROM_TO(0, BOOST_PP_INC(QGLIB_SIGNAL_MAX_ARGS), QGLIB_SIGNAL_CONNECT_DECLARATION, dummy)
+
+# undef QGLIB_SIGNAL_CONNECT_DECLARATION
+# undef QGLIB_SIGNAL_EMIT_DECLARATION
+
+#endif //QGLIB_HAVE_CXX0X
+
+
+/*! \internal This method is used internally from the templated emit() method. */
+Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
+
+/*! \internal This method is used internally from the templated connect() method. */
+SignalHandler connect(void *instance, const char *detailedSignal,
+                      const ClosurePtr & closure, ConnectFlags flags = 0);
+
+
 } //namespace QGlib
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::SignalFlags)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::ConnectFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::ConnectFlags)
 
 #define IN_QGLIB_SIGNAL_H
 # include "emitimpl.h"

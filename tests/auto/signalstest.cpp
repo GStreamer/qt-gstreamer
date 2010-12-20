@@ -46,8 +46,7 @@ void SignalsTest::closureTest()
     QGst::BinPtr bin = QGst::Bin::create("mybin");
 
     closureCalled = false;
-    QGlib::Signal::connect(bin, "parent-set", this,
-                           &SignalsTest::closureTestClosure, QGlib::Signal::PassSender);
+    QGlib::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure, QGlib::PassSender);
     bin->setParent(pipeline);
     QCOMPARE(closureCalled, true);
 }
@@ -82,31 +81,31 @@ void SignalsTest::emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib
 void SignalsTest::emitTest()
 {
     QGst::BinPtr bin = QGst::Bin::create("mybin");
-    QGlib::SignalHandler handler = QGlib::Signal::connect(bin, "notify::name",
-                                                          this, &SignalsTest::emitTestClosure,
-                                                          QGlib::Signal::PassSender);
+    QGlib::SignalHandler handler = QGlib::connect(bin, "notify::name",
+                                                  this, &SignalsTest::emitTestClosure,
+                                                  QGlib::PassSender);
 
     QVERIFY(handler.isConnected());
 
     closureCalled = false;
-    QGlib::Signal::emit<void>(bin, "notify::name", bin->findProperty("name"));
+    QGlib::emit<void>(bin, "notify::name", bin->findProperty("name"));
     QCOMPARE(closureCalled, true);
 
     //calling with wrong return value. should show error message but *call* the signal
     //and return default constructed value for int
     closureCalled = false;
-    int r = QGlib::Signal::emit<int>(bin, "notify::name", bin->findProperty("name"));
+    int r = QGlib::emit<int>(bin, "notify::name", bin->findProperty("name"));
     QCOMPARE(r, int());
     QCOMPARE(closureCalled, true);
 
     //calling with wrong number of arguments. should show error message and *not call* the signal
     closureCalled = false;
-    QGlib::Signal::emit<void>(bin, "notify::name");
+    QGlib::emit<void>(bin, "notify::name");
     QCOMPARE(closureCalled, false);
 
     //calling wrong signal. will return default constructed value for int
     closureCalled = false;
-    r = QGlib::Signal::emit<int>(bin, "foobar");
+    r = QGlib::emit<int>(bin, "foobar");
     QCOMPARE(r, int());
     QCOMPARE(closureCalled, false);
 
@@ -114,7 +113,7 @@ void SignalsTest::emitTest()
     QVERIFY(!handler.isConnected());
 
     closureCalled = false;
-    QGlib::Signal::emit<void>(bin, "notify::name", bin->findProperty("name"));
+    QGlib::emit<void>(bin, "notify::name", bin->findProperty("name"));
     QCOMPARE(closureCalled, false);
 }
 

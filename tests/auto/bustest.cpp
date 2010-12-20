@@ -83,7 +83,7 @@ void BusTest::watchTest()
 
     m_messagesReceived = 0;
     thread.bus->addSignalWatch();
-    QGlib::Signal::connect(thread.bus, "message", this, &BusTest::messageClosure);
+    QGlib::connect(thread.bus, "message", this, &BusTest::messageClosure);
 
     thread.start();
 
@@ -105,7 +105,7 @@ void BusTest::watchTestWithWatchRemoval()
 
     m_messagesReceived = 0;
     thread.bus->addSignalWatch();
-    QGlib::Signal::connect(thread.bus, "message", this, &BusTest::messageClosure);
+    QGlib::connect(thread.bus, "message", this, &BusTest::messageClosure);
 
     thread.start();
 

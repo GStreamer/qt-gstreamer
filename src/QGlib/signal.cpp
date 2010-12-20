@@ -148,10 +148,10 @@ QList<Signal> Signal::listSignals(Type type)
 }
 
 //END ******** Signal ********
-//BEGIN ******** Signal::emit ********
+//BEGIN ******** QGlib::emit ********
 
 //static
-Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value> & args)
+Value emit(void *instance, const char *detailedSignal, const QList<Value> & args)
 {
     Value result;
     Type itype = Type::fromInstance(instance);
@@ -171,7 +171,7 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
 
     try {
         //find the signal and perform sanity checks
-        Signal signal = lookup(signalParts[0].toUtf8(), itype);
+        Signal signal = Signal::lookup(signalParts[0].toUtf8(), itype);
         if (!signal.isValid()) {
             throw QString(QLatin1String("Could not find any signal named %1 "
                                         "on this instance type")).arg(signalParts[0]);
@@ -180,13 +180,13 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
         QList<Type> paramTypes = signal.paramTypes();
         if (paramTypes.size() != args.size()) {
             throw QString(QLatin1String("The number of arguments that the signal accepts differ "
-                                        "from the number of arguments provided to Signal::emit"));
+                                        "from the number of arguments provided to emit"));
         }
 
         //set arguments
         for(int i=0; i<args.size(); i++) {
             if (!paramTypes[i].isA(args[i].type())) {
-                throw QString(QLatin1String("Argument %1 provided to Signal::emit is not of the "
+                throw QString(QLatin1String("Argument %1 provided to emit is not of the "
                                             "type that the signal expects")).arg(i);
             } else {
                 g_value_init(&values[i+1], args[i].type());
@@ -223,7 +223,7 @@ Value Signal::emit(void *instance, const char *detailedSignal, const QList<Value
     return result;
 }
 
-//END ******** Signal::emit ********
+//END ******** QGlib::emit ********
 //BEGIN ******** Closure ********
 
 void Closure::ref(bool increaseRef)
@@ -334,17 +334,17 @@ ClosurePtr createCppClosure(ClosureDataBase *closureData)
 
 } //namespace Private
 
-//BEGIN ******** Signal::connect ********
+//BEGIN ******** QGlib::connect ********
 
 //static
-SignalHandler Signal::connect(void *instance, const char *detailedSignal,
-                              const ClosurePtr & closure, ConnectFlags flags)
+SignalHandler connect(void *instance, const char *detailedSignal,
+                      const ClosurePtr & closure, ConnectFlags flags)
 {
     uint id = g_signal_connect_closure(instance, detailedSignal, closure,
                                        (flags & ConnectAfter) ? TRUE : FALSE);
     return SignalHandler(instance, id);
 }
 
-//END ******** Signal::connect ********
+//END ******** QGlib::connect ********
 
 } //namespace QGlib
