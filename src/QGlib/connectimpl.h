@@ -71,7 +71,7 @@ protected:
 ClosurePtr createCppClosure(ClosureDataBase *data); //implemented in signal.cpp
 
 
-template <typename Signature, typename Function>
+template <typename Function, typename Signature>
 struct CppClosure {};
 
 //END ******** Closure internals ********
@@ -185,7 +185,7 @@ inline void unpackAndInvoke(F && function, Value & result,
 //BEGIN ******** CppClosure ********
 
 template <typename F, typename R, typename... Args>
-struct CppClosure<R (Args...), F>
+struct CppClosure<F, R (Args...)>
 {
     class ClosureData : public ClosureDataBase
     {
@@ -226,7 +226,7 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
     typedef QGlib::Private::MemberFunction<T, R, Args...> F;
 
     F && f = QGlib::Private::mem_fn(slot, receiver);
-    ClosurePtr && closure = QGlib::Private::CppClosure<R (Args...), F>::create(f, flags & PassSender);
+    ClosurePtr && closure = QGlib::Private::CppClosure<F, R (Args...)>::create(f, flags & PassSender);
     return connect(instance, detailedSignal, closure, flags);
 }
 
@@ -325,9 +325,9 @@ struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
     }
 };
 
-//partial specialization of struct CppClosure to support the CppClosure<R (Args...), F> syntax
+//partial specialization of struct CppClosure to support the CppClosure<F, R (Args...)> syntax
 template <typename F, typename R  QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
-struct CppClosure<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS), F>
+struct CppClosure<F, R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
     : public QGLIB_SIGNAL_IMPL_CPPCLOSUREN< F, R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS >
 {
 };
@@ -355,9 +355,10 @@ SignalHandler Signal::connect(void *instance, const char *detailedSignal,
                 = boost::bind(slot, receiver QGLIB_SIGNAL_IMPL_BIND_ARGS);
 
     ClosurePtr closure = QGlib::Private::CppClosure<
-                                        R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
-                                        boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
-                                                   >::create(f, flags & PassSender);
+            boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>,
+            R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)
+        >::create(f, flags & PassSender);
+
     return connect(instance, detailedSignal, closure, flags);
 }
 

@@ -52,7 +52,7 @@ inline QList<Value> packArguments()
 template <typename Arg1, typename... Args>
 QList<Value> packArguments(const Arg1 & a1, const Args & ... args)
 {
-    QList<Value> result = packArguments(args...);
+    QList<Value> && result = packArguments(args...);
     Value v;
     v.init<Arg1>();
     ValueImpl<Arg1>::set(v, a1);
