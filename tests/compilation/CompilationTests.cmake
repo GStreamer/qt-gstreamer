@@ -120,3 +120,47 @@ int main()
 ")
 
 ######### END RefPointer tests ########
+######### BEGIN disconnect tests ########
+
+cxx_compilation_test(disconnect_full SHOULD_COMPILE "
+#include <QGlib/Connect>
+
+int main()
+{
+    QGlib::disconnect(0, 0, 0, 0);
+    QGlib::disconnect(NULL, NULL, NULL, NULL);
+}
+")
+
+cxx_compilation_test(disconnect_default_args SHOULD_COMPILE "
+#include <QGlib/Connect>
+
+int main()
+{
+    QGlib::disconnect(0, 0, 0);
+    QGlib::disconnect(0, 0);
+    QGlib::disconnect(0);
+}
+")
+
+cxx_compilation_test(disconnect_non_member_slot SHOULD_FAIL "
+#include <QGlib/Connect>
+
+int foobar() {}
+
+int main()
+{
+    QGlib::disconnect(0, 0, 0, &foobar);
+}
+")
+
+cxx_compilation_test(disconnect_string_slot SHOULD_FAIL "
+#include <QGlib/Connect>
+
+int main()
+{
+    QGlib::disconnect(0, 0, 0, \"hello world\");
+}
+")
+
+######### END disconnect tests ########

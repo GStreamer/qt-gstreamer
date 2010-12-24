@@ -6,6 +6,7 @@ set(QtGstreamer_SRCS
     QGlib/value.cpp
     QGlib/signal.cpp
     QGlib/error.cpp
+    QGlib/connect.cpp
 
     QGst/global.cpp
     QGst/objectstore.cpp
@@ -52,6 +53,7 @@ set(INSTALLED_HEADERS
     QGlib/value.h       QGlib/Value
     QGlib/signal.h      QGlib/Signal
     QGlib/emitimpl.h
+    QGlib/connect.h     QGlib/Connect
     QGlib/connectimpl.h
     QGlib/error.h       QGlib/Error
 

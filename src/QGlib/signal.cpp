@@ -22,29 +22,6 @@
 
 namespace QGlib {
 
-//BEGIN ******** SignalHandler ********
-
-bool SignalHandler::isConnected() const
-{
-    return g_signal_handler_is_connected(m_instance, m_id);
-}
-
-void SignalHandler::disconnect()
-{
-    g_signal_handler_disconnect(m_instance, m_id);
-}
-
-void SignalHandler::block()
-{
-    g_signal_handler_block(m_instance, m_id);
-}
-
-void SignalHandler::unblock()
-{
-    g_signal_handler_unblock(m_instance, m_id);
-}
-
-//END ******** SignalHandler ********
 //BEGIN ******** Signal ********
 
 struct Signal::Private : public QSharedData
@@ -148,124 +125,9 @@ QList<Signal> Signal::listSignals(Type type)
 }
 
 //END ******** Signal ********
-//BEGIN ******** Closure ********
-
-void Closure::ref(bool increaseRef)
-{
-    if (increaseRef) {
-        g_closure_ref(static_cast<GClosure*>(m_object));
-    }
-}
-
-void Closure::unref()
-{
-    g_closure_unref(static_cast<GClosure*>(m_object));
-}
-
-//END ******** Closure ********
 
 namespace Private {
 
-//BEGIN ******** Closure internals ********
-
-static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValuesCount,
-                         const GValue *paramValues, void *hint, void *data)
-{
-    Q_UNUSED(data);
-
-    ClosureDataBase *cdata = static_cast<ClosureDataBase*>(closure->data);
-
-    QList<Value> params;
-    //the signal sender is always the first argument. if we are instructed not to pass it
-    //as an argument to the slot, begin converting from paramValues[1]
-    for(uint i = cdata->passSender ? 0 : 1; i<paramValuesCount; ++i) {
-        params.append(Value(&paramValues[i]));
-    }
-
-    try {
-        Value result(returnValue);
-        cdata->marshaller(result, params);
-
-        if (returnValue) {
-            g_value_copy(result, returnValue);
-        }
-    } catch (const std::exception & e) {
-        QString signalName;
-        if (hint != NULL) {
-            GSignalInvocationHint *ihint = static_cast<GSignalInvocationHint*>(hint);
-
-            GSignalQuery query;
-            g_signal_query(ihint->signal_id, &query);
-            signalName = QString::fromUtf8(query.signal_name);
-
-            if (ihint->detail != 0) {
-                Quark q(ihint->detail);
-                signalName.append(QLatin1String("::"));
-                signalName.append(q.toString());
-            }
-        }
-
-        QString instanceName = params.at(0).get<QString>();
-
-        //attempt to determine the cause of the failure
-        QString msg;
-        try {
-            //dynamic_cast will throw an std::bad_cast if it fails
-            dynamic_cast<const InvalidTypeException &>(e);
-            //cast succeded, e is indeed an InvalidTypeException
-            msg = QLatin1String("One or more of the arguments of the signal are of different "
-                                "type than the type that the closure expects");
-        } catch (...) {
-            try {
-                dynamic_cast<const InvalidValueException &>(e);
-                //cast succeded, e is indeed an InvalidValueException
-                //this is most likely to happen because the signal returns void
-                //but the closure returns something non-void. check this first.
-                if (returnValue == NULL) {
-                    msg = QLatin1String("The signal is defined to return void but the "
-                                        "closure returns something non-void");
-                } else {
-                    msg = QLatin1String("One of the arguments of the signal was not a valid GValue. "
-                                        "This is most likely a bug in the code that invoked the signal.");
-                }
-            } catch (...) {
-                msg = QString::fromAscii(e.what());
-            }
-        }
-
-        qCritical() << "Error during invocation of closure connected to signal"
-                    << signalName << "from object" << instanceName << ":" << msg;
-    }
-}
-
-static void closureDestroyNotify(void *data, GClosure *closure)
-{
-    Q_UNUSED(data);
-    delete static_cast<ClosureDataBase*>(closure->data);
-}
-
-ClosurePtr createCppClosure(ClosureDataBase *closureData)
-{
-    GClosure *closure = g_closure_new_simple(sizeof(GClosure), closureData);
-    g_closure_set_marshal(closure, &c_marshaller);
-    g_closure_add_finalize_notifier(closure, NULL, &closureDestroyNotify);
-    ClosurePtr result = ClosurePtr::wrap(closure);
-    g_closure_sink(closure);
-    return result;
-}
-
-//END ******** Closure internals ********
-//BEGIN ******** connect ********
-
-SignalHandler connect(void *instance, const char *detailedSignal,
-                      const ClosurePtr & closure, ConnectFlags flags)
-{
-    uint id = g_signal_connect_closure(instance, detailedSignal, closure,
-                                       (flags & ConnectAfter) ? TRUE : FALSE);
-    return SignalHandler(instance, id);
-}
-
-//END ******** connect ********
 //BEGIN ******** emit ********
 
 Value emit(void *instance, const char *detailedSignal, const QList<Value> & args)

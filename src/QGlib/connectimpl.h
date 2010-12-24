@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -16,7 +18,7 @@
 */
 #if !defined(BOOST_PP_IS_ITERATING) || !BOOST_PP_IS_ITERATING
 
-# ifndef IN_QGLIB_SIGNAL_H
+# ifndef IN_QGLIB_CONNECT_H
 #  error "This file must not be included directly"
 # endif
 
@@ -70,9 +72,6 @@ protected:
  */
 ClosurePtr createCppClosure(ClosureDataBase *data); //implemented in signal.cpp
 
-/*! This method is used internally from the templated connect() method. */
-SignalHandler connect(void *instance, const char *detailedSignal,
-                      const ClosurePtr & closure, ConnectFlags flags);
 
 template <typename Function, typename Signature>
 struct CppClosure {};
@@ -223,14 +222,17 @@ struct CppClosure<F, R (Args...)>
 //BEGIN ******** QGlib::connect ********
 
 template <typename T, typename R, typename... Args>
-SignalHandler connect(void *instance, const char *detailedSignal,
-                      T *receiver, R (T::*slot)(Args...), ConnectFlags flags)
+bool connect(void *instance, const char *detailedSignal,
+             T *receiver, R (T::*slot)(Args...), ConnectFlags flags = 0)
 {
-    typedef QGlib::Private::MemberFunction<T, R, Args...> F;
+    typedef Private::MemberFunction<T, R, Args...> F;
 
-    F && f = QGlib::Private::mem_fn(slot, receiver);
-    ClosurePtr && closure = QGlib::Private::CppClosure<F, R (Args...)>::create(f, flags & PassSender);
-    return Private::connect(instance, detailedSignal, closure, flags);
+    F && f = Private::mem_fn(slot, receiver);
+    ClosurePtr && closure = Private::CppClosure<F, R (Args...)>::create(f, flags & PassSender);
+
+    return Private::connect(instance, detailedSignal, Quark(),
+                            receiver, Private::GetDestroyNotifier<T>(),
+                            Private::hashMfp(slot), closure, flags);
 }
 
 //END ******** QGlib::connect ********
@@ -243,12 +245,12 @@ SignalHandler connect(void *instance, const char *detailedSignal,
 #  include <boost/preprocessor.hpp>
 #  include <boost/bind.hpp>
 
-// include the second part of this file as many times as QGLIB_SIGNAL_MAX_ARGS specifies
-#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/connectimpl.h"))
+// include the second part of this file as many times as QGLIB_CONNECT_MAX_ARGS specifies
+#  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_CONNECT_MAX_ARGS, "QGlib/connectimpl.h"))
 #  include BOOST_PP_ITERATE()
 
 #  undef BOOST_PP_ITERATION_PARAMS_1
-#  undef QGLIB_SIGNAL_MAX_ARGS
+#  undef QGLIB_CONNECT_MAX_ARGS
 
 # endif //QGLIB_HAVE_CXX0X
 
@@ -259,43 +261,43 @@ SignalHandler connect(void *instance, const char *detailedSignal,
     This part is included from BOOST_PP_ITERATE(). It defines a CppClosureN class
     (where N is the number of template arguments it takes) and a specialization for class
     CppClosure, so that the CppClosure<R (Args...), F> syntax is supported. This part is
-    included multiple times (QGLIB_SIGNAL_MAX_ARGS defines how many), and each time
+    included multiple times (QGLIB_CONNECT_MAX_ARGS defines how many), and each time
     it defines those classes with different number of arguments.
     The concept is based on the implementation of boost::function.
 */
 
-# define QGLIB_SIGNAL_IMPL_NUM_ARGS \
+# define QGLIB_CONNECT_IMPL_NUM_ARGS \
     BOOST_PP_ITERATION()
 
-# define QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS \
-    BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, typename A)
+# define QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_PARAMS \
+    BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_CONNECT_IMPL_NUM_ARGS, typename A)
 
-# define QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS \
-    BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A)
+# define QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_ARGS \
+    BOOST_PP_ENUM_TRAILING_PARAMS(QGLIB_CONNECT_IMPL_NUM_ARGS, A)
 
-# define QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS \
-    BOOST_PP_ENUM_PARAMS(QGLIB_SIGNAL_IMPL_NUM_ARGS, A)
+# define QGLIB_CONNECT_IMPL_TEMPLATE_ARGS \
+    BOOST_PP_ENUM_PARAMS(QGLIB_CONNECT_IMPL_NUM_ARGS, A)
 
 namespace QGlib {
 namespace Private {
 
 //BEGIN ******** boostpp CppClosure ********
 
-# define QGLIB_SIGNAL_IMPL_CPPCLOSUREN \
-    BOOST_PP_CAT(CppClosure, QGLIB_SIGNAL_IMPL_NUM_ARGS)
+# define QGLIB_CONNECT_IMPL_CPPCLOSUREN \
+    BOOST_PP_CAT(CppClosure, QGLIB_CONNECT_IMPL_NUM_ARGS)
 
-# define QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP(z, n, list) \
+# define QGLIB_CONNECT_IMPL_UNPACK_ARGS_STEP(z, n, list) \
     ,ValueImpl< \
         typename boost::remove_const< \
             typename boost::remove_reference<A ##n>::type \
         >::type \
     >::get(list.at(n))
 
-# define QGLIB_SIGNAL_IMPL_UNPACK_ARGS(list) \
-    BOOST_PP_REPEAT(QGLIB_SIGNAL_IMPL_NUM_ARGS, QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP, list)
+# define QGLIB_CONNECT_IMPL_UNPACK_ARGS(list) \
+    BOOST_PP_REPEAT(QGLIB_CONNECT_IMPL_NUM_ARGS, QGLIB_CONNECT_IMPL_UNPACK_ARGS_STEP, list)
 
-template <typename F, typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
-struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
+template <typename F, typename R QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_PARAMS>
+struct QGLIB_CONNECT_IMPL_CPPCLOSUREN
 {
     class ClosureData : public ClosureDataBase
     {
@@ -305,13 +307,13 @@ struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
 
         virtual void marshaller(Value & result, const QList<Value> & params)
         {
-            if (params.size() < QGLIB_SIGNAL_IMPL_NUM_ARGS) {
+            if (params.size() < QGLIB_CONNECT_IMPL_NUM_ARGS) {
                 throw std::logic_error("The signal provides less arguments than what the closure expects");
             }
 
-# if QGLIB_SIGNAL_IMPL_NUM_ARGS > 0
+# if QGLIB_CONNECT_IMPL_NUM_ARGS > 0
             boost::function<R ()> callback = boost::bind<R>(m_function
-                                                            QGLIB_SIGNAL_IMPL_UNPACK_ARGS(params));
+                                                            QGLIB_CONNECT_IMPL_UNPACK_ARGS(params));
             invoker< boost::function<R ()>, R >::invoke(callback, result);
 # else
             invoker< F, R >::invoke(m_function, result);
@@ -329,15 +331,15 @@ struct QGLIB_SIGNAL_IMPL_CPPCLOSUREN
 };
 
 //partial specialization of struct CppClosure to support the CppClosure<F, R (Args...)> syntax
-template <typename F, typename R  QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
-struct CppClosure<F, R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
-    : public QGLIB_SIGNAL_IMPL_CPPCLOSUREN< F, R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS >
+template <typename F, typename R  QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_PARAMS>
+struct CppClosure<F, R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)>
+    : public QGLIB_CONNECT_IMPL_CPPCLOSUREN< F, R QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_ARGS >
 {
 };
 
-# undef QGLIB_SIGNAL_IMPL_UNPACK_ARGS
-# undef QGLIB_SIGNAL_IMPL_UNPACK_ARGS_STEP
-# undef QGLIB_SIGNAL_IMPL_CPPCLOSUREN
+# undef QGLIB_CONNECT_IMPL_UNPACK_ARGS
+# undef QGLIB_CONNECT_IMPL_UNPACK_ARGS_STEP
+# undef QGLIB_CONNECT_IMPL_CPPCLOSUREN
 
 //END ******** boostpp CppClosure ********
 
@@ -345,35 +347,36 @@ struct CppClosure<F, R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 
 //BEGIN ******** bostpp QGlib::connect ********
 
-# define QGLIB_SIGNAL_IMPL_BIND_ARGS \
-    BOOST_PP_COMMA_IF(QGLIB_SIGNAL_IMPL_NUM_ARGS) \
-    BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(QGLIB_SIGNAL_IMPL_NUM_ARGS), _)
+# define QGLIB_CONNECT_IMPL_BIND_ARGS \
+    BOOST_PP_COMMA_IF(QGLIB_CONNECT_IMPL_NUM_ARGS) \
+    BOOST_PP_ENUM_SHIFTED_PARAMS(BOOST_PP_INC(QGLIB_CONNECT_IMPL_NUM_ARGS), _)
 
-template <typename T, typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
-SignalHandler connect(void *instance, const char *detailedSignal,
-                      T *receiver, R (T::*slot)(QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS),
-                      ConnectFlags flags)
+template <typename T, typename R QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_PARAMS>
+bool connect(void *instance, const char *detailedSignal,
+             T *receiver, R (T::*slot)(QGLIB_CONNECT_IMPL_TEMPLATE_ARGS), ConnectFlags flags = 0)
 {
-    boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)> f
-                = boost::bind(slot, receiver QGLIB_SIGNAL_IMPL_BIND_ARGS);
+    boost::function<R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)> f
+        = boost::bind(slot, receiver QGLIB_CONNECT_IMPL_BIND_ARGS);
 
-    ClosurePtr closure = QGlib::Private::CppClosure<
-            boost::function<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>,
-            R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)
+    ClosurePtr closure = Private::CppClosure<
+            boost::function<R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)>,
+            R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)
         >::create(f, flags & PassSender);
 
-    return Private::connect(instance, detailedSignal, closure, flags);
+    return Private::connect(instance, detailedSignal, Quark(),
+                            receiver, Private::GetDestroyNotifier<T>(),
+                            Private::hashMfp(slot), closure, flags);
 }
 
-# undef QGLIB_SIGNAL_IMPL_BIND_ARGS
+# undef QGLIB_CONNECT_IMPL_BIND_ARGS
 
 //END ******** bostpp QGlib::connect ********
 
 } //namespace QGlib
 
-# undef QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS
-# undef QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_ARGS
-# undef QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS
-# undef QGLIB_SIGNAL_IMPL_NUM_ARGS
+# undef QGLIB_CONNECT_IMPL_TEMPLATE_ARGS
+# undef QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_ARGS
+# undef QGLIB_CONNECT_IMPL_TRAILING_TEMPLATE_PARAMS
+# undef QGLIB_CONNECT_IMPL_NUM_ARGS
 
 #endif // !defined(BOOST_PP_IS_ITERATING) || !BOOST_PP_IS_ITERATING

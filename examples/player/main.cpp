@@ -19,7 +19,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QTime>
-#include <QGlib/Signal>
+#include <QGlib/Connect>
 #include <QGst/Global>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
@@ -37,7 +37,7 @@
  * the sound card. In the future this example will be expanded to handle video as well
  * and perhaps it will gain a simple GUI too. */
 
-class Player
+class Player : public QObject
 {
 public:
     Player(const QString & fileName);

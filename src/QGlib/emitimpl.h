@@ -24,7 +24,6 @@
 # include <QtCore/QList>
 # include <QtCore/QDebug>
 # include <stdexcept>
-# include <boost/type_traits.hpp>
 
 
 namespace QGlib {
@@ -116,6 +115,8 @@ R emit(void *instance, const char *detailedSignal, const Args & ... args)
 } //namespace QGlib
 
 # else //QGLIB_HAVE_CXX0X
+
+#  include <boost/preprocessor.hpp>
 
 // include the second part of this file as many times as QGLIB_SIGNAL_MAX_ARGS specifies
 #  define BOOST_PP_ITERATION_PARAMS_1 (3,(0, QGLIB_SIGNAL_MAX_ARGS, "QGlib/emitimpl.h"))

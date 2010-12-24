@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -16,6 +18,7 @@
 */
 #include "qgsttest.h"
 #include <QGlib/Signal>
+#include <QGlib/Connect>
 #include <QGst/Pipeline>
 
 class SignalsTest : public QGstTest
@@ -24,10 +27,14 @@ class SignalsTest : public QGstTest
 private:
    void closureTestClosure(const QGst::ObjectPtr & obj, QGst::ObjectPtr parentObj);
    void emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib::ParamSpecPtr & param);
+   void disconnectTestClosure(const QGlib::ParamSpecPtr &) {}
+
 private Q_SLOTS:
    void closureTest();
    void queryTest();
    void emitTest();
+   void disconnectTest();
+   void autoDisconnectTest();
 };
 
 static bool closureCalled = false;
@@ -81,11 +88,10 @@ void SignalsTest::emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib
 void SignalsTest::emitTest()
 {
     QGst::BinPtr bin = QGst::Bin::create("mybin");
-    QGlib::SignalHandler handler = QGlib::connect(bin, "notify::name",
-                                                  this, &SignalsTest::emitTestClosure,
-                                                  QGlib::PassSender);
+    bool isConnected = QGlib::connect(bin, "notify::name",
+                                      this, &SignalsTest::emitTestClosure, QGlib::PassSender);
 
-    QVERIFY(handler.isConnected());
+    QVERIFY(isConnected);
 
     closureCalled = false;
     QGlib::emit<void>(bin, "notify::name", bin->findProperty("name"));
@@ -109,12 +115,76 @@ void SignalsTest::emitTest()
     QCOMPARE(r, int());
     QCOMPARE(closureCalled, false);
 
-    handler.disconnect();
-    QVERIFY(!handler.isConnected());
+    isConnected = !QGlib::disconnect(bin, "notify::name", this, &SignalsTest::emitTestClosure);
+    QVERIFY(!isConnected);
 
     closureCalled = false;
     QGlib::emit<void>(bin, "notify::name", bin->findProperty("name"));
     QCOMPARE(closureCalled, false);
+}
+
+void SignalsTest::disconnectTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create();
+
+    //disconnect with same args
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+
+    //disconnect without detail
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, "notify", this, &SignalsTest::disconnectTestClosure));
+
+    //disconnect without slot
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, "notify::name", this));
+
+    //disconnect without slot & detail
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, "notify", this));
+
+    //disconnect without receiver & slot
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, "notify::name"));
+
+    //disconnect without receiver & slot & detail
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, "notify"));
+
+    //disconnect without signal
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, 0, this, &SignalsTest::disconnectTestClosure));
+
+    //disconnect without signal & slot
+    QVERIFY(QGlib::connect(bin, "notify::name", this, &SignalsTest::disconnectTestClosure));
+    QVERIFY(QGlib::disconnect(bin, 0, this, 0));
+}
+
+class DisconnectTestClass : public QObject
+{
+public:
+    void testClosure(const QGlib::ParamSpecPtr &) {}
+};
+
+void SignalsTest::autoDisconnectTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create();
+
+    //auto-disconnection on receiver destruction
+    DisconnectTestClass *test = new DisconnectTestClass;
+    QVERIFY(QGlib::connect(bin, "notify::name", test, &DisconnectTestClass::testClosure));
+    delete test;
+    QVERIFY(!QGlib::disconnect(bin, "notify::name", test, &DisconnectTestClass::testClosure));
+
+    //auto-disconnection on sender destruction
+    GstBin *binPtr = 0;
+    {
+        QGst::BinPtr bin2 = QGst::Bin::create();
+        QVERIFY(QGlib::connect(bin2, "notify::name", this, &SignalsTest::disconnectTestClosure));
+        binPtr = bin2;
+        QVERIFY(binPtr);
+    }
+    QVERIFY(!QGlib::disconnect(binPtr));
 }
 
 QTEST_APPLESS_MAIN(SignalsTest)

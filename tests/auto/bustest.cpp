@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qgsttest.h"
-#include <QGlib/Signal>
+#include <QGlib/Connect>
 #include <QGst/Bus>
 #include <QGst/Structure>
 #include <QGst/Message>

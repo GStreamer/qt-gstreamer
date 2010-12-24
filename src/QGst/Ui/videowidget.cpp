@@ -17,7 +17,7 @@
 #include "videowidget.h"
 #include "../xoverlay.h"
 #include "../childproxy.h"
-#include "../../QGlib/signal.h"
+#include "../../QGlib/connect.h"
 #include <QtCore/QDebug>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
@@ -109,7 +109,7 @@ private:
 };
 
 
-class ProxyRenderer : public AbstractRenderer
+class ProxyRenderer : public QObject, public AbstractRenderer
 {
 public:
     ProxyRenderer(const ChildProxyPtr & sink, QWidget *parent)
@@ -119,16 +119,13 @@ public:
             childAdded(sink->childByIndex(i));
         }
 
-        m_childAddedHandler = QGlib::connect(sink, "child-added",
-                                             this, &ProxyRenderer::childAdded);
-        m_childRemovedHandler = QGlib::connect(sink, "child-removed",
-                                               this, &ProxyRenderer::childRemoved);
+        QGlib::connect(sink, "child-added", this, &ProxyRenderer::childAdded);
+        QGlib::connect(sink, "child-removed", this, &ProxyRenderer::childRemoved);
     }
 
     virtual ~ProxyRenderer()
     {
-        m_childAddedHandler.disconnect();
-        m_childRemovedHandler.disconnect();
+        QGlib::disconnect(m_sink, 0, this);
     }
 
     virtual ElementPtr videoSink() const { return m_sink.dynamicCast<Element>(); }
@@ -155,8 +152,6 @@ private:
     AbstractRenderer *m_renderer;
     QWidget *m_parent;
     ChildProxyPtr m_sink;
-    QGlib::SignalHandler m_childAddedHandler;
-    QGlib::SignalHandler m_childRemovedHandler;
 };
 
 
