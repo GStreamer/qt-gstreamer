@@ -54,38 +54,82 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ConnectFlags)
 
 #if defined(DOXYGEN_RUN)
 
-/*! Connects a signal to a specified \a slot.
+/*! Connects \a detailedSignal of \a instance to the specified \a slot of \a receiver.
  *
- * This method will generate a set of template functions and classes that bind on a GClosure.
- * When the signal is emitted, this GClosure will be invoked and its templated marshaller
- * function will take care of converting the parameters of the signal (which are given as
- * GValues) to the types that the \a slot expects. In case the types do not match, a warning
- * will be printed to stderr at runtime and the \a slot will not be invoked. You are
- * responsible for defining the \a slot with the correct arguments!
+ * This method provides a way of connecting GObject signals to C++ slots, in a Qt-like fashion.
  *
- * Note that since the implementation uses Value::get() to convert the GValues into the
- * specified types, the same rules that apply to Value::get() apply here (i.e. you should
- * only use the types of the bindings and not the C types, which means QGst::ObjectPtr instead
- * of GstObject*, etc...).
+ * \a instance needs to be a pointer to a GLib instantiatable type, such as a GObject. You can
+ * pass a RefPointer as an argument here without any problems; it will automatically cast to void*.
+ *
+ * \a detailedSignal should be the name of the signal that you want to conenct to - with an
+ * optional detail, if the signal supports details. The signal must \em not use the Qt SIGNAL()
+ * macro; it should use the signal canonical form specified in GLib, i.e. it should be a string
+ * containing only lowercase letters and dashes. For example, "my-signal" is a valid signal name.
+ * The detail may be specified by appending "::" to the signal name and the detail after that.
+ * For example, "my-signal::detail".
+ *
+ * \a receiver should be the instance of the class on which \a slot will be invoked. Currently,
+ * the \a receiver needs to inherit QObject. If you use another class that doesn't inherit
+ * QObject, a compilation error will occur.
+ *
+ * \a slot should be a C++ member function pointer that points to the method that you want
+ * to be invoked on the \a receiver once the signal is emitted. Note that it must \em not use
+ * the Qt SLOT() macro.
+ *
+ * Special care must be taken with the arguments that \a slot takes. Consider the following
+ * example. The C API documentation mentions a signal that takes these parameters:
+ * \code
+ * void user_function (GObject *object, GParamSpec *pspec, gpointer user_data);
+ * \endcode
+ * The first argument is always a pointer to the sender object, the second argument is
+ * the real signal argument and the third argument is a user defined pointer that is usually
+ * used in C as a substitute for the \a receiver. In general, the first argument is always
+ * the sender, the 2nd to Nth-1 arguments are the real signal arguments and the Nth argument
+ * is a user defined pointer. Now in C++, the following rules apply:
+ * \li You must use the C++ equivalent types of the arguments that the signal sends.
+ * So, in the above example, GParamSpec* is translated to QGlib::ParamSpecPtr.
+ * \li You must not have the user_data argument at the end.
+ * \li You must not have the sender argument at the beginning, unless QGlib::PassSender
+ * is used in \a flags.
+ * \li You may use const references in the arguments to avoid unecessary copying of objects,
+ * as the C++ marshaller that will call your slot will always hold a copy of the converted
+ * C++ objects.
+ *
+ * So, the C++ signature should eventually be:
+ * \code
+ * void MyClass::mySlot(const QGlib::ParamSpecPtr & pspec);
+ * ...
+ * //Connected with:
+ * QGlib::connect(element, "notify::name", myClassInstance, &MyClass::mySlot);
+ * \endcode
+ * \em or
+ * \code
+ * void MyClass::mySlot(const QGlib::ObjectPtr & sender, const QGlib::ParamSpecPtr & pspec);
+ * ...
+ * //Connected with:
+ * QGlib::connect(element, "notify::name", myClassInstance, &MyClass::mySlot, QGlib::PassSender);
+ * \endcode
+ *
+ * Internally, the signal provides GValues that are converted to the C++ types that your
+ * \a slot specifies using Value::get(), so all rules that apply there also apply to the
+ * \a slot arguments. That means that you may actually use different types of arguments
+ * than the ones that the documentation specifies, given that Value is able to transform
+ * them (see Value::canTransformTo) to the type that you have requested. Obviously, if you
+ * specify non-compatible arguments on the \a slot, the conversion will fail, and in this case
+ * a warning is printed at the time of the signal emission and the \a slot is not invoked.
  *
  * \note
- * \li You can use const references for the arguments of the slot to avoid unnecessary
- * copying of objects. The marshaller will always hold one copy of them during the execution
- * of your \a slot.
+ * \li Include <QGlib/Connect> to use this function
+ * \li Unlike Qt, in GObject some signals are able to return values back to the sender.
+ * In this case, your \a slot should specify a compatible return type instead of void.
  * \li This method makes use of C++0x features (namely, variadic templates and rvalue
  * references). If your compiler does not support them, a hacky implementation using boost's
  * preprocessor, function and bind libraries will be compiled instead. That version has a
  * limit of 9 slot arguments.
+ * \li This function is thread-safe.
  *
- * \param instance The instance of the object that emits this signal. You can pass
- * a RefPointer as an instance without any problems; it will automatically cast to void*.
- * \param detailedSignal The name of the signal that you want to connect to, with an optional
- * detail if the signal is detailed. The detail may be specified with the following syntax:
- * "signal::detail".
- * \param receiver The instance of the class on which \a slot will be invoked.
- * \param slot A pointer to a member function that will be invoked when the signal is emitted.
- * \param flags See ConnectFlag.
  * \returns whether the connection was successfully made or not
+ * \sa disconnect(), ConnectFlag, \ref connect_design
  */
 template <typename T, typename R, typename... Args>
 bool connect(void *instance, const char *detailedSignal,
@@ -97,7 +141,52 @@ bool connect(void *instance, const char *detailedSignal,
 //to use NULL for the receiver and slot arguments. Also, a version that takes void*
 //for everything is not possible since member function pointers do not cast to void*.
 
-/*! Disconnects \a detailedSignal of \a instance from the \a slot of \a receiver. */
+/*! Disconnects \a detailedSignal of \a instance from the \a slot of \a receiver.
+ *
+ * A signal-slot connection typically is broken when either of the objects involved
+ * are destroyed. However, there are cases in which you might want to break that
+ * connection manually using this method.
+ *
+ * disconnect() can be used in the following ways:
+ * \li Disconnect everything connected to an object's signals:
+ * \code
+ * disconnect(myGObject);
+ * \endcode
+ * \li Disconnect everything connected to a specific signal:
+ * \code
+ * disconnect(myGObject, "some-signal");
+ * \endcode
+ * \li Disconnect a specific receiver:
+ * \code
+ * disconnect(myGObject, 0, myReceiver);
+ * \endcode
+ * \li Disconnect a specific slot (note that the receiver must also be specified):
+ * \code
+ * disconnect(myGObject, 0, myReceiver, &MyReceiver::mySlot);
+ * \endcode
+ *
+ * 0 can be used as a wildcard, meaning "any signal", "any receiver" or "any slot".
+ * \a instance can never be 0.
+ *
+ * If \a detailedSignal is 0, it disconnects \a receiver and \a slot from any signal.
+ * Otherwise, only \a detailedSignal is disconnected. A signal detail may or may not
+ * be specified. If it is not specified, it acts as a wildcard for all details, meaning
+ * it disconnects all the connections that have been made with a specific detail.
+ *
+ * If \a receiver is 0, it disconnects anything connected to \a detailedSignal. If not,
+ * only slots in \a receiver are disconnected.
+ *
+ * If \a slot is 0, it disconnects anything that is connected to \a receiver. If not,
+ * only the specified \a slot will be disconnected. Note that \a slot must be 0 if
+ * \a receiver is left out.
+ *
+ * \note
+ * \li Include <QGlib/Connect> to use this function
+ * \li This function is thread-safe.
+ *
+ * \returns true if the connection was successfully broken, or false otherwise
+ * \sa connect()
+ */
 template <typename T, typename R, typename... Args>
 bool disconnect(void *instance, const char *detailedSignal = 0,
                 T *receiver = 0, R (T::*slot)(Args...) = 0);
