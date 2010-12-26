@@ -27,6 +27,12 @@ namespace QGlib {
  * Quarks are associations between strings and integer identifiers.
  * Given either the string or the Quark identifier it is possible to retrieve the other.
  *
+ * To create a new quark from a string, use fromString().
+ *
+ * To find the string corresponding to a given Quark, use toString().
+ *
+ * To find the Quark corresponding to a given string, use tryString().
+ *
  * \note This class is a thin wrapper around a quint32. There is no overhead in copying
  * it around, since it is just an integer.
  */
@@ -34,10 +40,19 @@ class Quark
 {
 public:
     inline Quark(quint32 gquark = 0) : m_quark(gquark) {}
-    Quark(const char *str);
-    Quark(const QString & str);
 
+    /*! Creates a new Quark given a string \a str. */
+    static Quark fromString(const char *str);
+    static Quark fromString(const QString & str); ///< \overload
+
+    /*! Finds an existing Quark that corresponds to the given string \a str.
+     * If the Quark is not found, an invalid quark (equal to 0) is returned. */
+    static Quark tryString(const char *str);
+    static Quark tryString(const QString & str); ///< \overload
+
+    /*! Retrieves the string that corresponds to this Quark. */
     QString toString() const;
+
     inline operator quint32() const { return m_quark; }
 
 private:

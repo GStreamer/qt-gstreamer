@@ -19,14 +19,28 @@
 
 namespace QGlib {
 
-Quark::Quark(const char *str)
+//static
+Quark Quark::fromString(const char *str)
 {
-    m_quark = g_quark_from_string(str);
+    return g_quark_from_string(str);
 }
 
-Quark::Quark(const QString & str)
+//static
+Quark Quark::fromString(const QString & str)
 {
-    m_quark = g_quark_from_string(str.toUtf8());
+    return g_quark_from_string(str.toUtf8());
+}
+
+//static
+Quark Quark::tryString(const char *str)
+{
+    return g_quark_try_string(str);
+}
+
+//static
+Quark Quark::tryString(const QString & str)
+{
+    return g_quark_try_string(str.toUtf8());
 }
 
 QString Quark::toString() const
@@ -34,4 +48,4 @@ QString Quark::toString() const
     return QString::fromUtf8(g_quark_to_string(m_quark));
 }
 
-}
+} //namespace QGlib

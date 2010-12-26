@@ -138,7 +138,7 @@ Value emit(void *instance, const char *detailedSignal, Quark detail, const QList
     Type itype = Type::fromInstance(instance);
     QStringList signalParts = QString::fromUtf8(detailedSignal).split(QLatin1String("::"));
     if (!detail && signalParts.size() > 1) {
-        detail = Quark(signalParts[1]);
+        detail = Quark::fromString(signalParts[1]);
     }
 
     //initialize arguments array

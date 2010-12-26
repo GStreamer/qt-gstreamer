@@ -49,7 +49,7 @@ private Q_SLOTS:
 void MessageTest::baseTest()
 {
     QGst::Structure s("mystructure");
-    QGlib::Quark q("test");
+    QGlib::Quark q = QGlib::Quark::fromString("test");
     QGlib::Error err(q, 10, "test error");
     QGst::ErrorMessagePtr msg = QGst::ErrorMessage::create(QGst::ObjectPtr(), err,
                                                            "Test suite error");
@@ -73,7 +73,7 @@ void MessageTest::eosMessageTest()
 
 void MessageTest::errorMessageTest()
 {
-    QGlib::Quark q("test");
+    QGlib::Quark q = QGlib::Quark::fromString("test");
     QGlib::Error err(q, 10, "test error");
     QString debugString("Test suite error");
     QGst::ErrorMessagePtr msg = QGst::ErrorMessage::create(QGst::ObjectPtr(), err,
@@ -91,7 +91,7 @@ void MessageTest::errorMessageTest()
 
 void MessageTest::warningMessageTest()
 {
-    QGlib::Quark q("test");
+    QGlib::Quark q = QGlib::Quark::fromString("test");
     QGlib::Error err(q, 10, "test warning");
     QString debugString("Test suite warning");
     QGst::WarningMessagePtr msg = QGst::WarningMessage::create(QGst::ObjectPtr(), err,
@@ -109,7 +109,7 @@ void MessageTest::warningMessageTest()
 
 void MessageTest::infoMessageTest()
 {
-    QGlib::Quark q("test");
+    QGlib::Quark q = QGlib::Quark::fromString("test");
     QGlib::Error err(q, 10, "test info");
     QString debugString("Test suite info");
     QGst::InfoMessagePtr msg = QGst::InfoMessage::create(QGst::ObjectPtr(), err,
