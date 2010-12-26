@@ -24,7 +24,11 @@ namespace QGlib {
 
 Type Type::fromInstance(void *instance)
 {
-    return G_TYPE_FROM_INSTANCE(instance);
+    if (!instance) {
+        return Invalid;
+    } else {
+        return G_TYPE_FROM_INSTANCE(instance);
+    }
 }
 
 Type Type::fromName(const char *name)
