@@ -44,16 +44,22 @@
 namespace QGlib {
 
 /*! \headerfile signal.h <QGlib/Signal>
- * \brief Helper class providing integration with the GObject signal system
+ * \brief Helper class providing introspection of GObject signals
  *
  * Signals are a generic notification mechanism. Each signal is bound to a
  * certain instantiatable Type and can be emitted on any instance of this type.
  *
- * This class allows you to inspect, emit and connect to these signals. To inspect
- * the signals of a certain Type, you can use the lookup() and listSignals() methods.
- * To emit or connect a signal, use the emit() and connect() methods respectively.
+ * This class allows you to inspect these signals. You can use the lookup() and
+ * listSignals() methods to get a Signal instance. You can then use one of the
+ * accessor methods to retrieve information about this signal.
+ *
+ * This class does not offer methods to emit or connect to signals.
+ * To emit or connect a signal, use the QGlib::emit() and QGlib::connect()
+ * methods, respectively.
  *
  * For more information, please read the relevant Glib documentation.
+ *
+ * \sa connect(), emit()
  */
 class Signal
 {
@@ -73,17 +79,24 @@ public:
     Signal & operator=(const Signal & other);
     virtual ~Signal();
 
+    /*! Returns true if this Signal instance represents
+     * an existing signal, or false otherwise. */
     bool isValid() const;
 
-    uint id() const;
-    QString name() const;
-    SignalFlags flags() const;
+    uint id() const; ///< Returns the signal's id.
+    QString name() const; ///< Returns the signal's name.
+    SignalFlags flags() const; ///< Returns the signal's flags.
 
+    /*! Returns the interface/instance Type that this signal can be emitted for. */
     Type instanceType() const;
-    Type returnType() const;
-    QList<Type> paramTypes() const;
+    Type returnType() const; ///< Returns the return Type of the signal.
+    QList<Type> paramTypes() const; ///< Returns the types of the signal parameters.
 
+    /*! Finds and returns a Signal with the specified \a name
+     * on the specified interface/instance \a type. */
     static Signal lookup(const char *name, Type type);
+
+    /*! Returns a list with all the signals that an interface/instance \a type has. */
     static QList<Signal> listSignals(Type type);
 
 private:
@@ -98,13 +111,14 @@ private:
 /*! Emits a signal on a specified \a instance with the specified arguments.
  *
  * This method will convert all the specified arguments to GValues using Value::set()
- * and will then call the non-templated emit() method, which is a wrapper for g_signal_emitv().
- * The returned value from the signal (if the signal returns a value) will be converted
- * from GValue to the type R using Value::get() and will be returned. If some argument
- * is not of the type that the signal expects, a warning will be printed to stderr at runtime
- * and the signal will not be emitted. If the return value is not of the type that the signal
- * returns, the signal will be emitted, but a default-constructed value for the type R will
- * be returned and a warning will be printed to stderr.
+ * and will then emit the signal using g_signal_emitv(). The returned value from the signal
+ * (if the signal returns a value) will be converted from GValue to the type R using
+ * Value::get() and will be returned. If some argument is not of the type that the signal
+ * expects and a conversion is not possible, a warning will be printed to stderr at runtime
+ * and the signal will not be emitted. On the contrary, if the return value is not of the type
+ * that the signal returns and a conversion is not possible, the signal \em will be emitted,
+ * but a default-constructed value for the type R will be returned and a warning will be
+ * printed to stderr.
  *
  * Note that since the implementation uses Value::set() to convert the GValues into the
  * specified types, the same rules that apply to Value::set() apply here (i.e. you should
