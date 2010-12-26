@@ -23,12 +23,6 @@
 
 namespace QGst {
 
-EventPtr Event::create(EventType type, const Structure & structure)
-{
-    GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
-    return EventPtr::wrap(gst_event_new_custom(static_cast<GstEventType>(type), s), false);
-}
-
 ObjectPtr Event::source() const
 {
     return ObjectPtr::wrap(GST_EVENT_SRC(object<GstEvent>()));

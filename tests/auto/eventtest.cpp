@@ -41,10 +41,10 @@ private Q_SLOTS:
 void EventTest::baseTest()
 {
     QGst::Structure s("mystructure");
-    QGst::EventPtr evt = QGst::Event::create(QGst::EventCustomDownstream, s);
+    QGst::EventPtr evt = QGst::NavigationEvent::create(s);
 
-    QVERIFY(evt->type()==QGst::EventCustomDownstream);
-    QCOMPARE(evt->typeName(), QString("custom-downstream"));
+    QVERIFY(evt->type()==QGst::EventNavigation);
+    QCOMPARE(evt->typeName(), QString("navigation"));
 
     QGst::StructurePtr ss = evt->internalStructure();
     QVERIFY(ss->isValid());
@@ -63,7 +63,7 @@ void EventTest::copyTest()
 {
     QGst::Structure s("mystructure");
     s.setValue("myfield", 365);
-    QGst::EventPtr evt = QGst::Event::create(QGst::EventCustomUpstream, s);
+    QGst::EventPtr evt = QGst::NavigationEvent::create(s);
 
     QGst::EventPtr evt2 = evt->copy();
 

@@ -47,9 +47,6 @@ class Message : public MiniObject
 {
     QGST_WRAPPER(Message)
 public:
-    static MessagePtr create(MessageType type, const ObjectPtr & source,
-                             const Structure & structure = Structure());
-
     ObjectPtr source() const;
     quint64 timestamp() const;
     QString typeName() const;

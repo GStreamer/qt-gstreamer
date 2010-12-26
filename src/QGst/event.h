@@ -54,9 +54,6 @@ class Event : public MiniObject
 {
     QGST_WRAPPER(Event)
 public:
-    static EventPtr create(EventType type,
-                           const Structure & structure = Structure());
-
     ObjectPtr source() const;
     quint64 timestamp() const;
     EventType type() const;

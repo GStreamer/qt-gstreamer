@@ -23,12 +23,6 @@
 
 namespace QGst {
 
-MessagePtr Message::create(MessageType type, const ObjectPtr & source, const Structure & structure)
-{
-    GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
-    return MessagePtr::wrap(gst_message_new_custom(static_cast<GstMessageType>(type), source, s), false);
-}
-
 ObjectPtr Message::source() const
 {
     return ObjectPtr::wrap(GST_MESSAGE_SRC(object<GstMessage>()));
