@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -21,6 +23,7 @@
 # endif
 
 # include "value.h"
+# include "quark.h"
 # include <QtCore/QList>
 # include <QtCore/QDebug>
 # include <stdexcept>
@@ -30,7 +33,7 @@ namespace QGlib {
 namespace Private {
 
 /*! This method is used internally from the templated emit() method. */
-Value emit(void *instance, const char *detailedSignal, const QList<Value> & args);
+Value emit(void *instance, const char *signal, Quark detail, const QList<Value> & args);
 
 template <typename Signature>
 struct EmitImpl {};
@@ -69,13 +72,13 @@ QList<Value> packArguments(const Arg1 & a1, const Args & ... args)
 template <typename R, typename... Args>
 struct EmitImpl<R (Args...)>
 {
-    static inline R emit(void *instance, const char *detailedSignal, const Args & ... args)
+    static inline R emit(void *instance, const char *signal, Quark detail, const Args & ... args)
     {
         try {
-            Value && returnValue = Private::emit(instance, detailedSignal, packArguments(args...));
+            Value && returnValue = Private::emit(instance, signal, detail, packArguments(args...));
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
-            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
+            qCritical() << "Error during emission of signal" << signal << ":" << e.what();
             return R();
         }
     }
@@ -84,16 +87,16 @@ struct EmitImpl<R (Args...)>
 template <typename... Args>
 struct EmitImpl<void (Args...)>
 {
-    static inline void emit(void *instance, const char *detailedSignal, const Args & ... args)
+    static inline void emit(void *instance, const char *signal, Quark detail, const Args & ... args)
     {
         try {
-            Value && returnValue = Private::emit(instance, detailedSignal, packArguments(args...));
+            Value && returnValue = Private::emit(instance, signal, detail, packArguments(args...));
 
             if (returnValue.isValid()) {
-                qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
+                qWarning() << "Ignoring return value from emission of signal" << signal;
             }
         } catch(const std::exception & e) {
-            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
+            qCritical() << "Error during emission of signal" << signal << ":" << e.what();
         }
     }
 };
@@ -107,7 +110,13 @@ struct EmitImpl<void (Args...)>
 template <typename R, typename... Args>
 R emit(void *instance, const char *detailedSignal, const Args & ... args)
 {
-    return QGlib::Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, args...);
+    return Private::EmitImpl<R (Args...)>::emit(instance, detailedSignal, Quark(), args...);
+}
+
+template <typename R, typename... Args>
+R emitWithDetail(void *instance, const char *signal, Quark detail, const Args & ... args)
+{
+    return Private::EmitImpl<R (Args...)>::emit(instance, signal, detail, args...);
 }
 
 //END ******** QGlib::emit ********
@@ -177,16 +186,16 @@ namespace Private {
 template <typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
 struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 {
-    static inline R emit(void *instance, const char *detailedSignal
+    static inline R emit(void *instance, const char *signal, Quark detail
                          QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
     {
         try {
             QList<Value> values;
             QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-            Value returnValue = Private::emit(instance, detailedSignal, values);
+            Value returnValue = Private::emit(instance, signal, detail, values);
             return ValueImpl<R>::get(returnValue);
         } catch(const std::exception & e) {
-            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
+            qCritical() << "Error during emission of signal" << signal << ":" << e.what();
             return R();
         }
     }
@@ -195,18 +204,18 @@ struct EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 template <QGLIB_SIGNAL_IMPL_TEMPLATE_PARAMS>
 struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 {
-    static inline void emit(void *instance, const char *detailedSignal
+    static inline void emit(void *instance, const char *signal, Quark detail
                             QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
     {
         try {
             QList<Value> values;
             QGLIB_SIGNAL_IMPL_PACK_ARGS(values)
-            Value returnValue = Private::emit(instance, detailedSignal, values);
+            Value returnValue = Private::emit(instance, signal, detail, values);
             if (returnValue.isValid()) {
-                qWarning() << "Ignoring return value from emission of signal" << detailedSignal;
+                qWarning() << "Ignoring return value from emission of signal" << signal;
             }
         } catch(const std::exception & e) {
-            qCritical() << "Error during emission of signal" << detailedSignal << ":" << e.what();
+            qCritical() << "Error during emission of signal" << signal << ":" << e.what();
         }
     }
 };
@@ -223,8 +232,15 @@ struct EmitImpl<void (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
 template <typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
 R emit(void *instance, const char *detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
 {
-    return QGlib::Private::EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
-                             ::emit(instance, detailedSignal QGLIB_SIGNAL_IMPL_FUNCTION_ARGS);
+    return Private::EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
+                ::emit(instance, detailedSignal, Quark() QGLIB_SIGNAL_IMPL_FUNCTION_ARGS);
+}
+
+template <typename R QGLIB_SIGNAL_IMPL_TRAILING_TEMPLATE_PARAMS>
+R emitWithDetail(void *instance, const char *signal, Quark detail QGLIB_SIGNAL_IMPL_FUNCTION_PARAMS)
+{
+    return Private::EmitImpl<R (QGLIB_SIGNAL_IMPL_TEMPLATE_ARGS)>
+                ::emit(instance, signal, detail QGLIB_SIGNAL_IMPL_FUNCTION_ARGS);
 }
 
 //END ******** boostpp QGlib::emit ********

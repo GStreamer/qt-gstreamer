@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -128,6 +130,13 @@ private:
  */
 template <typename R, typename... Args>
 R emit(void *instance, const char *detailedSignal, const Args & ... args);
+
+/*! \overload
+ * This method takes the detail argument as a quark, separated from the signal name.
+ * It may be useful if you already have the quark of the detail that you want to specify.
+ */
+template <typename R, typename... Args>
+R emitWithDetail(void *instance, const char *signal, Quark detail, const Args & ... args);
 
 #endif //DOXYGEN_RUN
 

@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -130,13 +132,12 @@ namespace Private {
 
 //BEGIN ******** emit ********
 
-Value emit(void *instance, const char *detailedSignal, const QList<Value> & args)
+Value emit(void *instance, const char *detailedSignal, Quark detail, const QList<Value> & args)
 {
     Value result;
     Type itype = Type::fromInstance(instance);
     QStringList signalParts = QString::fromUtf8(detailedSignal).split(QLatin1String("::"));
-    Quark detail;
-    if (signalParts.size() > 1) {
+    if (!detail && signalParts.size() > 1) {
         detail = Quark(signalParts[1]);
     }
 
