@@ -106,6 +106,8 @@ private:
     QSharedDataPointer<Private> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(Signal::SignalFlags)
+
 #if defined(DOXYGEN_RUN)
 
 /*! Emits a signal on a specified \a instance with the specified arguments.
@@ -155,8 +157,6 @@ R emitWithDetail(void *instance, const char *signal, Quark detail, const Args & 
 #endif //DOXYGEN_RUN
 
 } //namespace QGlib
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGlib::Signal::SignalFlags)
 
 #define IN_QGLIB_SIGNAL_H
 # include "emitimpl.h"

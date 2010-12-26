@@ -29,8 +29,8 @@ namespace QGst {
         MiniObjectFlagLast = (1<<4)
     };
     Q_DECLARE_FLAGS(MiniObjectFlags, MiniObjectFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(MiniObjectFlags);
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::MiniObjectFlags);
 QGLIB_REGISTER_TYPE(QGst::MiniObjectFlags);
 
 
@@ -42,8 +42,8 @@ namespace QGst {
         ObjectFlagLast = (1<<4)
     };
     Q_DECLARE_FLAGS(ObjectFlags, ObjectFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(ObjectFlags);
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::ObjectFlags);
 QGLIB_REGISTER_TYPE(QGst::ObjectFlags);
 
 
@@ -102,8 +102,8 @@ namespace QGst {
         PadFlagLast = (ObjectFlagLast << 8)
     };
     Q_DECLARE_FLAGS(PadFlags, PadFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(PadFlags);
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::PadFlags);
 QGLIB_REGISTER_TYPE(QGst::PadFlags);
 
 namespace QGst {
@@ -300,8 +300,8 @@ namespace QGst {
         BufferFlagLast = (MiniObjectFlagLast << 8)
     };
     Q_DECLARE_FLAGS(BufferFlags, BufferFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(BufferFlags)
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::BufferFlags)
 QGLIB_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
 
 
@@ -313,8 +313,8 @@ namespace QGst {
         EventTypeBoth = (EventTypeUpstream | EventTypeDownstream)
     };
     Q_DECLARE_FLAGS(EventTypeFlags, EventTypeFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(EventTypeFlags)
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::EventTypeFlags)
 QGLIB_REGISTER_TYPE(QGst::EventTypeFlags)
 
 namespace QGst {
@@ -352,8 +352,8 @@ namespace QGst {
         SeekFlagSkip = (1 << 4)
     };
     Q_DECLARE_FLAGS(SeekFlags, SeekFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(SeekFlags)
 }
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::SeekFlags)
 QGLIB_REGISTER_TYPE(QGst::SeekFlags)
 
 namespace QGst {
