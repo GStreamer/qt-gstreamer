@@ -55,9 +55,6 @@ public:
 
 };
 
-/*! \relates QGst::Buffer */
-QDebug operator<<(QDebug debug, const BufferPtr & buffer);
-
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Buffer)

@@ -342,7 +342,7 @@ void Value::setData(Type dataType, const void *data)
 }
 
 
-QDebug & operator<<(QDebug debug, const Value & value)
+QDebug operator<<(QDebug debug, const Value & value)
 {
     debug.nospace() << "QGlib::Value";
     if(!value.isValid()) {

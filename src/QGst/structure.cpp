@@ -171,7 +171,7 @@ SharedStructure::~SharedStructure()
 
 QDebug operator<<(QDebug debug, const Structure & structure)
 {
-    debug.nospace() << "QGst::StructureBase";
+    debug.nospace() << "QGst::Structure";
     if (structure.isValid()) {
         debug.nospace() << "(" << structure.toString() << ")";
     } else {

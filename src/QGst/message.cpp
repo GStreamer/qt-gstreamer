@@ -569,16 +569,4 @@ void QosMessage::setStats(Format format, quint64 processed, quint64 dropped)
                               dropped);
 }
 
-QDebug operator<<(QDebug debug, MessageType type)
-{
-    debug.nospace() << gst_message_type_get_name(static_cast<GstMessageType>(type));
-    return debug.space();
-}
-
-QDebug operator<<(QDebug debug, const MessagePtr & message)
-{
-    debug.nospace() << "QGst::Message(Type: " << message->type() << ")";
-    return debug.space();
-}
-
 } //namespace QGst

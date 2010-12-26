@@ -365,16 +365,4 @@ bool StepEvent::intermediate() const
     return i;
 }
 
-QDebug operator<<(QDebug debug, EventType type)
-{
-    debug.nospace() << gst_event_type_get_name(static_cast<GstEventType>(type));
-    return debug.space();
-}
-
-QDebug operator<<(QDebug debug, const EventPtr & event)
-{
-    debug.nospace() << "QGst::Event(Type: " << event->type() << ")";
-    return debug.space();
-}
-
 } //namespace QGst

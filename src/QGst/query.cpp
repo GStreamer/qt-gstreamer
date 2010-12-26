@@ -403,18 +403,4 @@ void UriQuery::setValue(const QUrl & uri)
     gst_query_set_uri(object<GstQuery>(), uri.toEncoded());
 }
 
-//********************************************************
-
-QDebug operator<<(QDebug debug, QueryType type)
-{
-    debug.nospace() << gst_query_type_get_name(static_cast<GstQueryType>(type));
-    return debug.space();
-}
-
-QDebug operator<<(QDebug debug, const QueryPtr & query)
-{
-    debug.nospace() << "QGst::Query(Type: " << query->type() << ")";
-    return debug.space();
-}
-
 } //namespace QGst

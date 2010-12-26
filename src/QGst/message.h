@@ -314,12 +314,6 @@ public:
     void setStats(Format format, quint64 processed, quint64 dropped);
 };
 
-/*! \relates QGst::Message */
-QDebug operator<<(QDebug debug, MessageType type);
-
-/*! \relates QGst::Message */
-QDebug operator<<(QDebug debug, const MessagePtr & message);
-
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Message)

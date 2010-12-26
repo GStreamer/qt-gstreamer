@@ -219,12 +219,6 @@ public:
     bool intermediate() const;
 };
 
-/*! \relates QGst::Event */
-QDebug operator<<(QDebug debug, EventType type);
-
-/*! \relates QGst::Event */
-QDebug operator<<(QDebug debug, const EventPtr & event);
-
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Event)

@@ -497,7 +497,7 @@ public:
 // -- QDebug operator --
 
 /*! \relates QGlib::Value */
-QDebug & operator<<(QDebug debug, const Value & value);
+QDebug operator<<(QDebug debug, const Value & value);
 
 } //namespace QGlib
 

@@ -83,10 +83,4 @@ BufferPtr Buffer::copy() const
     return BufferPtr::wrap(gst_buffer_copy(object<GstBuffer>()), false);
 }
 
-QDebug operator<<(QDebug debug, const BufferPtr & buffer)
-{
-    debug.nospace() << "QGst::Buffer(Size: " << buffer->size() << ")";
-    return debug.space();
-}
-
 } //namespace QGst
