@@ -96,13 +96,11 @@ public:
     inline bool operator==(Type other) const;
     inline operator Private::GType() const { return m_type; }
 
-    template<class T>
-    static Type fromInstance(const RefPointer<T> & instance);
     static Type fromInstance(void *nativeInstance);
     static Type fromName(const char *name);
 
     QString name() const;
-    Quark qname() const;
+    Quark nameQuark() const;
 
     bool isAbstract() const;
     bool isDerived() const;
@@ -115,11 +113,14 @@ public:
     bool isDeepDerivable() const;
     bool isInterface() const;
 
-    FundamentalType fundamental() const;
+    Type fundamental() const;
     Type parent() const;
     uint depth() const;
     Type nextBase(Type rootType) const;
     bool isA(Type is_a_type) const;
+
+    template <typename T>
+    inline bool isA() const;
 
     QList<Type> children() const;
     QList<Type> interfaces() const;
@@ -144,9 +145,12 @@ inline bool Type::operator==(Type other) const
 }
 
 template <class T>
-Type Type::fromInstance(const RefPointer<T> & instance)
+inline Type GetType(); //forward-declaration, defined below
+
+template <typename T>
+inline bool Type::isA() const
 {
-    return fromInstance(static_cast<void*>(static_cast<typename T::CType*>(instance)));
+    return isA(GetType<T>());
 }
 
 //***************
@@ -242,7 +246,7 @@ struct CanConvertTo
 {
     static inline bool from(void *instance)
     {
-        return Type::fromInstance(instance).isA(GetType<T>());
+        return Type::fromInstance(instance).isA<T>();
     }
 };
 

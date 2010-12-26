@@ -41,7 +41,7 @@ QString Type::name() const
     return QString::fromUtf8(g_type_name(m_type));
 }
 
-Quark Type::qname() const
+Quark Type::nameQuark() const
 {
     return g_type_qname(m_type);
 }
@@ -96,9 +96,9 @@ bool Type::isInterface() const
     return G_TYPE_IS_INTERFACE(m_type);
 }
 
-Type::FundamentalType Type::fundamental() const
+Type Type::fundamental() const
 {
-    return static_cast<Type::FundamentalType>(G_TYPE_FUNDAMENTAL(m_type));
+    return G_TYPE_FUNDAMENTAL(m_type);
 }
 
 Type Type::parent() const

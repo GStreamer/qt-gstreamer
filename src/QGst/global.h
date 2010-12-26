@@ -42,7 +42,7 @@
         { \
             static inline bool from(void *instance) \
             { \
-                return (Type::fromInstance(instance).isA(GetType<QGst::BASECLASS>()) && \
+                return (Type::fromInstance(instance).isA<QGst::BASECLASS>() && \
                         QGst::BASECLASS##Ptr::wrap(static_cast<Gst##BASECLASS *>(instance))->type() \
                         == QGst::BASECLASS##TYPE); \
             } \
