@@ -44,15 +44,21 @@ typedef RefPointer<Object> ObjectPtr;
 
 } //namespace QGlib
 
-#define QGLIB_WRAPPER(Class) \
+
+#define QGLIB_WRAPPER_DECLARATION_MACRO(CppClass, CClass, CNamespace, FakeSuperClass) \
     public: \
-        typedef G##Class CType; \
+        typedef CNamespace##CClass CType; \
     protected: \
-        Class() {} \
-        Class(const Class &); \
-        Class & operator=(const Class &); \
-        ~Class() {} \
-        template <class T> friend class QGlib::RefPointer;
+        CppClass() {} \
+        CppClass(const CppClass &); \
+        CppClass & operator=(const CppClass &); \
+        ~CppClass() {} \
+        template <class T> friend class QGlib::RefPointer; \
+        friend QGlib::RefCountedObject* FakeSuperClass##_new(void*); \
+    private:
+
+#define QGLIB_WRAPPER(Class) \
+    QGLIB_WRAPPER_DECLARATION_MACRO(Class, Class, G, Class)
 
 
 #if !defined(BOOST_NO_STATIC_ASSERT) //we have c++0x static_assert

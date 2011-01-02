@@ -140,18 +140,15 @@ QGST_WRAPPER_DECLARATION(XOverlay)
 #undef QGST_WRAPPER_GSTCLASS_DECLARATION
 
 
-#define QGST_WRAPPER_DIFFERENT_C_CLASS(Class, CClass) \
-    public: \
-        typedef Gst##CClass CType; \
-    protected: \
-        Class() {} \
-        Class(const Class &); \
-        Class & operator=(const Class &); \
-        ~Class() {} \
-        template <class T> friend class QGlib::RefPointer;
-
 #define QGST_WRAPPER(Class) \
-        QGST_WRAPPER_DIFFERENT_C_CLASS(Class, Class)
+    QGLIB_WRAPPER_DECLARATION_MACRO(Class, Class, Gst, Class)
+
+#define QGST_WRAPPER_DIFFERENT_C_CLASS(Class, CClass) \
+    QGLIB_WRAPPER_DECLARATION_MACRO(Class, CClass, Gst, Class)
+
+#define QGST_WRAPPER_FAKE_SUBCLASS(Sub, Class) \
+    QGLIB_WRAPPER_DECLARATION_MACRO(Sub##Class, Class, Gst, Class)
+
 
 namespace QGst {
     /*! A datatype to hold a time, measured in nanoseconds */

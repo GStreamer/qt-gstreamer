@@ -64,7 +64,7 @@ public:
  */
 class EosMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(EosMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Eos, Message)
 public:
     static EosMessagePtr create(const ObjectPtr & source);
 };
@@ -74,7 +74,7 @@ public:
  */
 class ErrorMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(ErrorMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Error, Message)
 public:
     static ErrorMessagePtr create(const ObjectPtr & source,
                                   const QGlib::Error & error, const char *debug);
@@ -88,7 +88,7 @@ public:
  */
 class WarningMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(WarningMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Warning, Message)
 public:
     static WarningMessagePtr create(const ObjectPtr & source,
                                     const QGlib::Error & error, const char *debug);
@@ -102,7 +102,7 @@ public:
  */
 class InfoMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(InfoMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Info, Message)
 public:
     static InfoMessagePtr create(const ObjectPtr & source,
                                  const QGlib::Error & error, const char *debug);
@@ -118,7 +118,7 @@ public:
  */
 class BufferingMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(BufferingMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Buffering, Message)
 public:
     static BufferingMessagePtr create(const ObjectPtr & source, int percent);
 
@@ -136,7 +136,7 @@ public:
  */
 class StateChangedMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(StateChangedMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(StateChanged, Message)
 public:
     static StateChangedMessagePtr create(const ObjectPtr & source,
                                          State oldState, State newState, State pending);
@@ -153,7 +153,7 @@ public:
  */
 class StepDoneMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(StepDoneMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(StepDone, Message)
 public:
     static StepDoneMessagePtr create(const ObjectPtr & source, Format format, quint64 amount,
                                      double rate, bool flush, bool intermediate, quint64 duration, bool eos);
@@ -175,7 +175,7 @@ public:
  */
 class StreamStatusMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(StreamStatusMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(StreamStatus, Message)
 public:
     static StreamStatusMessagePtr create(const ObjectPtr & source,
                                          StreamStatusType type, const ElementPtr & owner);
@@ -191,7 +191,7 @@ public:
  */
 class ApplicationMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(ApplicationMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Application, Message)
 public:
     static ApplicationMessagePtr create(const ObjectPtr & source,
                                         const Structure & structure = Structure());
@@ -202,7 +202,7 @@ public:
  */
 class ElementMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(ElementMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Element, Message)
 public:
     static ElementMessagePtr create(const ObjectPtr & source,
                                     const Structure & structure = Structure());
@@ -215,7 +215,7 @@ public:
  */
 class SegmentDoneMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(SegmentDoneMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(SegmentDone, Message)
 public:
     static SegmentDoneMessagePtr create(const ObjectPtr & source, Format format, qint64 position);
 
@@ -228,7 +228,7 @@ public:
  */
 class DurationMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(DurationMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Duration, Message)
 public:
     static DurationMessagePtr create(const ObjectPtr & source, Format format, qint64 duration);
 
@@ -241,7 +241,7 @@ public:
  */
 class LatencyMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(LatencyMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Latency, Message)
 public:
     static LatencyMessagePtr create(const ObjectPtr & source);
 };
@@ -253,7 +253,7 @@ public:
  */
 class AsyncDoneMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(AsyncDoneMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(AsyncDone, Message)
 public:
     static AsyncDoneMessagePtr create(const ObjectPtr & source);
 };
@@ -263,7 +263,7 @@ public:
  */
 class RequestStateMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(RequestStateMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(RequestState, Message)
 public:
     static RequestStateMessagePtr create(const ObjectPtr & source, State state);
 
@@ -275,7 +275,7 @@ public:
  */
 class StepStartMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(StepStartMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(StepStart, Message)
 public:
     static StepStartMessagePtr create(const ObjectPtr & source, bool active, Format format,
                                       quint64 amount, double rate, bool flush, bool intermediate);
@@ -292,7 +292,7 @@ public:
  */
 class QosMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(QosMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Qos, Message)
 public:
     static QosMessagePtr create(const ObjectPtr & source, bool live, quint64 runningTime,
                                 quint64 streamTime, quint64 timestamp, quint64 duration);

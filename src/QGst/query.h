@@ -66,7 +66,7 @@ public:
  */
 class PositionQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(PositionQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Position, Query)
 public:
     static PositionQueryPtr create(Format format);
 
@@ -80,7 +80,7 @@ public:
  */
 class DurationQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(DurationQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Duration, Query)
 public:
     static DurationQueryPtr create(Format format);
 
@@ -94,7 +94,7 @@ public:
  */
 class LatencyQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(LatencyQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Latency, Query)
 public:
     static LatencyQueryPtr create();
 
@@ -110,7 +110,7 @@ public:
  */
 class SeekingQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(SeekingQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Seeking, Query)
 public:
     static SeekingQueryPtr create(Format format);
 
@@ -127,7 +127,7 @@ public:
  */
 class SegmentQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(SegmentQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Segment, Query)
 public:
     static SegmentQueryPtr create(Format format);
 
@@ -144,7 +144,7 @@ public:
  */
 class ConvertQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(ConvertQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Convert, Query)
 public:
     static ConvertQueryPtr create(Format sourceFormat, qint64 value, Format destinationFormat);
 
@@ -162,7 +162,7 @@ public:
  */
 class FormatsQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(FormatsQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Formats, Query)
 public:
     static FormatsQueryPtr create();
 
@@ -176,7 +176,7 @@ public:
  */
 class BufferingQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(BufferingQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Buffering, Query)
 public:
     static BufferingQueryPtr create(Format format);
 
@@ -205,7 +205,7 @@ public:
  */
 class UriQuery : public Query
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(UriQuery, Query)
+    QGST_WRAPPER_FAKE_SUBCLASS(Uri, Query)
 public:
     static UriQueryPtr create();
 

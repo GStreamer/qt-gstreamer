@@ -74,7 +74,7 @@ public:
  */
 class FlushStartEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(FlushStartEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(FlushStart, Event)
 public:
     static FlushStartEventPtr create();
 };
@@ -84,7 +84,7 @@ public:
  */
 class FlushStopEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(FlushStopEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(FlushStop, Event)
 public:
     static FlushStopEventPtr create();
 };
@@ -94,7 +94,7 @@ public:
  */
 class EosEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(EosEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Eos, Event)
 public:
     static EosEventPtr create();
 };
@@ -104,7 +104,7 @@ public:
  */
 class NewSegmentEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(NewSegmentEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(NewSegment, Event)
 public:
     static NewSegmentEventPtr create(bool update, double rate, double appliedRate, Format format,
                                      qint64 start, qint64 stop, qint64 position);
@@ -125,7 +125,7 @@ public:
  */
 class BufferSizeEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(BufferSizeEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(BufferSize, Event)
 public:
     static BufferSizeEventPtr create(Format format, qint64 minSize, qint64 maxSize, bool isAsync);
 
@@ -140,7 +140,7 @@ public:
  */
 class SinkMessageEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(SinkMessageEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(SinkMessage, Event)
 public:
     static SinkMessageEventPtr create(const MessagePtr & msg);
 
@@ -152,7 +152,7 @@ public:
  */
 class QosEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(QosEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Qos, Event)
 public:
     static QosEventPtr create(double proportion, ClockTimeDiff diff, ClockTime timestamp);
 
@@ -166,7 +166,7 @@ public:
  */
 class SeekEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(SeekEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Seek, Event)
 public:
     static SeekEventPtr create(double rate, Format format, SeekFlags flags, SeekType startType,
                                qint64 start, SeekType stopType, qint64 stop);
@@ -185,7 +185,7 @@ public:
  */
 class NavigationEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(NavigationEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Navigation, Event)
 public:
     static NavigationEventPtr create(const Structure & structure  = Structure());
 };
@@ -195,7 +195,7 @@ public:
  */
 class LatencyEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(LatencyEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Latency, Event)
 public:
     static LatencyEventPtr create(ClockTime latency);
 
@@ -207,7 +207,7 @@ public:
  */
 class StepEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(StepEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Step, Event)
 public:
     static StepEventPtr create(Format format, quint64 amount, double rate,
                             bool flush, bool intermediate);
