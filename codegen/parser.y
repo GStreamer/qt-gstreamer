@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -31,6 +33,9 @@ void yyerror(CodeGen *codegen, const char *msg);
 %token REGISTER_TYPE_BEGIN
        SCOPE_RESOLUTION_OPERATOR
        REGISTER_TYPE_END
+       REGISTER_WRAPPER_BEGIN
+       REGISTER_WRAPPER_SUBCLASS_BEGIN
+       REGISTER_WRAPPER_END
        INSTRUCTIONS_BEGIN
        INSTRUCTIONS_ASSIGN_OPERATOR
        INSTRUCTIONS_SEPARATOR
@@ -63,7 +68,7 @@ void yyerror(CodeGen *codegen, const char *msg);
 
 header: header expression | expression | /*empty*/;
 
-expression : enum_def | type_registration;
+expression : enum_def | type_registration | wrapper_definition;
 
 enum_def:
     ENUM_KEYWORD IDENTIFIER LEFT_BRACE optional_instructions enum_list RIGHT_BRACE SEMICOLON
@@ -109,6 +114,29 @@ optional_enum_id:
         $$ = new QByteArray();
     };
 
+wrapper_definition:
+    REGISTER_WRAPPER_BEGIN IDENTIFIER optional_c_class REGISTER_WRAPPER_END optional_instructions
+    {
+        codegen->addWrapperDefinition(*$2, *$5);
+        delete $2;
+        delete $5;
+    }
+    |
+    REGISTER_WRAPPER_SUBCLASS_BEGIN IDENTIFIER COMMA IDENTIFIER REGISTER_WRAPPER_END optional_instructions
+    {
+        codegen->addWrapperFakeSubclass(*$2, *$4, *$6);
+        delete $2;
+        delete $4;
+        delete $6;
+    };
+
+optional_c_class:
+    COMMA IDENTIFIER
+    {
+        delete $2;
+    }
+    | /* empty */
+    ;
 
 optional_instructions:
     INSTRUCTIONS_BEGIN instruction_list INSTRUCTIONS_END

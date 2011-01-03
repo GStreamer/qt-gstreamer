@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -25,37 +27,52 @@
 class CodeGen
 {
 public:
-    static void parse(const QString & fileName);
+    typedef QHash<QByteArray, QByteArray> QByteArrayHash;
+    typedef QPair<QByteArray, QByteArray> QByteArrayPair;
+
+    static void parse(const QString & fileName, QTextStream & outStream);
+    static void printGlobalWrapperDefinitions(QTextStream & outStream);
 
     inline CodeGen(const QString & fileName) : m_fileName(fileName) {}
 
     inline void setCurrentNameSpace(const char *name) { m_currentNamespace = name; }
     inline void setCurrentClass(const char *name) { m_currentClass = name; }
 
-    void addEnum(const QList<QByteArray> & values, const QHash<QByteArray, QByteArray> & options);
+    void addEnum(const QList<QByteArray> & values, const QByteArrayHash & options);
     void addTypeRegistration(const QByteArray & namespaceId, const QByteArray & classId,
-                             const QByteArray & enumId, const QHash<QByteArray, QByteArray> & options);
+                             const QByteArray & enumId, const QByteArrayHash & options);
+    void addWrapperDefinition(const QByteArray & classId, const QByteArrayHash & options);
+    void addWrapperFakeSubclass(const QByteArray & prefix, const QByteArray & classId,
+                                const QByteArrayHash & options);
+
     void fatalError(const char *msg);
 
 private:
     struct Enum
     {
         QList<QByteArray> values;
-        QHash<QByteArray, QByteArray> options;
+        QByteArrayHash options;
     };
 
-    typedef QHash<QByteArray, QByteArray> TypeRegistration;
+    void generateOutput(QTextStream & outStream);
 
-    void generateOutput();
-    static void printTypeRegistration(QTextStream & outStream, const TypeRegistration & typeReg);
+    static void printTypeRegistration(QTextStream & outStream, const QByteArrayHash & typeReg);
     static void printEnumAssertions(QTextStream & outStream, const Enum & enumDef);
+    void printWrapperDefinition(QTextStream & outStream, const QByteArrayHash & def);
+
     static QByteArray toGstStyle(const QByteArray & str);
+    static QByteArray namespaceToGstStyle(const QByteArray & ns);
 
     const QString m_fileName;
     QByteArray m_currentNamespace;
     QByteArray m_currentClass;
     QList<Enum> m_enums;
-    QList<TypeRegistration> m_typeRegistrations;
+    QList<QByteArrayHash> m_typeRegistrations;
+    QList<QByteArrayHash> m_wrapperDefinitions;
+    //< <namespace, class>, <prefix + options> >
+    QHash<QByteArrayPair, QList<QByteArrayHash> > m_wrapperSubclasses;
+
+    static QHash<QByteArray, QList<QByteArray> > s_wrapperDefinitions; //<namespace, classes>
 };
 
 #endif // GENERATOR_H

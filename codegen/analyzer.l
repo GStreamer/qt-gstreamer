@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -29,6 +31,7 @@ void yyerror(CodeGen *codegen, const char *msg);
 id      [a-zA-Z][a-zA-Z_0-9]*
 
 %x REGISTER_TYPE
+%x REGISTER_WRAPPER
 %x ENUM
 %x ENUM_EAT_ASSIGNMENT
 %x INSTRUCTION
@@ -41,7 +44,7 @@ id      [a-zA-Z][a-zA-Z_0-9]*
 
 %%
 
-<REGISTER_TYPE,ENUM,INSTRUCTION>{id} { yylval.Id = new QByteArray(yytext); return IDENTIFIER;  }
+<REGISTER_TYPE,REGISTER_WRAPPER,ENUM,INSTRUCTION>{id} { yylval.Id = new QByteArray(yytext); return IDENTIFIER;  }
 
 QGLIB_REGISTER_TYPE\(    { yy_push_state(REGISTER_TYPE); return REGISTER_TYPE_BEGIN; }
 <REGISTER_TYPE>{
@@ -49,6 +52,16 @@ QGLIB_REGISTER_TYPE\(    { yy_push_state(REGISTER_TYPE); return REGISTER_TYPE_BE
     \)                   { yy_pop_state(); return REGISTER_TYPE_END; }
     [[:space:]]*
     .                    { yyerror(codegen, "Syntax error in QGLIB_REGISTER_TYPE"); }
+}
+
+Q[A-Z]+_WRAPPER\(         { yy_push_state(REGISTER_WRAPPER); return REGISTER_WRAPPER_BEGIN; }
+Q[A-Z]+_WRAPPER_DIFFERENT_C_CLASS\(  { yy_push_state(REGISTER_WRAPPER); return REGISTER_WRAPPER_BEGIN; }
+Q[A-Z]+_WRAPPER_FAKE_SUBCLASS\(      { yy_push_state(REGISTER_WRAPPER); return REGISTER_WRAPPER_SUBCLASS_BEGIN; }
+<REGISTER_WRAPPER>{
+    ,                    { return COMMA; }
+    \)                   { yy_pop_state(); return REGISTER_WRAPPER_END; }
+    [[:space:]]*
+    .                    { yyerror(codegen, "Syntax error in wrapper definition"); }
 }
 
 [[:space:]]enum          { yy_push_state(ENUM); return ENUM_KEYWORD; }
