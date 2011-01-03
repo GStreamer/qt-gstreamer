@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -39,6 +41,14 @@ public:
     Value property(const char *name) const;
     template <class T> void setProperty(const char *name, const T & value);
     void setPropertyValue(const char *name, const Value & value);
+
+    void *data(const char *key) const;
+    void *stealData(const char *key) const;
+    void setData(const char *key, void *data, void (*destroyCallback)(void*) = NULL);
+
+    void *quarkData(const Quark & quark) const;
+    void *stealQuarkData(const Quark & quark) const;
+    void setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*) = NULL);
 
 protected:
     virtual void ref(bool increaseRef);

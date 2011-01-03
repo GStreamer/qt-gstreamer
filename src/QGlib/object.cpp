@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -15,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "object.h"
+#include "quark.h"
 #include <glib-object.h>
 
 namespace QGlib {
@@ -70,6 +73,36 @@ Value Object::property(const char *name) const
 void Object::setPropertyValue(const char *name, const Value & value)
 {
     g_object_set_property(object<GObject>(), name, value);
+}
+
+void *Object::data(const char *key) const
+{
+    return g_object_get_data(object<GObject>(), key);
+}
+
+void *Object::stealData(const char *key) const
+{
+    return g_object_steal_data(object<GObject>(), key);
+}
+
+void Object::setData(const char *key, void *data, void (*destroyCallback)(void*))
+{
+    g_object_set_data_full(object<GObject>(), key, data, destroyCallback);
+}
+
+void *Object::quarkData(const Quark & quark) const
+{
+    return g_object_get_qdata(object<GObject>(), quark);
+}
+
+void *Object::stealQuarkData(const Quark & quark) const
+{
+    return g_object_steal_qdata(object<GObject>(), quark);
+}
+
+void Object::setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*))
+{
+    g_object_set_qdata_full(object<GObject>(), quark, data, destroyCallback);
 }
 
 void Object::ref(bool increaseRef)
