@@ -102,6 +102,7 @@ public:
     QString name() const;
     Quark nameQuark() const;
 
+    bool isValid() const;
     bool isAbstract() const;
     bool isDerived() const;
     bool isFundamental() const;

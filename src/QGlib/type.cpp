@@ -46,6 +46,11 @@ Quark Type::nameQuark() const
     return g_type_qname(m_type);
 }
 
+bool Type::isValid() const
+{
+    return m_type != Type::Invalid;
+}
+
 bool Type::isAbstract() const
 {
     return G_TYPE_IS_ABSTRACT(m_type);
