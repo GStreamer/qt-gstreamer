@@ -36,7 +36,7 @@ QList< RefPointer<T> > arrayToList(typename T::CType **array, uint n)
 } //namespace Private
 
 
-ParamSpecPtr Object::findProperty(const char *name) const
+ParamSpecPtr ObjectBase::findProperty(const char *name) const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object<void>())));
     GParamSpec *param = g_object_class_find_property(klass, name);
@@ -48,7 +48,7 @@ ParamSpecPtr Object::findProperty(const char *name) const
     }
 }
 
-QList<ParamSpecPtr> Object::listProperties() const
+QList<ParamSpecPtr> ObjectBase::listProperties() const
 {
     GObjectClass *klass = G_OBJECT_CLASS(g_type_class_ref(Type::fromInstance(object<void>())));
     uint n;
@@ -59,7 +59,7 @@ QList<ParamSpecPtr> Object::listProperties() const
     return result;
 }
 
-Value Object::property(const char *name) const
+Value ObjectBase::property(const char *name) const
 {
     Value result;
     ParamSpecPtr param = findProperty(name);
@@ -70,49 +70,49 @@ Value Object::property(const char *name) const
     return result;
 }
 
-void Object::setPropertyValue(const char *name, const Value & value)
+void ObjectBase::setPropertyValue(const char *name, const Value & value)
 {
     g_object_set_property(object<GObject>(), name, value);
 }
 
-void *Object::data(const char *key) const
+void *ObjectBase::data(const char *key) const
 {
     return g_object_get_data(object<GObject>(), key);
 }
 
-void *Object::stealData(const char *key) const
+void *ObjectBase::stealData(const char *key) const
 {
     return g_object_steal_data(object<GObject>(), key);
 }
 
-void Object::setData(const char *key, void *data, void (*destroyCallback)(void*))
+void ObjectBase::setData(const char *key, void *data, void (*destroyCallback)(void*))
 {
     g_object_set_data_full(object<GObject>(), key, data, destroyCallback);
 }
 
-void *Object::quarkData(const Quark & quark) const
+void *ObjectBase::quarkData(const Quark & quark) const
 {
     return g_object_get_qdata(object<GObject>(), quark);
 }
 
-void *Object::stealQuarkData(const Quark & quark) const
+void *ObjectBase::stealQuarkData(const Quark & quark) const
 {
     return g_object_steal_qdata(object<GObject>(), quark);
 }
 
-void Object::setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*))
+void ObjectBase::setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*))
 {
     g_object_set_qdata_full(object<GObject>(), quark, data, destroyCallback);
 }
 
-void Object::ref(bool increaseRef)
+void ObjectBase::ref(bool increaseRef)
 {
     if (increaseRef) {
         g_object_ref(m_object);
     }
 }
 
-void Object::unref()
+void ObjectBase::unref()
 {
     g_object_unref(m_object);
 }

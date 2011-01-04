@@ -17,14 +17,15 @@
 #ifndef QGST_STREAMVOLUME_H
 #define QGST_STREAMVOLUME_H
 
-#include "element.h"
+#include "global.h"
+#include "../QGlib/object.h"
 
 namespace QGst {
 
 /*! \headerfile streamvolume.h <QGst/StreamVolume>
  * \brief Wrapper class for GstStreamVolume
  */
-class StreamVolume : public Element
+class StreamVolume : public QGlib::Interface
 {
     QGST_WRAPPER(StreamVolume)
 public:

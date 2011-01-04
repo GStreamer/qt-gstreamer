@@ -62,13 +62,13 @@ public:
         widget()->update();
     }
 
-    virtual ElementPtr videoSink() const { return m_sink; }
+    virtual ElementPtr videoSink() const { return m_sink.dynamicCast<Element>(); }
 
     virtual bool eventFilter(QObject *filteredObject, QEvent *event)
     {
         if (filteredObject == parent() && event->type() == QEvent::Paint) {
             State currentState;
-            m_sink->getState(&currentState, NULL, 0);
+            videoSink()->getState(&currentState, NULL, 0);
             if (currentState == StatePlaying || currentState == StatePaused) {
                 m_sink->expose();
             } else {

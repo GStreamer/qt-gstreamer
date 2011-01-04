@@ -17,14 +17,15 @@
 #ifndef QGST_PROPERTYPROBE_H
 #define QGST_PROPERTYPROBE_H
 
-#include "element.h"
+#include "global.h"
+#include "../QGlib/object.h"
 
 namespace QGst {
 
 /*! \interface PropertyProbe propertyprobe.h <QGst/PropertyProbe>
  * \brief Wrapper class for GstPropertyProbe
  */
-class PropertyProbe : public Element
+class PropertyProbe : public QGlib::Interface
 {
     QGST_WRAPPER(PropertyProbe)
 public:

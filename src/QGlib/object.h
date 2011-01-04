@@ -29,11 +29,14 @@
 namespace QGlib {
 
 /*! \headerfile QGlib/object.h <QGlib/Object>
- * \brief Wrapper class for GObject
+ * \brief Common virtual base class for Object and Interface
+ *
+ * This class is an implementation detail that serves only in code reuse between
+ * the Object and Interface classes. You should not use this class directly at all.
+ * Use Object or Interface instead.
  */
-class Object : public RefCountedObject
+class ObjectBase : public RefCountedObject
 {
-    QGLIB_WRAPPER(Object)
 public:
     ParamSpecPtr findProperty(const char *name) const;
     QList<ParamSpecPtr> listProperties() const;
@@ -51,12 +54,37 @@ public:
     void setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*) = NULL);
 
 protected:
+    ObjectBase() {}
+    virtual ~ObjectBase() {}
+    Q_DISABLE_COPY(ObjectBase);
+
     virtual void ref(bool increaseRef);
     virtual void unref();
 };
 
+/*! \headerfile QGlib/object.h <QGlib/Object>
+ * \brief Wrapper class for GObject
+ *
+ * The methods of this class can be found in ObjectBase.
+ */
+class Object : virtual public ObjectBase
+{
+    QGLIB_WRAPPER(Object)
+};
+
+/*! \headerfile QGlib/object.h <QGlib/Object>
+ * \brief Base class for interface wrappers
+ *
+ * The methods of this class can be found in ObjectBase.
+ */
+class Interface : virtual public ObjectBase
+{
+    QGLIB_WRAPPER_DIFFERENT_C_CLASS(Interface, Object)
+};
+
+
 template <class T>
-void Object::setProperty(const char *name, const T & value)
+void ObjectBase::setProperty(const char *name, const T & value)
 {
     ParamSpecPtr param = findProperty(name);
     if (param) {
@@ -70,5 +98,6 @@ void Object::setProperty(const char *name, const T & value)
 } //namespace QGlib
 
 QGLIB_REGISTER_TYPE(QGlib::Object)
+QGLIB_REGISTER_TYPE(QGlib::Interface)
 
 #endif

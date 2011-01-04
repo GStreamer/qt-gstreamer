@@ -60,6 +60,9 @@ typedef RefPointer<Object> ObjectPtr;
 #define QGLIB_WRAPPER(Class) \
     QGLIB_WRAPPER_DECLARATION_MACRO(Class, Class, G, Class)
 
+#define QGLIB_WRAPPER_DIFFERENT_C_CLASS(Class, CClass) \
+    QGLIB_WRAPPER_DECLARATION_MACRO(Class, CClass, G, Class)
+
 
 #if !defined(BOOST_NO_STATIC_ASSERT) //we have c++0x static_assert
 # define QGLIB_STATIC_ASSERT(expr, message) static_assert(expr, message)

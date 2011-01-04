@@ -17,7 +17,8 @@
 #ifndef QGST_XOVERLAY_H
 #define QGST_XOVERLAY_H
 
-#include "element.h"
+#include "global.h"
+#include "../QGlib/object.h"
 #include <QtGui/qwindowdefs.h>
 
 class QRect;
@@ -27,7 +28,7 @@ namespace QGst {
 /*! \interface XOverlay xoverlay.h <QGst/XOverlay>
  * \brief Wrapper class for GstXOverlay
  */
-class XOverlay : public Element
+class XOverlay : public QGlib::Interface
 {
     QGST_WRAPPER(XOverlay)
 public:

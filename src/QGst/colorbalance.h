@@ -17,7 +17,8 @@
 #ifndef QGST_COLORBALANCE_H
 #define QGST_COLORBALANCE_H
 
-#include "element.h"
+#include "global.h"
+#include "../QGlib/object.h"
 
 namespace QGst {
 
@@ -36,7 +37,7 @@ public:
 /*! \headerfile colorbalance.h <QGst/ColorBalance>
  * \brief Wrapper class for GstColorBalance
  */
-class ColorBalance : public Element
+class ColorBalance : public QGlib::Interface
 {
     QGST_WRAPPER(ColorBalance)
 public:

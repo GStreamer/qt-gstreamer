@@ -27,7 +27,7 @@ namespace QGst {
 /*! \headerfile clock.h <QGst/Clock>
  * \brief Wrapper class for GstClock
  */
-class Clock : public virtual Object
+class Clock : public Object
 {
     QGST_WRAPPER(Clock)
 public:

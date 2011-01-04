@@ -19,14 +19,15 @@
 #ifndef QGST_VIDEOORIENTATION_H
 #define QGST_VIDEOORIENTATION_H
 
-#include "element.h"
+#include "global.h"
+#include "../QGlib/object.h"
 
 namespace QGst {
 
 /*! \interface VideoOrientation videoorientation.h <QGst/VideoOrientation>
  * \brief Wrapper class for GstVideoOrientation
  */
-class VideoOrientation : public Element
+class VideoOrientation : public QGlib::Interface
 {
     QGST_WRAPPER(VideoOrientation)
 public:

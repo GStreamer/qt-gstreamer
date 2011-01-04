@@ -16,6 +16,7 @@
 */
 #include "qgsttest.h"
 #include <QGst/UriHandler>
+#include <QGst/Element>
 #include <QGst/ElementFactory>
 
 class UriHandlerTest : public QGstTest

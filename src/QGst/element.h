@@ -25,7 +25,7 @@ namespace QGst {
 /*! \headerfile element.h <QGst/Element>
  * \brief Wrapper class for GstElement
  */
-class Element : public virtual Object
+class Element : public Object
 {
     QGST_WRAPPER(Element)
 public:

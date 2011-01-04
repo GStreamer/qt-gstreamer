@@ -17,7 +17,8 @@
 #ifndef QGST_URIHANDLER_H
 #define QGST_URIHANDLER_H
 
-#include "element.h"
+#include "global.h"
+#include "../QGlib/object.h"
 class QUrl;
 
 namespace QGst {
@@ -25,7 +26,7 @@ namespace QGst {
 /*! \interface UriHandler urihandler.h <QGst/UriHandler>
  * \brief Wrapper class for GstURIHandler
  */
-class UriHandler : public virtual Element
+class UriHandler : public QGlib::Interface
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(UriHandler, URIHandler)
 public:
