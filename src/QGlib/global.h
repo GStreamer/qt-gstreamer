@@ -37,8 +37,6 @@ class SignalHandler;
 template <class T> class RefPointer;
 class ParamSpec;
 typedef RefPointer<ParamSpec> ParamSpecPtr;
-class Closure;
-typedef RefPointer<Closure> ClosurePtr;
 class Object;
 typedef RefPointer<Object> ObjectPtr;
 

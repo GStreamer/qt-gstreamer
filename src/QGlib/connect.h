@@ -195,6 +195,24 @@ bool disconnect(void *instance, const char *detailedSignal = 0,
 
 namespace Private {
 
+//BEGIN ******** ClosureDataBase ********
+
+class ClosureDataBase
+{
+public:
+    inline virtual ~ClosureDataBase() {}
+    virtual void marshaller(Value &, const QList<Value> &) = 0;
+
+    bool passSender; //whether to pass the sender instance as the first slot argument
+
+protected:
+    inline ClosureDataBase(bool passSender)
+        : passSender(passSender) {}
+};
+
+//END ******** ClosureDataBase ********
+
+
 /* This interface specifies the methods that will be used to connect/disconnect a
  * signal receiver to/from a slot that should be called when the receiver is destroyed.
  * This notification is used to disconnect the signal automatically.
@@ -240,7 +258,7 @@ struct GetDestroyNotifier<T, typename boost::enable_if< boost::is_base_of<QObjec
 /* This method is used internally from QGlib::connect(). */
 ulong connect(void *instance, const char *signal, Quark detail,
               void *receiver, const DestroyNotifierIfacePtr & notifier,
-              uint slotHash, const ClosurePtr & closure, ConnectFlags flags);
+              uint slotHash, ClosureDataBase *closureData, ConnectFlags flags);
 
 /* This method is used internally from QGlib::disconnect(). */
 bool disconnect(void *instance, const char *signal, Quark detail,

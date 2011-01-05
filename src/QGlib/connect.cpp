@@ -26,23 +26,6 @@
 #include <boost/multi_index/member.hpp>
 
 namespace QGlib {
-
-//BEGIN ******** Closure ********
-
-void Closure::ref(bool increaseRef)
-{
-    if (increaseRef) {
-        g_closure_ref(static_cast<GClosure*>(m_object));
-    }
-}
-
-void Closure::unref()
-{
-    g_closure_unref(static_cast<GClosure*>(m_object));
-}
-
-//END ******** Closure ********
-
 namespace Private {
 
 //BEGIN ******** Closure internals ********
@@ -123,14 +106,14 @@ static void closureDestroyNotify(void *data, GClosure *closure)
     delete static_cast<ClosureDataBase*>(closure->data);
 }
 
-ClosurePtr createCppClosure(ClosureDataBase *closureData)
+static inline GClosure *createCppClosure(ClosureDataBase *closureData)
 {
     GClosure *closure = g_closure_new_simple(sizeof(GClosure), closureData);
     g_closure_set_marshal(closure, &c_marshaller);
     g_closure_add_finalize_notifier(closure, NULL, &closureDestroyNotify);
-    ClosurePtr result = ClosurePtr::wrap(closure);
+    g_closure_ref(closure);
     g_closure_sink(closure);
-    return result;
+    return closure;
 }
 
 //END ******** Closure internals ********
@@ -175,7 +158,7 @@ public:
 
     ulong connect(void *instance, uint signal, Quark detail,
                   void *receiver, const DestroyNotifierIfacePtr & notifier,
-                  uint slotHash, const ClosurePtr & closure, ConnectFlags flags);
+                  uint slotHash, ClosureDataBase *closureData, ConnectFlags flags);
 
     bool disconnect(void *instance, uint signal, Quark detail,
                     void *receiver, uint slotHash, ulong handlerId);
@@ -206,7 +189,7 @@ private:
     void disconnectHandler(void *instance, const Connection & c);
     void disconnectAndDestroyRcvrWatch(void *instance, const Connection & c);
 
-    void setupClosureWatch(void *instance, ulong handlerId, const ClosurePtr & closure);
+    void setupClosureWatch(void *instance, ulong handlerId, GClosure *closure);
     void onClosureDestroyedAction(void *instance, ulong handlerId);
     static void onClosureDestroyed(void *data, GClosure *closure);
 
@@ -270,9 +253,10 @@ Q_GLOBAL_STATIC(ConnectionsStore, s_connectionsStore)
 
 ulong ConnectionsStore::connect(void *instance, uint signal, Quark detail,
                                 void *receiver, const DestroyNotifierIfacePtr & notifier,
-                                uint slotHash, const ClosurePtr & closure, ConnectFlags flags)
+                                uint slotHash, ClosureDataBase *closureData, ConnectFlags flags)
 {
     QMutexLocker l(&m_mutex);
+    GClosure *closure = createCppClosure(closureData);
 
     ulong handlerId = g_signal_connect_closure_by_id(instance, signal, detail, closure,
                                                      (flags & ConnectAfter) ? TRUE : FALSE);
@@ -286,6 +270,7 @@ ulong ConnectionsStore::connect(void *instance, uint signal, Quark detail,
         setupReceiverWatch(instance, receiver, notifier);
     }
 
+    g_closure_unref(closure);
     return handlerId;
 }
 
@@ -388,7 +373,7 @@ void ConnectionsStore::disconnectAndDestroyRcvrWatch(void *instance, const Conne
     destroyReceiverWatch(instance, c);
 }
 
-void ConnectionsStore::setupClosureWatch(void *instance, ulong handlerId, const ClosurePtr & closure)
+void ConnectionsStore::setupClosureWatch(void *instance, ulong handlerId, GClosure *closure)
 {
     void *data = new QPair<void*, ulong>(instance, handlerId);
     g_closure_add_finalize_notifier(closure, data, &ConnectionsStore::onClosureDestroyed);
@@ -465,7 +450,7 @@ void ConnectionsStore::onReceiverDestroyed(QObject *receiver)
 
 ulong connect(void *instance, const char *signal, Quark detail,
               void *receiver, const DestroyNotifierIfacePtr & notifier,
-              uint slotHash, const ClosurePtr & closure, ConnectFlags flags)
+              uint slotHash, ClosureDataBase *closureData, ConnectFlags flags)
 {
     guint signalId;
     GQuark detailQuark;
@@ -477,11 +462,12 @@ ulong connect(void *instance, const char *signal, Quark detail,
             detail = detailQuark;
         }
         return s_connectionsStore()->connect(instance, signalId, detail, receiver,
-                                             notifier, slotHash, closure, flags);
+                                             notifier, slotHash, closureData, flags);
     } else {
         qWarning() << "QGlib::connect: Could not parse signal:" << signal
                    << "- Either it does not exist on this instance, or a detail "
                       "was specified but the signal is not detailed";
+        delete closureData;
     }
 
     return 0;

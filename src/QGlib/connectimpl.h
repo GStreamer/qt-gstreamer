@@ -30,53 +30,14 @@
 
 
 namespace QGlib {
-
-//BEGIN ******** Closure ********
-
-/* Wrapper class for GClosure. It contains no public methods, it is
- * only used internally to pass around GClosure pointers in a C++ fashion.
- */
-class Closure : public RefCountedObject
-{
-    QGLIB_WRAPPER(Closure)
-
-    virtual void ref(bool increaseRef);
-    virtual void unref();
-};
-
-//END ******** Closure ********
-
 namespace Private {
 
-//BEGIN ******** Closure internals ********
-
-class ClosureDataBase
-{
-public:
-    inline virtual ~ClosureDataBase() {}
-    virtual void marshaller(Value &, const QList<Value> &) = 0;
-
-    bool passSender; //whether to pass the sender instance as the first slot argument
-
-protected:
-    inline ClosureDataBase(bool passSender)
-        : passSender(passSender) {}
-};
-
-
-/*! This is the method that glues the c++ closure system with the GObject world.
- * It creates a GClosure, sets its data, marshaller and finalize notifier accordingly
- * and returns a ClosurePtr. This is the only exported symbol from this library that
- * allows you to create a GClosure and it should only be used through the
- * template CppClosure class.
- */
-ClosurePtr createCppClosure(ClosureDataBase *data); //implemented in signal.cpp
-
+//BEGIN ******** CppClosure prototype ********
 
 template <typename Function, typename Signature>
 struct CppClosure {};
 
-//END ******** Closure internals ********
+//END ******** CppClosure prototype ********
 //BEGIN ******** invoker ********
 
 template <typename Function, typename R>
@@ -209,9 +170,9 @@ struct CppClosure<F, R (Args...)>
         F m_function;
     };
 
-    static inline ClosurePtr create(const F & function, bool passSender)
+    static inline ClosureDataBase *create(const F & function, bool passSender)
     {
-        return createCppClosure(new ClosureData(function, passSender));
+        return new ClosureData(function, passSender);
     }
 };
 
@@ -228,7 +189,8 @@ bool connect(void *instance, const char *detailedSignal,
     typedef Private::MemberFunction<T, R, Args...> F;
 
     F && f = Private::mem_fn(slot, receiver);
-    ClosurePtr && closure = Private::CppClosure<F, R (Args...)>::create(f, flags & PassSender);
+    Private::ClosureDataBase* && closure
+        = Private::CppClosure<F, R (Args...)>::create(f, flags & PassSender);
 
     return Private::connect(instance, detailedSignal, Quark(),
                             receiver, Private::GetDestroyNotifier<T>(),
@@ -324,9 +286,9 @@ struct QGLIB_CONNECT_IMPL_CPPCLOSUREN
         F m_function;
     };
 
-    static ClosurePtr create(const F & function, bool passSender)
+    static ClosureDataBase *create(const F & function, bool passSender)
     {
-        return createCppClosure(new ClosureData(function, passSender));
+        return new ClosureData(function, passSender);
     }
 };
 
@@ -358,7 +320,7 @@ bool connect(void *instance, const char *detailedSignal,
     boost::function<R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)> f
         = boost::bind(slot, receiver QGLIB_CONNECT_IMPL_BIND_ARGS);
 
-    ClosurePtr closure = Private::CppClosure<
+    Private::ClosureDataBase *closure = Private::CppClosure<
             boost::function<R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)>,
             R (QGLIB_CONNECT_IMPL_TEMPLATE_ARGS)
         >::create(f, flags & PassSender);
