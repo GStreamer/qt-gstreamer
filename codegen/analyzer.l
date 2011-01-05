@@ -104,16 +104,16 @@ Q[A-Z]+_WRAPPER_FAKE_SUBCLASS\(      { yy_push_state(REGISTER_WRAPPER); return R
     .
 }
 
-[[:space:]]namespace     { yy_push_state(NAMESPACE); }
+[[:space:]]namespace     { yy_push_state(NAMESPACE); return NAMESPACE_KEYWORD; }
 <NAMESPACE>{
-    {id}                 { codegen->setCurrentNameSpace(yytext); yy_pop_state(); }
+    {id}                 { yylval.Id = new QByteArray(yytext); yy_pop_state(); return IDENTIFIER; }
     [[:space:]]*
     .                    { yyerror(codegen, "Expected identifier after namespace keyword"); }
 }
 
-[[:space:]]class         { yy_push_state(CLASS); }
+[[:space:]]class         { yy_push_state(CLASS); return CLASS_KEYWORD; }
 <CLASS>{
-    {id}                 { codegen->setCurrentClass(yytext); yy_pop_state(); }
+    {id}                 { yylval.Id = new QByteArray(yytext); yy_pop_state(); return IDENTIFIER; }
     [[:space:]]*
     .                    { yyerror(codegen, "Expected identifier after class keyword"); }
 }

@@ -41,6 +41,8 @@ void yyerror(CodeGen *codegen, const char *msg);
        INSTRUCTIONS_SEPARATOR
        INSTRUCTIONS_END
        ENUM_KEYWORD
+       NAMESPACE_KEYWORD
+       CLASS_KEYWORD
        LEFT_BRACE
        RIGHT_BRACE
        COMMA
@@ -68,7 +70,7 @@ void yyerror(CodeGen *codegen, const char *msg);
 
 header: header expression | expression | /*empty*/;
 
-expression : enum_def | type_registration | wrapper_definition;
+expression : enum_def | class_def | namespace_def | type_registration | wrapper_definition;
 
 enum_def:
     ENUM_KEYWORD IDENTIFIER LEFT_BRACE optional_instructions enum_list RIGHT_BRACE SEMICOLON
@@ -93,6 +95,19 @@ enum_list:
         delete $1;
     };
 
+class_def:
+    CLASS_KEYWORD IDENTIFIER
+    {
+        codegen->setCurrentClass(*$2);
+        delete $2;
+    };
+
+namespace_def:
+    NAMESPACE_KEYWORD IDENTIFIER
+    {
+        codegen->setCurrentNameSpace(*$2);
+        delete $2;
+    };
 
 type_registration:
     REGISTER_TYPE_BEGIN IDENTIFIER SCOPE_RESOLUTION_OPERATOR IDENTIFIER optional_enum_id REGISTER_TYPE_END optional_instructions
