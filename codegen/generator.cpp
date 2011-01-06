@@ -145,12 +145,16 @@ void CodeGen::printEnumAssertions(QTextStream& outStream, const Enum & enumDef)
 
 void CodeGen::printWrapperDefinition(QTextStream& outStream, const QByteArrayHash & def)
 {
+    //This function is not printed inside namespace Private because it needs to be friend
+    //with the actual class and we cannot declare a friend from another namespace in the
+    //class without a forward declaration.
     outStream << "namespace " << def["namespace"] << " {" << endl;
     outStream << "  QGlib::RefCountedObject *" << def["class"] << "_new(void *instance)" << endl;
     outStream << "  {" << endl;
 
     QByteArrayPair index = qMakePair(def["namespace"], def["class"]);
     if (m_wrapperSubclasses.contains(index)) {
+        outStream << "    "<< def["namespace"] << "::" << def["class"] << " *cppClass = NULL;" << endl;
         outStream << "    switch(" << namespaceToGstStyle(def["namespace"])
                                    << "_" << toGstStyle(def["class"]) << "_"
                                    << "TYPE(instance)) {" << endl;
@@ -158,18 +162,22 @@ void CodeGen::printWrapperDefinition(QTextStream& outStream, const QByteArrayHas
         Q_FOREACH(const QByteArrayHash & subclass, m_wrapperSubclasses[index]) {
             outStream << "    case " << def["namespace"] << "::"
                                      << def["class"] << subclass["prefix"] << ":" << endl;
-            outStream << "      return new " << def["namespace"] << "::"
+            outStream << "      cppClass = new " << def["namespace"] << "::"
                                              << subclass["prefix"] << def["class"] << ";" << endl;
+            outStream << "      break;" << endl;
         }
 
         outStream << "    default:" << endl;
-        outStream << "      return new " << def["namespace"] << "::" << def["class"] << ";" << endl;
+        outStream << "      cppClass = new " << def["namespace"] << "::" << def["class"] << ";" << endl;
+        outStream << "      break;" << endl;
         outStream << "    }" << endl;
     } else {
-        outStream << "    Q_UNUSED(instance);" << endl;
-        outStream << "    return new " << def["namespace"] << "::" << def["class"] << ";" << endl;
+        outStream << "    " << def["namespace"] << "::" << def["class"] << " *cppClass = new "
+                            << def["namespace"] << "::" << def["class"] << ";" << endl;
     }
 
+    outStream << "    cppClass->m_object = instance;" << endl;
+    outStream << "    return cppClass;" << endl;
     outStream << "  }" << endl;
     outStream << "} //namespace " << def["namespace"] << endl;
 
@@ -182,6 +190,7 @@ void CodeGen::printGlobalWrapperDefinitions(QTextStream & outStream)
     while (it.hasNext()) {
         it.next();
         outStream << "namespace " << it.key() << " {" << endl;
+        outStream << "namespace Private {" << endl;
         outStream << "  void registerWrapperConstructors()" << endl;
         outStream << "  {" << endl;
         outStream << "    QGlib::Quark q = g_quark_from_static_string(\"QGlib__wrapper_constructor\");" << endl;
@@ -191,6 +200,7 @@ void CodeGen::printGlobalWrapperDefinitions(QTextStream & outStream)
                       << ".setQuarkData(q, reinterpret_cast<void*>(&" << classId << "_new));" << endl;
         }
         outStream << "  }" << endl;
+        outStream << "} //namespace Private" << endl;
         outStream << "} //namespace " << it.key() << endl << endl;
     }
     s_wrapperDefinitions.clear();
