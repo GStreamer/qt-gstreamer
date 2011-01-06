@@ -53,5 +53,6 @@ void ChildProxy::setChildProperty(const char *name, const T & value)
 }
 
 QGLIB_REGISTER_TYPE(QGst::ChildProxy)
+QGLIB_REGISTER_INTERFACE(QGst::ChildProxy)
 
 #endif // QGST_CHILDPROXY_H

@@ -7,6 +7,8 @@ set(QtGstreamer_SRCS
     QGlib/signal.cpp
     QGlib/error.cpp
     QGlib/connect.cpp
+    QGlib/wrap.cpp
+    QGlib/init.cpp
 
     QGst/global.cpp
     QGst/objectstore.cpp
@@ -48,6 +50,7 @@ set(INSTALLED_HEADERS
     QGlib/quark.h       QGlib/Quark
     QGlib/type.h        QGlib/Type
     QGlib/refpointer.h  QGlib/RefPointer
+    QGlib/wrap.h
     QGlib/paramspec.h   QGlib/ParamSpec
     QGlib/object.h      QGlib/Object
     QGlib/value.h       QGlib/Value

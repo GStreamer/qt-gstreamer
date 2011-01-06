@@ -164,6 +164,8 @@ namespace QGst {
 
     /*! Initializes the GStreamer library, setting up internal path lists,
      * registering built-in elements, and loading standard plugins.
+     * \note This function also calls QGlib::init(),
+     * so there is no need to call it explicitly.
      * \param argc pointer to the application's argc
      * \param argv pointer to the application's argv
      * \throws QGlib::Error when initialization fails

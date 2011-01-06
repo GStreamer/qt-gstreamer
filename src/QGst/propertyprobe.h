@@ -50,5 +50,6 @@ public:
 }
 
 QGLIB_REGISTER_TYPE(QGst::PropertyProbe)
+QGLIB_REGISTER_INTERFACE(QGst::PropertyProbe)
 
 #endif // QGST_PROPERTYPROBE_H

@@ -32,7 +32,7 @@ class MiniObject : public QGlib::RefCountedObject
 public:
     MiniObjectPtr copy() const;
     bool isWritable() const;
-    void makeWritable();
+    MiniObjectPtr makeWritable() const;
 
     MiniObjectFlags flags() const;
     bool flagIsSet(MiniObjectFlag flag) const;
@@ -44,8 +44,15 @@ protected:
     virtual void unref();
 };
 
+
+namespace Private {
+
+QGlib::RefCountedObject *wrapMiniObject(void *miniObject);
+
+} //namespace Private
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::MiniObject)
+QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::MiniObject, QGst::Private::wrapMiniObject)
 
 #endif

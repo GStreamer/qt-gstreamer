@@ -107,7 +107,7 @@ void CapsTest::writabilityTest()
     QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 2);
     QVERIFY(!caps->isWritable());
 
-    caps->makeWritable(); //creates a copy
+    caps = caps->makeWritable(); //creates a copy
     QVERIFY(caps->isWritable());
     QVERIFY(oldPtr != static_cast<GstCaps*>(caps)); //no longer same gstcaps object
 }

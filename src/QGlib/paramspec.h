@@ -70,5 +70,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ParamSpec::ParamFlags)
 
 QGLIB_REGISTER_TYPE(QGlib::ParamSpec) //codegen: GType=G_TYPE_PARAM
 QGLIB_REGISTER_TYPE(QGlib::ParamSpec::ParamFlags)
+QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGlib::ParamSpec, QGlib::Private::wrapParamSpec)
 
 #endif

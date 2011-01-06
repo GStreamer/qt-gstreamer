@@ -44,5 +44,6 @@ public:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::VideoOrientation)
+QGLIB_REGISTER_INTERFACE(QGst::VideoOrientation)
 
 #endif // QGST_VIDEOORIENTATION_H

@@ -69,7 +69,7 @@ public:
     CapsPtr copyNth(uint index) const;
 
     bool isWritable() const;
-    void makeWritable();
+    CapsPtr makeWritable() const;
 
 protected:
     virtual void ref(bool increaseRef);
@@ -79,8 +79,15 @@ protected:
 /*! \relates QGst::Caps */
 QDebug operator<<(QDebug debug, const CapsPtr & caps);
 
-}
+
+namespace Private {
+
+QGlib::RefCountedObject *wrapCaps(void *caps);
+
+} //namespace Private
+} //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::Caps)
+QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::Caps, QGst::Private::wrapCaps)
 
 #endif

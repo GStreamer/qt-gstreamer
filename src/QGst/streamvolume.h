@@ -41,5 +41,6 @@ public:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::StreamVolume)
+QGLIB_REGISTER_INTERFACE(QGst::StreamVolume)
 
 #endif // QGST_STREAMVOLUME_H

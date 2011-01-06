@@ -51,5 +51,6 @@ public:
 
 QGLIB_REGISTER_TYPE(QGst::ColorBalanceChannel)
 QGLIB_REGISTER_TYPE(QGst::ColorBalance)
+QGLIB_REGISTER_INTERFACE(QGst::ColorBalance)
 
 #endif // QGST_COLORBALANCE_H

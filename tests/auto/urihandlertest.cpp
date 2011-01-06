@@ -23,21 +23,9 @@ class UriHandlerTest : public QGstTest
 {
     Q_OBJECT
 private Q_SLOTS:
-    void castTest();
     void interfaceTest();
     void makeTest();
 };
-
-void UriHandlerTest::castTest()
-{
-    QGst::ElementPtr e = QGst::ElementFactory::make("audioconvert");
-    QGst::UriHandlerPtr u = e.dynamicCast<QGst::UriHandler>();
-    QVERIFY(u.isNull());
-
-    e = QGst::ElementFactory::make("filesrc");
-    u = e.dynamicCast<QGst::UriHandler>();
-    QVERIFY(!u.isNull());
-}
 
 void UriHandlerTest::interfaceTest()
 {

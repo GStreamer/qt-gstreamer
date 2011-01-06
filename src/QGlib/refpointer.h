@@ -21,10 +21,18 @@
 
 #include "global.h"
 #include "type.h"
+#include "wrap.h"
 #include <cstddef>
 #include <boost/type_traits.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace QGlib {
+
+//forward declarations
+class Object;
+class Interface;
+
+
 namespace Private {
 
 template <class T, class X>
@@ -81,6 +89,9 @@ class RefPointer
 public:
     inline RefPointer();
     inline ~RefPointer();
+
+    /*! \internal */
+    explicit inline RefPointer(T *cppClass);
 
     inline RefPointer(const RefPointer<T> & other);
     template <class X>
@@ -149,11 +160,12 @@ private:
  */
 class RefCountedObject
 {
+public:
+    virtual ~RefCountedObject() {}
+
 protected:
     template <class T> friend class RefPointer;
     template <class T, class X> friend struct Private::RefPointerEqualityCheck;
-
-    virtual ~RefCountedObject() {}
 
     virtual void ref(bool increaseRef) = 0;
     virtual void unref() = 0;
@@ -181,6 +193,12 @@ template <class T>
 inline RefPointer<T>::~RefPointer()
 {
     clear();
+}
+
+template <class T>
+inline RefPointer<T>::RefPointer(T *cppClass)
+    : m_class(cppClass)
+{
 }
 
 template <class T>
@@ -221,11 +239,10 @@ void RefPointer<T>::assign(const RefPointer<X> & other)
 {
     //T should be a base class of X
     QGLIB_STATIC_ASSERT((boost::is_base_of<T, X>::value),
-                        "Cannot upcast a RefPointer without using dynamicCast()");
+                        "Cannot implicitly cast a RefPointer down the hierarchy");
 
     if (!other.isNull()) {
-        m_class = new T();
-        m_class->m_object = other.m_class->m_object;
+        m_class = static_cast<T*>(other.m_class);
         static_cast<RefCountedObject*>(m_class)->ref(true);
     }
 }
@@ -262,8 +279,7 @@ template <class T>
 void RefPointer<T>::clear()
 {
     if (!isNull()) {
-        static_cast<RefCountedObject*>(m_class)->unref();
-        delete m_class;
+        static_cast<RefCountedObject*>(m_class)->unref(); //this may delete m_class at this point
         m_class = NULL;
     }
 }
@@ -274,9 +290,10 @@ RefPointer<T> RefPointer<T>::wrap(typename T::CType *nativePtr, bool increaseRef
 {
     RefPointer<T> ptr;
     if (nativePtr != NULL) {
-        ptr.m_class = new T();
-        ptr.m_class->m_object = nativePtr;
-        static_cast<RefCountedObject*>(ptr.m_class)->ref(increaseRef);
+        RefCountedObject *cppObj = WrapImpl<T>::wrap(nativePtr);
+        cppObj->ref(increaseRef);
+        ptr.m_class = dynamic_cast<T*>(cppObj);
+        Q_ASSERT(ptr.m_class);
     }
     return ptr;
 }
@@ -304,26 +321,126 @@ inline T *RefPointer<T>::operator->() const
 template <class T>
 inline RefPointer<T>::operator typename T::CType*() const
 {
-    return m_class ? static_cast<typename T::CType*>(m_class->m_object) : NULL;
+    return m_class ? static_cast<RefCountedObject*>(m_class)->object<typename T::CType>() : NULL;
 }
 
 template <class T>
 template <class X>
 RefPointer<X> RefPointer<T>::staticCast() const
 {
-    return isNull() ? RefPointer<X>()
-        : RefPointer<X>::wrap(static_cast<typename X::CType*>(static_cast<X*>(m_class)->m_object));
+    RefPointer<X> result;
+    if (m_class) {
+        static_cast<RefCountedObject*>(m_class)->ref(true);
+        result.m_class = static_cast<X*>(m_class);
+    }
+    return result;
 }
+
+
+namespace Private {
+
+template <typename T, typename X, typename Enable = void>
+struct IfaceDynamicCastImpl
+{
+    static inline X *doCast(typename X::CType *obj)
+    {
+        Q_UNUSED(obj);
+        return NULL;
+    }
+};
+
+//this version is compiled if X is an interface and T is an object,
+//i.e. we are dynamically casting from an object to an interface.
+template <typename T, typename X>
+struct IfaceDynamicCastImpl<T, X,
+        typename boost::enable_if_c<
+            //to check if something is an interface, we need to also verify that it does
+            //not inherit Object, since derived object classes may also derive from interfaces.
+            (boost::is_base_of<Interface, X>::value &&
+             !boost::is_base_of<Object, X>::value &&
+             boost::is_base_of<Object, T>::value)
+        >::type
+    >
+{
+    static inline X *doCast(typename X::CType *obj)
+    {
+        X *targetClass = NULL;
+
+        //Check that instanceType implements (isA) the interface
+        //and if it does, return a wrapper for that interface.
+        if (Type::fromInstance(obj).isA(GetType<X>()))
+        {
+            targetClass = dynamic_cast<X*>(Private::wrapInterface(GetType<X>(), obj));
+            Q_ASSERT(targetClass);
+        }
+
+        return targetClass;
+    }
+};
+
+//this version is compiled if T is an interface,
+//i.e. we are dynamically casting from an interface to either an object or another interface.
+template <typename T, typename X>
+struct IfaceDynamicCastImpl<T, X,
+        typename boost::enable_if_c<
+            //to check if something is an interface, we need to also verify that it does
+            //not inherit Object, since derived object classes may also derive from interfaces.
+            (boost::is_base_of<Interface, T>::value &&
+             !boost::is_base_of<Object, T>::value)
+        >::type
+    >
+{
+    static inline X *doCast(typename X::CType *obj)
+    {
+        //get the instance type and try to create (or rather fetch from the GObject qdata)
+        //the C++ wrapper class for this type of object.
+        RefCountedObject *cppClass = Private::wrapObject(obj);
+
+        //attempt to cast it to X
+        X *targetClass = dynamic_cast<X*>(cppClass);
+
+        if (!targetClass) {
+            //Cast failed. This either means that X is something that our instance is not
+            //or that X is another interface that is not inherited by the wrapper class
+            //for this instance type, but it is possible that our instance actually
+            //implements it, so let's check it.
+            if (boost::is_base_of<Interface, X>::value &&
+                !boost::is_base_of<Object, X>::value &&
+                Type::fromInstance(obj).isA(GetType<X>()))
+            {
+                targetClass = dynamic_cast<X*>(Private::wrapInterface(GetType<X>(), obj));
+                Q_ASSERT(targetClass);
+            }
+        }
+
+        return targetClass;
+    }
+};
+
+} //namespace Private
+
 
 template <class T>
 template <class X>
 RefPointer<X> RefPointer<T>::dynamicCast() const
 {
-    if (!isNull() && QGlib::Private::CanConvertTo<X>::from(m_class->m_object)) {
-        return RefPointer<X>::wrap(static_cast<typename X::CType*>(m_class->m_object));
-    } else {
-        return RefPointer<X>();
+    RefPointer<X> result;
+    if (m_class) {
+        X *targetClass = dynamic_cast<X*>(m_class);
+        if (!targetClass) {
+            //in case either X or T is an interface, we need to do some extra checks.
+            //this is a template to optimize the compiled code depending on what X and T are.
+            typename X::CType *obj = static_cast<RefCountedObject*>(m_class)->object<typename X::CType>();
+            targetClass = Private::IfaceDynamicCastImpl<T, X>::doCast(obj);
+        }
+
+        if (targetClass) {
+            static_cast<RefCountedObject*>(targetClass)->ref(true);
+            result.m_class = targetClass;
+        }
     }
+
+    return result;
 }
 
 // trick GetType to return the same type for GetType<T>() and GetType< RefPointer<T> >()

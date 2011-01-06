@@ -42,5 +42,6 @@ public:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::XOverlay)
+QGLIB_REGISTER_INTERFACE(QGst::XOverlay)
 
 #endif // QGST_XOVERLAY_H

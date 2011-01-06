@@ -40,6 +40,10 @@ typedef RefPointer<ParamSpec> ParamSpecPtr;
 class Object;
 typedef RefPointer<Object> ObjectPtr;
 
+/*! Initializes the type system. You must call
+ * this function before using any QtGLib API. */
+void init();
+
 } //namespace QGlib
 
 
@@ -51,7 +55,6 @@ typedef RefPointer<Object> ObjectPtr;
         CppClass(const CppClass &); \
         CppClass & operator=(const CppClass &); \
         ~CppClass() {} \
-        template <class T> friend class QGlib::RefPointer; \
         friend QGlib::RefCountedObject* FakeSuperClass##_new(void*); \
     private:
 

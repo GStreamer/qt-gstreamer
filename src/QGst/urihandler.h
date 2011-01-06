@@ -42,5 +42,6 @@ public:
 } //namespace QGst
 
 QGLIB_REGISTER_TYPE(QGst::UriHandler)
+QGLIB_REGISTER_INTERFACE(QGst::UriHandler)
 
 #endif // QGST_URIHANDLER_H

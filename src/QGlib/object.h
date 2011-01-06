@@ -99,5 +99,6 @@ void ObjectBase::setProperty(const char *name, const T & value)
 
 QGLIB_REGISTER_TYPE(QGlib::Object)
 QGLIB_REGISTER_TYPE(QGlib::Interface)
+QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGlib::Object, QGlib::Private::wrapObject)
 
 #endif
