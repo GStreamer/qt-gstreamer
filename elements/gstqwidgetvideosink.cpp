@@ -620,15 +620,6 @@ static gboolean plugin_init(GstPlugin *plugin)
                                 GST_RANK_NONE, GST_TYPE_QWIDGETVIDEOSINK);
 }
 
-/* PACKAGE: this is usually set by autotools depending on some _INIT macro
- * in configure.ac and then written into and defined in config.h, but we can
- * just set it ourselves here in case someone doesn't use autotools to
- * compile this code. GST_PLUGIN_DEFINE needs PACKAGE to be defined.
- */
-#ifndef PACKAGE
-# define PACKAGE "qtgstreamer"
-#endif
-
 GST_PLUGIN_DEFINE (
     GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
@@ -637,8 +628,8 @@ GST_PLUGIN_DEFINE (
     plugin_init,
     "0.1", //plugin version
     "LGPL",
-    "QtGStreamer",
-    "http://gitorious.org/qtgstreamer"
+    PACKAGE_NAME,
+    PACKAGE_ORIGIN
 )
 
 //END ******** plugin interface ********
