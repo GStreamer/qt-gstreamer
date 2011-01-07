@@ -1,30 +1,30 @@
 1. About
 --------
 
-- What is QtGstreamer?
+- What is QtGStreamer?
 
-QtGstreamer aims to become a library providing C++ bindings for Gstreamer [1]
-with a Qt-style API plus some helper classes for integrating Gstreamer better
+QtGStreamer aims to become a library providing C++ bindings for GStreamer [1]
+with a Qt-style API plus some helper classes for integrating GStreamer better
 in Qt [2] applications.
 
 [1]. http://gstreamer.freedesktop.org/
 [2]. http://qt.nokia.com/
 
-- What is QtGstreamer’s development state at the moment?
+- What is QtGStreamer’s development state at the moment?
 
-QtGstreamer is still under development, but might be suitable for simple uses.
+QtGStreamer is still under development, but might be suitable for simple uses.
 However, note that there is no source or binary compatibility guarantee yet,
-so if you want to use QtGstreamer in your project, I would recommend to ship
+so if you want to use QtGStreamer in your project, I would recommend to ship
 it with your sources and build it as a static library.
 
-- What are the differences between the C++ bindings of QtGstreamer and Gstreamermm?
+- What are the differences between the C++ bindings of QtGStreamer and GStreamermm?
 
- * QtGstreamer provides bindings that completely hide the Gstreamer ABI,
-   so your application doesn’t need to link to Gstreamer itself.
- * QtGstreamer uses QtCore helper classes (QString, QList, etc..) where it can,
+ * QtGStreamer provides bindings that completely hide the GStreamer ABI,
+   so your application doesn’t need to link to GStreamer itself.
+ * QtGStreamer uses QtCore helper classes (QString, QList, etc..) where it can,
    to ease integration with Qt.
- * QtGstreamer provides support for connecting arbitrary GObject signals to
-   slots, while in Gstreamermm every signal needs to be defined in the bindings,
+ * QtGStreamer provides support for connecting arbitrary GObject signals to
+   slots, while in GStreamermm every signal needs to be defined in the bindings,
    or else you need to use the C API for connecting it. This is especially useful
    for connecting signals from element plugins, where their interface is unknown
    at compile time.
@@ -36,7 +36,7 @@ it with your sources and build it as a static library.
 2.1 Dependencies
 ----------------
 
-QtGstreamer requires the following software to be installed in order to build:
+QtGStreamer requires the following software to be installed in order to build:
  * CMake 2.6 or later <http://www.cmake.org/>
  * GStreamer 0.10.31 or later <http://gstreamer.freedesktop.org/>
    With its dependencies:
@@ -51,10 +51,10 @@ QtGstreamer requires the following software to be installed in order to build:
 ------------
 
 A decent compiler with proper support for advanced templates, including features
-such as partial template specialization, is required. QtGstreamer can also make
+such as partial template specialization, is required. QtGStreamer can also make
 use of C++0x features (see below for details). A compiler supporting at least
 some of them is recommended. Currently, only the GNU C++ compiler (g++) version
-4.3 or later is known to support all the features that QtGstreamer uses. However,
+4.3 or later is known to support all the features that QtGStreamer uses. However,
 other compilers can be used too, but with some limitations.
 
 C++0x features in use:
@@ -77,8 +77,8 @@ $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix
 $ make
 $ make install
 
-The above commands will build and install QtGstreamer as a shared library.
-If you prefer to build QtGstreamer as a static library, pass the
+The above commands will build and install QtGStreamer as a shared library.
+If you prefer to build QtGStreamer as a static library, pass the
 -DSTATIC_QTGSTREAMER=1 option to cmake, like that:
 
 $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix -DSTATIC_QTGSTREAMER=1
@@ -86,37 +86,37 @@ $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix -DSTATIC_QTGSTREA
 2.4 Generating documentation
 ----------------------------
 
-QtGstreamer uses doxygen for documentation. To generate the documentation you need
+QtGStreamer uses doxygen for documentation. To generate the documentation you need
 to install doxygen and run "make doc" after you have run cmake. This will generate
 the documentation in <builddir>/doc/html/.
 
 
-3. Using QtGstreamer
+3. Using QtGStreamer
 --------------------
 
 3.1. Build system integration
 -----------------------------
 
-If you are using cmake as your build system, using QtGstreamer is quite easy.
+If you are using cmake as your build system, using QtGStreamer is quite easy.
 You can just do:
 
-    find_package(QtGstreamer)
+    find_package(QtGStreamer)
 
-which will find QtGstreamer and define the following variables:
+which will find QtGStreamer and define the following variables:
 
-    QTGSTREAMER_FOUND - system has QtGstreamer
-    QTGSTREAMER_INCLUDE_DIR - the QtGstreamer include directory
-    QTGSTREAMER_INCLUDES - the include directories needed to use QtGstreamer
-    QTGSTREAMER_LIBRARY - the QtGstreamer library
-    QTGSTREAMER_LIBRARIES - the libraries needed to use QtGstreamer
-    QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGstreamer
-    QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGstreamer
+    QTGSTREAMER_FOUND - system has QtGStreamer
+    QTGSTREAMER_INCLUDE_DIR - the QtGStreamer include directory
+    QTGSTREAMER_INCLUDES - the include directories needed to use QtGStreamer
+    QTGSTREAMER_LIBRARY - the QtGStreamer library
+    QTGSTREAMER_LIBRARIES - the libraries needed to use QtGStreamer
+    QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGStreamer
+    QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGStreamer
 
-Take a look at the CMakeLists.txt of the QtGstreamer examples to see how to use them.
+Take a look at the CMakeLists.txt of the QtGStreamer examples to see how to use them.
 
 Alternatively, if you are using qmake, you can manually set the required variables,
 as demonstrated in the example qmake project files that you can find together with
-the QtGstreamer examples. Unfortunately qmake does not support dynamic detection
+the QtGStreamer examples. Unfortunately qmake does not support dynamic detection
 of installed libraries, so those variables have to be set manually, or you will have
 to write some wrapper "configure" script that generates a qmake project file. This
 is quite painful, compared to cmake, thus cmake is recommended.
@@ -124,19 +124,19 @@ is quite painful, compared to cmake, thus cmake is recommended.
 3.2. Headers
 ------------
 
-The correct way to include a certain QtGstreamer header for a class is to use
+The correct way to include a certain QtGStreamer header for a class is to use
 the #include <namespace/class> syntax. For example: #include <QGst/Element>
 All the other lowercase headers (which all end with .h) are considered private
 and should not be used directly.
 
 
-4. Developing QtGstreamer
+4. Developing QtGStreamer
 -------------------------
 
 4.1. Coding style
 -----------------
 
-QtGstreamer follows the kdelibs coding style:
+QtGStreamer follows the kdelibs coding style:
 http://techbase.kde.org/Policies/Kdelibs_Coding_Style
 
 
@@ -172,7 +172,7 @@ becomes:
 There are cases where this may not be followed:
 
 1) Properties. Most property getters have a "get" prefix, for example,
-gst_object_get_name(). In QtGstreamer the "get" prefix is omitted, so this
+gst_object_get_name(). In QtGStreamer the "get" prefix is omitted, so this
 becomes just name().
 
 2) Overloaded members. In C there is no possibility to have two methods with

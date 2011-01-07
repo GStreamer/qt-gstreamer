@@ -1,4 +1,4 @@
-set(QtGstreamer_SRCS
+set(QtGStreamer_SRCS
     QGlib/quark.cpp
     QGlib/type.cpp
     QGlib/paramspec.cpp
@@ -41,7 +41,7 @@ set(QtGstreamer_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
-set(QtGstreamerUi_SRCS
+set(QtGStreamerUi_SRCS
     QGst/Ui/videowidget.cpp
 )
 
@@ -157,45 +157,45 @@ add_custom_command(OUTPUT gen.cpp
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 
-# Build and link QtGstreamer
+# Build and link QtGStreamer
 if(QTGSTREAMER_STATIC)
-    automoc4_add_library(QtGstreamer STATIC ${QtGstreamer_SRCS})
+    automoc4_add_library(QtGStreamer STATIC ${QtGStreamer_SRCS})
 else()
-    automoc4_add_library(QtGstreamer SHARED ${QtGstreamer_SRCS})
+    automoc4_add_library(QtGStreamer SHARED ${QtGStreamer_SRCS})
 endif()
 
-set_target_properties(QtGstreamer PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
+set_target_properties(QtGStreamer PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
                                              VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGstreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARY}
+target_link_libraries(QtGStreamer ${QT_QTCORE_LIBRARY} ${GSTREAMER_LIBRARY}
                                   ${GSTREAMER_INTERFACES_LIBRARY} ${GOBJECT_LIBRARIES})
-target_link_libraries(QtGstreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
+target_link_libraries(QtGStreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 
-# Build and link QtGstreamerUi
+# Build and link QtGStreamerUi
 if(QTGSTREAMER_STATIC)
-    automoc4_add_library(QtGstreamerUi STATIC ${QtGstreamerUi_SRCS})
+    automoc4_add_library(QtGStreamerUi STATIC ${QtGStreamerUi_SRCS})
 else()
-    automoc4_add_library(QtGstreamerUi SHARED ${QtGstreamerUi_SRCS})
+    automoc4_add_library(QtGStreamerUi SHARED ${QtGStreamerUi_SRCS})
 endif()
 
-set_target_properties(QtGstreamerUi PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
+set_target_properties(QtGStreamerUi PROPERTIES SOVERSION ${QTGSTREAMER_SOVERSION}
                                                VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGstreamerUi ${QT_QTGUI_LIBRARY} QtGstreamer)
-target_link_libraries(QtGstreamerUi LINK_INTERFACE_LIBRARIES ${QT_QTGUI_LIBRARY} QtGstreamer)
+target_link_libraries(QtGStreamerUi ${QT_QTGUI_LIBRARY} QtGStreamer)
+target_link_libraries(QtGStreamerUi LINK_INTERFACE_LIBRARIES ${QT_QTGUI_LIBRARY} QtGStreamer)
 
 
 # Install the library
-install(TARGETS QtGstreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGstreamerTargets)
-install(TARGETS QtGstreamerUi DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGstreamerTargets)
+install(TARGETS QtGStreamer DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGStreamerTargets)
+install(TARGETS QtGStreamerUi DESTINATION ${CMAKE_INSTALL_PREFIX}/lib EXPORT QtGStreamerTargets)
 
 # Install the cmake scripts that are used to find the installed library from external projects
-install(EXPORT QtGstreamerTargets DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGstreamer)
-install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGstreamer.cmake
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGstreamer
-        RENAME QtGstreamerConfig.cmake)
+install(EXPORT QtGStreamerTargets DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGStreamer)
+install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGStreamer.cmake
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/QtGStreamer
+        RENAME QtGStreamerConfig.cmake)
 
 # Install the headers
 foreach(header ${INSTALLED_HEADERS})
     get_filename_component(header_path ${header} PATH)
-    install(FILES ${header} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGstreamer/${header_path})
+    install(FILES ${header} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/QtGStreamer/${header_path})
 endforeach(header ${INSTALLED_HEADERS})

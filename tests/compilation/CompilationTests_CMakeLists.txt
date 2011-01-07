@@ -3,7 +3,7 @@
 # the result of the whole test suite on the cmake exit status.
 
 cmake_minimum_required(VERSION 2.8)
-find_package(QtGstreamer REQUIRED)
+find_package(QtGStreamer REQUIRED)
 include(MacroCXXCompilationTest)
 
 set(CMAKE_REQUIRED_LIBRARIES ${QTGSTREAMER_LIBRARIES})

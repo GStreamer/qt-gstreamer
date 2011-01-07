@@ -1,4 +1,4 @@
-project(QtGstreamer)
+project(QtGStreamer)
 cmake_minimum_required(VERSION 2.8)
 enable_testing()
 
@@ -21,7 +21,7 @@ find_package(Boost)
 macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.40")
 
 # this just sets the QTGSTREAMER_* cmake variables
-find_package(QtGstreamer REQUIRED)
+find_package(QtGStreamer REQUIRED)
 
 find_package(Automoc4)
 macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"

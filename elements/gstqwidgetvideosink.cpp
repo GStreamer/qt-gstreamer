@@ -637,7 +637,7 @@ GST_PLUGIN_DEFINE (
     plugin_init,
     "0.1", //plugin version
     "LGPL",
-    "QtGstreamer",
+    "QtGStreamer",
     "http://gitorious.org/qtgstreamer"
 )
 

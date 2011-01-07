@@ -1,13 +1,13 @@
-# - Try to find QtGstreamer
+# - Try to find QtGStreamer
 # Once done this will define
 #
-#  QTGSTREAMER_FOUND - system has QtGstreamer
-#  QTGSTREAMER_INCLUDE_DIR - the QtGstreamer include directory
-#  QTGSTREAMER_INCLUDES - the include directories needed to use QtGstreamer
-#  QTGSTREAMER_LIBRARY - the QtGstreamer library
-#  QTGSTREAMER_LIBRARIES - the libraries needed to use QtGstreamer
-#  QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGstreamer
-#  QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGstreamer
+#  QTGSTREAMER_FOUND - system has QtGStreamer
+#  QTGSTREAMER_INCLUDE_DIR - the QtGStreamer include directory
+#  QTGSTREAMER_INCLUDES - the include directories needed to use QtGStreamer
+#  QTGSTREAMER_LIBRARY - the QtGStreamer library
+#  QTGSTREAMER_LIBRARIES - the libraries needed to use QtGStreamer
+#  QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGStreamer
+#  QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGStreamer
 #
 # Copyright (c) 2010, George Kiagiadakis <kiagiadakis.george@gmail.com>
 #
@@ -15,48 +15,48 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-# if variables are already in cache or we are building QtGstreamer
+# if variables are already in cache or we are building QtGStreamer
 if((QTGSTREAMER_LIBRARY AND QTGSTREAMER_INCLUDE_DIR) OR BUILDING_QTGSTREAMER)
-    set(QtGstreamer_FIND_QUIETLY TRUE)
+    set(QtGStreamer_FIND_QUIETLY TRUE)
 else()
-    set(QtGstreamer_FIND_QUIETLY FALSE)
+    set(QtGStreamer_FIND_QUIETLY FALSE)
 endif()
 
 set(_QTGSTREAMER_LINK_TO_QT_REQUIRED FALSE)
 
 if(BUILDING_QTGSTREAMER)
-    set(QTGSTREAMER_LIBRARY QtGstreamer)
-    set(QTGSTREAMER_UI_LIBRARY QtGstreamerUi)
+    set(QTGSTREAMER_LIBRARY QtGStreamer)
+    set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
     set(QTGSTREAMER_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 else()
-    # Attempt to find the generated QtGstreamerTargets.cmake in the same directory
+    # Attempt to find the generated QtGStreamerTargets.cmake in the same directory
     get_filename_component(_QTGSTREAMER_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-    find_file(_QTGSTREAMER_TARGETS_FILE QtGstreamerTargets.cmake PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
+    find_file(_QTGSTREAMER_TARGETS_FILE QtGStreamerTargets.cmake PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
 
     if(NOT _QTGSTREAMER_TARGETS_FILE)
-        # Targets file not found. Do a typical search for QtGstreamer.
+        # Targets file not found. Do a typical search for QtGStreamer.
         # Normally, this path is never executed. It is just provided as a fallback in case something goes wrong.
-        find_library(QTGSTREAMER_LIBRARY QtGstreamer
+        find_library(QTGSTREAMER_LIBRARY QtGStreamer
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
-        find_library(QTGSTREAMER_UI_LIBRARY QtGstreamerUi
+        find_library(QTGSTREAMER_UI_LIBRARY QtGStreamerUi
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
         find_path(QTGSTREAMER_INCLUDE_DIR QGst/global.h
                   PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../include"
-                  PATH_SUFFIXES QtGstreamer)
+                  PATH_SUFFIXES QtGStreamer)
         set(_QTGSTREAMER_LINK_TO_QT_REQUIRED TRUE)
     else()
-        # Targets file found. Use imported QtGstreamer target and relative include path.
-        # We assume that this file has been installed in $PREFIX/lib/QtGstreamer/,
-        # so the include path should evaluate to $PREFIX/include/QtGstreamer
+        # Targets file found. Use imported QtGStreamer target and relative include path.
+        # We assume that this file has been installed in $PREFIX/lib/QtGStreamer/,
+        # so the include path should evaluate to $PREFIX/include/QtGStreamer
         include(${_QTGSTREAMER_TARGETS_FILE})
-        set(QTGSTREAMER_LIBRARY QtGstreamer)
-        set(QTGSTREAMER_UI_LIBRARY QtGstreamerUi)
-        get_filename_component(QTGSTREAMER_INCLUDE_DIR "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGstreamer" ABSOLUTE)
+        set(QTGSTREAMER_LIBRARY QtGStreamer)
+        set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
+        get_filename_component(QTGSTREAMER_INCLUDE_DIR "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGStreamer" ABSOLUTE)
     endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(QtGstreamer DEFAULT_MSG QTGSTREAMER_INCLUDE_DIR
+find_package_handle_standard_args(QtGStreamer DEFAULT_MSG QTGSTREAMER_INCLUDE_DIR
                                                           QTGSTREAMER_LIBRARY QTGSTREAMER_UI_LIBRARY)
 
 if(QTGSTREAMER_FOUND)

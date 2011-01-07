@@ -1,7 +1,7 @@
-/*! \mainpage QtGstreamer API Reference
+/*! \mainpage QtGStreamer API Reference
  *
  * \section introduction Introduction
- * QtGstreamer provides C++ bindings for <a href="http://www.gstreamer.net">GStreamer</a>
+ * QtGStreamer provides C++ bindings for <a href="http://www.gstreamer.net">GStreamer</a>
  * with a Qt-style API, plus some helper classes for integrating GStreamer better in
  * <a href="http://qt.nokia.com">Qt</a> applications.
  */
@@ -75,5 +75,5 @@
  */
 
 /*! \example player/main.cpp
- * This is an example audio player using QtGstreamer
+ * This is an example audio player using QtGStreamer
  */

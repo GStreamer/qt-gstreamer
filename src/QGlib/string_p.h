@@ -18,7 +18,7 @@
 #include <glib.h>
 
 /* WARNING: This header should only be included from
- * QtGstreamer source files and should not be installed */
+ * QtGStreamer source files and should not be installed */
 
 namespace QGlib {
 namespace Private {
