@@ -46,3 +46,12 @@ install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
 install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGStreamer.cmake
         DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer
         RENAME QtGStreamerConfig.cmake)
+
+# Install pkgconfig files
+file(GLOB_RECURSE PC_IN_FILES "*.pc.in")
+foreach(pc_in_file ${PC_IN_FILES})
+    get_filename_component(pc_out_file ${pc_in_file} NAME)
+    string(REPLACE ".pc.in" ".pc" pc_out_file ${pc_out_file})
+    configure_file(${pc_in_file} ${CMAKE_CURRENT_BINARY_DIR}/${pc_out_file} @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pc_out_file} DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+endforeach()

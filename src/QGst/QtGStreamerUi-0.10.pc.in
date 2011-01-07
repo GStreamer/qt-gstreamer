@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=@INCLUDES_INSTALL_DIR@
+
+Name: QtGStreamerUi
+Description: QtGui GStreamer integration library
+Requires: QtGui QtGStreamer
+Version: @QTGSTREAMER_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lQtGStreamerUi-0.10

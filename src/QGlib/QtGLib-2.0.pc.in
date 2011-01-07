@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@LIB_INSTALL_DIR@
+includedir=@INCLUDES_INSTALL_DIR@
+
+Name: QtGLib
+Description: Qt-style C++ bindings library for GLib & GObject
+Requires: QtCore
+Requires.private: gobject-2.0
+Version: @QTGSTREAMER_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lQtGLib-2.0
