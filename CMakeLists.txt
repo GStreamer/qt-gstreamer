@@ -3,14 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-set(BUILDING_QTGSTREAMER TRUE)
-set(QTGSTREAMER_VERSION 0.1)
-set(QTGSTREAMER_SOVERSION 0)
+set(QTGSTREAMER_VERSION 0.10.0)
 
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" ON)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
-
 
 include(MacroLogFeature)
 
@@ -21,6 +18,7 @@ find_package(Boost)
 macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.40")
 
 # this just sets the QTGSTREAMER_* cmake variables
+set(BUILDING_QTGSTREAMER TRUE)
 find_package(QtGStreamer REQUIRED)
 
 find_package(Automoc4)
