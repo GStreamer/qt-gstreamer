@@ -22,6 +22,9 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDebug>
 
+//proper initializer for GValue structs on the stack
+#define QGLIB_G_VALUE_INITIALIZER {0, {{0}, {0}}}
+
 namespace QGlib {
 
 //BEGIN ******** Signal ********

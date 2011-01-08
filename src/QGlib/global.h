@@ -80,7 +80,4 @@ void init();
 # define QGLIB_HAVE_CXX0X 0
 #endif
 
-//proper initializer for GValue structs on the stack
-#define QGLIB_G_VALUE_INITIALIZER {0, {{0}, {0}}}
-
 #endif
