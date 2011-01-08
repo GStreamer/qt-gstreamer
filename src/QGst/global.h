@@ -54,37 +54,6 @@
     QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
     QGST_WRAPPER_REFPOINTER_DECLARATION(Class)
 
-#define QGST_SUBCLASS_REGISTER_CONVERTERS(BASECLASS, TYPE) \
-    namespace QGlib { \
-    namespace Private { \
-        template <> \
-        struct CanConvertTo<QGst::TYPE##BASECLASS> \
-        { \
-            static inline bool from(void *instance) \
-            { \
-                return (Type::fromInstance(instance).isA<QGst::BASECLASS>() && \
-                        QGst::BASECLASS##Ptr::wrap(static_cast<Gst##BASECLASS *>(instance))->type() \
-                        == QGst::BASECLASS##TYPE); \
-            } \
-        }; \
-    } /* namespace Private */ \
-    } /* namespace QGlib */
-
-#define QGST_SUBCLASS_REGISTER_VALUEIMPL(BASECLASS, TYPE) \
-    namespace QGlib { \
-        template<> \
-        struct ValueImpl<QGst::TYPE##BASECLASS##Ptr> \
-        { \
-            static void set(Value & value, const QGst::TYPE##BASECLASS##Ptr & data) { \
-                ValueImpl<QGst::BASECLASS##Ptr>::set(value, data); \
-            } \
-        }; \
-    } /* namespace QGlib */
-
-#define QGST_REGISTER_SUBCLASS(BASECLASS, TYPE) \
-    QGST_SUBCLASS_REGISTER_CONVERTERS(BASECLASS, TYPE) \
-        QGST_SUBCLASS_REGISTER_VALUEIMPL(BASECLASS, TYPE)
-
 QGST_WRAPPER_DECLARATION(Bin)
 QGST_WRAPPER_DECLARATION(Bus)
 QGST_WRAPPER_DECLARATION(Caps)
@@ -169,6 +138,13 @@ QGST_WRAPPER_DECLARATION(XOverlay)
 #define QGST_WRAPPER_FAKE_SUBCLASS(Sub, Class) \
     QGLIB_WRAPPER_DECLARATION_MACRO(Sub##Class, Class, Gst, Class)
 
+#define QGST_REGISTER_SUBCLASS(BASECLASS, TYPE) \
+    namespace QGlib { \
+        template <> \
+        struct GetTypeImpl<QGst::TYPE##BASECLASS> { \
+            inline operator Type() { return GetType<QGst::BASECLASS>(); }; \
+        }; \
+    }
 
 namespace QGst {
     /*! A datatype to hold a time, measured in nanoseconds */

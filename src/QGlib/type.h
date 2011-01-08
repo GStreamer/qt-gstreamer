@@ -174,10 +174,7 @@ private:
 };
 
 /*! This template function retrieves the QGlib::Type (aka GType) of a given type T.
- * Type T must have been registered with the QGlib type system using QGLIB_REGISTER_TYPE,
- * otherwise this function will fail to compile.
  * \relates QGlib::Type
- * \sa QGLIB_REGISTER_TYPE
  */
 template <class T>
 inline Type GetType()
@@ -185,77 +182,26 @@ inline Type GetType()
     return GetTypeImpl<T>();
 }
 
-/*! \addtogroup macros Internal macros */
-//@{
+} //namespace QGlib
 
+/* This is to be used to define new Q*_REGISTER_TYPE(T) macros in
+ * other bindings libraries that are based on QtGLib.
+ */
 #define QGLIB_REGISTER_TYPE_WITH_EXPORT_MACRO(T, EXPORT_MACRO) \
     namespace QGlib { \
         template <> \
         struct EXPORT_MACRO GetTypeImpl<T> { operator Type(); }; \
     }
 
-/*! \internal
- * This macro is used to register a class with the QGlib type system. It forward-declares
- * a specialization for struct GetTypeImpl and serves as a keyword for codegen, our code generator,
- * which then uses QGLIB_REGISTER_TYPE_IMPLEMENTATION to provide the compiled implementation.
- * \note this macro must be used outside of any namespace scope
+/* This macro is used to register a class with the QtGLib type system. It forward-declares
+ * a specialization for struct GetTypeImpl and serves as a keyword for codegen,
+ * our code generator, which provides the compiled implementation. This specific macro
+ * is meant to be used only inside QtGLib, for other libraries, define a new macro
+ * using QGLIB_REGISTER_TYPE_WITH_EXPORT_MACRO.
+ * Note: this macro must be used outside of any namespace scope
  */
 #define QGLIB_REGISTER_TYPE(T) \
     QGLIB_REGISTER_TYPE_WITH_EXPORT_MACRO(T, QTGLIB_EXPORT)
-
-/*! \internal Used by codegen only */
-#define QGLIB_REGISTER_TYPE_IMPLEMENTATION(T, GTYPE) \
-    namespace QGlib { \
-        GetTypeImpl<T>::operator Type() { return (GTYPE); } \
-    }
-
-/*! Registers the specified type \a T with the QGlib type system as a Boxed type.
- * You can use this macro to register any boxed type in your code, in case
- * you need to use it with an element property or with a signal.
- *
- * Be careful with boxed types, though, since they all are the same thing for
- * the QGlib type system, so there is no type checking. For example, if you
- * register both GList* and MyBoxed* and then try to call
- * someObject->property("foo-list").get<MyBoxed*>() (supposing that this is a
- * GList property), it will succeed, although the property is not of the
- * MyBoxed type.
- *
- * \note \a T must be a pointer
- * \sa QGLIB_REGISTER_VALUEIMPL_FOR_BOXED_TYPE
- */
-#define QGLIB_REGISTER_BOXED_TYPE(T) \
-    namespace QGlib { \
-        template <> \
-        struct GetTypeImpl<T> { \
-            inline operator Type() { return Type::Boxed; } \
-        }; \
-    }
-
-//@}
-
-//***********************
-// -- private helpers --
-//***********************
-
-namespace Private {
-
-/* This is used from RefPointer::dynamicCast.
- * It Checks if it is possible to convert from the given instance
- * to the type T. It is provided as a template to be able to be specialized
- * for strange cases like the GstMessage subclasses, where the subclasses
- * have the same GType as their superclass.
- */
-template <typename T>
-struct CanConvertTo
-{
-    static inline bool from(void *instance)
-    {
-        return Type::fromInstance(instance).isA<T>();
-    }
-};
-
-} //namespace Private
-} //namespace QGlib
 
 //**************************
 // -- type registrations --
