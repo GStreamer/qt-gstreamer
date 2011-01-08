@@ -19,7 +19,7 @@
 #ifndef QGST_ENUMS_H
 #define QGST_ENUMS_H
 
-#include "../QGlib/type.h"
+#include "global.h"
 #include <QtCore/QFlags>
 
 namespace QGst {
@@ -31,7 +31,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(MiniObjectFlags, MiniObjectFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(MiniObjectFlags);
 }
-QGLIB_REGISTER_TYPE(QGst::MiniObjectFlags);
+QGST_REGISTER_TYPE(QGst::MiniObjectFlags);
 
 
 namespace QGst {
@@ -44,7 +44,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(ObjectFlags, ObjectFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(ObjectFlags);
 }
-QGLIB_REGISTER_TYPE(QGst::ObjectFlags);
+QGST_REGISTER_TYPE(QGst::ObjectFlags);
 
 
 namespace QGst {
@@ -56,7 +56,7 @@ namespace QGst {
         StatePlaying = 4
     };
 }
-QGLIB_REGISTER_TYPE(QGst::State)
+QGST_REGISTER_TYPE(QGst::State)
 
 namespace QGst {
     enum StateChange {
@@ -68,7 +68,7 @@ namespace QGst {
         StateChangeReadyToNull = (StateReady<<3) | StateNull
     };
 }
-QGLIB_REGISTER_TYPE(QGst::StateChange)
+QGST_REGISTER_TYPE(QGst::StateChange)
 
 namespace QGst {
     enum StateChangeReturn {
@@ -78,7 +78,7 @@ namespace QGst {
         StateChangeNoPreroll = 3
     };
 }
-QGLIB_REGISTER_TYPE(QGst::StateChangeReturn)
+QGST_REGISTER_TYPE(QGst::StateChangeReturn)
 
 
 namespace QGst {
@@ -88,7 +88,7 @@ namespace QGst {
         PadSink
     };
 }
-QGLIB_REGISTER_TYPE(QGst::PadDirection)
+QGST_REGISTER_TYPE(QGst::PadDirection)
 
 namespace QGst {
     enum PadFlag {
@@ -104,7 +104,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(PadFlags, PadFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(PadFlags);
 }
-QGLIB_REGISTER_TYPE(QGst::PadFlags);
+QGST_REGISTER_TYPE(QGst::PadFlags);
 
 namespace QGst {
     enum PadLinkReturn {
@@ -118,7 +118,7 @@ namespace QGst {
         PadLinkRefused = -6
     };
 }
-QGLIB_REGISTER_TYPE(QGst::PadLinkReturn)
+QGST_REGISTER_TYPE(QGst::PadLinkReturn)
 
 namespace QGst {
     enum FlowReturn {
@@ -134,7 +134,7 @@ namespace QGst {
         FlowCustomError = -100
     };
 }
-QGLIB_REGISTER_TYPE(QGst::FlowReturn)
+QGST_REGISTER_TYPE(QGst::FlowReturn)
 
 namespace QGst {
     enum ActivateMode {
@@ -143,7 +143,7 @@ namespace QGst {
         ActivatePull
     };
 }
-QGLIB_REGISTER_TYPE(QGst::ActivateMode)
+QGST_REGISTER_TYPE(QGst::ActivateMode)
 
 
 namespace QGst {
@@ -154,7 +154,7 @@ namespace QGst {
         RankPrimary = 256
     };
 }
-QGLIB_REGISTER_TYPE(QGst::Rank)
+QGST_REGISTER_TYPE(QGst::Rank)
 
 
 namespace QGst {
@@ -188,7 +188,7 @@ namespace QGst {
         MessageAny             = ~0
     };
 }
-QGLIB_REGISTER_TYPE(QGst::MessageType)
+QGST_REGISTER_TYPE(QGst::MessageType)
 
 
 namespace QGst {
@@ -202,7 +202,7 @@ namespace QGst {
         ParseErrorEmpty
     };
 }
-QGLIB_REGISTER_TYPE(QGst::ParseError)
+QGST_REGISTER_TYPE(QGst::ParseError)
 
 
 namespace QGst {
@@ -212,7 +212,7 @@ namespace QGst {
         UriSrc
     };
 }
-QGLIB_REGISTER_TYPE(QGst::UriType)
+QGST_REGISTER_TYPE(QGst::UriType)
 
 namespace QGst {
     enum BufferingMode {
@@ -222,7 +222,7 @@ namespace QGst {
         BufferingLive
     };
 }
-QGLIB_REGISTER_TYPE(QGst::BufferingMode)
+QGST_REGISTER_TYPE(QGst::BufferingMode)
 
 namespace QGst {
     enum Format {
@@ -234,7 +234,7 @@ namespace QGst {
         FormatPercent
     };
 }
-QGLIB_REGISTER_TYPE(QGst::Format)
+QGST_REGISTER_TYPE(QGst::Format)
 
 namespace QGst {
     enum StreamStatusType {
@@ -247,7 +247,7 @@ namespace QGst {
         StreamStatusTypeStop = 10
     };
 }
-QGLIB_REGISTER_TYPE(QGst::StreamStatusType)
+QGST_REGISTER_TYPE(QGst::StreamStatusType)
 
 namespace QGst {
     enum StreamVolumeFormat {
@@ -256,7 +256,7 @@ namespace QGst {
         StreamVolumeFormatDb
     };
 }
-QGLIB_REGISTER_TYPE(QGst::StreamVolumeFormat)
+QGST_REGISTER_TYPE(QGst::StreamVolumeFormat)
 
 namespace QGst {
     enum ColorBalanceType {
@@ -264,7 +264,7 @@ namespace QGst {
         ColorBalanceSoftware
     };
 }
-QGLIB_REGISTER_TYPE(QGst::ColorBalanceType)
+QGST_REGISTER_TYPE(QGst::ColorBalanceType)
 
 namespace QGst {
     enum QueryType {
@@ -283,7 +283,7 @@ namespace QGst {
         QueryUri
     };
 }
-QGLIB_REGISTER_TYPE(QGst::QueryType)
+QGST_REGISTER_TYPE(QGst::QueryType)
 
 namespace QGst {
     enum BufferFlag {
@@ -302,7 +302,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(BufferFlags, BufferFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(BufferFlags)
 }
-QGLIB_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
+QGST_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
 
 
 namespace QGst {
@@ -315,7 +315,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(EventTypeFlags, EventTypeFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(EventTypeFlags)
 }
-QGLIB_REGISTER_TYPE(QGst::EventTypeFlags)
+QGST_REGISTER_TYPE(QGst::EventTypeFlags)
 
 namespace QGst {
     enum EventType {
@@ -340,7 +340,7 @@ namespace QGst {
         EventCustomBothOob = (32 << 4) | EventTypeBoth
     };
 }
-QGLIB_REGISTER_TYPE(QGst::EventType)
+QGST_REGISTER_TYPE(QGst::EventType)
 
 namespace QGst {
     enum SeekFlag {
@@ -354,7 +354,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(SeekFlags, SeekFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(SeekFlags)
 }
-QGLIB_REGISTER_TYPE(QGst::SeekFlags)
+QGST_REGISTER_TYPE(QGst::SeekFlags)
 
 namespace QGst {
     enum SeekType {
@@ -364,6 +364,6 @@ namespace QGst {
         SeekTypeEnd = 3
     };
 }
-QGLIB_REGISTER_TYPE(QGst::SeekType)
+QGST_REGISTER_TYPE(QGst::SeekType)
 
 #endif

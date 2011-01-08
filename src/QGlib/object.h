@@ -35,7 +35,7 @@ namespace QGlib {
  * the Object and Interface classes. You should not use this class directly at all.
  * Use Object or Interface instead.
  */
-class ObjectBase : public RefCountedObject
+class QTGLIB_EXPORT ObjectBase : public RefCountedObject
 {
 public:
     ParamSpecPtr findProperty(const char *name) const;
@@ -67,7 +67,7 @@ protected:
  *
  * The methods of this class can be found in ObjectBase.
  */
-class Object : virtual public ObjectBase
+class QTGLIB_EXPORT Object : virtual public ObjectBase
 {
     QGLIB_WRAPPER(Object)
 };
@@ -77,7 +77,7 @@ class Object : virtual public ObjectBase
  *
  * The methods of this class can be found in ObjectBase.
  */
-class Interface : virtual public ObjectBase
+class QTGLIB_EXPORT Interface : virtual public ObjectBase
 {
     QGLIB_WRAPPER_DIFFERENT_C_CLASS(Interface, Object)
 };

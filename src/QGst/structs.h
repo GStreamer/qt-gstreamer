@@ -17,14 +17,14 @@
 #ifndef QGST_STRUCTS_H
 #define QGST_STRUCTS_H
 
-#include "../QGlib/type.h"
+#include "global.h"
 
 namespace QGst {
 
     /*! \headerfile structs.h <QGst/Fourcc>
      * \brief Helper structure for accessing Fourcc values
      */
-    struct Fourcc
+    struct QTGSTREAMER_EXPORT Fourcc
     {
         inline Fourcc() { value.as_integer = 0; }
 
@@ -65,13 +65,13 @@ namespace QGst {
         } value;
     };
 }
-QGLIB_REGISTER_TYPE(QGst::Fourcc)
+QGST_REGISTER_TYPE(QGst::Fourcc)
 
 namespace QGst {
     /*! \headerfile structs.h <QGst/Fraction>
      * \brief Helper structure for accessing Fraction values
      */
-    struct Fraction
+    struct QTGSTREAMER_EXPORT Fraction
     {
         inline Fraction() {}
         inline Fraction(int numerator, int denominator)
@@ -81,7 +81,7 @@ namespace QGst {
         int denominator;
     };
 }
-QGLIB_REGISTER_TYPE(QGst::Fraction)
+QGST_REGISTER_TYPE(QGst::Fraction)
 
 namespace QGst {
     namespace Private {
@@ -117,8 +117,8 @@ namespace QGst {
      */
     typedef Private::Range<Fraction> FractionRange;
 }
-QGLIB_REGISTER_TYPE(QGst::IntRange)
-QGLIB_REGISTER_TYPE(QGst::DoubleRange)
-QGLIB_REGISTER_TYPE(QGst::FractionRange)
+QGST_REGISTER_TYPE(QGst::IntRange)
+QGST_REGISTER_TYPE(QGst::DoubleRange)
+QGST_REGISTER_TYPE(QGst::FractionRange)
 
 #endif // QGST_STRUCTS_H

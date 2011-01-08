@@ -24,7 +24,7 @@ namespace QGst {
 /*! \headerfile pipeline.h <QGst/Pipeline>
  * \brief Wrapper class for GstPipeline
  */
-class Pipeline : public Bin
+class QTGSTREAMER_EXPORT Pipeline : public Bin
 {
     QGST_WRAPPER(Pipeline)
 public:
@@ -38,6 +38,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Pipeline)
+QGST_REGISTER_TYPE(QGst::Pipeline)
 
 #endif

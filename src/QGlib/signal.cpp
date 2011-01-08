@@ -29,7 +29,7 @@ namespace QGlib {
 
 //BEGIN ******** Signal ********
 
-struct Signal::Private : public QSharedData
+struct QTGLIB_NO_EXPORT Signal::Private : public QSharedData
 {
     Private(uint i) : id(i), m_queryInitialized(false) {}
 

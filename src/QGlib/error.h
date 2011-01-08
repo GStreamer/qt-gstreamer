@@ -26,7 +26,7 @@ namespace QGlib {
 /*! \headerfile error.h <QGlib/Error>
  * \brief Wrapper class for GError
  */
-class Error : public std::exception
+class QTGLIB_EXPORT Error : public std::exception
 {
 public:
     /*! Wraps an existing GError into an Error.
@@ -67,7 +67,7 @@ private:
 };
 
 /*! \relates QGlib::Error */
-QDebug operator<<(QDebug dbg, const Error & error);
+QTGLIB_EXPORT QDebug operator<<(QDebug dbg, const Error & error);
 
 } //namespace QGlib
 

@@ -25,7 +25,7 @@ namespace QGst {
 /*! \headerfile QGst/object.h <QGst/Object>
  * \brief Wrapper class for GstObject
  */
-class Object : public QGlib::Object
+class QTGSTREAMER_EXPORT Object : public QGlib::Object
 {
     QGST_WRAPPER(Object)
 public:
@@ -45,6 +45,6 @@ protected:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Object)
+QGST_REGISTER_TYPE(QGst::Object)
 
 #endif // QGST_OBJECT_H

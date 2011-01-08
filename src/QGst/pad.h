@@ -24,7 +24,7 @@ namespace QGst {
 /*! \headerfile pad.h <QGst/Pad>
  * \brief Wrapper class for GstPad
  */
-class Pad : public Object
+class QTGSTREAMER_EXPORT Pad : public Object
 {
     QGST_WRAPPER(Pad)
 public:
@@ -65,6 +65,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Pad)
+QGST_REGISTER_TYPE(QGst::Pad)
 
 #endif

@@ -20,6 +20,20 @@
 #include <QtCore/QtGlobal>
 #include <boost/config.hpp>
 
+/* defined by cmake when building this library */
+#if defined(QtGLib_EXPORTS)
+# define QTGLIB_EXPORT Q_DECL_EXPORT
+#else
+# define QTGLIB_EXPORT Q_DECL_IMPORT
+#endif
+
+#if !defined(Q_OS_WIN) && !defined(Q_CC_NOKIAX86) && \
+    !defined(Q_CC_RVCT) && defined(QT_VISIBILITY_AVAILABLE)
+# define QTGLIB_NO_EXPORT __attribute__((visibility("hidden")))
+#else
+# define QTGLIB_NO_EXPORT
+#endif
+
 typedef struct _GValue GValue;
 typedef struct _GParamSpec GParamSpec;
 typedef struct _GClosure GClosure;
@@ -42,7 +56,7 @@ typedef RefPointer<Object> ObjectPtr;
 
 /*! Initializes the type system. You must call
  * this function before using any QtGLib API. */
-void init();
+QTGLIB_EXPORT void init();
 
 } //namespace QGlib
 

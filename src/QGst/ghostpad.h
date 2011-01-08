@@ -24,7 +24,7 @@ namespace QGst {
 /*! \headerfile ghostpad.h <QGst/GhostPad>
  * \brief Wrapper class for GstGhostPad
  */
-class GhostPad : public Pad
+class QTGSTREAMER_EXPORT GhostPad : public Pad
 {
     QGST_WRAPPER(GhostPad)
 public:
@@ -37,6 +37,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::GhostPad)
+QGST_REGISTER_TYPE(QGst::GhostPad)
 
 #endif

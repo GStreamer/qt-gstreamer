@@ -25,7 +25,7 @@ namespace QGst {
 /*! \headerfile colorbalance.h <QGst/ColorBalance>
  * \brief Wrapper class for GstColorBalanceChannel
  */
-class ColorBalanceChannel : public QGlib::Object
+class QTGSTREAMER_EXPORT ColorBalanceChannel : public QGlib::Object
 {
     QGST_WRAPPER(ColorBalanceChannel)
 public:
@@ -37,7 +37,7 @@ public:
 /*! \headerfile colorbalance.h <QGst/ColorBalance>
  * \brief Wrapper class for GstColorBalance
  */
-class ColorBalance : public QGlib::Interface
+class QTGSTREAMER_EXPORT ColorBalance : public QGlib::Interface
 {
     QGST_WRAPPER(ColorBalance)
 public:
@@ -49,8 +49,8 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::ColorBalanceChannel)
-QGLIB_REGISTER_TYPE(QGst::ColorBalance)
+QGST_REGISTER_TYPE(QGst::ColorBalanceChannel)
+QGST_REGISTER_TYPE(QGst::ColorBalance)
 QGLIB_REGISTER_INTERFACE(QGst::ColorBalance)
 
 #endif // QGST_COLORBALANCE_H

@@ -28,7 +28,7 @@ namespace QGst {
 /*! \interface XOverlay xoverlay.h <QGst/XOverlay>
  * \brief Wrapper class for GstXOverlay
  */
-class XOverlay : public QGlib::Interface
+class QTGSTREAMER_EXPORT XOverlay : public QGlib::Interface
 {
     QGST_WRAPPER(XOverlay)
 public:
@@ -41,7 +41,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::XOverlay)
+QGST_REGISTER_TYPE(QGst::XOverlay)
 QGLIB_REGISTER_INTERFACE(QGst::XOverlay)
 
 #endif // QGST_XOVERLAY_H

@@ -24,7 +24,7 @@ namespace QGst {
 /*! \headerfile pluginfeature.h <QGst/PluginFeature>
  * \brief Wrapper class for GstPluginFeature
  */
-class PluginFeature : public Object
+class QTGSTREAMER_EXPORT PluginFeature : public Object
 {
     QGST_WRAPPER(PluginFeature)
 public:
@@ -41,6 +41,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::PluginFeature)
+QGST_REGISTER_TYPE(QGst::PluginFeature)
 
 #endif // QGST_PLUGINFEATURE_H

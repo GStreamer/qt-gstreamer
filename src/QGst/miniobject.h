@@ -26,7 +26,7 @@ namespace QGst {
 /*! \headerfile miniobject.h <QGst/MiniObject>
  * \brief Wrapper class for GstMiniObject
  */
-class MiniObject : public QGlib::RefCountedObject
+class QTGSTREAMER_EXPORT MiniObject : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(MiniObject)
 public:
@@ -47,12 +47,12 @@ protected:
 
 namespace Private {
 
-QGlib::RefCountedObject *wrapMiniObject(void *miniObject);
+QTGSTREAMER_EXPORT QGlib::RefCountedObject *wrapMiniObject(void *miniObject);
 
 } //namespace Private
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::MiniObject)
+QGST_REGISTER_TYPE(QGst::MiniObject)
 QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::MiniObject, QGst::Private::wrapMiniObject)
 
 #endif

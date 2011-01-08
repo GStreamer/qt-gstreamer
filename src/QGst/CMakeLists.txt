@@ -68,6 +68,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     buffer.h            Buffer
     event.h             Event
 
+    Ui/global.h
     Ui/videowidget.h    Ui/VideoWidget
 )
 

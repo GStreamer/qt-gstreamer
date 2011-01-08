@@ -31,14 +31,14 @@ namespace Parse {
  * The syntax is the same as the one used in the gst-launch tool.
  * \throws QGlib::Error when there was a problem creating the pipeline
  */
-ElementPtr launch(const char *description);
+QTGSTREAMER_EXPORT ElementPtr launch(const char *description);
 
 /*! \overload
  * This function takes an array of strings, which are joined before they are
  * parsed as a description. This is the function used by the gst-launch tool.
  * \throws QGlib::Error when there was a problem creating the pipeline
  */
-ElementPtr launch(const char *argv[]);
+QTGSTREAMER_EXPORT ElementPtr launch(const char *argv[]);
 
 } //namespace Parse
 } //namespace QGst

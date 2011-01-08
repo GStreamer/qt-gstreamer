@@ -197,7 +197,7 @@ namespace Private {
 
 //BEGIN ******** ClosureDataBase ********
 
-class ClosureDataBase
+class QTGLIB_EXPORT ClosureDataBase
 {
 public:
     inline virtual ~ClosureDataBase() {}
@@ -217,7 +217,7 @@ protected:
  * signal receiver to/from a slot that should be called when the receiver is destroyed.
  * This notification is used to disconnect the signal automatically.
  */
-class DestroyNotifierIface
+class QTGLIB_EXPORT DestroyNotifierIface
 {
 public:
     virtual ~DestroyNotifierIface() {}
@@ -228,7 +228,7 @@ public:
 typedef QSharedPointer<DestroyNotifierIface> DestroyNotifierIfacePtr;
 
 /* This is DestroyNotifierIface that works for signal receivers that inherit QObject. */
-class QObjectDestroyNotifier : public DestroyNotifierIface
+class QTGLIB_EXPORT QObjectDestroyNotifier : public DestroyNotifierIface
 {
 public:
     static DestroyNotifierIfacePtr instance();
@@ -256,13 +256,13 @@ struct GetDestroyNotifier<T, typename boost::enable_if< boost::is_base_of<QObjec
 
 
 /* This method is used internally from QGlib::connect(). */
-ulong connect(void *instance, const char *signal, Quark detail,
-              void *receiver, const DestroyNotifierIfacePtr & notifier,
-              uint slotHash, ClosureDataBase *closureData, ConnectFlags flags);
+QTGLIB_EXPORT ulong connect(void *instance, const char *signal, Quark detail,
+                            void *receiver, const DestroyNotifierIfacePtr & notifier,
+                            uint slotHash, ClosureDataBase *closureData, ConnectFlags flags);
 
 /* This method is used internally from QGlib::disconnect(). */
-bool disconnect(void *instance, const char *signal, Quark detail,
-                void *receiver, uint slotHash, ulong handlerId);
+QTGLIB_EXPORT bool disconnect(void *instance, const char *signal, Quark detail,
+                              void *receiver, uint slotHash, ulong handlerId);
 
 
 /* This is a helper that returns a hash value for a member function pointer.

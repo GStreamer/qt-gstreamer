@@ -158,7 +158,7 @@ private:
 /*! \headerfile refpointer.h <QGlib/RefPointer>
  * \brief Base class for all the reference-counted object wrappers.
  */
-class RefCountedObject
+class QTGLIB_EXPORT RefCountedObject
 {
 public:
     virtual ~RefCountedObject() {}

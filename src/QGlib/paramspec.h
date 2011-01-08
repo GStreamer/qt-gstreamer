@@ -31,7 +31,7 @@ namespace QGlib {
  * GParamSpec is an object structure that encapsulates the metadata
  * required to specify parameters, such as e.g. GObject properties.
  */
-class ParamSpec : public RefCountedObject
+class QTGLIB_EXPORT ParamSpec : public RefCountedObject
 {
     QGLIB_WRAPPER(ParamSpec)
 public:

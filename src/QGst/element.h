@@ -25,7 +25,7 @@ namespace QGst {
 /*! \headerfile element.h <QGst/Element>
  * \brief Wrapper class for GstElement
  */
-class Element : public Object
+class QTGSTREAMER_EXPORT Element : public Object
 {
     QGST_WRAPPER(Element)
 public:
@@ -63,6 +63,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Element)
+QGST_REGISTER_TYPE(QGst::Element)
 
 #endif // QGST_ELEMENT_H

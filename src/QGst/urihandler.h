@@ -26,7 +26,7 @@ namespace QGst {
 /*! \interface UriHandler urihandler.h <QGst/UriHandler>
  * \brief Wrapper class for GstURIHandler
  */
-class UriHandler : public QGlib::Interface
+class QTGSTREAMER_EXPORT UriHandler : public QGlib::Interface
 {
     QGST_WRAPPER_DIFFERENT_C_CLASS(UriHandler, URIHandler)
 public:
@@ -41,7 +41,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::UriHandler)
+QGST_REGISTER_TYPE(QGst::UriHandler)
 QGLIB_REGISTER_INTERFACE(QGst::UriHandler)
 
 #endif // QGST_URIHANDLER_H

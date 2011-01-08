@@ -46,7 +46,7 @@ id      [a-zA-Z][a-zA-Z_0-9]*
 
 <REGISTER_TYPE,REGISTER_WRAPPER,ENUM,INSTRUCTION>{id} { yylval.Id = new QByteArray(yytext); return IDENTIFIER;  }
 
-QGLIB_REGISTER_TYPE\(    { yy_push_state(REGISTER_TYPE); return REGISTER_TYPE_BEGIN; }
+Q[A-Z]+_REGISTER_TYPE\(  { yy_push_state(REGISTER_TYPE); return REGISTER_TYPE_BEGIN; }
 <REGISTER_TYPE>{
     ::                   { return SCOPE_RESOLUTION_OPERATOR; }
     \)                   { yy_pop_state(); return REGISTER_TYPE_END; }
@@ -113,6 +113,7 @@ Q[A-Z]+_WRAPPER_FAKE_SUBCLASS\(      { yy_push_state(REGISTER_WRAPPER); return R
 
 [[:space:]]class         { yy_push_state(CLASS); return CLASS_KEYWORD; }
 <CLASS>{
+    [A-Z]+_EXPORT
     {id}                 { yylval.Id = new QByteArray(yytext); yy_pop_state(); return IDENTIFIER; }
     [[:space:]]*
     .                    { yyerror(codegen, "Expected identifier after class keyword"); }

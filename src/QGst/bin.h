@@ -25,7 +25,7 @@ namespace QGst {
 /*! \headerfile bin.h <QGst/Bin>
  * \brief Wrapper class for GstBin
  */
-class Bin : public Element, public ChildProxy
+class QTGSTREAMER_EXPORT Bin : public Element, public ChildProxy
 {
     QGST_WRAPPER(Bin)
 public:
@@ -73,6 +73,6 @@ QGlib::RefPointer<T> Bin::getElementByInterface() const
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Bin)
+QGST_REGISTER_TYPE(QGst::Bin)
 
 #endif

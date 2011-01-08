@@ -49,7 +49,7 @@ namespace QGst {
      * used as arguments in slots connected to GObject signals, even though you may know that your
      * slot will only be called with that type of queries.
      */
-class Query : public MiniObject
+class QTGSTREAMER_EXPORT Query : public MiniObject
 {
     QGST_WRAPPER(Query)
 public:
@@ -64,7 +64,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::PositionQuery
  */
-class PositionQuery : public Query
+class QTGSTREAMER_EXPORT PositionQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Position, Query)
 public:
@@ -78,7 +78,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::DurationQuery
  */
-class DurationQuery : public Query
+class QTGSTREAMER_EXPORT DurationQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Duration, Query)
 public:
@@ -92,7 +92,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::LatencyQuery
  */
-class LatencyQuery : public Query
+class QTGSTREAMER_EXPORT LatencyQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Latency, Query)
 public:
@@ -108,7 +108,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::SeekingQuery
  */
-class SeekingQuery : public Query
+class QTGSTREAMER_EXPORT SeekingQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Seeking, Query)
 public:
@@ -125,7 +125,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::SegmentQuery
  */
-class SegmentQuery : public Query
+class QTGSTREAMER_EXPORT SegmentQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Segment, Query)
 public:
@@ -142,7 +142,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::ConvertQuery
  */
-class ConvertQuery : public Query
+class QTGSTREAMER_EXPORT ConvertQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Convert, Query)
 public:
@@ -160,7 +160,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::FormatsQuery
  */
-class FormatsQuery : public Query
+class QTGSTREAMER_EXPORT FormatsQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Formats, Query)
 public:
@@ -174,7 +174,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::BufferingQuery
  */
-class BufferingQuery : public Query
+class QTGSTREAMER_EXPORT BufferingQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Buffering, Query)
 public:
@@ -203,7 +203,7 @@ public:
 /*! \headerfile query.h <QGst/Query>
  * \brief Wrapper class for queries of type QGst::UriQuery
  */
-class UriQuery : public Query
+class QTGSTREAMER_EXPORT UriQuery : public Query
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Uri, Query)
 public:
@@ -216,7 +216,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Query)
+QGST_REGISTER_TYPE(QGst::Query)
 QGST_REGISTER_SUBCLASS(Query, Position)
 QGST_REGISTER_SUBCLASS(Query, Duration)
 QGST_REGISTER_SUBCLASS(Query, Latency)

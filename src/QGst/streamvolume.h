@@ -25,7 +25,7 @@ namespace QGst {
 /*! \headerfile streamvolume.h <QGst/StreamVolume>
  * \brief Wrapper class for GstStreamVolume
  */
-class StreamVolume : public QGlib::Interface
+class QTGSTREAMER_EXPORT StreamVolume : public QGlib::Interface
 {
     QGST_WRAPPER(StreamVolume)
 public:
@@ -40,7 +40,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::StreamVolume)
+QGST_REGISTER_TYPE(QGst::StreamVolume)
 QGLIB_REGISTER_INTERFACE(QGst::StreamVolume)
 
 #endif // QGST_STREAMVOLUME_H

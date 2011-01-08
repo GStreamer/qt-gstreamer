@@ -27,7 +27,7 @@ namespace QGst {
 /*! \interface VideoOrientation videoorientation.h <QGst/VideoOrientation>
  * \brief Wrapper class for GstVideoOrientation
  */
-class VideoOrientation : public QGlib::Interface
+class QTGSTREAMER_EXPORT VideoOrientation : public QGlib::Interface
 {
     QGST_WRAPPER(VideoOrientation)
 public:
@@ -43,7 +43,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::VideoOrientation)
+QGST_REGISTER_TYPE(QGst::VideoOrientation)
 QGLIB_REGISTER_INTERFACE(QGst::VideoOrientation)
 
 #endif // QGST_VIDEOORIENTATION_H

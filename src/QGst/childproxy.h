@@ -24,7 +24,7 @@ namespace QGst {
 /*! \interface ChildProxy childproxy.h <QGst/ChildProxy>
  * \brief Wrapper class for GstChildProxy
  */
-class ChildProxy : public QGlib::Interface
+class QTGSTREAMER_EXPORT ChildProxy : public QGlib::Interface
 {
     QGST_WRAPPER(ChildProxy)
 public:
@@ -52,7 +52,7 @@ void ChildProxy::setChildProperty(const char *name, const T & value)
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::ChildProxy)
+QGST_REGISTER_TYPE(QGst::ChildProxy)
 QGLIB_REGISTER_INTERFACE(QGst::ChildProxy)
 
 #endif // QGST_CHILDPROXY_H

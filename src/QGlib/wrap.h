@@ -18,6 +18,8 @@
 #ifndef QGLIB_WRAP_H
 #define QGLIB_WRAP_H
 
+#include "global.h"
+
 namespace QGlib {
 
 class RefCountedObject;
@@ -32,7 +34,7 @@ class Type;
  * an Object or Interface or ParamSpec (like QGst::MiniObject and QGst::Caps).
  * You should \em not otherwise call this function directly.
  */
-RefCountedObject *constructWrapper(Type instanceType, void *instance);
+QTGLIB_EXPORT RefCountedObject *constructWrapper(Type instanceType, void *instance);
 
 template <typename T, typename Enable = void>
 struct WrapImpl {};
@@ -63,9 +65,9 @@ struct WrapImpl {};
 
 namespace Private {
 
-RefCountedObject *wrapObject(void *gobject);
-RefCountedObject *wrapParamSpec(void *param);
-RefCountedObject *wrapInterface(Type interfaceType, void *gobject);
+QTGLIB_EXPORT RefCountedObject *wrapObject(void *gobject);
+QTGLIB_EXPORT RefCountedObject *wrapParamSpec(void *param);
+QTGLIB_EXPORT RefCountedObject *wrapInterface(Type interfaceType, void *gobject);
 
 } //namespace Private
 } //namespace QGlib

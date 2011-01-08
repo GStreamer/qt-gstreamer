@@ -19,6 +19,7 @@
 #ifndef QGLIB_QUARK_H
 #define QGLIB_QUARK_H
 
+#include "global.h"
 #include <QtCore/QString>
 
 namespace QGlib {
@@ -38,7 +39,7 @@ namespace QGlib {
  * \note This class is a thin wrapper around a quint32. There is no overhead in copying
  * it around, since it is just an integer.
  */
-class Quark
+class QTGLIB_EXPORT Quark
 {
 public:
     inline Quark(quint32 gquark = 0) : m_quark(gquark) {}

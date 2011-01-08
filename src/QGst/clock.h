@@ -27,7 +27,7 @@ namespace QGst {
 /*! \headerfile clock.h <QGst/Clock>
  * \brief Wrapper class for GstClock
  */
-class Clock : public Object
+class QTGSTREAMER_EXPORT Clock : public Object
 {
     QGST_WRAPPER(Clock)
 public:
@@ -43,6 +43,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::Clock)
+QGST_REGISTER_TYPE(QGst::Clock)
 
 #endif // QGST_CLOCK_H

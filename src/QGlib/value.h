@@ -38,7 +38,7 @@ namespace QGlib {
  * using Value::registerValueVTable().
  * \sa \ref value_design
  */
-struct ValueVTable
+struct QTGLIB_EXPORT ValueVTable
 {
     typedef void (*SetFunction)(Value & value, const void *data);
     typedef void (*GetFunction)(const Value & value, void *data);
@@ -70,7 +70,7 @@ struct ValueVTable
  *
  * \note This class is implicitly shared.
  */
-class Value
+class QTGLIB_EXPORT Value
 {
 public:
     /*! Creates a new invalid Value \sa isValid() */
@@ -460,14 +460,14 @@ struct ValueImpl<Value>
 
 namespace Private {
 
-class InvalidValueException : public std::logic_error
+class QTGLIB_EXPORT InvalidValueException : public std::logic_error
 {
 public:
     inline InvalidValueException()
         : std::logic_error("This Value instance has not been initialized") {}
 };
 
-class InvalidTypeException : public std::logic_error
+class QTGLIB_EXPORT InvalidTypeException : public std::logic_error
 {
 public:
     inline InvalidTypeException(const std::string & dataType, const std::string & valueType)
@@ -476,14 +476,14 @@ public:
                            + valueType + "\" and no conversion is possible") {}
 };
 
-class UnregisteredTypeException : public std::logic_error
+class QTGLIB_EXPORT UnregisteredTypeException : public std::logic_error
 {
 public:
     inline UnregisteredTypeException(const std::string & typeName)
         : std::logic_error("Unable to handle unregistered type \"" + typeName + "\"") {}
 };
 
-class TransformationFailedException : public std::runtime_error
+class QTGLIB_EXPORT TransformationFailedException : public std::runtime_error
 {
 public:
     inline TransformationFailedException(const std::string & srcTypeName,
@@ -497,7 +497,7 @@ public:
 // -- QDebug operator --
 
 /*! \relates QGlib::Value */
-QDebug operator<<(QDebug debug, const Value & value);
+QTGLIB_EXPORT QDebug operator<<(QDebug debug, const Value & value);
 
 } //namespace QGlib
 

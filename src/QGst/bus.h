@@ -47,7 +47,7 @@ namespace QGst {
  * even if you are not running a Glib event loop. However, this requires a running
  * Qt event loop.
  */
-class Bus : public Object
+class QTGSTREAMER_EXPORT Bus : public Object
 {
     QGST_WRAPPER(Bus)
 public:
@@ -133,6 +133,6 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Bus)
+QGST_REGISTER_TYPE(QGst::Bus)
 
 #endif //QGST_BUS_H

@@ -50,7 +50,7 @@ namespace QGst {
  * used as arguments in slots connected to GObject signals, even though you may know that your
  * slot will only be called with that type of event.
  */
-class Event : public MiniObject
+class QTGSTREAMER_EXPORT Event : public MiniObject
 {
     QGST_WRAPPER(Event)
 public:
@@ -72,7 +72,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::FlushStartEvent
  */
-class FlushStartEvent : public Event
+class QTGSTREAMER_EXPORT FlushStartEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(FlushStart, Event)
 public:
@@ -82,7 +82,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::FlushStopEvent
  */
-class FlushStopEvent : public Event
+class QTGSTREAMER_EXPORT FlushStopEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(FlushStop, Event)
 public:
@@ -92,7 +92,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::EosEvent
  */
-class EosEvent : public Event
+class QTGSTREAMER_EXPORT EosEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Eos, Event)
 public:
@@ -102,7 +102,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::NewSegmentEvent
  */
-class NewSegmentEvent : public Event
+class QTGSTREAMER_EXPORT NewSegmentEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(NewSegment, Event)
 public:
@@ -123,7 +123,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::BufferSizeEvent
  */
-class BufferSizeEvent : public Event
+class QTGSTREAMER_EXPORT BufferSizeEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(BufferSize, Event)
 public:
@@ -138,7 +138,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::BufferSizeEvent
  */
-class SinkMessageEvent : public Event
+class QTGSTREAMER_EXPORT SinkMessageEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(SinkMessage, Event)
 public:
@@ -150,7 +150,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::QosEvent
  */
-class QosEvent : public Event
+class QTGSTREAMER_EXPORT QosEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Qos, Event)
 public:
@@ -164,7 +164,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::SeekEvent
  */
-class SeekEvent : public Event
+class QTGSTREAMER_EXPORT SeekEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Seek, Event)
 public:
@@ -183,7 +183,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::NavigationEvent
  */
-class NavigationEvent : public Event
+class QTGSTREAMER_EXPORT NavigationEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Navigation, Event)
 public:
@@ -193,7 +193,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::LatencyEvent
  */
-class LatencyEvent : public Event
+class QTGSTREAMER_EXPORT LatencyEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Latency, Event)
 public:
@@ -205,7 +205,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::StepEvent
  */
-class StepEvent : public Event
+class QTGSTREAMER_EXPORT StepEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Step, Event)
 public:
@@ -221,7 +221,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Event)
+QGST_REGISTER_TYPE(QGst::Event)
 QGST_REGISTER_SUBCLASS(Event, FlushStart)
 QGST_REGISTER_SUBCLASS(Event, FlushStop)
 QGST_REGISTER_SUBCLASS(Event, Eos)

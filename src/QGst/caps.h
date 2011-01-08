@@ -27,7 +27,7 @@ namespace QGst {
 /*! \headerfile caps.h <QGst/Caps>
  * \brief Wrapper class for GstCaps
  */
-class Caps : public QGlib::RefCountedObject
+class QTGSTREAMER_EXPORT Caps : public QGlib::RefCountedObject
 {
     QGST_WRAPPER(Caps)
 public:
@@ -77,17 +77,17 @@ protected:
 };
 
 /*! \relates QGst::Caps */
-QDebug operator<<(QDebug debug, const CapsPtr & caps);
+QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const CapsPtr & caps);
 
 
 namespace Private {
 
-QGlib::RefCountedObject *wrapCaps(void *caps);
+QTGSTREAMER_EXPORT QGlib::RefCountedObject *wrapCaps(void *caps);
 
 } //namespace Private
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Caps)
+QGST_REGISTER_TYPE(QGst::Caps)
 QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::Caps, QGst::Private::wrapCaps)
 
 #endif

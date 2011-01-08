@@ -61,7 +61,7 @@ namespace QGlib {
  *
  * \sa connect(), emit()
  */
-class Signal
+class QTGLIB_EXPORT Signal
 {
 public:
     enum SignalFlag {

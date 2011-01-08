@@ -33,7 +33,7 @@ namespace QGlib {
 namespace Private {
 
 /*! This method is used internally from the templated emit() method. */
-Value emit(void *instance, const char *signal, Quark detail, const QList<Value> & args);
+QTGLIB_EXPORT Value emit(void *instance, const char *signal, Quark detail, const QList<Value> & args);
 
 template <typename Signature>
 struct EmitImpl {};

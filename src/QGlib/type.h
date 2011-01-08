@@ -60,7 +60,7 @@ namespace QGlib { //closing and re-opening namespace QGlib is required to trick 
  * \note This class is a thin wrapper around an unsigned long. There is no overhead
  * in copying it around, since it is just an integer.
  */
-class Type
+class QTGLIB_EXPORT Type
 {
 public:
     enum FundamentalType {
@@ -188,6 +188,12 @@ inline Type GetType()
 /*! \addtogroup macros Internal macros */
 //@{
 
+#define QGLIB_REGISTER_TYPE_WITH_EXPORT_MACRO(T, EXPORT_MACRO) \
+    namespace QGlib { \
+        template <> \
+        struct EXPORT_MACRO GetTypeImpl<T> { operator Type(); }; \
+    }
+
 /*! \internal
  * This macro is used to register a class with the QGlib type system. It forward-declares
  * a specialization for struct GetTypeImpl and serves as a keyword for codegen, our code generator,
@@ -195,10 +201,7 @@ inline Type GetType()
  * \note this macro must be used outside of any namespace scope
  */
 #define QGLIB_REGISTER_TYPE(T) \
-    namespace QGlib { \
-        template <> \
-        struct GetTypeImpl<T> { operator Type(); }; \
-    }
+    QGLIB_REGISTER_TYPE_WITH_EXPORT_MACRO(T, QTGLIB_EXPORT)
 
 /*! \internal Used by codegen only */
 #define QGLIB_REGISTER_TYPE_IMPLEMENTATION(T, GTYPE) \

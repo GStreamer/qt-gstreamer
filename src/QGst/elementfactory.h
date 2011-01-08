@@ -24,7 +24,7 @@ namespace QGst {
 /*! \headerfile elementfactory.h <QGst/ElementFactory>
  * \brief Wrapper class for GstElementFactory
  */
-class ElementFactory : public PluginFeature
+class QTGSTREAMER_EXPORT ElementFactory : public PluginFeature
 {
     QGST_WRAPPER(ElementFactory)
 public:
@@ -48,6 +48,6 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::ElementFactory)
+QGST_REGISTER_TYPE(QGst::ElementFactory)
 
 #endif

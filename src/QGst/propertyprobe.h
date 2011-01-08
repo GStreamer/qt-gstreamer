@@ -25,7 +25,7 @@ namespace QGst {
 /*! \interface PropertyProbe propertyprobe.h <QGst/PropertyProbe>
  * \brief Wrapper class for GstPropertyProbe
  */
-class PropertyProbe : public QGlib::Interface
+class QTGSTREAMER_EXPORT PropertyProbe : public QGlib::Interface
 {
     QGST_WRAPPER(PropertyProbe)
 public:
@@ -49,7 +49,7 @@ public:
 
 }
 
-QGLIB_REGISTER_TYPE(QGst::PropertyProbe)
+QGST_REGISTER_TYPE(QGst::PropertyProbe)
 QGLIB_REGISTER_INTERFACE(QGst::PropertyProbe)
 
 #endif // QGST_PROPERTYPROBE_H

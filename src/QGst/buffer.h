@@ -30,7 +30,7 @@ namespace QGst {
      * CapsPtr in caps() that indicates the format of the buffer data.
      *
      */
-class Buffer : public MiniObject
+class QTGSTREAMER_EXPORT Buffer : public MiniObject
 {
     QGST_WRAPPER(Buffer)
 public:    
@@ -57,6 +57,6 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Buffer)
+QGST_REGISTER_TYPE(QGst::Buffer)
 
 #endif

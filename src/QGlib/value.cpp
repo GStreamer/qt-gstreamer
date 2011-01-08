@@ -129,7 +129,7 @@ Q_GLOBAL_STATIC(Private::Dispatcher, s_dispatcher);
 
 // -- Value::Data --
 
-struct Value::Data : public QSharedData
+struct QTGLIB_NO_EXPORT Value::Data : public QSharedData
 {
     Data();
     Data(const Data & other);

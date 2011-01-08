@@ -43,7 +43,7 @@ namespace QGst {
  * used as arguments in slots connected to GObject signals, even though you may know that your
  * slot will only be called with that type of message.
  */
-class Message : public MiniObject
+class QTGSTREAMER_EXPORT Message : public MiniObject
 {
     QGST_WRAPPER(Message)
 public:
@@ -62,7 +62,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageEos
  */
-class EosMessage : public Message
+class QTGSTREAMER_EXPORT EosMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Eos, Message)
 public:
@@ -72,7 +72,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageError
  */
-class ErrorMessage : public Message
+class QTGSTREAMER_EXPORT ErrorMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Error, Message)
 public:
@@ -86,7 +86,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageWarning
  */
-class WarningMessage : public Message
+class QTGSTREAMER_EXPORT WarningMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Warning, Message)
 public:
@@ -100,7 +100,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageInfo
  */
-class InfoMessage : public Message
+class QTGSTREAMER_EXPORT InfoMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Info, Message)
 public:
@@ -116,7 +116,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageBuffering
  */
-class BufferingMessage : public Message
+class QTGSTREAMER_EXPORT BufferingMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Buffering, Message)
 public:
@@ -134,7 +134,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageStateChanged
  */
-class StateChangedMessage : public Message
+class QTGSTREAMER_EXPORT StateChangedMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(StateChanged, Message)
 public:
@@ -151,7 +151,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageStepDone
  */
-class StepDoneMessage : public Message
+class QTGSTREAMER_EXPORT StepDoneMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(StepDone, Message)
 public:
@@ -173,7 +173,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageStreamStatus
  */
-class StreamStatusMessage : public Message
+class QTGSTREAMER_EXPORT StreamStatusMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(StreamStatus, Message)
 public:
@@ -189,7 +189,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageApplication
  */
-class ApplicationMessage : public Message
+class QTGSTREAMER_EXPORT ApplicationMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Application, Message)
 public:
@@ -200,7 +200,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageElement
  */
-class ElementMessage : public Message
+class QTGSTREAMER_EXPORT ElementMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Element, Message)
 public:
@@ -213,7 +213,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageSegmentDone
  */
-class SegmentDoneMessage : public Message
+class QTGSTREAMER_EXPORT SegmentDoneMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(SegmentDone, Message)
 public:
@@ -226,7 +226,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageDuration
  */
-class DurationMessage : public Message
+class QTGSTREAMER_EXPORT DurationMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Duration, Message)
 public:
@@ -239,7 +239,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageLatency
  */
-class LatencyMessage : public Message
+class QTGSTREAMER_EXPORT LatencyMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Latency, Message)
 public:
@@ -251,7 +251,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageAsyncDone
  */
-class AsyncDoneMessage : public Message
+class QTGSTREAMER_EXPORT AsyncDoneMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(AsyncDone, Message)
 public:
@@ -261,7 +261,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageRequestState
  */
-class RequestStateMessage : public Message
+class QTGSTREAMER_EXPORT RequestStateMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(RequestState, Message)
 public:
@@ -273,7 +273,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageStepStart
  */
-class StepStartMessage : public Message
+class QTGSTREAMER_EXPORT StepStartMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(StepStart, Message)
 public:
@@ -290,7 +290,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageQos
  */
-class QosMessage : public Message
+class QTGSTREAMER_EXPORT QosMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Qos, Message)
 public:
@@ -316,7 +316,7 @@ public:
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Message)
+QGST_REGISTER_TYPE(QGst::Message)
 QGST_REGISTER_SUBCLASS(Message, Eos)
 QGST_REGISTER_SUBCLASS(Message, Error)
 QGST_REGISTER_SUBCLASS(Message, Warning)

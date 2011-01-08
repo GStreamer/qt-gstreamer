@@ -17,6 +17,7 @@
 #ifndef QGST_UI_VIDEOWIDGET_H
 #define QGST_UI_VIDEOWIDGET_H
 
+#include "global.h"
 #include "../element.h"
 #include <QtGui/QWidget>
 
@@ -38,7 +39,7 @@ class AbstractRenderer;
  * completely sure that there can be no child bins and there can be only
  * one video sink element in this bin.
  */
-class VideoWidget : public QWidget
+class QTGSTREAMERUI_EXPORT VideoWidget : public QWidget
 {
     Q_OBJECT
 public:

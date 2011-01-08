@@ -34,7 +34,7 @@ namespace QGst {
  * \sa SharedStructure
  */
 
-class Structure
+class QTGSTREAMER_EXPORT Structure
 {
 public:
     Structure();
@@ -88,7 +88,7 @@ protected:
  * unlike Structure, which always keeps a GstStructure instance for itself.
  * \sa Structure
  */
-class SharedStructure : public Structure
+class QTGSTREAMER_EXPORT SharedStructure : public Structure
 {
 public:
     virtual ~SharedStructure();
@@ -107,11 +107,11 @@ private:
 };
 
 /*! \relates QGst::StructureBase */
-QDebug operator<<(QDebug debug, const Structure & structure);
+QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const Structure & structure);
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::Structure)
-QGLIB_REGISTER_TYPE(QGst::SharedStructure) //codegen: GType=GST_TYPE_STRUCTURE
+QGST_REGISTER_TYPE(QGst::Structure)
+QGST_REGISTER_TYPE(QGst::SharedStructure) //codegen: GType=GST_TYPE_STRUCTURE
 
 #endif

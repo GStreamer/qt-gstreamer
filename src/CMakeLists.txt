@@ -7,6 +7,9 @@ if (QTGSTREAMER_STATIC)
     set(SHARED_OR_STATIC "STATIC")
 else()
     set(SHARED_OR_STATIC "SHARED")
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
+    endif ()
 endif()
 
 # Macro to run codegen from the subdirs

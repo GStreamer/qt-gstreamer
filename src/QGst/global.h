@@ -17,9 +17,29 @@
 #ifndef QGST_GLOBAL_H
 #define QGST_GLOBAL_H
 
-#include "enums.h"
+#include "../QGlib/type.h"
 #include <QtCore/QtGlobal>
 #include <QtCore/QSharedPointer>
+
+/* defined by cmake when building this library */
+#if defined(QtGStreamer_EXPORTS)
+# define QTGSTREAMER_EXPORT Q_DECL_EXPORT
+#else
+# define QTGSTREAMER_EXPORT Q_DECL_IMPORT
+#endif
+
+#if !defined(Q_OS_WIN) && !defined(Q_CC_NOKIAX86) && \
+    !defined(Q_CC_RVCT) && defined(QT_VISIBILITY_AVAILABLE)
+# define QTGSTREAMER_NO_EXPORT __attribute__((visibility("hidden")))
+#else
+# define QTGSTREAMER_NO_EXPORT
+#endif
+
+#define QGST_REGISTER_TYPE(T) \
+    QGLIB_REGISTER_TYPE_WITH_EXPORT_MACRO(T, QTGSTREAMER_EXPORT)
+
+//cyclic dependency, must include after defining the above
+#include "enums.h"
 
 #define QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
     typedef struct _Gst##Class Gst##Class;
@@ -160,7 +180,7 @@ namespace QGst {
 
 namespace QGst {
     /*! \overload */
-    void init();
+    QTGSTREAMER_EXPORT void init();
 
     /*! Initializes the GStreamer library, setting up internal path lists,
      * registering built-in elements, and loading standard plugins.
@@ -170,7 +190,7 @@ namespace QGst {
      * \param argv pointer to the application's argv
      * \throws QGlib::Error when initialization fails
      */
-    void init(int *argc, char **argv[]);
+    QTGSTREAMER_EXPORT void init(int *argc, char **argv[]);
 
     /*! Clean up any resources created by GStreamer in init().
      *
@@ -180,7 +200,7 @@ namespace QGst {
      *
      * After this call GStreamer (including this method) should not be used anymore.
      */
-    void cleanup();
+    QTGSTREAMER_EXPORT void cleanup();
 }
 
 #endif
