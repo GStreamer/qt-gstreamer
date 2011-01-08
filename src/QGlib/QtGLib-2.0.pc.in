@@ -3,7 +3,7 @@ exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=@INCLUDES_INSTALL_DIR@
 
-Name: QtGLib
+Name: QtGLib-2.0
 Description: Qt-style C++ bindings library for GLib & GObject
 Requires: QtCore
 Requires.private: gobject-2.0
