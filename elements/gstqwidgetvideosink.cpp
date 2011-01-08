@@ -626,7 +626,7 @@ GST_PLUGIN_DEFINE (
     "qwidgetvideosink",
     qwidgetvideosink_description,
     plugin_init,
-    "0.1", //plugin version
+    PACKAGE_VERSION,
     "LGPL",
     PACKAGE_NAME,
     PACKAGE_ORIGIN

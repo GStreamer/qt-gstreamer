@@ -3,7 +3,8 @@ set(GST_PACKAGE_ORIGIN "http://gstreamer.freedesktop.org/" CACHE STRING "The ori
 
 add_definitions(-DPACKAGE="qt-gstreamer"
                 -DPACKAGE_NAME="${GST_PACKAGE_NAME}"
-                -DPACKAGE_ORIGIN="${GST_PACKAGE_ORIGIN}")
+                -DPACKAGE_ORIGIN="${GST_PACKAGE_ORIGIN}"
+                -DPACKAGE_VERSION="${QTGSTREAMER_VERSION}")
 
 if (GSTREAMER_VIDEO_LIBRARY_FOUND)
     include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDE_DIR} ${GSTREAMER_INCLUDE_DIR}
