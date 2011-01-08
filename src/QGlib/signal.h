@@ -24,18 +24,16 @@
 #include <QtCore/QFlags>
 #include <QtCore/QSharedData>
 
-#if !QGLIB_HAVE_CXX0X && !defined(QGLIB_SIGNAL_MAX_ARGS)
-# define QGLIB_SIGNAL_MAX_ARGS 9
-#endif
-
 //Qt's emit will clash
 #if defined(emit)
-# if defined(Q_CC_GNU)
-#  warning "The emit keyword is defined and will be undefined here to compile QGlib::emit."
-#  warning "It is recommended to compile your project with QT_NO_KEYWORDS defined."
-# elif defined(Q_CC_MSVC)
-#  pragma message("Warning: The emit keyword is defined and will be undefined here to compile QGlib::emit.")
-#  pragma message("Warning: It is recommended to compile your project with QT_NO_KEYWORDS defined.")
+# if !defined(QGLIB_NO_EMIT_WARNING) //define that to get rid of the warning
+#  if defined(Q_CC_GNU)
+#   warning "The emit keyword is defined and will be undefined here to compile QGlib::emit."
+#   warning "It is recommended to compile your project with QT_NO_KEYWORDS defined."
+#  elif defined(Q_CC_MSVC)
+#   pragma message("Warning: The emit keyword is defined and will be undefined here to compile QGlib::emit.")
+#   pragma message("Warning: It is recommended to compile your project with QT_NO_KEYWORDS defined.")
+#  endif
 # endif
 # undef emit
 # define QT_NO_EMIT //undocumented Qt macro that skips "#define emit" in qglobal.h
@@ -131,10 +129,21 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Signal::SignalFlags)
  * from the application and not connected to. They are more like dynamic methods that can be
  * identified with a string.
  *
- * \note This method makes use of C++0x features (namely, variadic templates and rvalue
+ * \note
+ * \li This method makes use of C++0x features (namely, variadic templates and rvalue
  * references). If your compiler does not support them, a hacky implementation using boost's
  * preprocessor, function and bind libraries will be compiled instead. That version has a
- * limit of 9 arguments.
+ * limit of 9 arguments by default. Define QGLIB_SIGNAL_MAX_ARGS to a greater value before
+ * including QGlib/Signal if you want to support more arguments.
+ * \li This function's name clashes with Qt's emit keyword. To compile it successfully,
+ * the headers will undefine Qt's emit and print a warning at compile time. It is recommended
+ * that you compile your project with QT_NO_KEYWORDS to avoid this, however note that this
+ * means that the "signals", "slots" and "foreach" keywords will also be unavailable under these
+ * names (you can use "Q_SIGNALS", "Q_SLOTS" and "Q_FOREACH" respectively). If you do not wish
+ * to do that, you can also define QT_NO_EMIT or QGLIB_NO_EMIT_WARNING. The first one undefines
+ * Qt's emit completely and the second one supresses the warning and undefines Qt's emit in all
+ * the code files that include the QGlib/Signal header. In all cases, to emit Qt signals you
+ * will have to use "Q_EMIT" instead of "emit".
  *
  * \param instance The instance of the object on which the signal will be emitted. You can pass
  * a RefPointer as an instance without any problems; it will automatically cast to void*.
@@ -157,6 +166,10 @@ R emitWithDetail(void *instance, const char *signal, Quark detail, const Args & 
 #endif //DOXYGEN_RUN
 
 } //namespace QGlib
+
+#if !QGLIB_HAVE_CXX0X && !defined(QGLIB_SIGNAL_MAX_ARGS)
+# define QGLIB_SIGNAL_MAX_ARGS 9
+#endif
 
 #define IN_QGLIB_SIGNAL_H
 # include "emitimpl.h"
