@@ -1,5 +1,5 @@
 set(QtGStreamer_SRCS
-    global.cpp
+    init.cpp
     objectstore.cpp
     value.cpp
     structure.cpp
@@ -36,6 +36,7 @@ set(QtGStreamerUi_SRCS
 
 set(QtGStreamer_INSTALLED_HEADERS
     global.h            Global
+    init.h              Init
     enums.h
     structs.h           Fourcc
                         Fraction

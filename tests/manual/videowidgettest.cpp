@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ui_videowidgettest.h"
+#include <QGst/Init>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
 #include <QtGui/QApplication>

@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2011 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -14,19 +15,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef QGSTTEST_H
-#define QGSTTEST_H
+#ifndef QGLIB_INIT_H
+#define QGLIB_INIT_H
 
-#include <QtTest/QtTest>
-#include <QGst/Init>
-#include <gst/gst.h>
+#include "global.h"
 
-class QGstTest : public QObject
-{
-    Q_OBJECT
-private Q_SLOTS:
-    void initTestCase() { QGst::init(); }
-    void cleanupTestCase() { QGst::cleanup(); }
-};
+namespace QGlib {
 
-#endif
+    /*! Initializes the type system. You must call
+    * this function before using any QtGLib API. */
+    QTGLIB_EXPORT void init();
+
+} //namespace QGlib
+
+#endif //QGLIB_INIT_H

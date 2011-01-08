@@ -14,7 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "global.h"
+#include "init.h"
+#include "../QGlib/init.h"
 #include "../QGlib/error.h"
 #include <gst/gst.h>
 

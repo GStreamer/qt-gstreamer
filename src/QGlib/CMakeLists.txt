@@ -13,7 +13,8 @@ set(QtGLib_SRCS
 )
 
 set(QtGLib_INSTALLED_HEADERS
-    global.h
+    global.h      Global
+    init.h        Init
     quark.h       Quark
     type.h        Type
     refpointer.h  RefPointer

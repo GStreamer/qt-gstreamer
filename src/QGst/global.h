@@ -178,29 +178,4 @@ namespace QGst {
     typedef qint64 ClockTimeDiff;
 }
 
-namespace QGst {
-    /*! \overload */
-    QTGSTREAMER_EXPORT void init();
-
-    /*! Initializes the GStreamer library, setting up internal path lists,
-     * registering built-in elements, and loading standard plugins.
-     * \note This function also calls QGlib::init(),
-     * so there is no need to call it explicitly.
-     * \param argc pointer to the application's argc
-     * \param argv pointer to the application's argv
-     * \throws QGlib::Error when initialization fails
-     */
-    QTGSTREAMER_EXPORT void init(int *argc, char **argv[]);
-
-    /*! Clean up any resources created by GStreamer in init().
-     *
-     * It is normally not needed to call this function in a normal application as the resources
-     * will automatically be freed when the program terminates. This function is therefore mostly
-     * used by testsuites and other memory profiling tools.
-     *
-     * After this call GStreamer (including this method) should not be used anymore.
-     */
-    QTGSTREAMER_EXPORT void cleanup();
-}
-
 #endif

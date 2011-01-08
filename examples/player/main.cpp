@@ -20,7 +20,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QTime>
 #include <QGlib/Connect>
-#include <QGst/Global>
+#include <QGst/Init>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
 #include <QGst/GhostPad>

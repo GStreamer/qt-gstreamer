@@ -16,7 +16,7 @@
 */
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
-#include <QGst/Global>
+#include <QGst/Init>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <signal.h>

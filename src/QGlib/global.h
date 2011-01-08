@@ -54,10 +54,6 @@ typedef RefPointer<ParamSpec> ParamSpecPtr;
 class Object;
 typedef RefPointer<Object> ObjectPtr;
 
-/*! Initializes the type system. You must call
- * this function before using any QtGLib API. */
-QTGLIB_EXPORT void init();
-
 } //namespace QGlib
 
 
