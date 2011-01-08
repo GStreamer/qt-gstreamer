@@ -93,18 +93,34 @@ public:
     /*! \internal */
     explicit inline RefPointer(T *cppClass);
 
-    inline RefPointer(const RefPointer<T> & other);
     template <class X>
     inline RefPointer(const RefPointer<X> & other);
-    inline RefPointer<T> & operator=(const RefPointer<T> & other);
+    inline RefPointer(const RefPointer<T> & other);
+
     template <class X>
     inline RefPointer<T> & operator=(const RefPointer<X> & other);
+    inline RefPointer<T> & operator=(const RefPointer<T> & other);
 
+    /*! This operator allows you to compare a RefPointer to either
+     * another RefPointer or to a pointer of a C object.
+     * For example:
+     * \code
+     * GObject *object = g_object_new(...);
+     * QGlib::ObjectPtr objectPtr = QGlib::ObjectPtr::wrap(object);
+     * if (objectPtr == object) {
+     *    //this code will be executed, the comparison returns true
+     * }
+     * \endcode
+     * \note Although this is a template, you cannot compare to
+     * anything else other than a RefPointer or a C instance pointer.
+     */
     template <class X>
     bool operator==(const X & other) const;
     template <class X>
-    bool operator!=(const X & other) const;
+    bool operator!=(const X & other) const; ///< \see operator==()
 
+    /*! Sets this RefPointer to NULL and drops the reference
+     * to the object that it was previously pointing at. */
     void clear();
 
     inline bool isNull() const;
@@ -130,11 +146,11 @@ public:
     RefPointer<X> staticCast() const;
 
     /*! Dynamically casts this RefPointer to a RefPointer of another class.
-     * This is equivalent to the built-in dynamic_cast, but it uses the Glib type system
-     * to determine if the cast is allowed or not. If the cast fails, it returns a null
-     * RefPointer.
+     * This is equivalent to the built-in dynamic_cast, but it additionally allows you
+     * to cast objects to interfaces that they implement and vice-versa by using the
+     * Glib type system to determine if the cast is allowed or not. If the cast fails,
+     * it returns a null RefPointer.
      *
-     * This method also allows you to cast an object to an interface that it implements.
      * For example, you can do:
      * \code
      * QGst::ElementPtr filesrc = QGst::ElementFactory::make("filesrc");
@@ -157,6 +173,7 @@ private:
 
 /*! \headerfile refpointer.h <QGlib/RefPointer>
  * \brief Base class for all the reference-counted object wrappers.
+ * \internal
  */
 class QTGLIB_EXPORT RefCountedObject
 {
@@ -261,14 +278,18 @@ bool RefPointer<T>::operator!=(const X & other) const
     return !Private::RefPointerEqualityCheck<T, X>::check(*this, other);
 }
 
-/*! \relates QGlib::RefPointer */
+/*! \see RefPointer::operator==()
+ * \relates QGlib::RefPointer
+ */
 template <class T, class X>
 bool operator==(const X & other, const RefPointer<T> & self)
 {
     return Private::RefPointerEqualityCheck<T, X>::check(self, other);
 }
 
-/*! \relates QGlib::RefPointer */
+/*! \see RefPointer::operator==()
+ * \relates QGlib::RefPointer
+ */
 template <class T, class X>
 bool operator!=(const X & other, const RefPointer<T> & self)
 {
