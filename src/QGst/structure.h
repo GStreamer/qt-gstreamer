@@ -1,7 +1,9 @@
 /*
     Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
     Copyright (C) 2010  Collabora Multimedia.
-      @author Mauricio Piacentini <mauricio.piacentini@collabora.co.u
+      @author Mauricio Piacentini <mauricio.piacentini@collabora.co.uk>
+    Copyright (C) 2011  Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -38,9 +40,8 @@ class QTGSTREAMER_EXPORT Structure
 {
 public:
     Structure();
-    Structure(const char *name);
-    Structure(GstStructure *structure);
-    Structure(const GstStructure *structure);
+    explicit Structure(const char *name);
+    explicit Structure(const GstStructure *structure);
     Structure(const Structure & other);
     virtual ~Structure();
 
@@ -66,14 +67,20 @@ public:
     QString toString() const; //FIXME maybe call it serialize()?
     static Structure fromString(const char *str);
 
-    inline operator GstStructure*() { return m_structure; }
-    inline operator const GstStructure*() const { return m_structure; }
+    operator GstStructure*();
+    operator const GstStructure*() const;
 
     //TODO iterators, gst_structure_fixate_*, quark methods
 
-protected:
-    GstStructure *m_structure;
+private:
+    friend class SharedStructure;
 
+    struct Data;
+
+    QTGSTREAMER_NO_EXPORT
+    Structure(Data *data);
+
+    QSharedDataPointer<Data> d;
 };
 
 
@@ -100,10 +107,16 @@ private:
     friend class Event;
     friend class Query;
 
-    SharedStructure(GstStructure *structure);
+    struct Data;
+
+    QTGSTREAMER_NO_EXPORT
+    SharedStructure(Data *data);
+    QTGSTREAMER_NO_EXPORT
+    static StructurePtr fromMiniObject(GstStructure *structure, const MiniObjectPtr & parent);
+    QTGSTREAMER_NO_EXPORT
+    static StructurePtr fromCaps(GstStructure *structure, const CapsPtr & parent);
 
     Q_DISABLE_COPY(SharedStructure);
-
 };
 
 /*! \relates QGst::StructureBase */

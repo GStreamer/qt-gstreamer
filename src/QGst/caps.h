@@ -48,7 +48,6 @@ public:
     void truncate();
 
     StructurePtr internalStructure(uint index);
-    const StructurePtr internalStructure(uint index) const;
 
     void appendStructure(const Structure & structure);
     void mergeStructure(const Structure & structure);

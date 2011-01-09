@@ -37,12 +37,8 @@ QueryType Query::type() const
 
 StructurePtr Query::internalStructure()
 {
-    return StructurePtr(new SharedStructure(gst_query_get_structure(object<GstQuery>())));
-}
-
-const StructurePtr Query::internalStructure() const
-{
-    return StructurePtr(new SharedStructure(gst_query_get_structure(object<GstQuery>())));
+    GstStructure *structure = gst_query_get_structure(object<GstQuery>());
+    return SharedStructure::fromMiniObject(structure, MiniObjectPtr(this));
 }
 
 //********************************************************

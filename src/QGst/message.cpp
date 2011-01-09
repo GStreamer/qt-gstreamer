@@ -45,12 +45,7 @@ MessageType Message::type() const
 
 StructurePtr Message::internalStructure()
 {
-    return StructurePtr(new SharedStructure(object<GstMessage>()->structure));
-}
-
-const StructurePtr Message::internalStructure() const
-{
-    return StructurePtr(new SharedStructure(object<GstMessage>()->structure));
+    return SharedStructure::fromMiniObject(object<GstMessage>()->structure, MiniObjectPtr(this));
 }
 
 quint32 Message::sequenceNumber() const

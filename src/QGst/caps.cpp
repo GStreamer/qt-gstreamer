@@ -80,12 +80,8 @@ void Caps::truncate()
 
 StructurePtr Caps::internalStructure(uint index)
 {
-    return StructurePtr(new SharedStructure(gst_caps_get_structure(object<GstCaps>(), index)));
-}
-
-const StructurePtr Caps::internalStructure(uint index) const
-{
-    return StructurePtr(new SharedStructure(gst_caps_get_structure(object<GstCaps>(), index)));
+    GstStructure *structure = gst_caps_get_structure(object<GstCaps>(), index);
+    return SharedStructure::fromCaps(structure, CapsPtr(this));
 }
 
 void Caps::appendStructure(const Structure & structure)

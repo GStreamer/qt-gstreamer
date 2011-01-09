@@ -45,12 +45,7 @@ QString Event::typeName() const
 
 StructurePtr Event::internalStructure()
 {
-    return StructurePtr(new SharedStructure(object<GstEvent>()->structure));
-}
-
-const StructurePtr Event::internalStructure() const
-{
-    return StructurePtr(new SharedStructure(object<GstEvent>()->structure));
+    return SharedStructure::fromMiniObject(object<GstEvent>()->structure, MiniObjectPtr(this));
 }
 
 quint32 Event::sequenceNumber() const

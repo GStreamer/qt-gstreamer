@@ -53,7 +53,6 @@ public:
     MessageType type() const;
 
     StructurePtr internalStructure();
-    const StructurePtr internalStructure() const;
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);

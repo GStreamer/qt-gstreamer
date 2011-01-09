@@ -58,8 +58,6 @@ public:
     QueryType type() const;
 
     StructurePtr internalStructure();
-    const StructurePtr internalStructure() const;
-
 };
 
 /*! \headerfile query.h <QGst/Query>
