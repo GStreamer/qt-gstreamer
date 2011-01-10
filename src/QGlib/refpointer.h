@@ -216,6 +216,7 @@ template <class T>
 inline RefPointer<T>::RefPointer(T *cppClass)
     : m_class(cppClass)
 {
+    static_cast<RefCountedObject*>(m_class)->ref(true);
 }
 
 template <class T>
