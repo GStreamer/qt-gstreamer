@@ -41,7 +41,8 @@ public:
         ReadWrite = Readable | Writable,
         Construct = 1<<2,
         ConstructOnly = 1<<3,
-        LaxValidation = 1<<4
+        LaxValidation = 1<<4,
+        Deprecated = 1<<31
     };
     Q_DECLARE_FLAGS(ParamFlags, ParamFlag);
 
