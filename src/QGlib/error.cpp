@@ -26,10 +26,10 @@ Error::Error(GError *error)
     m_error = error;
 }
 
-Error::Error(Quark domain, int code, const char *message)
+Error::Error(Quark domain, int code, const QString & message)
     : std::exception()
 {
-    m_error = g_error_new_literal(domain, code, message);
+    m_error = g_error_new_literal(domain, code, message.toUtf8());
 }
 
 Error::Error(const Error & other)

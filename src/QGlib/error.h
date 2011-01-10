@@ -34,7 +34,7 @@ public:
     Error(GError *error);
 
     /*! Creates a new Error with the given \a domain, \a code and \a message */
-    Error(Quark domain, int code, const char *message);
+    Error(Quark domain, int code, const QString & message);
 
     Error(const Error & other);
     Error & operator=(const Error & other);
