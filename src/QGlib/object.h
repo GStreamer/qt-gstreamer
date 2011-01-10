@@ -38,11 +38,30 @@ namespace QGlib {
 class QTGLIB_EXPORT ObjectBase : public RefCountedObject
 {
 public:
+    /*! Finds the property with the given \a name and returns a ParamSpec that describes it.
+     * If the property cannot be found, a null ParamSpecPtr will be returned.
+     */
     ParamSpecPtr findProperty(const char *name) const;
+
+    /*! Returns a list with all the properties that the class of this instance supports. */
     QList<ParamSpecPtr> listProperties() const;
 
+    /*! Returns the value of the property with the given \a name as a Value object.
+     * If the property is not found, an invalid Value will be returned.
+     */
     Value property(const char *name) const;
+
+    /*! Sets the property with the given \a name to hold the given \a value.
+     * \a value is automatically converted to the type that this property
+     * expects using the Value::set() template method.
+     */
     template <class T> void setProperty(const char *name, const T & value);
+
+    /*! Sets the property with the given \a name to hold the given \a value.
+     * \a value \em must have exactly the same type that the property expects,
+     * otherwise this call will fail. Normally, you should use setProperty()
+     * instead of this function.
+     */
     void setPropertyValue(const char *name, const Value & value);
 
     void *data(const char *key) const;
