@@ -98,7 +98,7 @@ public:
     static QList<Signal> listSignals(Type type);
 
 private:
-    Signal(uint id);
+    QTGLIB_NO_EXPORT Signal(uint id);
 
     struct Private;
     QSharedDataPointer<Private> d;
