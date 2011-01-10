@@ -1,34 +1,23 @@
 1. About
 --------
 
-- What is QtGStreamer?
+QtGStreamer is a set of libraries and plugins providing C++ bindings for
+GStreamer [1] with a Qt-style API plus some helper classes for integrating
+GStreamer better in Qt [2] applications.
 
-QtGStreamer aims to become a library providing C++ bindings for GStreamer [1]
-with a Qt-style API plus some helper classes for integrating GStreamer better
-in Qt [2] applications.
+Currently, it consists of the following parts:
+ * QtGLib        - Library providing C++/Qt bindings for parts of the GLib
+                   and GObject APIs, a base on which QtGStreamer is built.
+ * QtGStreamer   - Library providing C++/Qt bindings for GStreamer
+ * QtGStreamerUi - Library providing integration with QtGui. Currently,
+                   it only provides a video widget that embeds GStreamer's
+                   video sinks.
+
+In addition, it provides a "qwidgetvideosink" GStreamer element, an video
+sink element that can draw directly on QWidgets using QPainter.
 
 [1]. http://gstreamer.freedesktop.org/
 [2]. http://qt.nokia.com/
-
-- What is QtGStreamer’s development state at the moment?
-
-QtGStreamer is still under development, but might be suitable for simple uses.
-However, note that there is no source or binary compatibility guarantee yet,
-so if you want to use QtGStreamer in your project, I would recommend to ship
-it with your sources and build it as a static library.
-
-- What are the differences between the C++ bindings of QtGStreamer and GStreamermm?
-
- * QtGStreamer provides bindings that completely hide the GStreamer ABI,
-   so your application doesn’t need to link to GStreamer itself.
- * QtGStreamer uses QtCore helper classes (QString, QList, etc..) where it can,
-   to ease integration with Qt.
- * QtGStreamer provides support for connecting arbitrary GObject signals to
-   slots, while in GStreamermm every signal needs to be defined in the bindings,
-   or else you need to use the C API for connecting it. This is especially useful
-   for connecting signals from element plugins, where their interface is unknown
-   at compile time.
-
 
 2. Building
 -----------
@@ -37,13 +26,14 @@ it with your sources and build it as a static library.
 ----------------
 
 QtGStreamer requires the following software to be installed in order to build:
- * CMake 2.6 or later <http://www.cmake.org/>
+ * CMake 2.8 or later <http://www.cmake.org/>
  * GStreamer 0.10.31 or later <http://gstreamer.freedesktop.org/>
    With its dependencies:
    - Glib / GObject <http://www.gtk.org/>
- * Qt 4 <http://qt.nokia.com/>
+   and including gstreamer-plugins-base (0.10.31 or later)
+ * Qt 4.5 or later <http://qt.nokia.com/>
  * Automoc <svn://anonsvn.kde.org/home/kde/trunk/kdesupport/automoc/>
- * Boost (static_assert, type_traits, function, bind, preprocessor) <http://www.boost.org/>
+ * Boost <http://www.boost.org/>
  * Flex <http://flex.sourceforge.net/>
  * Bison <http://www.gnu.org/software/bison/>
 
@@ -54,7 +44,7 @@ A decent compiler with proper support for advanced templates, including features
 such as partial template specialization, is required. QtGStreamer can also make
 use of C++0x features (see below for details). A compiler supporting at least
 some of them is recommended. Currently, only the GNU C++ compiler (g++) version
-4.3 or later is known to support all the features that QtGStreamer uses. However,
+4.5 or later is known to support all the features that QtGStreamer uses. However,
 other compilers can be used too, but with some limitations.
 
 C++0x features in use:
@@ -77,11 +67,30 @@ $ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix
 $ make
 $ make install
 
-The above commands will build and install QtGStreamer as a shared library.
-If you prefer to build QtGStreamer as a static library, pass the
--DSTATIC_QTGSTREAMER=1 option to cmake, like that:
+Other options that can be passed to cmake include:
 
-$ cmake .. -DCMAKE_INSTALL_PREFIX=/path/to/installation/prefix -DSTATIC_QTGSTREAMER=1
+* -DCMAKE_BUILD_TYPE=[Debug|Release|RelWithDebInfo|MinSizeRel]
+  Allows you to specify the type of the build. This is a standard
+  cmake option, see the cmake man page for details.
+
+* -DQTGSTREAMER_STATIC=[ON|OFF]
+  Allows you to choose whether to build static or dynamic libraries.
+  ON means static, OFF means dynamic.
+
+* -DQTGSTREAMER_EXAMPLES=[ON|OFF]
+  Allows you to choose whether to build the examples shipped with QtGStreamer or not.
+  Note that the examples can also be built independently outside the source tree.
+
+* -DQTGSTREAMER_TESTS=[ON|OFF]
+  Allows you to choose whether to build tests or not.
+
+* -DGST_PACKAGE_NAME="some string"
+  Allows you to specify the name that gst-inspect will show as the "Binary package"
+  name for all the element plugins that are build from this source package.
+
+* -DGST_PACKAGE_ORIGIN="http://some.url"
+  Allows you to specify the url that gst-inspect will show as the "Origin URL"
+  for all the element plugins that are build from this source package.
 
 2.4 Generating documentation
 ----------------------------
@@ -90,224 +99,37 @@ QtGStreamer uses doxygen for documentation. To generate the documentation you ne
 to install doxygen and run "make doc" after you have run cmake. This will generate
 the documentation in <builddir>/doc/html/.
 
-
-3. Using QtGStreamer
---------------------
-
-3.1. Build system integration
------------------------------
-
-If you are using cmake as your build system, using QtGStreamer is quite easy.
-You can just do:
-
-    find_package(QtGStreamer)
-
-which will find QtGStreamer and define the following variables:
-
-    QTGSTREAMER_FOUND - system has QtGStreamer
-    QTGSTREAMER_INCLUDE_DIR - the QtGStreamer include directory
-    QTGSTREAMER_INCLUDES - the include directories needed to use QtGStreamer
-    QTGSTREAMER_LIBRARY - the QtGStreamer library
-    QTGSTREAMER_LIBRARIES - the libraries needed to use QtGStreamer
-    QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGStreamer
-    QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGStreamer
-
-Take a look at the CMakeLists.txt of the QtGStreamer examples to see how to use them.
-
-Alternatively, if you are using qmake, you can manually set the required variables,
-as demonstrated in the example qmake project files that you can find together with
-the QtGStreamer examples. Unfortunately qmake does not support dynamic detection
-of installed libraries, so those variables have to be set manually, or you will have
-to write some wrapper "configure" script that generates a qmake project file. This
-is quite painful, compared to cmake, thus cmake is recommended.
-
-3.2. Headers
-------------
-
-The correct way to include a certain QtGStreamer header for a class is to use
-the #include <namespace/class> syntax. For example: #include <QGst/Element>
-All the other lowercase headers (which all end with .h) are considered private
-and should not be used directly.
-
-
-4. Developing QtGStreamer
--------------------------
-
-4.1. Coding style
+2.5 Running tests
 -----------------
 
-QtGStreamer follows the kdelibs coding style:
-http://techbase.kde.org/Policies/Kdelibs_Coding_Style
+QtGStreamer comes with a suite of automatic unit tests that ensure QtGStreamer
+is working properly. To run them you will need ctest, a tool that comes with cmake,
+plus some gstreamer plugins from the base and good sets.
+
+To run them, simply invoke "make test" or "ctest" in the build directory.
+For advanced usage, refer to the ctest manual page.
 
 
-4.2. Naming policies
---------------------
+3. Links & Contact information
+------------------------------
 
-4.2.1. The namespaces
----------------------
+Web:
+    http://gstreamer.freedesktop.net
+    http://gstreamer.freedesktop.org/wiki/QtGStreamer
 
-The "G" namespace (GObject, GValue, etc...) is referred to as "QGlib".
-The "Gst" namespace (GstObject, GstElement, etc...) is referred to as "QGst".
-I didn't like them much when I chose them, better names could be discussed...
+Mailing list:
+    mailto:gstreamer-devel@lists.sourceforge.net
 
-4.2.2. The class names
-----------------------
+Irc channels:
+    irc://irc.freenode.net/gstreamer
+    irc://irc.freenode.net/qtgstreamer
 
-Class names should be the same as their G* equivalents, with the namespace
-prefix removed. For example, "GstObject" becomes "QGst::Object", "GParamSpec"
-becomes "QGlib::ParamSpec", etc...
+Git repository:
+    http://cgit.freedesktop.org/gstreamer/qt-gstreamer/
 
-4.2.3. The method names
------------------------
-
-In general the method names should be the same as the gstreamer ones,
-with the g[st]_<class> prefix removed and converted to camel case.
-
-For example,
-    gboolean gst_caps_is_empty(const GstCaps *caps);
-becomes:
-    bool isEmpty() const;
-(and member of the QGst::Caps class)
-
-There are cases where this may not be followed:
-
-1) Properties. Most property getters have a "get" prefix, for example,
-gst_object_get_name(). In QtGStreamer the "get" prefix is omitted, so this
-becomes just name().
-
-2) Overloaded members. In C there is no possibility to have two methods with
-the same name, so overloaded members usually have some extra suffix, like "_full".
-For example, g_object_set_data and g_object_set_data_full. In C++ we just add
-a method with the same name, or put optional parameters in the existing method.
-
-3) Other cases where the glib/gstreamer method name doesn't make much sense...
-For example, gst_element_is_locked_state(). That doesn't make sense in english,
-as "state" is the subject and should go before the verb "is".
-So, it becomes stateIsLocked().
-
-
-4.3. Refcounted wrappers policy
--------------------------------
-
-All reference counted classes must:
-1) Inherit from QGlib::RefCountedObject and implement its virtual ref() and
-   unref() methods (and possibly makeWritable() too).
-2) Include the QGLIB_WRAPPER (or QGST_WRAPPER) macro in their class declaration.
-   This is used like this: QGST_WRAPPER(ClassName).
-3) Be used with QGlib::RefPointer<T> and provide a
-   typedef QGlib::RefPointer<ClassName> ClassNamePtr;
-
-No constructor/destructor/copy constructor/assignment operator is allowed for
-these classes and they are all defined as private in the QGLIB_WRAPPER/QGST_WRAPPER
-macros.
-
-RefPointer always creates a new instance of the wrapper class every time it is
-copied, but it keeps the m_object protected variable of RefCountedObject pointing
-to the same underlying glib/gstreamer object, using ref()/unref() to keep its
-reference count correct.
-
-For classes that implement the makeWritable() virtual method, this method is always
-called before accessing a non-const member function. This is to implement semantics
-similar to Qt's implicit sharing for gstreamer classes that use the concept of being
-writable only when their reference count is 1, such as GstMiniObject and GstCaps.
-The idea is that makeWritable() makes a copy of the object if its reference count is
-higher than 1, so when one accesses a non-const method on an object that has more
-than one references, it is automatically copied.
-
-
-4.4. About codegen
-------------------
-
-Codegen is a simple code generator that does two basic jobs:
-
- 1) It generates all the implementations of the QGlib::GetType<T> specializations.
-GetType<T>() is used to get the GType of a type at runtime. Since we don't want
-the target application to include any glib/gstreamer headers and/or link to
-glib/gstreamer directly, this is the only way to be able to find the GType of
-a class in a template class or method, such as RefPointer::dynamicCast(),
-Value::init(), etc...
-
-The header declaration of all these specializations is added on the header of each
-class, with the QGLIB_REGISTER_TYPE() macro. This defines the declaration of the
-specialization and also acts as a keyword for codegen, which then generates the
-implementation.
-
-The usage is simple. For example: QGLIB_REGISTER_TYPE(QGst::Element)
-With this declaration, codegen will generate an implementation that returns
-GST_TYPE_ELEMENT.
-
-If a class name doesn't exactly reflect its GType getter macro, then one can
-tell codegen which is the real GType macro with a special "codegen instruction"
-comment after the QGLIB_REGISTER_TYPE keyword that goes like this:
-
-    //codegen: GType=GST_TYPE_FOO
-
-For example, QGLIB_REGISTER_TYPE(QGlib::ParamSpec) would generate an implementation
-that returns G_TYPE_PARAM_SPEC. However, that macro doesn't really exist, the
-correct one is G_TYPE_PARAM. So, we define it like this:
-
-    QGLIB_REGISTER_TYPE(QGst::ParamSpec) //codegen: GType=G_TYPE_PARAM
-
-
- 2) It generates static assertions for all the enums to make sure that their
-value is exactly the same as their glib/gstreamer equivalent. This is just used
-as a safety test for developers and doesn't have any impact on the library.
-
-Since, according to the coding style, all enums should be camel case, starting
-with a capital and glib's coding style says all enums should be capitals with
-underscores for separators, codegen does a style conversion to find out the
-glib/gstreamer equivalent of the enum. An enum that is defined as: FooBar
-in the namespace QGst will become GST_FOO_BAR. If an enum is defined in such a way
-that the conversion is not accurate, then one can use a "codegen instruction"
-after the opening brace of the enum definition that goes like this:
-
-    //codegen: EnumToBeConverted=ENUM_HOW_IT_SHOULD_BE_CONVERTED, SecondEnum=SECONDENUM , ...
-
-This will assume that "EnumToBeConverted" is "GST_ENUM_HOW_IT_SHOULD_BE_CONVERTED"
-(assuming that the namespace is QGst), and similar for "SecondEnum" -> GST_SECONDENUM
-
-A real world example:
-
----- snip ----
-namespace QGst {
-    enum PadLinkReturn {
-        //codegen: PadLinkNoFormat=PAD_LINK_NOFORMAT, PadLinkNoSched=PAD_LINK_NOSCHED
-        PadLinkOk = 0,
-        PadLinkWrongHierarchy = -1,
-        PadLinkWasLinked = -2,
-        PadLinkWrongDirection = -3,
-        PadLinkNoFormat = -4,
-        PadLinkNoSched = -5,
-        PadLinkRefused = -6
-    };
-}
-QGLIB_REGISTER_TYPE(QGst::PadLinkReturn)
----- endsnip ----
-
-For this snippet, codegen will generate:
-
----- snip ----
-QGLIB_REGISTER_TYPE_IMPLEMENTATION(QGst::PadLinkReturn,GST_TYPE_PAD_LINK_RETURN)
-
-namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkOk) == static_cast<int>(GST_PAD_LINK_OK));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkWrongHierarchy) == static_cast<int>(GST_PAD_LINK_WRONG_HIERARCHY));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkWasLinked) == static_cast<int>(GST_PAD_LINK_WAS_LINKED));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkWrongDirection) == static_cast<int>(GST_PAD_LINK_WRONG_DIRECTION));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkNoFormat) == static_cast<int>(GST_PAD_LINK_NOFORMAT));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkNoSched) == static_cast<int>(GST_PAD_LINK_NOSCHED));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkRefused) == static_cast<int>(GST_PAD_LINK_REFUSED));
-}
----- endsnip ----
-
-
-4.5. How to contribute
-----------------------
-
-Simply clone the repository on gitorious, develop the feature that you want there
-and when it's ready, send me a merge request.
-
+Bugs, feature requests & patches should be sent at:
+    https://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer&component=qt-gstreamer
 
 --
-George Kiagiadakis <kiagiadakis.george@gmail.com>
-Last updated: 11 July 2010
+George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
+Last updated: Jan 10, 2011

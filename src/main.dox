@@ -1,9 +1,124 @@
+/*
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010-2011 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
+
+    This library is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /*! \mainpage QtGStreamer API Reference
  *
  * \section introduction Introduction
- * QtGStreamer provides C++ bindings for <a href="http://www.gstreamer.net">GStreamer</a>
- * with a Qt-style API, plus some helper classes for integrating GStreamer better in
+ * QtGStreamer is a set of libraries and plugins providing C++ bindings for
+ * <a href="http://www.gstreamer.net">GStreamer</a> with a Qt-style API plus some
+ * helper classes for integrating GStreamer better in
  * <a href="http://qt.nokia.com">Qt</a> applications.
+ *
+ * Currently, it consists of the following parts:
+ * \li QtGLib - Library providing C++/Qt bindings for parts of the GLib
+ * and GObject APIs, a base on which QtGStreamer is built.
+ * \li QtGStreamer - Library providing C++/Qt bindings for GStreamer
+ * \li QtGStreamerUi - Library providing integration with QtGui. Currently,
+ * it only provides a video widget that embeds GStreamer's video sinks.
+ *
+ * In addition, it provides a "qwidgetvideosink" GStreamer element, an video
+ * sink element that can draw directly on QWidgets using QPainter.
+ *
+ * \section api_reference API Reference
+ * \li <a href="classes.html">All Classes</a>
+ * \li <a href="namespaces.html">All Namespaces</a>
+ *
+ * \section using_qtgstreamer Using QtGStreamer
+ * \li \subpage build_system_integration
+ * \li \subpage coding_conventions
+ */
+
+/*! \page build_system_integration Build system integration
+ *
+ * \section cmake CMake
+ *
+ * If you are using cmake as your build system, using QtGStreamer is quite easy.
+ * You can just do:
+ *
+ * \code
+ * find_package(QtGStreamer)
+ * \endcode
+ *
+ * which will find QtGStreamer and define the following variables:
+ *
+ * \li QTGSTREAMER_FOUND - system has QtGStreamer
+ * \li QTGSTREAMER_INCLUDE_DIR - the QtGStreamer include directory
+ * \li QTGSTREAMER_INCLUDES - the include directories needed to use QtGStreamer
+ * \li QTGLIB_LIBRARY - the QtGLib library
+ * \li QTGLIB_LIBRARIES - the libraries needed to use QtGLib
+ * \li QTGSTREAMER_LIBRARY - the QtGStreamer library
+ * \li QTGSTREAMER_LIBRARIES - the libraries needed to use QtGStreamer
+ * \li QTGSTREAMER_UI_LIBRARY - the QtGStreamerUi library
+ * \li QTGSTREAMER_UI_LIBRARIES - the libraries needed to use QtGStreamerUi
+ * \li QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGStreamer
+ * \li QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGStreamer
+ *
+ * Take a look at the CMakeLists.txt of the QtGStreamer examples to see how to use them.
+ *
+ * \section qmake qmake
+ *
+ * If you are using qmake as your build system, you can use QtGStreamer via
+ * pkg-config. For example:
+ *
+ * \code
+ * CONFIG += link_pkgconfig
+ * PKGCONFIG += QtGStreamer-0.10
+ * \endcode
+ *
+ * In the PKGCONFIG variable you can set one or more of:
+ *
+ * \li QtGLib-2.0 - the libraries needed to use QtGLib
+ * \li QtGStreamer-0.10 - the libraries needed to use QtGStreamer
+ * \li QtGStreamerUi-0.10 - the libraries needed to use QtGStreamerUi
+ *
+ * \section other_build_systems Other build systems
+ *
+ * If you are not using one of the above build systems, you could also use QtGStreamer
+ * via pkg-config, if your build system integrates with it.
+ */
+
+/*! \page coding_conventions Coding conventions
+ *
+ * \section headers Headers
+ *
+ * The correct way to include a certain QtGStreamer header for a class is to use
+ * the #include <namespace/class> syntax. For example:
+ * \code
+ * #include <QGst/Element>
+ * \endcode
+ * All the other lowercase headers (which all end with .h) are considered private
+ * and should \em not be used directly.
+ *
+ * \section smart_pointers Smart pointers
+ *
+ * Nearly all the C objects that these bindings wrap are reference counted. This means
+ * that when you obtain a pointer to such an object, you need to increase its reference
+ * count value and decrease it when you no longer need that pointer. To make reference
+ * counting easy, QtGStreamer wraps all those objects in a smart pointer class, RefPointer.
+ * This smart pointer does all the reference counting work for you and you do not need to
+ * worry about it at all.
+ *
+ * To offer a nice syntax, all those wrapper classes additionally offer typedefs for
+ * RefPointer, in the form:
+ * \code
+ * typedef RefPointer<WrapperClass> WrapperClassPtr;
+ * \endcode
  */
 
 /*! \namespace QGlib
@@ -12,12 +127,16 @@
  * This namespace provides wrapper classes for objects from the Glib and GObject libraries,
  * plus some helper classes that provide the foundations for building C++/Qt bindings for
  * GObject-based libraries.
+ *
+ * \note This namespace is contained in the QtGLib library.
  */
 
 /*! \namespace QGst
  * \brief Wrappers for GStreamer classes
  *
  * This namespace provides wrapper classes for GStreamer objects.
+ *
+ * \note This namespace is contained in the QtGStreamer library.
  */
 
 /*! \namespace QGst::Ui
@@ -25,6 +144,8 @@
  *
  * This namespace provides helper classes for better integration of GStreamer
  * in graphical Qt applications.
+ *
+ * \note This namespace is contained in the QtGStreamerUi library.
  */
 
 /*! \page internal_design_details Internal Design Details

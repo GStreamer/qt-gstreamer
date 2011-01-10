@@ -1,0 +1,170 @@
+1. Coding style
+-----------------
+
+QtGStreamer follows the kdelibs coding style:
+http://techbase.kde.org/Policies/Kdelibs_Coding_Style
+
+
+2. Naming policies
+--------------------
+
+2.1. The namespaces
+---------------------
+
+The "G" namespace (GObject, GValue, etc...) is referred to as "QGlib".
+The "Gst" namespace (GstObject, GstElement, etc...) is referred to as "QGst".
+
+2.2. The class names
+----------------------
+
+Class names should be the same as their G* equivalents, with the namespace
+prefix removed. For example, "GstObject" becomes "QGst::Object", "GParamSpec"
+becomes "QGlib::ParamSpec", etc...
+
+2.3. The method names
+-----------------------
+
+In general the method names should be the same as the gstreamer ones,
+with the g[st]_<class> prefix removed and converted to camel case.
+
+For example,
+    gboolean gst_caps_is_empty(const GstCaps *caps);
+becomes:
+    bool isEmpty() const;
+(and member of the QGst::Caps class)
+
+There are cases where this may not be followed:
+
+1) Properties. Most property getters have a "get" prefix, for example,
+gst_object_get_name(). In QtGStreamer the "get" prefix is omitted, so this
+becomes just name().
+
+2) Overloaded members. In C there is no possibility to have two methods with
+the same name, so overloaded members usually have some extra suffix, like "_full".
+For example, g_object_set_data and g_object_set_data_full. In C++ we just add
+a method with the same name, or put optional parameters in the existing method.
+
+3) Other cases where the glib/gstreamer method name doesn't make much sense...
+For example, gst_element_is_locked_state(). That doesn't make sense in english,
+as "state" is the subject and should go before the verb "is".
+So, it becomes stateIsLocked().
+
+
+3. Refcounted wrappers policy
+-------------------------------
+
+All reference counted classes must:
+1) Inherit from QGlib::RefCountedObject and implement its virtual
+   ref() and unref() methods.
+2) Include the QGLIB_WRAPPER (or QGST_WRAPPER) macro in their class declaration.
+   This is used like this: QGST_WRAPPER(ClassName).
+3) Be used with QGlib::RefPointer<T> and provide a
+   typedef QGlib::RefPointer<ClassName> ClassNamePtr;
+
+No constructor/destructor/copy constructor/assignment operator is allowed for
+these classes and they are all defined as private in the QGLIB_WRAPPER/QGST_WRAPPER
+macros.
+
+
+4. About codegen
+------------------
+
+Codegen is a simple code generator that does two basic jobs:
+
+ 1) It generates all the implementations of the QGlib::GetType<T> specializations.
+GetType<T>() is used to get the GType of a type at runtime. Since we don't want
+the target application to include any glib/gstreamer headers and/or link to
+glib/gstreamer directly, this is the only way to be able to find the GType of
+a class in a template class or method, such as RefPointer::dynamicCast(),
+Value::init(), etc...
+
+The header declaration of all these specializations is added on the header of each
+class, with the QGLIB_REGISTER_TYPE() and QGST_REGISTER_TYPE macros. These define
+the declaration of the specialization and also act as keywords for codegen, which
+then generates the implementation.
+
+The usage is simple. For example: QGST_REGISTER_TYPE(QGst::Element)
+With this declaration, codegen will generate an implementation that returns
+GST_TYPE_ELEMENT.
+
+If a class name doesn't exactly reflect its GType getter macro, then one can
+tell codegen which is the real GType macro with a special "codegen instruction"
+comment after the QGLIB_REGISTER_TYPE keyword that goes like this:
+
+    //codegen: GType=GST_TYPE_FOO
+
+For example, QGLIB_REGISTER_TYPE(QGlib::ParamSpec) would generate an implementation
+that returns G_TYPE_PARAM_SPEC. However, that macro doesn't really exist, the
+correct one is G_TYPE_PARAM. So, we define it like this:
+
+    QGLIB_REGISTER_TYPE(QGst::ParamSpec) //codegen: GType=G_TYPE_PARAM
+
+
+ 2) It generates static assertions for all the enums to make sure that their
+value is exactly the same as their glib/gstreamer equivalent. This is just used
+as a safety test for developers and doesn't have any impact on the library.
+
+Since, according to the coding style, all enums should be camel case, starting
+with a capital and glib's coding style says all enums should be capitals with
+underscores for separators, codegen does a style conversion to find out the
+glib/gstreamer equivalent of the enum. An enum that is defined as: FooBar
+in the namespace QGst will become GST_FOO_BAR. If an enum is defined in such a way
+that the conversion is not accurate, then one can use a "codegen instruction"
+after the opening brace of the enum definition that goes like this:
+
+    //codegen: EnumToBeConverted=ENUM_HOW_IT_SHOULD_BE_CONVERTED, SecondEnum=SECONDENUM , ...
+
+This will assume that "EnumToBeConverted" is "GST_ENUM_HOW_IT_SHOULD_BE_CONVERTED"
+(assuming that the namespace is QGst), and similar for "SecondEnum" -> GST_SECONDENUM
+
+A real world example:
+
+---- snip ----
+namespace QGst {
+    enum PadLinkReturn {
+        //codegen: PadLinkNoFormat=PAD_LINK_NOFORMAT, PadLinkNoSched=PAD_LINK_NOSCHED
+        PadLinkOk = 0,
+        PadLinkWrongHierarchy = -1,
+        PadLinkWasLinked = -2,
+        PadLinkWrongDirection = -3,
+        PadLinkNoFormat = -4,
+        PadLinkNoSched = -5,
+        PadLinkRefused = -6
+    };
+}
+QGLIB_REGISTER_TYPE(QGst::PadLinkReturn)
+---- endsnip ----
+
+For this snippet, codegen will generate:
+
+---- snip ----
+QGLIB_REGISTER_TYPE_IMPLEMENTATION(QGst::PadLinkReturn,GST_TYPE_PAD_LINK_RETURN)
+
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkOk) == static_cast<int>(GST_PAD_LINK_OK));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkWrongHierarchy) == static_cast<int>(GST_PAD_LINK_WRONG_HIERARCHY));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkWasLinked) == static_cast<int>(GST_PAD_LINK_WAS_LINKED));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkWrongDirection) == static_cast<int>(GST_PAD_LINK_WRONG_DIRECTION));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkNoFormat) == static_cast<int>(GST_PAD_LINK_NOFORMAT));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkNoSched) == static_cast<int>(GST_PAD_LINK_NOSCHED));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadLinkRefused) == static_cast<int>(GST_PAD_LINK_REFUSED));
+}
+---- endsnip ----
+
+ 3) It generates constructor functions for all the wrapper classes and a registration
+function that assigns all of them to the GType qdata. This provides reflection features.
+Given a GType and an instance pointer, QGlib::constructWrapper() can create any wrapper
+class by getting the pointer to the constructor function from the GType qdata and calling it.
+
+
+5. How to contribute
+----------------------
+
+Patches can be sent to gnome's bugzilla, using the product "GStreamer"
+and component "qt-gstreamer":
+
+  https://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer&component=qt-gstreamer
+
+--
+George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
+Last updated: Jan 10, 2011
