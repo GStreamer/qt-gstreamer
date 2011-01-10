@@ -307,13 +307,18 @@ inline bool disconnect(void *instance, const char *detailedSignal, void *receive
 
 } //namespace QGlib
 
-#define IN_QGLIB_CONNECT_H
-# if !QGLIB_HAVE_CXX0X
+#if !QGLIB_HAVE_CXX0X
 //boost::bind restricts us to 9 arguments. if you need more,
 //consider using a modern compiler with variadic template support ;)
-#  define QGLIB_CONNECT_MAX_ARGS 9
-# endif
+# define QGLIB_CONNECT_MAX_ARGS 9
+#endif
+
+#define IN_QGLIB_CONNECT_H
 # include "connectimpl.h"
 #undef IN_QGLIB_CONNECT_H
+
+#if defined(QGLIB_CONNECT_MAX_ARGS)
+# undef QGLIB_CONNECT_MAX_ARGS
+#endif
 
 #endif //QGLIB_CONNECT_H
