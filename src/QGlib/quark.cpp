@@ -28,21 +28,9 @@ Quark Quark::fromString(const char *str)
 }
 
 //static
-Quark Quark::fromString(const QString & str)
-{
-    return g_quark_from_string(str.toUtf8());
-}
-
-//static
 Quark Quark::tryString(const char *str)
 {
     return g_quark_try_string(str);
-}
-
-//static
-Quark Quark::tryString(const QString & str)
-{
-    return g_quark_try_string(str.toUtf8());
 }
 
 QString Quark::toString() const

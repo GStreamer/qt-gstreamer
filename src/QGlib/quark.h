@@ -46,12 +46,12 @@ public:
 
     /*! Creates a new Quark given a string \a str. */
     static Quark fromString(const char *str);
-    static Quark fromString(const QString & str); ///< \overload
+    static inline Quark fromString(const QString & str); ///< \overload
 
     /*! Finds an existing Quark that corresponds to the given string \a str.
      * If the Quark is not found, an invalid quark (equal to 0) is returned. */
     static Quark tryString(const char *str);
-    static Quark tryString(const QString & str); ///< \overload
+    static inline Quark tryString(const QString & str); ///< \overload
 
     /*! Retrieves the string that corresponds to this Quark. */
     QString toString() const;
@@ -62,6 +62,18 @@ private:
     quint32 m_quark;
 };
 
+//static
+inline Quark Quark::fromString(const QString & str)
+{
+    return fromString(str.toUtf8().constData());
 }
+
+//static
+inline Quark Quark::tryString(const QString & str)
+{
+    return tryString(str.toUtf8().constData());
+}
+
+} //namespace QGlib
 
 #endif // QGLIB_QUARK_H
