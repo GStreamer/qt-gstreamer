@@ -57,8 +57,6 @@ public:
     void *stealQuarkData(const Quark & quark) const;
     void setQuarkData(const Quark & quark, void *data, void (*destroyCallback)(void*) = NULL);
 
-    ParamSpecPtr redirectTarget() const;
-
 protected:
     virtual void ref(bool increaseRef);
     virtual void unref();

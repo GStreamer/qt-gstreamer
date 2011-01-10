@@ -66,11 +66,6 @@ void ParamSpec::setQuarkData(const Quark & quark, void *data, void (*destroyCall
     g_param_spec_set_qdata_full(object<GParamSpec>(), quark, data, destroyCallback);
 }
 
-ParamSpecPtr ParamSpec::redirectTarget() const
-{
-    return ParamSpecPtr::wrap(g_param_spec_get_redirect_target(object<GParamSpec>()));
-}
-
 void ParamSpec::ref(bool increaseRef)
 {
     if (increaseRef) {
