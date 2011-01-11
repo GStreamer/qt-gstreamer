@@ -121,9 +121,9 @@ void TagListTest::copyTest()
 
     QGst::BufferPtr buffer2 = tl2.image();
     QGst::CapsPtr caps2 = buffer2->caps();
-    QGst::SharedStructure structure = caps2->structure(0);
-    QCOMPARE(structure.name(), QString("video/x-raw-yuv"));
-    int width = structure.value("width").get<int>();
+    QGst::StructurePtr structure = caps2->internalStructure(0);
+    QCOMPARE(structure->name(), QString("video/x-raw-yuv"));
+    int width = structure->value("width").get<int>();
     QCOMPARE(width, 320);
 }
 
@@ -374,21 +374,21 @@ void TagListTest::bufferTest()
 
     QGst::BufferPtr buffer2 = tl.image();
     QGst::CapsPtr caps2 = buffer2->caps();
-    QGst::SharedStructure structure2 = caps2->structure(0);
-    QCOMPARE(structure2.name(), QString("video/x-raw-yuv"));
-    QCOMPARE(structure2.value("width").get<int>(), 320);
+    QGst::StructurePtr structure2 = caps2->internalStructure(0);
+    QCOMPARE(structure2->name(), QString("video/x-raw-yuv"));
+    QCOMPARE(structure2->value("width").get<int>(), 320);
 
     QGst::BufferPtr buffer3 = tl.previewImage();
     QGst::CapsPtr caps3 = buffer3->caps();
-    QGst::SharedStructure structure3 = caps3->structure(0);
-    QCOMPARE(structure3.name(), QString("video/x-raw-rgb"));
-    QCOMPARE(structure3.value("width").get<int>(), 160);
+    QGst::StructurePtr structure3 = caps3->internalStructure(0);
+    QCOMPARE(structure3->name(), QString("video/x-raw-rgb"));
+    QCOMPARE(structure3->value("width").get<int>(), 160);
 
     QGst::BufferPtr buffer4 = tl.attachment();
     QGst::CapsPtr caps4 = buffer4->caps();
-    QGst::SharedStructure structure4 = caps4->structure(0);
-    QCOMPARE(structure4.name(), QString("files"));
-    QCOMPARE(structure4.value("attachment").get<QString>(), QString("avalue"));
+    QGst::StructurePtr structure4 = caps4->internalStructure(0);
+    QCOMPARE(structure4->name(), QString("files"));
+    QCOMPARE(structure4->value("attachment").get<QString>(), QString("avalue"));
 
     //now set multiple buffers and verify the count
     tl.setImage(buffer3, QGst::TagMergeAppend);
