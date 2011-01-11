@@ -34,6 +34,8 @@ public:
 
     ClockPtr clock() const;
     bool setClock(const ClockPtr & clock);
+    void useClock(const ClockPtr & clock);
+    void enableAutoClock();
 };
 
 }

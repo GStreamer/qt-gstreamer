@@ -46,4 +46,14 @@ bool Pipeline::setClock(const ClockPtr & clock)
     return gst_pipeline_set_clock(object<GstPipeline>(), clock);
 }
 
+void Pipeline::useClock(const ClockPtr & clock)
+{
+    gst_pipeline_use_clock(object<GstPipeline>(), clock);
+}
+
+void Pipeline::enableAutoClock()
+{
+    gst_pipeline_auto_clock(object<GstPipeline>());
+}
+
 }
