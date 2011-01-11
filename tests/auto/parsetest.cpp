@@ -58,7 +58,7 @@ void ParseTest::binFromDescriptionTest()
     }
 
     try {
-        QGst::BinPtr bin = QGst::Bin::fromDescription("audiotestsrc ! audioconvert", false);
+        QGst::BinPtr bin = QGst::Bin::fromDescription("audiotestsrc ! audioconvert", QGst::Bin::NoGhost);
         QVERIFY(!bin.isNull());
         QVERIFY(bin->getStaticPad("src").isNull());
         QVERIFY(bin->getStaticPad("sink").isNull());

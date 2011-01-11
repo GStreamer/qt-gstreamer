@@ -1,5 +1,7 @@
 /*
     Copyright (C) 2009-2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2011 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -32,15 +34,25 @@ public:
     /*! Creates a new Bin with the specified \a name */
     static BinPtr create(const char *name = NULL);
 
-    /*! Creates a new Bin from a bin description. The syntax is the same as the one used
-     * in the gst-launch tool. Ghost pads on the bin for unlinked source or sink pads within the
-     * bin can automatically be created, if \a ghostUnlinkedPads is set to true (but only a maximum
-     * of one ghost pad for each direction will be created; if you expect multiple unlinked source
-     * pads or multiple unlinked sink pads and want them all ghosted, you will have to create the
-     * ghost pads yourself)
+    /*! \see fromDescription() */
+    enum BinFromDescriptionOption { //codegen: skip=true
+        NoGhost = 0, ///< Do not create ghost pads
+        Ghost = 1 ///< Create ghost pads
+    };
+
+    /*! Creates a new Bin from a bin description. The description's syntax is the same as the one
+     * used in the gst-launch tool. If \a ghostUnlinkedPads is set to Ghost, Ghost pads on the bin
+     * for unlinked source or sink pads within the bin can automatically be created (but only a
+     * maximum of one ghost pad for each direction will be created; if you expect multiple unlinked
+     * source pads or multiple unlinked sink pads and want them all ghosted, you will have to
+     * create the ghost pads yourself)
      * \throws QGlib::Error when there was a problem creating the pipeline
      */
-    static BinPtr fromDescription(const char *description, bool ghostUnlinkedPads = true);
+    static BinPtr fromDescription(const char *description,
+                                  BinFromDescriptionOption ghostUnlinkedPads = Ghost);
+    /*! \overload */
+    static inline BinPtr fromDescription(const QString & description,
+                                         BinFromDescriptionOption ghostUnlinkedPads = Ghost);
 
     bool add(const ElementPtr & element);
     bool remove(const ElementPtr & element);
@@ -63,6 +75,12 @@ public:
     PadPtr findUnlinkedPad(PadDirection direction) const;
     bool recalculateLatency();
 };
+
+inline BinPtr Bin::fromDescription(const QString & description,
+                                   BinFromDescriptionOption ghostUnlinkedPads)
+{
+    return fromDescription(description.toUtf8().constData(), ghostUnlinkedPads);
+}
 
 template <typename T>
 QGlib::RefPointer<T> Bin::getElementByInterface() const

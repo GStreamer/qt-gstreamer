@@ -33,7 +33,7 @@ BinPtr Bin::create(const char *name)
 }
 
 //static
-BinPtr Bin::fromDescription(const char *description, bool ghostUnlinkedPads)
+BinPtr Bin::fromDescription(const char *description, BinFromDescriptionOption ghostUnlinkedPads)
 {
     GError *error = NULL;
     GstElement *e = gst_parse_bin_from_description_full(description, ghostUnlinkedPads,
