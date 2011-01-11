@@ -63,6 +63,8 @@ public:
     void setName(const char *name);
 
     QGlib::Value value(const char *fieldName) const;
+    template <typename T>
+    inline void setValue(const char *fieldName, const T & value);
     void setValue(const char *fieldName, const QGlib::Value & value);
 
     unsigned int numberOfFields() const;
@@ -91,6 +93,12 @@ private:
 
     QSharedDataPointer<Data> d;
 };
+
+template <typename T>
+inline void Structure::setValue(const char *fieldName, const T & value)
+{
+    setValue(fieldName, QGlib::Value::create(value));
+}
 
 //static
 inline Structure fromString(const QString & str)
