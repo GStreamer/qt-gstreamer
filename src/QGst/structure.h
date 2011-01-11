@@ -76,6 +76,7 @@ public:
 
     QString toString() const; //FIXME maybe call it serialize()?
     static Structure fromString(const char *str);
+    static inline Structure fromString(const QString & str);
 
     operator GstStructure*();
     operator const GstStructure*() const;
@@ -92,6 +93,12 @@ private:
 
     QSharedDataPointer<Data> d;
 };
+
+//static
+inline Structure fromString(const QString & str)
+{
+    return fromString(str.toUtf8().constData());
+}
 
 
 /*! \headerfile structure.h <QGst/Structure>
