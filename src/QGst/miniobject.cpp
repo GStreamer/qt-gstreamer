@@ -30,26 +30,6 @@ bool MiniObject::isWritable() const
     return gst_mini_object_is_writable(object<GstMiniObject>());
 }
 
-MiniObjectFlags MiniObject::flags() const
-{
-    return QFlag((GST_MINI_OBJECT_FLAGS(object<GstMiniObject>())));
-}
-
-bool MiniObject::flagIsSet(MiniObjectFlag flag) const
-{
-    return GST_MINI_OBJECT_FLAG_IS_SET(object<GstMiniObject>(), flag);
-}
-
-void MiniObject::setFlag(MiniObjectFlag flag)
-{
-    GST_MINI_OBJECT_FLAG_SET(object<GstMiniObject>(), flag);
-}
-
-void MiniObject::unsetFlag(MiniObjectFlag flag)
-{
-    GST_MINI_OBJECT_FLAG_UNSET(object<GstMiniObject>(), flag);
-}
-
 void MiniObject::ref(bool increaseRef)
 {
     if (Private::ObjectStore::put(this)) {

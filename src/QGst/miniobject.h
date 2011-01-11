@@ -34,11 +34,6 @@ public:
     bool isWritable() const;
     MiniObjectPtr makeWritable() const;
 
-    MiniObjectFlags flags() const;
-    bool flagIsSet(MiniObjectFlag flag) const;
-    void setFlag(MiniObjectFlag flag);
-    void unsetFlag(MiniObjectFlag flag);
-
 protected:
     virtual void ref(bool increaseRef);
     virtual void unref();
