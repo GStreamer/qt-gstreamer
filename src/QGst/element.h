@@ -37,7 +37,7 @@ public:
     bool syncStateWithParent();
 
     bool stateIsLocked() const;
-    bool setStateLocked(bool locked); //### is the return value ever needed?
+    bool setStateLocked(bool locked);
 
     bool addPad(const PadPtr & pad);
     PadPtr getStaticPad(const char *name);
