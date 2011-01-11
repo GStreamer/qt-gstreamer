@@ -63,6 +63,8 @@ namespace QGst {
  * tl.setAuthor("Mary", QGst::TagMergeAppend); //now tl.authorCount() equals 2
  * tl.setAuthor("George", QGst::TagMergeReplaceAll); //now there is only one author, "George"
  * \endcode
+ *
+ * \note This class is implicitly shared.
  */
 
 class TagList
@@ -88,8 +90,8 @@ public:
     void clear();
     void removeTag(const QString & tag);
 
-    inline operator GstTagList*() { return m_taglist; }
-    inline operator const GstTagList*() const { return m_taglist; }
+    operator GstTagList*();
+    operator const GstTagList*() const;
 
     //Begin helpers
 
@@ -334,8 +336,9 @@ public:
     double geoLocationHorizontalError() const;
     void setGeoLocationHorizontalError(double value);
 
-protected:
-    GstTagList *m_taglist;
+private:
+    struct Data;
+    QSharedDataPointer<Data> d;
 };
 
 
