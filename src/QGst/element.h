@@ -19,6 +19,7 @@
 
 #include "object.h"
 #include "caps.h"
+#include "clocktime.h"
 
 namespace QGst {
 

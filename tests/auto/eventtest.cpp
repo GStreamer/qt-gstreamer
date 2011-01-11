@@ -134,8 +134,8 @@ void EventTest::qosTest()
     QCOMPARE(evt->typeName(), QString("qos"));
 
     QCOMPARE(evt->proportion(), 123.4);
-    QCOMPARE(evt->diff(), static_cast<qint64>(23455));
-    QCOMPARE(evt->timestamp(), static_cast<quint64>(98765432));
+    QCOMPARE(evt->diff(), QGst::ClockTimeDiff(23455));
+    QCOMPARE(evt->timestamp(), QGst::ClockTime(98765432));
 };
 
 void EventTest::seekTest()
@@ -174,7 +174,7 @@ void EventTest::latencyTest()
     QVERIFY(evt->type()==QGst::EventLatency);
     QCOMPARE(evt->typeName(), QString("latency"));
 
-    QCOMPARE(evt->latency(), static_cast<quint64>(43210));
+    QCOMPARE(evt->latency(), QGst::ClockTime(43210));
 };
 
 void EventTest::stepTest()

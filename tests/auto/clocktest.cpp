@@ -42,26 +42,26 @@ void ClockTest::systemTest()
 
 void ClockTest::timeFromClockTimeTest()
 {
-    QCOMPARE(QGst::Clock::timeFromClockTime(3600 * 1000 * 1000000LL).toString(),
+    QCOMPARE(QGst::ClockTime(3600 * 1000 * Q_UINT64_C(1000000)).toTime().toString(),
              QString("01:00:00")); // 1 hour
-    QCOMPARE(QGst::Clock::timeFromClockTime(4000 * 1000 * 1000000LL).toString(),
+    QCOMPARE(QGst::ClockTime(4000 * 1000 * Q_UINT64_C(1000000)).toTime().toString(),
              QString("01:06:40"));
-    QCOMPARE(QGst::Clock::timeFromClockTime(50001 * 1000 * 1000000LL).toString(),
+    QCOMPARE(QGst::ClockTime(50001 * 1000 * Q_UINT64_C(1000000)).toTime().toString(),
              QString("13:53:21"));
-    QCOMPARE(QGst::Clock::timeFromClockTime(120000 * 1000 * 1000000LL).toString(),
+    QCOMPARE(QGst::ClockTime(120000 * 1000 * Q_UINT64_C(1000000)).toTime().toString(),
              QString("09:20:00")); // wraps
 }
 
 void ClockTest::clockTimeFromTimeTest()
 {
-    QCOMPARE(static_cast<quint64>(QGst::Clock::clockTimeFromTime(QTime(1, 0))),
-             static_cast<quint64>(3600 * 1000 * 1000000LL)); // 1 hour
+    QCOMPARE(static_cast<quint64>(QGst::ClockTime::fromTime(QTime(1, 0))),
+             static_cast<quint64>(3600 * 1000 * Q_UINT64_C(1000000))); // 1 hour
 
-    QCOMPARE(static_cast<quint64>(QGst::Clock::clockTimeFromTime(QTime(1, 6, 40))),
-             static_cast<quint64>(4000 * 1000 * 1000000LL));
+    QCOMPARE(static_cast<quint64>(QGst::ClockTime::fromTime(QTime(1, 6, 40))),
+             static_cast<quint64>(4000 * 1000 * Q_UINT64_C(1000000)));
 
-    QCOMPARE(static_cast<quint64>(QGst::Clock::clockTimeFromTime(QTime(13, 53, 21, 15))),
-             static_cast<quint64>((50001 * 1000 +15) * 1000000LL));
+    QCOMPARE(static_cast<quint64>(QGst::ClockTime::fromTime(QTime(13, 53, 21, 15))),
+             static_cast<quint64>((50001 * 1000 +15) * Q_UINT64_C(1000000)));
 }
 
 

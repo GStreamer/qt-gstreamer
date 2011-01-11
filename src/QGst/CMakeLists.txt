@@ -27,6 +27,7 @@ set(QtGStreamer_SRCS
     clock.cpp
     buffer.cpp
     event.cpp
+    clocktime.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -68,6 +69,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     clock.h             Clock
     buffer.h            Buffer
     event.h             Event
+    clocktime.h         ClockTime
 
     Ui/global.h
     Ui/videowidget.h    Ui/VideoWidget

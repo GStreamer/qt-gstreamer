@@ -19,6 +19,7 @@
 #define QGST_BUFFER_H
 
 #include "miniobject.h"
+#include "clocktime.h"
 
 namespace QGst {
 

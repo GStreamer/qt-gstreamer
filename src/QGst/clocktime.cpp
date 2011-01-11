@@ -15,34 +15,27 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "clock.h"
+#include "clocktime.h"
 
 #include <QtCore/QTime>
 #include <gst/gstclock.h>
-#include <gst/gstsystemclock.h>
 
 namespace QGst {
 
-ClockPtr Clock::systemClock()
+QTime ClockTime::toTime() const
 {
-    return ClockPtr::wrap(gst_system_clock_obtain(), false);
+    ClockTime asSeconds = GST_TIME_AS_SECONDS(m_clocktime);
+    ClockTime h = (asSeconds / 3600) % 24;
+    ClockTime min = (asSeconds / 60) % 60;
+    ClockTime sec = asSeconds % 60;
+    ClockTime msec = GST_TIME_AS_MSECONDS(m_clocktime) % 1000;
+    return QTime(h, min, sec, msec);
 }
 
-ClockTime Clock::clockTime() const
+ClockTime ClockTime::fromTime(const QTime & time)
 {
-    GstClockTime t = gst_clock_get_time(object<GstClock>());
-    return t;
+    return (time.hour()*3600*Q_UINT64_C(1000000000)) + (time.minute()*60*Q_UINT64_C(1000000000))
+            + (time.second()*Q_UINT64_C(1000000000)) + (time.msec()*Q_UINT64_C(1000000));
 }
 
-ClockTime Clock::resolution() const
-{
-    GstClockTime t = gst_clock_get_resolution(object<GstClock>());
-    return t;
-}
-
-QTime Clock::time() const
-{
-    return clockTime().toTime();
-}
-
-}
+} //namespace QGst

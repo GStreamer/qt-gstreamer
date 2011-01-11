@@ -18,6 +18,7 @@
 #define QGST_BUS_H
 
 #include "object.h"
+#include "clocktime.h"
 
 namespace QGst {
 

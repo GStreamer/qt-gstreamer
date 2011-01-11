@@ -146,12 +146,4 @@ QGST_WRAPPER_DECLARATION(XOverlay)
         }; \
     }
 
-namespace QGst {
-    /*! A datatype to hold a time, measured in nanoseconds */
-    typedef quint64 ClockTime;
-
-    /*! A datatype to hold a time difference, measured in nanoseconds */
-    typedef qint64 ClockTimeDiff;
-}
-
 #endif

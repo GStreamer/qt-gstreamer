@@ -20,6 +20,7 @@
 
 #include "miniobject.h"
 #include "structure.h"
+#include "clocktime.h"
 
 namespace QGst {
 

@@ -19,8 +19,7 @@
 #define QGST_CLOCK_H
 
 #include "object.h"
-
-class QTime;
+#include "clocktime.h"
 
 namespace QGst {
 
@@ -36,9 +35,6 @@ public:
     ClockTime resolution() const;
     ClockTime clockTime() const;
     QTime time() const;
-
-    static QTime timeFromClockTime(ClockTime clocktime);
-    static ClockTime clockTimeFromTime(const QTime & time);
 };
 
 }

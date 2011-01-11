@@ -79,8 +79,8 @@ void QueryTest::latencyTest()
 
     query->setValues(true, 10000, 100000);
     QVERIFY(query->hasLive());
-    QCOMPARE(query->minimumLatency(), static_cast<quint64>(10000));
-    QCOMPARE(query->maximumLatency(), static_cast<quint64>(100000));
+    QCOMPARE(query->minimumLatency(), QGst::ClockTime(10000));
+    QCOMPARE(query->maximumLatency(), QGst::ClockTime(100000));
 }
 
 void QueryTest::seekingTest()
