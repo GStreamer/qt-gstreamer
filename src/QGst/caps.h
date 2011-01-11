@@ -41,6 +41,8 @@ public:
 
     void append(const CapsPtr & caps2);
     void merge(const CapsPtr & caps2);
+    template <typename T>
+    void setValue(const char *field, const T & value);
     void setValue(const char *field, const QGlib::Value & value);
     bool simplify();
     void truncate();
@@ -76,6 +78,12 @@ protected:
     virtual void ref(bool increaseRef);
     virtual void unref();
 };
+
+template <typename T>
+void Caps::setValue(const char *field, const T & value)
+{
+    setValue(field, QGlib::Value::create(value));
+}
 
 //static
 inline CapsPtr Caps::fromString(const QString & string)

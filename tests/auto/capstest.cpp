@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2011 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -17,6 +19,7 @@
 #include "qgsttest.h"
 #include <QGst/Caps>
 #include <QGst/Structure>
+#include <QGst/Bin>
 
 class CapsTest : public QGstTest
 {
@@ -26,6 +29,7 @@ private Q_SLOTS:
     void anyTest();
     void fullTest();
     void writabilityTest();
+    void setValueTest();
 };
 
 void CapsTest::simpleTest()
@@ -110,6 +114,28 @@ void CapsTest::writabilityTest()
     caps = caps->makeWritable(); //creates a copy
     QVERIFY(caps->isWritable());
     QVERIFY(oldPtr != static_cast<GstCaps*>(caps)); //no longer same gstcaps object
+}
+
+void CapsTest::setValueTest()
+{
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+
+    QGst::BinPtr bin = QGst::Bin::create();
+
+    {
+        caps->setValue("binptr", bin);
+        QGlib::Value v = caps->internalStructure(0)->value("binptr");
+        QCOMPARE(v.type(), QGlib::GetType<QGst::Bin>());
+        QVERIFY(v.get<QGst::BinPtr>() == bin);
+    }
+
+    {
+        QGlib::Value v = QGlib::Value::create(bin);
+        caps->setValue("binptr2", v);
+        v = caps->internalStructure(0)->value("binptr2");
+        QCOMPARE(v.type(), QGlib::GetType<QGst::Bin>());
+        QVERIFY(v.get<QGst::BinPtr>() == bin);
+    }
 }
 
 QTEST_APPLESS_MAIN(CapsTest)
