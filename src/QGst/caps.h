@@ -42,7 +42,7 @@ public:
     void append(const CapsPtr & caps2);
     void merge(const CapsPtr & caps2);
     template <typename T>
-    void setValue(const char *field, const T & value);
+    inline void setValue(const char *field, const T & value);
     void setValue(const char *field, const QGlib::Value & value);
     bool simplify();
     void truncate();
@@ -79,7 +79,7 @@ protected:
 };
 
 template <typename T>
-void Caps::setValue(const char *field, const T & value)
+inline void Caps::setValue(const char *field, const T & value)
 {
     setValue(field, QGlib::Value::create(value));
 }
