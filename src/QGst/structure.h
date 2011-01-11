@@ -69,19 +69,17 @@ public:
     QString fieldName(unsigned int fieldNumber) const;
     QGlib::Type fieldType(const char *fieldName) const;
     bool hasField(const char *fieldName) const;
-    bool hasFieldTyped(const char *fieldName, QGlib::Type type) const; //FIXME better name?
+    bool hasFieldTyped(const char *fieldName, QGlib::Type type) const;
 
     void removeField(const char *fieldName);
     void removeAllFields();
 
-    QString toString() const; //FIXME maybe call it serialize()?
+    QString toString() const;
     static Structure fromString(const char *str);
     static inline Structure fromString(const QString & str);
 
     operator GstStructure*();
     operator const GstStructure*() const;
-
-    //TODO iterators, gst_structure_fixate_*, quark methods
 
 private:
     friend class SharedStructure;
