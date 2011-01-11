@@ -86,10 +86,10 @@ template <typename T>
 QGlib::RefPointer<T> Bin::getElementByInterface() const
 {
     ElementPtr p = getElementByInterface(QGlib::GetType<T>());
-    return p.staticCast<T>();
+    return p.dynamicCast<T>();
 }
 
-}
+} //namespace QGst
 
 QGST_REGISTER_TYPE(QGst::Bin)
 
