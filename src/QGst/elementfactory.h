@@ -43,7 +43,7 @@ public:
     bool canSinkCaps(const CapsPtr & caps) const;
     bool canSrcCaps(const CapsPtr & caps) const;
 
-    ElementPtr create(const char *elementName) const;
+    ElementPtr create(const char *elementName = NULL) const;
 };
 
 }
