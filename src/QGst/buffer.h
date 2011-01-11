@@ -52,8 +52,13 @@ public:
     void setFlags(const BufferFlags flags);
 
     BufferPtr copy() const;
-
+    inline BufferPtr makeWritable() const;
 };
+
+BufferPtr Buffer::makeWritable() const
+{
+    return MiniObject::makeWritable().staticCast<Buffer>();
+}
 
 } //namespace QGst
 
