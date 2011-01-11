@@ -68,7 +68,7 @@ ElementPtr Bin::getElementByName(const char *name, RecursionType r) const
         e = gst_bin_get_by_name_recurse_up(object<GstBin>(), name);
         break;
     default:
-        Q_ASSERT_X(false, "QGst::Bin::getByName", "Invalid RecursionType");
+        Q_ASSERT_X(false, "QGst::Bin::getElementByName", "Invalid RecursionType");
     }
     return ElementPtr::wrap(e, false);
 }
