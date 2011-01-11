@@ -168,8 +168,7 @@ public:
     static FormatsQueryPtr create();
 
     QList<Format> formats() const;
-
-    void setValue(const QList<Format> & formats);
+    void setFormats(const QList<Format> & formats);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -184,21 +183,23 @@ public:
     bool isBusy() const;
     int percent() const;
 
-    void setValues(bool busy, int percent);
+    void setBufferingPercent(bool busy, int percent);
 
     BufferingMode mode() const;
     int averageIn() const;
     int averageOut() const;
     qint64 bufferingLeft() const;
 
-    void setValues(BufferingMode mode, int averageIn, int averageOut, qint64 bufferingLeft);
+    void setBufferingStats(BufferingMode mode, int averageIn,
+                           int averageOut, qint64 bufferingLeft);
 
-    Format format() const;
+    Format rangeFormat() const;
     qint64 rangeStart() const;
     qint64 rangeStop() const;
     qint64 estimatedTotal() const;
 
-    void setValues(Format rangeFormat, qint64 rangeStart, qint64 rangeStop, qint64 estimatedTotal);
+    void setBufferingRange(Format rangeFormat, qint64 rangeStart,
+                           qint64 rangeStop, qint64 estimatedTotal);
 };
 
 /*! \headerfile query.h <QGst/Query>
@@ -211,8 +212,7 @@ public:
     static UriQueryPtr create();
 
     QUrl uri() const;
-
-    void setValue(const QUrl & uri);
+    void setUri(const QUrl & uri);
 };
 
 } //namespace QGst

@@ -275,7 +275,7 @@ QList<Format> FormatsQuery::formats() const
     return formats;
 }
 
-void FormatsQuery::setValue(const QList<Format> & formats)
+void FormatsQuery::setFormats(const QList<Format> & formats)
 {
     int cnt = formats.count();
     if (cnt==0) return;
@@ -308,7 +308,7 @@ int BufferingQuery::percent() const
     return p;
 }
 
-void BufferingQuery::setValues(bool busy, int percent)
+void BufferingQuery::setBufferingPercent(bool busy, int percent)
 {
     gst_query_set_buffering_percent(object<GstQuery>(), busy, percent);
 }
@@ -342,14 +342,14 @@ qint64 BufferingQuery::bufferingLeft() const
     return l;
 }
 ;
-void BufferingQuery::setValues(BufferingMode mode, int averageIn, int averageOut,
-                              qint64 bufferingLeft)
+void BufferingQuery::setBufferingStats(BufferingMode mode, int averageIn,
+                                       int averageOut, qint64 bufferingLeft)
 {
     gst_query_set_buffering_stats(object<GstQuery>(), static_cast<GstBufferingMode>(mode),
                                   averageIn, averageOut, bufferingLeft);
 }
 
-Format BufferingQuery::format() const
+Format BufferingQuery::rangeFormat() const
 {
     GstFormat f;
     gst_query_parse_buffering_range(object<GstQuery>(), &f, NULL, NULL, NULL);
@@ -377,8 +377,8 @@ qint64 BufferingQuery::estimatedTotal() const
     return r;
 }
 
-void BufferingQuery::setValues(Format rangeFormat, qint64 rangeStart, qint64 rangeStop,
-                              qint64 estimatedTotal)
+void BufferingQuery::setBufferingRange(Format rangeFormat, qint64 rangeStart,
+                                       qint64 rangeStop, qint64 estimatedTotal)
 {
     gst_query_set_buffering_range(object<GstQuery>(), static_cast<GstFormat>(rangeFormat),
                                   rangeStart, rangeStop, estimatedTotal);
@@ -398,7 +398,7 @@ QUrl UriQuery::uri() const
     return QUrl::fromPercentEncoding(uri);
 }
 
-void UriQuery::setValue(const QUrl & uri)
+void UriQuery::setUri(const QUrl & uri)
 {
     gst_query_set_uri(object<GstQuery>(), uri.toEncoded());
 }

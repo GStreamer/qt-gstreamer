@@ -140,7 +140,7 @@ void QueryTest::formatsTest()
     formats.append(QGst::FormatTime);
     formats.append(QGst::FormatBytes);
 
-    query->setValue(formats);
+    query->setFormats(formats);
     QList<QGst::Format> answer = query->formats();
     QVERIFY(answer.count()==3);
     QVERIFY(answer.contains(QGst::FormatPercent));
@@ -155,22 +155,22 @@ void QueryTest::bufferingTest()
     QGst::BufferingQueryPtr query = QGst::BufferingQuery::create(QGst::FormatBytes);
     QVERIFY(query->type()==QGst::QueryBuffering);
     QCOMPARE(query->typeName(), QString("buffering"));
-    QVERIFY(query->format()==QGst::FormatBytes);
+    QVERIFY(query->rangeFormat()==QGst::FormatBytes);
 
-    query->setValues(true, 85);
+    query->setBufferingPercent(true, 85);
     QVERIFY(query->isBusy());
     QCOMPARE(query->percent(), 85);
 
-    query->setValues(QGst::BufferingStream, 12345, 23456, 345678);
+    query->setBufferingStats(QGst::BufferingStream, 12345, 23456, 345678);
     QVERIFY(query->mode()!=QGst::BufferingDownload);
     QVERIFY(query->mode()==QGst::BufferingStream);
     QCOMPARE(query->averageIn(), 12345);
     QCOMPARE(query->averageOut(), 23456);
     QCOMPARE(query->bufferingLeft(), static_cast<qint64>(345678));
 
-    query->setValues(QGst::FormatTime, 23456, 34567, 100000);
-    QVERIFY(query->format()!=QGst::FormatBytes);
-    QVERIFY(query->format()==QGst::FormatTime);
+    query->setBufferingRange(QGst::FormatTime, 23456, 34567, 100000);
+    QVERIFY(query->rangeFormat()!=QGst::FormatBytes);
+    QVERIFY(query->rangeFormat()==QGst::FormatTime);
     QCOMPARE(query->rangeStart(), static_cast<qint64>(23456));
     QCOMPARE(query->rangeStop(), static_cast<qint64>(34567));
     QCOMPARE(query->estimatedTotal(), static_cast<qint64>(100000));
@@ -182,7 +182,7 @@ void QueryTest::uriTest()
     QVERIFY(query->type()==QGst::QueryUri);
     QCOMPARE(query->typeName(), QString("uri"));
 
-    query->setValue(QUrl::fromLocalFile("/bin/sh"));
+    query->setUri(QUrl::fromLocalFile("/bin/sh"));
     QCOMPARE(query->uri(), QUrl::fromLocalFile("/bin/sh"));
 }
 
