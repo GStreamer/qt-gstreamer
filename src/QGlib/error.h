@@ -56,11 +56,11 @@ public:
 
     /*! \returns a pointer to the underlying GError
      * \note no copy is made */
-    inline operator GError *() { return m_error; }
+    operator GError *();
 
     /*! \returns a const pointer to the underlying GError
      * \note no copy is made */
-    inline operator const GError *() const { return m_error; }
+    operator const GError *() const;
 
 private:
     GError *m_error;

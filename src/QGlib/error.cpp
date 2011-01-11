@@ -70,6 +70,16 @@ QString Error::message() const
     return QString::fromUtf8(m_error->message);
 }
 
+Error::operator GError *()
+{
+    return m_error;
+}
+
+Error::operator const GError *() const
+{
+    return m_error;
+}
+
 QDebug operator<<(QDebug dbg, const Error & error)
 {
     return dbg << error.message();
