@@ -57,7 +57,7 @@ public:
                 const char *sinkPadName = NULL);
     void unlink(const ElementPtr & dest, const char *sinkPadName = NULL);
 
-    void query(const QueryPtr & query);
+    bool query(const QueryPtr & query);
     bool sendEvent(const EventPtr & event);
     bool seek(Format format, SeekFlags flags, quint64 position);
 };

@@ -113,9 +113,9 @@ void Element::unlink(const ElementPtr & dest, const char *sinkPadName)
     unlink(NULL, dest, sinkPadName);
 }
 
-void Element::query(const QueryPtr & query)
+bool Element::query(const QueryPtr & query)
 {
-    gst_element_query(object<GstElement>(), query);
+    return gst_element_query(object<GstElement>(), query);
 }
 
 ClockPtr Element::clock() const
