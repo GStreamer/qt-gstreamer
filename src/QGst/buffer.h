@@ -34,7 +34,7 @@ class QTGSTREAMER_EXPORT Buffer : public MiniObject
 {
     QGST_WRAPPER(Buffer)
 public:
-    static BufferPtr create(uint size = 0);
+    static BufferPtr create(uint size);
 
     quint8 * data() const;
     quint32 size() const;
