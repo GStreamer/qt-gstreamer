@@ -26,6 +26,12 @@ namespace QGst {
 
 /*! \headerfile bin.h <QGst/Bin>
  * \brief Wrapper class for GstBin
+ *
+ * Bin is an element that can contain other Elements, allowing them to be managed as a group.
+ * Pads from the child elements can be ghosted to the bin, see GhostPad. This makes the bin
+ * look like any other elements and enables creation of higher-level abstraction elements.
+ *
+ * For more information refer to GStreamer's C API documentation.
  */
 class QTGSTREAMER_EXPORT Bin : public Element, public ChildProxy
 {
@@ -54,7 +60,19 @@ public:
     static inline BinPtr fromDescription(const QString & description,
                                          BinFromDescriptionOption ghostUnlinkedPads = Ghost);
 
+    /*! Adds the given element to the bin. Sets the element's parent, and thus takes
+     * ownership of the element. An element can only be added to one bin.
+     *
+     * If the element's pads are linked to other pads, the pads will be unlinked before
+     * the element is added to the bin.
+     */
     bool add(const ElementPtr & element);
+
+    /*! Removes the element from the bin, unparenting it as well.
+     *
+     * If the element's pads are linked to other pads, the pads will be
+     * unlinked before the element is removed from the bin.
+     */
     bool remove(const ElementPtr & element);
 
     /*! This enum is used with getElementByName() to specify where to look for
@@ -68,11 +86,31 @@ public:
          */
         RecurseUp
     };
-    ElementPtr getElementByName(const char *name, RecursionType = RecurseDown) const;
+
+    /*! Gets the element with the given name from a bin.
+     * Returns a null ElementPtr if the element is not found.
+     *
+     * By default, this function also recurses into child bins. If \a recursionType
+     * is set to RecurseUp, it will also search parent bins (if any) and their children.
+     */
+    ElementPtr getElementByName(const char *name, RecursionType recursionType = RecurseDown) const;
+
+    /*! Returns an element inside the bin that implements the given interface type. */
     ElementPtr getElementByInterface(QGlib::Type interfaceType) const;
+
+    /*! Looks for an element inside the bin that implements the given interface
+     * and returns it casted to the interface type. Example:
+     * \code
+     * QGst::XOverlayPtr xoverlay = bin->getElementByInterface<QGst::XOverlay>();
+     * \endcode
+     */
     template <typename T> QGlib::RefPointer<T> getElementByInterface() const;
 
+    /*! Recursively looks for elements with an unlinked pad of the given direction within the
+     * specified bin and returns an unlinked pad if one is found, or a null PadPtr otherwise.
+     */
     PadPtr findUnlinkedPad(PadDirection direction) const;
+
     bool recalculateLatency();
 };
 
