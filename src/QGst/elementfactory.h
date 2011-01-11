@@ -18,6 +18,7 @@
 #define QGST_ELEMENTFACTORY_H
 
 #include "pluginfeature.h"
+#include "element.h"
 
 namespace QGst {
 
@@ -29,7 +30,10 @@ class QTGSTREAMER_EXPORT ElementFactory : public PluginFeature
     QGST_WRAPPER(ElementFactory)
 public:
     static ElementFactoryPtr find(const char *factoryName);
+    static inline ElementFactoryPtr find(const QString & factoryName);
+
     static ElementPtr make(const char *factoryName, const char *elementName = NULL);
+    static inline ElementPtr make(const QString & factoryName, const char *elementName = NULL);
 
     QGlib::Type elementType() const;
     QString longName() const;
@@ -46,7 +50,19 @@ public:
     ElementPtr create(const char *elementName = NULL) const;
 };
 
+//static
+inline ElementFactoryPtr ElementFactory::find(const QString & factoryName)
+{
+    return find(factoryName.toUtf8().constData());
 }
+
+//static
+inline ElementPtr ElementFactory::make(const QString & factoryName, const char *elementName)
+{
+    return make(factoryName.toUtf8().constData(), elementName);
+}
+
+} //namespace QGst
 
 QGST_REGISTER_TYPE(QGst::ElementFactory)
 

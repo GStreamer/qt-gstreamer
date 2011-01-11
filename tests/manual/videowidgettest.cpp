@@ -72,7 +72,7 @@ void VideoWidgetTest::onButtonClicked(int id)
             m_pipeline->remove(m_sink);
         }
 
-        m_sink = QGst::ElementFactory::make(m_ui.elementNameEdit->text().toUtf8());
+        m_sink = QGst::ElementFactory::make(m_ui.elementNameEdit->text());
 
         if (!m_sink) {
             QMessageBox::critical(this, "Error", "Could not create the specified sink element");
