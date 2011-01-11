@@ -36,6 +36,7 @@ public:
     static CapsPtr createEmpty();
 
     static CapsPtr fromString(const char *string);
+    static inline CapsPtr fromString(const QString & string);
     QString toString() const;
 
     void append(const CapsPtr & caps2);
@@ -75,6 +76,12 @@ protected:
     virtual void ref(bool increaseRef);
     virtual void unref();
 };
+
+//static
+inline CapsPtr Caps::fromString(const QString & string)
+{
+    return fromString(string.toUtf8().constData());
+}
 
 /*! \relates QGst::Caps */
 QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const CapsPtr & caps);
