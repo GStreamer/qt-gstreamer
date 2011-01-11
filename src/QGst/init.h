@@ -21,13 +21,17 @@
 
 namespace QGst {
 
-    /*! \overload */
+    /*! \overload
+     * \note You need to include <QGst/Init> to use this function.
+     */
     QTGSTREAMER_EXPORT void init();
 
     /*! Initializes the GStreamer library, setting up internal path lists,
      * registering built-in elements, and loading standard plugins.
-     * \note This function also calls QGlib::init(),
-     * so there is no need to call it explicitly.
+     * \note
+     * \li This function also calls QGlib::init(), so there is no need to call it explicitly.
+     * \li You need to include <QGst/Init> to use this function.
+     *
      * \param argc pointer to the application's argc
      * \param argv pointer to the application's argv
      * \throws QGlib::Error when initialization fails
@@ -41,6 +45,8 @@ namespace QGst {
      * used by testsuites and other memory profiling tools.
      *
      * After this call GStreamer (including this method) should not be used anymore.
+     *
+     * \note You need to include <QGst/Init> to use this function.
      */
     QTGSTREAMER_EXPORT void cleanup();
 

@@ -23,7 +23,9 @@
 namespace QGlib {
 
     /*! Initializes the type system. You must call
-    * this function before using any QtGLib API. */
+     * this function before using any QtGLib API.
+     * \note You need to include <QGlib/Init> to use this function.
+     */
     QTGLIB_EXPORT void init();
 
 } //namespace QGlib
