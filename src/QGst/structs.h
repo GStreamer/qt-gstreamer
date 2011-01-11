@@ -33,10 +33,8 @@ namespace QGst {
             value.as_integer = first | second << 8 | third << 16 | fourth << 24;
         }
 
-        inline Fourcc(const char *str)
+        inline Fourcc(const char str[4])
         {
-            Q_ASSERT(str != NULL);
-            Q_ASSERT(str[0] && str[1] && str[2] && str[3]);
             value.as_integer = str[0] | str[1] << 8 | str[2] << 16 | str[3] << 24;
         }
 
