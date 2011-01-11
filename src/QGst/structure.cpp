@@ -27,6 +27,8 @@
 
 namespace QGst {
 
+#ifndef DOXYGEN_RUN
+
 struct QTGSTREAMER_NO_EXPORT Structure::Data : public QSharedData
 {
     Data() : QSharedData(), structure(NULL) {}
@@ -51,6 +53,7 @@ Structure::Data::~Data()
     }
 }
 
+#endif //DOXYGEN_RUN
 
 Structure::Structure()
     : d(new Data)
@@ -206,6 +209,8 @@ Structure::operator const GstStructure*() const
 
 //BEGIN SharedStructure
 
+#ifndef DOXYGEN_RUN
+
 struct QTGSTREAMER_NO_EXPORT SharedStructure::Data : public Structure::Data
 {
     Data() : Structure::Data() {}
@@ -214,6 +219,8 @@ struct QTGSTREAMER_NO_EXPORT SharedStructure::Data : public Structure::Data
     MiniObjectPtr miniobject;
     CapsPtr caps;
 };
+
+#endif
 
 SharedStructure::SharedStructure(SharedStructure::Data* data)
     : Structure(data)

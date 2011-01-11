@@ -31,11 +31,21 @@ namespace QGst {
 /*! \headerfile structure.h <QGst/Structure>
  * \brief Wrapper for GstStructure
  *
- * \note Unlike SharedStructure, this class always keeps a private GstStructure internally
- * which is allocated in the constructors and freed from the destructor.
+ * A Structure is a collection of key/value pairs. In addition to the key/value pairs,
+ * a Structure also has a name. The name starts with a letter and can be folled by letters,
+ * numbers and any of "/-_.:". Structure is used by various GStreamer subsystems to store
+ * information in a flexible and extensible way.
+ *
+ * To use a Structure, you must first give it a name, either on the constructor or using
+ * the setName() method. Afterwards, you can set values with setValue() and retrieve them
+ * with value().
+ *
+ * Structure is also serializable. You can use toString() to serialize it into a string
+ * and fromString() to deserialize it.
+ *
+ * \note This class is implicitly shared.
  * \sa SharedStructure
  */
-
 class QTGSTREAMER_EXPORT Structure
 {
 public:
@@ -85,15 +95,23 @@ private:
 
 
 /*! \headerfile structure.h <QGst/Structure>
- * \brief Wrapper for shared GstStructure instances
+ * \brief Helper for shared GstStructure instances
  *
- * This class serves as a wrapper for shared GstStructure instances. Some functions in the
- * GStreamer API return a pointer to some internal GstStructure and expect you to change this
+ * This class serves as a helper for wrapping shared GstStructure instances. Some functions in
+ * the GStreamer API return a pointer to some internal GstStructure and expect you to change this
  * internal instance, not copy it and re-set it using some setter function (like all normal
- * object-oriented APIs do), so it is necessary to have way of accessing those instances. This
- * class wraps a GstStructure without copying it and without freeing it from the destructor,
+ * object-oriented APIs do), so it is necessary to have way of accessing those instances.
+ *
+ * This class wraps a GstStructure without copying it and without freeing it from the destructor,
  * unlike Structure, which always keeps a GstStructure instance for itself.
- * \sa Structure
+ * In addition to that, this class also holds a reference to the GstStructure's parent object,
+ * so that it doesn't accidentally get deleted because its smart pointer has gone out of scope.
+ *
+ * Since this class is not copy-able (to prevent misuse), to ease using it, there is a StructurePtr
+ * typedef for QSharedPointer<SharedStructure> available. You should only use this class through
+ * StructurePtr and not directly.
+ *
+ * \sa Structure, Caps::internalStructure
  */
 class QTGSTREAMER_EXPORT SharedStructure : public Structure
 {
@@ -119,7 +137,7 @@ private:
     Q_DISABLE_COPY(SharedStructure);
 };
 
-/*! \relates QGst::StructureBase */
+/*! \relates QGst::Structure */
 QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const Structure & structure);
 
 } //namespace QGst
