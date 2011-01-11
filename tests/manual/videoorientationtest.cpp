@@ -95,7 +95,7 @@ void VideoOrientationTest::on_hFlipCheckBox_clicked(bool checked)
     if (m_src) {
         QGst::VideoOrientationPtr orientationinterface = m_src.dynamicCast<QGst::VideoOrientation>();
         if (orientationinterface) {
-            bool canFlip = orientationinterface->setHFlip(checked);
+            bool canFlip = orientationinterface->enableHorizontalFlip(checked);
             if (!canFlip) {
                 QMessageBox::warning(this, "Warning", "Source can not flip horizontally");
             }
@@ -109,7 +109,7 @@ void VideoOrientationTest::on_vFlipCheckBox_clicked(bool checked)
     if (m_src) {
         QGst::VideoOrientationPtr orientationinterface = m_src.dynamicCast<QGst::VideoOrientation>();
         if (orientationinterface) {
-            bool canFlip = orientationinterface->setVFlip(checked);
+            bool canFlip = orientationinterface->enableVerticalFlip(checked);
             if (!canFlip) {
                 QMessageBox::warning(this, "Warning", "Source can not flip vertically");
             }

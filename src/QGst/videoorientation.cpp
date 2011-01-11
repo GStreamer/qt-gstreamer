@@ -21,7 +21,7 @@
 
 namespace QGst {
 
-bool VideoOrientation::hFlip() const
+bool VideoOrientation::horizontalFlipEnabled() const
 {
     gboolean flipped;
     //Ignoring the gboolean result of the function, can be tested when setting the property
@@ -29,7 +29,7 @@ bool VideoOrientation::hFlip() const
     return flipped;
 }
 
-bool VideoOrientation::vFlip() const
+bool VideoOrientation::verticalFlipEnabled() const
 {
     gboolean flipped;
     //Ignoring the gboolean result of the function, can be tested when setting the property
@@ -37,7 +37,7 @@ bool VideoOrientation::vFlip() const
     return flipped;
 }
 
-int VideoOrientation::hCenter() const
+int VideoOrientation::horizontalCenter() const
 {
     int center = 0;
     //Ignoring the gboolean result of the function, can be tested when setting the property
@@ -45,7 +45,7 @@ int VideoOrientation::hCenter() const
     return center;
 }
 
-int VideoOrientation::vCenter() const
+int VideoOrientation::verticalCenter() const
 {
     int center = 0;
     //Ignoring the gboolean result of the function, can be tested when setting the property
@@ -53,22 +53,22 @@ int VideoOrientation::vCenter() const
     return center;
 }
 
-bool VideoOrientation::setHFlip(bool enabled)
+bool VideoOrientation::enableHorizontalFlip(bool enabled)
 {
     return gst_video_orientation_set_hflip(object<GstVideoOrientation>(), enabled);
 }
 
-bool VideoOrientation::setVFlip(bool enabled)
+bool VideoOrientation::enableVerticalFlip(bool enabled)
 {
     return gst_video_orientation_set_vflip(object<GstVideoOrientation>(), enabled);
 }
 
-bool VideoOrientation::setHCenter(int center)
+bool VideoOrientation::setHorizontalCenter(int center)
 {
     return gst_video_orientation_set_hcenter(object<GstVideoOrientation>(), center);
 }
 
-bool VideoOrientation::setVCenter(int center)
+bool VideoOrientation::setVerticalCenter(int center)
 {
     return gst_video_orientation_set_hcenter(object<GstVideoOrientation>(), center);
 }

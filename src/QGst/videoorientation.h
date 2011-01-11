@@ -31,14 +31,14 @@ class QTGSTREAMER_EXPORT VideoOrientation : public QGlib::Interface
 {
     QGST_WRAPPER(VideoOrientation)
 public:
-    bool hFlip() const;
-    bool vFlip() const;
-    int hCenter() const;
-    int vCenter() const;
-    bool setHFlip(bool enabled);
-    bool setVFlip(bool enabled);
-    bool setHCenter(int center);
-    bool setVCenter(int center);
+    bool horizontalFlipEnabled() const;
+    bool verticalFlipEnabled() const;
+    int horizontalCenter() const;
+    int verticalCenter() const;
+    bool enableHorizontalFlip(bool enabled);
+    bool enableVerticalFlip(bool enabled);
+    bool setHorizontalCenter(int center);
+    bool setVerticalCenter(int center);
 };
 
 } //namespace QGst
