@@ -35,7 +35,7 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
-    static double convertVolume(StreamVolumeFormat from, StreamVolumeFormat to, double value);
+    static double convert(StreamVolumeFormat from, StreamVolumeFormat to, double value);
 };
 
 } //namespace QGst

@@ -41,7 +41,7 @@ void StreamVolume::setMuted(bool muted)
     gst_stream_volume_set_mute(object<GstStreamVolume>(), muted);
 }
 
-double StreamVolume::convertVolume(StreamVolumeFormat from, StreamVolumeFormat to, double value)
+double StreamVolume::convert(StreamVolumeFormat from, StreamVolumeFormat to, double value)
 {
     return gst_stream_volume_convert_volume(static_cast<GstStreamVolumeFormat>(from),
                                             static_cast<GstStreamVolumeFormat>(to), value);
