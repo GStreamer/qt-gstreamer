@@ -116,7 +116,7 @@ public:
  */
 class TagMessage : public Message
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(TagMessage, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(Tag, Message)
 public:
     static TagMessagePtr create(const ObjectPtr & source, const TagList & taglist);
 

@@ -120,6 +120,7 @@ void TagListTest::copyTest()
     QCOMPARE(tl.albumGain(), tl2.albumGain());
 
     QGst::BufferPtr buffer2 = tl2.image();
+    QVERIFY(!buffer2.isNull());
     QGst::CapsPtr caps2 = buffer2->caps();
     QGst::StructurePtr structure = caps2->internalStructure(0);
     QCOMPARE(structure->name(), QString("video/x-raw-yuv"));

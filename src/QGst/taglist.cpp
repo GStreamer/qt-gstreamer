@@ -141,7 +141,8 @@ QString TagList::title(int index) const
 
 void TagList::setTitle(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_TITLE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_TITLE, QGlib::Value::create(value));
 }
 
 int TagList::titleCount() const
@@ -156,7 +157,8 @@ QString TagList::titleSortName() const
 
 void TagList::setTitleSortName(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_TITLE_SORTNAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_TITLE_SORTNAME, QGlib::Value::create(value));
 }
 
 QString TagList::artist(int index) const
@@ -166,7 +168,8 @@ QString TagList::artist(int index) const
 
 void TagList::setArtist(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_ARTIST, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_ARTIST, QGlib::Value::create(value));
 }
 
 int TagList::artistCount() const
@@ -181,7 +184,8 @@ QString TagList::artistSortName() const
 
 void TagList::setArtistSortName(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_ARTIST_SORTNAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_ARTIST_SORTNAME, QGlib::Value::create(value));
 }
 
 QString TagList::composer(int index) const
@@ -191,7 +195,8 @@ QString TagList::composer(int index) const
 
 void TagList::setComposer(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_COMPOSER, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_COMPOSER, QGlib::Value::create(value));
 }
 
 int TagList::composerCount() const
@@ -223,7 +228,8 @@ QString TagList::genre(int index) const
 
 void TagList::setGenre(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_GENRE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_GENRE, QGlib::Value::create(value));
 }
 
 int TagList::genreCount() const
@@ -238,7 +244,8 @@ QString TagList::comment(int index) const
 
 void TagList::setComment(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_COMMENT, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_COMMENT, QGlib::Value::create(value));
 }
 
 int TagList::commentCount() const
@@ -253,8 +260,8 @@ QString TagList::extendedComment(int index) const
 
 void TagList::setExtendedComment(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_EXTENDED_COMMENT,
-                           QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_EXTENDED_COMMENT, QGlib::Value::create(value));
 }
 
 int TagList::extendedCommentCount() const
@@ -309,7 +316,8 @@ QString TagList::location(int index) const
 
 void TagList::setLocation(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_LOCATION, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_LOCATION, QGlib::Value::create(value));
 }
 
 int TagList::locationCount() const
@@ -324,7 +332,8 @@ QString TagList::homepage(int index) const
 
 void TagList::setHomepage(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_HOMEPAGE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_HOMEPAGE, QGlib::Value::create(value));
 }
 
 int TagList::homepageCount() const
@@ -339,7 +348,8 @@ QString TagList::description(int index) const
 
 void TagList::setDescription(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_DESCRIPTION, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_DESCRIPTION, QGlib::Value::create(value));
 }
 
 int TagList::descriptionCount() const
@@ -354,7 +364,8 @@ QString TagList::version() const
 
 void TagList::setVersion(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_VERSION, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_VERSION, QGlib::Value::create(value));
 }
 
 QString TagList::isrc() const
@@ -364,7 +375,8 @@ QString TagList::isrc() const
 
 void TagList::setIsrc(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_ISRC, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_ISRC, QGlib::Value::create(value));
 }
 
 QString TagList::organization(int index) const
@@ -374,8 +386,8 @@ QString TagList::organization(int index) const
 
 void TagList::setOrganization(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_ORGANIZATION,
-                           QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_ORGANIZATION, QGlib::Value::create(value));
 }
 
 int TagList::organizationCount() const
@@ -390,7 +402,8 @@ QString TagList::copyright() const
 
 void TagList::setCopyright(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_COPYRIGHT, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_COPYRIGHT, QGlib::Value::create(value));
 }
 
 QString TagList::copyrightUri() const
@@ -400,7 +413,8 @@ QString TagList::copyrightUri() const
 
 void TagList::setCopyrightUri(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_COPYRIGHT_URI, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_COPYRIGHT_URI, QGlib::Value::create(value));
 }
 
 QString TagList::contact(int index) const
@@ -410,7 +424,8 @@ QString TagList::contact(int index) const
 
 void TagList::setContact(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_CONTACT, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_CONTACT, QGlib::Value::create(value));
 }
 
 int TagList::contactCount() const
@@ -425,7 +440,8 @@ QString TagList::license() const
 
 void TagList::setLicense(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_LICENSE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_LICENSE, QGlib::Value::create(value));
 }
 
 QString TagList::licenseUri() const
@@ -435,7 +451,8 @@ QString TagList::licenseUri() const
 
 void TagList::setLicenseUri(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_LICENSE_URI, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_LICENSE_URI, QGlib::Value::create(value));
 }
 
 QString TagList::performer(int index) const
@@ -445,7 +462,8 @@ QString TagList::performer(int index) const
 
 void TagList::setPerformer(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_PERFORMER, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_PERFORMER, QGlib::Value::create(value));
 }
 
 int TagList::performerCount() const
@@ -472,7 +490,8 @@ QString TagList::codec() const
 
 void TagList::setCodec(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_CODEC, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_CODEC, QGlib::Value::create(value));
 }
 
 QString TagList::videoCodec() const
@@ -482,7 +501,8 @@ QString TagList::videoCodec() const
 
 void TagList::setVideoCodec(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_VIDEO_CODEC, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_VIDEO_CODEC, QGlib::Value::create(value));
 }
 
 QString TagList::audioCodec() const
@@ -492,7 +512,8 @@ QString TagList::audioCodec() const
 
 void TagList::setAudioCodec(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_AUDIO_CODEC, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_AUDIO_CODEC, QGlib::Value::create(value));
 }
 
 QString TagList::subtitleCodec() const
@@ -502,7 +523,8 @@ QString TagList::subtitleCodec() const
 
 void TagList::setSubtitleCodec(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_SUBTITLE_CODEC, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_SUBTITLE_CODEC, QGlib::Value::create(value));
 }
 
 QString TagList::containerFormat() const
@@ -512,7 +534,8 @@ QString TagList::containerFormat() const
 
 void TagList::setContainerFormat(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_CONTAINER_FORMAT, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_CONTAINER_FORMAT, QGlib::Value::create(value));
 }
 
 quint32 TagList::bitrate() const
@@ -572,7 +595,8 @@ QString TagList::encoder() const
 
 void TagList::setEncoder(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_ENCODER, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_ENCODER, QGlib::Value::create(value));
 }
 
 quint32 TagList::encoderVersion() const
@@ -642,7 +666,8 @@ QString TagList::languageCode() const
 
 void TagList::setLanguageCode(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_LANGUAGE_CODE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_LANGUAGE_CODE, QGlib::Value::create(value));
 }
 
 BufferPtr TagList::image(int index) const
@@ -652,7 +677,8 @@ BufferPtr TagList::image(int index) const
 
 void TagList::setImage(const BufferPtr & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_IMAGE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_IMAGE, QGlib::Value::create(value));
 }
 
 int TagList::imageCount() const
@@ -667,7 +693,8 @@ BufferPtr TagList::previewImage() const
 
 void TagList::setPreviewImage(const BufferPtr & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_PREVIEW_IMAGE, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_PREVIEW_IMAGE, QGlib::Value::create(value));
 }
 
 BufferPtr TagList::attachment(int index) const
@@ -677,7 +704,8 @@ BufferPtr TagList::attachment(int index) const
 
 void TagList::setAttachment(const BufferPtr & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_ATTACHMENT, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_ATTACHMENT, QGlib::Value::create(value));
 }
 
 int TagList::attachmentCount() const
@@ -702,7 +730,8 @@ QString TagList::keywords(int index) const
 
 void TagList::setKeywords(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_KEYWORDS, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_KEYWORDS, QGlib::Value::create(value));
 }
 
 int TagList::keywordsCount() const
@@ -717,7 +746,8 @@ QString TagList::geoLocationName() const
 
 void TagList::seGeoLocationName(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_NAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_GEO_LOCATION_NAME, QGlib::Value::create(value));
 }
 
 double TagList::geoLocationLatitude() const
@@ -727,7 +757,8 @@ double TagList::geoLocationLatitude() const
 
 void TagList::setGeoLocationLatitude(double value)
 {
-    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_LATITUDE, value, NULL);
+    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                     GST_TAG_GEO_LOCATION_LATITUDE, value, NULL);
 }
 
 double TagList::geoLocationLongitude() const
@@ -737,7 +768,8 @@ double TagList::geoLocationLongitude() const
 
 void TagList::setGeoLocationLongitude(double value)
 {
-    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_LONGITUDE, value, NULL);
+    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                     GST_TAG_GEO_LOCATION_LONGITUDE, value, NULL);
 }
 
 double TagList::geoLocationElevation() const
@@ -747,7 +779,8 @@ double TagList::geoLocationElevation() const
 
 void TagList::setGeoLocationElevation(double value)
 {
-    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_ELEVATION, value, NULL);
+    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                     GST_TAG_GEO_LOCATION_ELEVATION, value, NULL);
 }
 
 QString TagList::geoLocationCountry() const
@@ -757,7 +790,8 @@ QString TagList::geoLocationCountry() const
 
 void TagList::setGeoLocationCountry(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_COUNTRY, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_GEO_LOCATION_COUNTRY, QGlib::Value::create(value));
 }
 
 QString TagList::geoLocationCity() const
@@ -767,7 +801,8 @@ QString TagList::geoLocationCity() const
 
 void TagList::setGeoLocationCity(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_CITY, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_GEO_LOCATION_CITY, QGlib::Value::create(value));
 }
 
 QString TagList::geoLocationSublocation() const
@@ -777,7 +812,8 @@ QString TagList::geoLocationSublocation() const
 
 void TagList::setGeoLocationSublocation(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_SUBLOCATION, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_GEO_LOCATION_SUBLOCATION, QGlib::Value::create(value));
 }
 
 double TagList::geoLocationMovementSpeed() const
@@ -787,7 +823,8 @@ double TagList::geoLocationMovementSpeed() const
 
 void TagList::setGeoLocationMovementSpeed(double value)
 {
-    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_MOVEMENT_SPEED, value, NULL);
+    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                     GST_TAG_GEO_LOCATION_MOVEMENT_SPEED, value, NULL);
 }
 
 double TagList::geoLocationMovementDirection() const
@@ -797,7 +834,8 @@ double TagList::geoLocationMovementDirection() const
 
 void TagList::setGeoLocationMovementDirection(double value)
 {
-    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION, value, NULL);
+    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                     GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION, value, NULL);
 }
 
 double TagList::geoLocationCaptureDirection() const
@@ -807,7 +845,8 @@ double TagList::geoLocationCaptureDirection() const
 
 void TagList::setGeoLocationCaptureDirector(double value)
 {
-    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION, value, NULL);
+    gst_tag_list_add(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                     GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION, value, NULL);
 }
 
 QString TagList::showName(int index) const
@@ -817,7 +856,8 @@ QString TagList::showName(int index) const
 
 void TagList::setShowName(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_SHOW_NAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_SHOW_NAME, QGlib::Value::create(value));
 }
 
 int TagList::showNameCount() const
@@ -832,7 +872,8 @@ QString TagList::showSortName() const
 
 void TagList::setShowSortName(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_SHOW_SORTNAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_SHOW_SORTNAME, QGlib::Value::create(value));
 }
 
 quint32 TagList::showEpisodeNumber() const
@@ -862,7 +903,8 @@ QString TagList::lyrics(int index) const
 
 void TagList::setLyrics(const QString & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode), GST_TAG_LYRICS, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, static_cast<GstTagMergeMode>(mode),
+                           GST_TAG_LYRICS, QGlib::Value::create(value));
 }
 
 int TagList::lyricsCount() const
@@ -877,7 +919,8 @@ QString TagList::composerSortName() const
 
 void TagList::setComposerSortName(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_COMPOSER_SORTNAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_COMPOSER_SORTNAME, QGlib::Value::create(value));
 }
 
 QString TagList::grouping() const
@@ -887,7 +930,8 @@ QString TagList::grouping() const
 
 void TagList::setGrouping(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_GROUPING, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_GROUPING, QGlib::Value::create(value));
 }
 
 quint32 TagList::userRating() const
@@ -907,7 +951,8 @@ QString TagList::deviceManufacturer() const
 
 void TagList::setDeviceManufacturer(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_DEVICE_MANUFACTURER, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_DEVICE_MANUFACTURER, QGlib::Value::create(value));
 }
 
 QString TagList::deviceModel() const
@@ -917,7 +962,8 @@ QString TagList::deviceModel() const
 
 void TagList::setDeviceModel(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_DEVICE_MODEL, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_DEVICE_MODEL, QGlib::Value::create(value));
 }
 
 QString TagList::imageOrientation() const
@@ -927,7 +973,8 @@ QString TagList::imageOrientation() const
 
 void TagList::setImageOrientation(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_IMAGE_ORIENTATION, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_IMAGE_ORIENTATION, QGlib::Value::create(value));
 }
 
 /*TODO Enable when 0.10.31 is released
@@ -948,7 +995,8 @@ QString TagList::applicationName() const
 
 void TagList::setApplicationName(const QString & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_APPLICATION_NAME, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_APPLICATION_NAME, QGlib::Value::create(value));
 }
 
 BufferPtr TagList::applicationData() const
@@ -958,7 +1006,8 @@ BufferPtr TagList::applicationData() const
 
 void TagList::setApplicationData(const BufferPtr & value)
 {
-    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_APPLICATION_DATA, QGlib::Value(value));
+    gst_tag_list_add_value(m_taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_APPLICATION_DATA, QGlib::Value::create(value));
 }
 
 QDateTime TagList::dateTime() const

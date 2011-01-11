@@ -124,7 +124,7 @@ public:
  */
 class TagEvent : public Event
 {
-    QGST_WRAPPER_DIFFERENT_C_CLASS(TagEvent, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Tag, Event)
 public:
     static TagEventPtr create(const TagList & taglist);
 
