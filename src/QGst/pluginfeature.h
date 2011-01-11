@@ -36,7 +36,7 @@ public:
 
     bool isVersion(uint major, uint minor, uint micro) const;
 
-    void load();
+    PluginFeaturePtr load();
 };
 
 }
