@@ -33,8 +33,8 @@ namespace QGst {
 class QTGSTREAMER_EXPORT Buffer : public MiniObject
 {
     QGST_WRAPPER(Buffer)
-public:    
-    static BufferPtr create(int size = 0);
+public:
+    static BufferPtr create(uint size = 0);
 
     quint8 * data() const;
     quint32 size() const;

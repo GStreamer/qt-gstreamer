@@ -22,7 +22,7 @@
 
 namespace QGst {
 
-BufferPtr Buffer::create(int size)
+BufferPtr Buffer::create(uint size)
 {
     return BufferPtr::wrap(gst_buffer_try_new_and_alloc(size), false);
 }
