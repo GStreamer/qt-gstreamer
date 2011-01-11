@@ -31,7 +31,7 @@ class QTGSTREAMER_EXPORT UriHandler : public QGlib::Interface
     QGST_WRAPPER_DIFFERENT_C_CLASS(UriHandler, URIHandler)
 public:
     static bool protocolIsSupported(UriType type, const char *protocol);
-    static UriHandlerPtr makeFromUri(UriType type, const QUrl & uri, const char *elementName = NULL);
+    static ElementPtr makeFromUri(UriType type, const QUrl & uri, const char *elementName = NULL);
 
     UriType uriType() const;
     QStringList supportedProtocols() const;

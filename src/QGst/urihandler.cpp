@@ -15,6 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "urihandler.h"
+#include "element.h"
 #include <gst/gsturi.h>
 #include <QtCore/QUrl>
 #include <QtCore/QStringList>
@@ -28,13 +29,13 @@ bool UriHandler::protocolIsSupported(UriType type, const char *protocol)
 }
 
 //static
-UriHandlerPtr UriHandler::makeFromUri(UriType type, const QUrl & uri, const char *elementName)
+ElementPtr UriHandler::makeFromUri(UriType type, const QUrl & uri, const char *elementName)
 {
     GstElement *e = gst_element_make_from_uri(static_cast<GstURIType>(type), uri.toEncoded(), elementName);
     if (e) {
         gst_object_ref_sink(e);
     }
-    return UriHandlerPtr::wrap(GST_URI_HANDLER(e), false);
+    return ElementPtr::wrap(e, false);
 }
 
 UriType UriHandler::uriType() const

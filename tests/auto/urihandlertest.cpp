@@ -45,7 +45,10 @@ void UriHandlerTest::makeTest()
 {
     QVERIFY(QGst::UriHandler::protocolIsSupported(QGst::UriSrc, "file"));
 
-    QGst::UriHandlerPtr u = QGst::UriHandler::makeFromUri(QGst::UriSrc, QUrl::fromLocalFile("/bin/sh"));
+    QGst::ElementPtr e = QGst::UriHandler::makeFromUri(QGst::UriSrc, QUrl::fromLocalFile("/bin/sh"));
+    QVERIFY(!e.isNull());
+
+    QGst::UriHandlerPtr u = e.dynamicCast<QGst::UriHandler>();
     QVERIFY(!u.isNull());
     QCOMPARE(u->uri(), QUrl::fromLocalFile("/bin/sh"));
 }
