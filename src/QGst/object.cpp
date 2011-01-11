@@ -50,6 +50,11 @@ bool Object::isAncestorOf(const ObjectPtr & obj) const
     return gst_object_has_ancestor(obj, object<GstObject>());
 }
 
+QString Object::pathString() const
+{
+    return QGlib::Private::stringFromGCharPtr(gst_object_get_path_string(object<GstObject>()));
+}
+
 void Object::ref(bool increaseRef)
 {
     if (increaseRef) {

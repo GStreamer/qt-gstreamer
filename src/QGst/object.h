@@ -38,6 +38,8 @@ public:
 
     bool isAncestorOf(const ObjectPtr & object) const;
 
+    QString pathString() const;
+
 protected:
     virtual void ref(bool increaseRef);
     virtual void unref();
