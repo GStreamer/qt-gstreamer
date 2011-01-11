@@ -30,7 +30,9 @@ class QTGSTREAMER_EXPORT Element : public Object
 {
     QGST_WRAPPER(Element)
 public:
-    StateChangeReturn getState(State *state, State *pending, ClockTime timeout);
+    State currentState() const;
+    State pendingState() const;
+    StateChangeReturn getState(State *state, State *pending, ClockTime timeout) const;
     StateChangeReturn setState(State state);
     bool syncStateWithParent();
 

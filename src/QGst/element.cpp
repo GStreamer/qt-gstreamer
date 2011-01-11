@@ -24,7 +24,21 @@
 
 namespace QGst {
 
-StateChangeReturn Element::getState(State *state, State *pending, ClockTime timeout)
+State Element::currentState() const
+{
+    State r;
+    getState(&r, NULL, 0);
+    return r;
+}
+
+State Element::pendingState() const
+{
+    State r;
+    getState(NULL, &r, 0);
+    return r;
+}
+
+StateChangeReturn Element::getState(State *state, State *pending, ClockTime timeout) const
 {
     GstState curState, pendingState;
     GstStateChangeReturn result = gst_element_get_state(object<GstElement>(),
