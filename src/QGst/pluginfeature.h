@@ -34,7 +34,7 @@ public:
     QString name() const;
     void setName(const char *name);
 
-    bool checkVersion(uint major, uint minor, uint micro) const;
+    bool isVersion(uint major, uint minor, uint micro) const;
 
     void load();
 };
