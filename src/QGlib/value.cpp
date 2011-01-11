@@ -127,6 +127,8 @@ void Dispatcher::setVTable(Type t, const ValueVTable & vtable)
 
 Q_GLOBAL_STATIC(Private::Dispatcher, s_dispatcher);
 
+#ifndef DOXYGEN_RUN
+
 // -- Value::Data --
 
 struct QTGLIB_NO_EXPORT Value::Data : public QSharedData
@@ -165,6 +167,8 @@ Value::Data::~Data()
         g_value_unset(value());
     }
 }
+
+#endif //DOXYGEN_RUN
 
 // -- Value --
 

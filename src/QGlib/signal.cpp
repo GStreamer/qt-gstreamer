@@ -29,6 +29,8 @@ namespace QGlib {
 
 //BEGIN ******** Signal ********
 
+#ifndef DOXYGEN_RUN
+
 struct QTGLIB_NO_EXPORT Signal::Private : public QSharedData
 {
     Private(uint i) : id(i), m_queryInitialized(false) {}
@@ -50,6 +52,7 @@ GSignalQuery *Signal::Private::query() const
     return &m_query;
 }
 
+#endif //DOXYGEN_RUN
 
 Signal::Signal(uint id)
     : d(new Private(id))
