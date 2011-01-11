@@ -30,7 +30,7 @@ void XOverlay::setWindowHandle(WId id)
     gst_x_overlay_set_window_handle(object<GstXOverlay>(), id);
 }
 
-void XOverlay::setHandleEvents(bool enabled)
+void XOverlay::enableEventHandling(bool enabled)
 {
     gst_x_overlay_handle_events(object<GstXOverlay>(), enabled);
 }

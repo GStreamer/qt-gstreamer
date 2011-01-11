@@ -34,7 +34,7 @@ class QTGSTREAMER_EXPORT XOverlay : public QGlib::Interface
 public:
     void expose();
     void setWindowHandle(WId id);
-    void setHandleEvents(bool enabled);
+    void enableEventHandling(bool enabled);
     bool setRenderRectangle(int x, int y, int width, int height);
     bool setRenderRectangle(const QRect & rect);
 };
