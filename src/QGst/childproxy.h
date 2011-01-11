@@ -46,7 +46,7 @@ void ChildProxy::setChildProperty(const char *name, const T & value)
         QGlib::Value v;
         v.init(param->valueType());
         v.set<T>(value);
-        object->setPropertyValue(param->name(), value);
+        object->setProperty(param->name(), value);
     }
 }
 

@@ -59,10 +59,10 @@ public:
 
     /*! Sets the property with the given \a name to hold the given \a value.
      * \a value \em must have exactly the same type that the property expects,
-     * otherwise this call will fail. Normally, you should use setProperty()
-     * instead of this function.
+     * otherwise this call will fail. Normally, you should use the template
+     * version of setProperty() instead of this function.
      */
-    void setPropertyValue(const char *name, const Value & value);
+    void setProperty(const char *name, const Value & value);
 
     void *data(const char *key) const;
     void *stealData(const char *key) const;
@@ -110,7 +110,7 @@ void ObjectBase::setProperty(const char *name, const T & value)
         Value v;
         v.init(param->valueType());
         v.set<T>(value);
-        setPropertyValue(name, v);
+        setProperty(name, v);
     }
 }
 

@@ -70,7 +70,7 @@ Value ObjectBase::property(const char *name) const
     return result;
 }
 
-void ObjectBase::setPropertyValue(const char *name, const Value & value)
+void ObjectBase::setProperty(const char *name, const Value & value)
 {
     g_object_set_property(object<GObject>(), name, value);
 }
