@@ -320,19 +320,19 @@ public:
     QString imageOrientation() const;
     void setImageOrientation(const QString & value);
 
-    /*TODO Enable when 0.10.31 is released
     QString applicationName() const;
     void setApplicationName(const QString & value);
 
     BufferPtr applicationData() const;
     void setApplicationData(const BufferPtr & value);
 
+    /*
     QDateTime dateTime() const;
     void setDateTime(const QDateTime & value);
+    */
 
     double geoLocationHorizontalError() const;
-    void setGeoLocationHorizontalError(double value);*/
-
+    void setGeoLocationHorizontalError(double value);
 
 protected:
     GstTagList *m_taglist;

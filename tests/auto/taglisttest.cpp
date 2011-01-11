@@ -83,7 +83,7 @@ void TagListTest::dateTest()
 
 void TagListTest::dateTimeTest()
 {
-    /*TODO - enable when 0.10.31 is released
+    /*
     QGst::TagList tl;
     QDate date(1969, 8, 4);
     QTime time(1, 10, 15, 432);

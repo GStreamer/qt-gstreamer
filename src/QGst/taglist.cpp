@@ -19,7 +19,7 @@
 #include "../QGlib/string_p.h"
 #include <gst/gsttaglist.h>
 #include <gst/gstvalue.h>
-//#include <gst/gstdatetime.h> //needs 0.10.31
+//#include <gst/gstdatetime.h>
 #include <QtCore/QDebug>
 #include <QtCore/QDate>
 #include <QGst/Buffer>
@@ -977,7 +977,6 @@ void TagList::setImageOrientation(const QString & value)
                            GST_TAG_IMAGE_ORIENTATION, QGlib::Value::create(value));
 }
 
-/*TODO Enable when 0.10.31 is released
 double TagList::geoLocationHorizontalError() const
 {
     return getDoubleTag(m_taglist, GST_TAG_GEO_LOCATION_HORIZONTAL_ERROR, 0);
@@ -1010,6 +1009,7 @@ void TagList::setApplicationData(const BufferPtr & value)
                            GST_TAG_APPLICATION_DATA, QGlib::Value::create(value));
 }
 
+/*
 QDateTime TagList::dateTime() const
 {
     GstDateTime * value;
@@ -1033,8 +1033,8 @@ void TagList::setDateTime(const QDateTime & value)
                     value.date().month(), value.date().day(), value.time().hour(),
                     value.time().minute(),value.time().second()+(value.time().msec()/1000.0));
     gst_tag_list_add (m_taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_DATE_TIME, datetime, NULL);
-} */
-
+}
+*/
 
 } //namespace QGst
 
