@@ -130,14 +130,15 @@ bool TagList::isEmpty() const
     return gst_tag_list_is_empty(d->taglist);
 }
 
-void TagList::insertList(const TagList & other, TagMergeMode mode)
+void TagList::insert(const TagList & other, TagMergeMode mode)
 {
     gst_tag_list_insert(d->taglist, other.d->taglist, static_cast<GstTagMergeMode>(mode));
 }
 
-TagList TagList::mergeList(const TagList & other, TagMergeMode mode) const
+//static
+TagList TagList::merge(const TagList & firstList, const TagList & secondList, TagMergeMode mode)
 {
-    GstTagList *taglist = gst_tag_list_merge(d->taglist, other.d->taglist,
+    GstTagList *taglist = gst_tag_list_merge(firstList, secondList,
                                              static_cast<GstTagMergeMode>(mode));
 
     //avoid copying the merged taglist by freeing the new one and assigning this one to d->taglist
@@ -147,20 +148,19 @@ TagList TagList::mergeList(const TagList & other, TagMergeMode mode) const
     return tl;
 }
 
-QGlib::Value TagList::tagValue(const QString & tag, int index) const
+QGlib::Value TagList::tagValue(const char *tag, int index) const
 {
-    return QGlib::Value(gst_tag_list_get_value_index(d->taglist, tag.toUtf8(), index));
+    return QGlib::Value(gst_tag_list_get_value_index(d->taglist, tag, index));
 }
 
-void TagList::setTagValue(const QString & tag, const QGlib::Value & value,
-            TagMergeMode mode)
+void TagList::setTagValue(const char *tag, const QGlib::Value & value, TagMergeMode mode)
 {
-    gst_tag_list_add_value(d->taglist, static_cast<GstTagMergeMode>(mode), tag.toUtf8(), value);
+    gst_tag_list_add_value(d->taglist, static_cast<GstTagMergeMode>(mode), tag, value);
 }
 
-int TagList::tagValueCount(const QString & tag) const
+int TagList::tagValueCount(const char *tag) const
 {
-    return gst_tag_list_get_tag_size(d->taglist, tag.toUtf8());
+    return gst_tag_list_get_tag_size(d->taglist, tag);
 }
 
 void TagList::clear()
@@ -169,9 +169,9 @@ void TagList::clear()
     d->taglist = gst_tag_list_new();
 }
 
-void TagList::removeTag(const QString & tag)
+void TagList::removeTag(const char *tag)
 {
-    gst_tag_list_remove_tag(d->taglist, tag.toUtf8());
+    gst_tag_list_remove_tag(d->taglist, tag);
 }
 
 TagList::operator GstTagList*()

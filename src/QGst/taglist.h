@@ -79,16 +79,17 @@ public:
 
     bool isEmpty() const;
 
-    void insertList(const TagList & other, TagMergeMode mode = TagMergeAppend);
-    TagList mergeList(const TagList & other, TagMergeMode mode = TagMergeAppend) const;
+    void insert(const TagList & other, TagMergeMode mode = TagMergeAppend);
+    static TagList merge(const TagList & firstList, const TagList & secondList,
+                         TagMergeMode mode = TagMergeAppend);
 
-    QGlib::Value tagValue(const QString & tag, int index = 0) const;
-    void setTagValue(const QString & tag, const QGlib::Value & value,
-                TagMergeMode mode = TagMergeReplaceAll);
-    int tagValueCount(const QString & tag) const;
+    QGlib::Value tagValue(const char *tag, int index = 0) const;
+    void setTagValue(const char *tag, const QGlib::Value & value,
+                     TagMergeMode mode = TagMergeReplaceAll);
+    int tagValueCount(const char *tag) const;
 
     void clear();
-    void removeTag(const QString & tag);
+    void removeTag(const char *tag);
 
     operator GstTagList*();
     operator const GstTagList*() const;
