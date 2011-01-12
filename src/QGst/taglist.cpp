@@ -1086,11 +1086,11 @@ void TagList::setDateTime(const QDateTime & value)
 }
 */
 
-} //namespace QGst
-
-QDebug operator<<(QDebug debug, const QGst::TagList & taglist)
+QDebug operator<<(QDebug debug, const TagList & taglist)
 {
     debug.nospace() << "QGst::TagList("
                     << QGlib::Private::stringFromGCharPtr(gst_structure_to_string(taglist)) << ")";
     return debug.space();
 }
+
+} //namespace QGst

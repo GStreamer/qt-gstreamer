@@ -342,11 +342,10 @@ private:
     QSharedDataPointer<Data> d;
 };
 
+/*! \relates QGst::TagList */
+QDebug operator<<(QDebug debug, const TagList & taglist);
 
 } //namespace QGst
-
-/*! \relates QGst::TagList */
-QDebug operator<<(QDebug debug, const QGst::TagList & taglist);
 
 QGLIB_REGISTER_TYPE(QGst::TagList)
 
