@@ -122,7 +122,7 @@ public:
 /*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::TagEvent
  */
-class TagEvent : public Event
+class QTGSTREAMER_EXPORT TagEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Tag, Event)
 public:

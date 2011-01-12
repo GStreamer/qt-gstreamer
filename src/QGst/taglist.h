@@ -67,7 +67,7 @@ namespace QGst {
  * \note This class is implicitly shared.
  */
 
-class TagList
+class QTGSTREAMER_EXPORT TagList
 {
 public:
     TagList();
@@ -343,10 +343,10 @@ private:
 };
 
 /*! \relates QGst::TagList */
-QDebug operator<<(QDebug debug, const TagList & taglist);
+QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const TagList & taglist);
 
 } //namespace QGst
 
-QGLIB_REGISTER_TYPE(QGst::TagList)
+QGST_REGISTER_TYPE(QGst::TagList)
 
 #endif

@@ -114,7 +114,7 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageTag
  */
-class TagMessage : public Message
+class QTGSTREAMER_EXPORT TagMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Tag, Message)
 public:
