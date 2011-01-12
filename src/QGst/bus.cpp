@@ -55,7 +55,9 @@ private:
         GstMessage *message;
         gst_object_ref(m_bus);
         while((message = gst_bus_pop(m_bus)) != NULL) {
-            QGlib::emit<void>(m_bus, "message", MessagePtr::wrap(message, false));
+            MessagePtr msg = MessagePtr::wrap(message, false);
+            QGlib::Quark detail = gst_message_type_to_quark(static_cast<GstMessageType>(msg->type()));
+            QGlib::emitWithDetail<void>(m_bus, "message", detail, msg);
         }
         gst_object_unref(m_bus);
     }
