@@ -164,8 +164,9 @@ TagList TagMessage::taglist() const
 {
     GstTagList * t;
     gst_message_parse_tag(object<GstMessage>(), &t);
-    //TagList destructor will take ownership and free the GstTagList when done
-    return TagList(t);
+    TagList tl(t);
+    gst_tag_list_free(t);
+    return tl;
 }
 
 //********************************************************
