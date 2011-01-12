@@ -22,12 +22,12 @@ macro(find_gstreamer_library _name _header _abi_version)
 
     find_library(GSTREAMER_${_upper_name}_LIBRARY
                  NAMES gst${_lower_name}-${_abi_version}
-                 PATHS ${PKG_GSTREAMER_${_upper_name}_LIBRARY_DIRS}
+                 HINTS ${PKG_GSTREAMER_${_upper_name}_LIBRARY_DIRS}
     )
 
     find_path(GSTREAMER_${_upper_name}_INCLUDE_DIR
               gst/${_lower_name}/${_header}
-              PATHS ${PKG_GSTREAMER_${_upper_name}_INCLUDE_DIRS}
+              HINTS ${PKG_GSTREAMER_${_upper_name}_INCLUDE_DIRS}
               PATH_SUFFIXES gstreamer-${_abi_version}
     )
 

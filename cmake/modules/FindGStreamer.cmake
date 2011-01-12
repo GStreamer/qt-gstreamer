@@ -36,11 +36,11 @@ endif()
 
 find_library(GSTREAMER_LIBRARY
              NAMES gstreamer-${GSTREAMER_ABI_VERSION}
-             PATHS ${PKG_GSTREAMER_LIBRARY_DIRS})
+             HINTS ${PKG_GSTREAMER_LIBRARY_DIRS})
 
 find_path(GSTREAMER_INCLUDE_DIR
           gst/gst.h
-          PATHS ${PKG_GSTREAMER_INCLUDE_DIRS}
+          HINTS ${PKG_GSTREAMER_INCLUDE_DIRS}
           PATH_SUFFIXES gstreamer-${GSTREAMER_ABI_VERSION})
 
 mark_as_advanced(GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR)

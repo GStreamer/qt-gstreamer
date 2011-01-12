@@ -29,26 +29,25 @@ IF (NOT WIN32)
 ENDIF (NOT WIN32)
 
 FIND_PATH(GOBJECT_INCLUDE_DIR gobject/gobject.h
-   PATHS
-   ${PKG_GOBJECT2_INCLUDE_DIRS}
-   /usr/include/glib-2.0/
+   HINTS ${PKG_GOBJECT2_INCLUDE_DIRS}
+   PATHS /usr/include/glib-2.0/
    PATH_SUFFIXES glib-2.0
    )
 
 FIND_LIBRARY(_GObjectLibs NAMES gobject-2.0
-   PATHS
+   HINTS
    ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 FIND_LIBRARY(_GModuleLibs NAMES gmodule-2.0
-   PATHS
+   HINTS
    ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 FIND_LIBRARY(_GThreadLibs NAMES gthread-2.0
-   PATHS
+   HINTS
    ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 FIND_LIBRARY(_GLibs NAMES glib-2.0
-   PATHS
+   HINTS
    ${PKG_GOBJECT2_LIBRARY_DIRS}
    )
 
