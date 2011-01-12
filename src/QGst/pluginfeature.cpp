@@ -39,7 +39,7 @@ void PluginFeature::setName(const char *name)
     gst_plugin_feature_set_name(object<GstPluginFeature>(), name);
 }
 
-bool PluginFeature::isVersion(uint major, uint minor, uint micro) const
+bool PluginFeature::isAtLeastVersion(uint major, uint minor, uint micro) const
 {
     return gst_plugin_feature_check_version(object<GstPluginFeature>(), major, minor, micro);
 }

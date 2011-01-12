@@ -34,7 +34,7 @@ public:
     QString name() const;
     void setName(const char *name);
 
-    bool isVersion(uint major, uint minor, uint micro) const;
+    bool isAtLeastVersion(uint major, uint minor, uint micro) const;
 
     PluginFeaturePtr load();
 };
