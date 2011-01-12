@@ -5,7 +5,7 @@ enable_testing()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 set(QTGSTREAMER_VERSION 0.10.0)
 
-option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" ON)
+option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
 
