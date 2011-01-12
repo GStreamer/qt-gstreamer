@@ -349,6 +349,8 @@ void TagListTest::stringsTest()
     s1 = "imageOrientation";
     tl.setImageOrientation(s1);
     QCOMPARE(tl.imageOrientation(), s1);
+
+    qDebug() << tl;
 }
 
 void TagListTest::bufferTest()
