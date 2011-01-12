@@ -27,7 +27,13 @@ void XOverlay::expose()
 
 void XOverlay::setWindowHandle(WId id)
 {
+#if defined(Q_WS_WIN)
+    QGLIB_STATIC_ASSERT(sizeof(WId) == sizeof(guintptr),
+                        "Size of WId doesn't match guintptr. Please file a bug report.");
+    gst_x_overlay_set_window_handle(object<GstXOverlay>(), *reinterpret_cast<guintptr*>(&id));
+#else
     gst_x_overlay_set_window_handle(object<GstXOverlay>(), id);
+#endif
 }
 
 void XOverlay::enableEventHandling(bool enabled)
