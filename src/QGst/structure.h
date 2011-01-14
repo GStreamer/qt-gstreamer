@@ -156,6 +156,5 @@ QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const Structure & structure);
 } //namespace QGst
 
 QGST_REGISTER_TYPE(QGst::Structure)
-QGST_REGISTER_TYPE(QGst::SharedStructure) //codegen: GType=GST_TYPE_STRUCTURE
 
 #endif
