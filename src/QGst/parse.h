@@ -17,7 +17,8 @@
 #ifndef QGST_PARSE_H
 #define QGST_PARSE_H
 
-#include "global.h"
+#include "element.h"
+#include <QtCore/QString>
 
 /*! \namespace QGst::Parse
  * \brief Wrappers for the GstParse methods
@@ -32,6 +33,12 @@ namespace Parse {
  * \throws QGlib::Error when there was a problem creating the pipeline
  */
 QTGSTREAMER_EXPORT ElementPtr launch(const char *description);
+
+/*! \overload */
+inline ElementPtr launch(const QString & description)
+{
+    return launch(description.toUtf8().constData());
+}
 
 /*! \overload
  * This function takes an array of strings, which are joined before they are
