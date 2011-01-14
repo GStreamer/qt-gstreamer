@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 Collabora Ltd.
+    Copyright (C) 2010-2011 Collabora Ltd.
       @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 */
 #include "structs.h"
 #include "miniobject.h"
+#include "structure.h"
 #include "../QGlib/value.h"
 #include <gst/gstvalue.h>
 #include <gst/gstminiobject.h>
@@ -137,6 +138,21 @@ void registerValueVTables()
     };
     QGlib::Value::registerValueVTable(QGlib::GetType<FractionRange>(),
             QGlib::ValueVTable(ValueVTable_FractionRange::set, ValueVTable_FractionRange::get));
+
+    struct ValueVTable_Structure
+    {
+        static void get(const QGlib::Value & value, void *data)
+        {
+            *reinterpret_cast<Structure*>(data) = Structure(gst_value_get_structure(value));
+        };
+
+        static void set(QGlib::Value & value, const void *data)
+        {
+            gst_value_set_structure(value, *reinterpret_cast<Structure const *>(data));
+        };
+    };
+    QGlib::Value::registerValueVTable(QGlib::GetType<Structure>(),
+            QGlib::ValueVTable(ValueVTable_Structure::set, ValueVTable_Structure::get));
 }
 
 } //namespace Private

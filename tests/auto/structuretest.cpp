@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2011 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +25,7 @@ class StructureTest : public QGstTest
 private Q_SLOTS:
     void bindingsTest();
     void copyTest();
+    void valueTest();
 };
 
 void StructureTest::bindingsTest()
@@ -79,6 +82,26 @@ void StructureTest::copyTest()
     }
 
 }
+
+void StructureTest::valueTest()
+{
+    QGlib::Value v;
+
+    {
+        QGst::Structure s("mystructure");
+        s.setValue("foo", 1);
+        v = QGlib::Value::create(s);
+        QVERIFY(v.isValid());
+    }
+
+    {
+        QGst::Structure s = v.get<QGst::Structure>();
+        QVERIFY(s.isValid());
+        QCOMPARE(s.name(), QString("mystructure"));
+        QCOMPARE(s.value("foo").toInt(), 1);
+    }
+}
+
 
 QTEST_APPLESS_MAIN(StructureTest)
 
