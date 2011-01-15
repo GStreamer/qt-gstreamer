@@ -158,7 +158,6 @@ TagList TagEvent::taglist() const
     GstTagList * t;
     gst_event_parse_tag(object<GstEvent>(), &t);
     TagList tl(t);
-    gst_tag_list_free(t);
     return tl;
 }
 
