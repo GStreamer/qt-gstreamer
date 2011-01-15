@@ -14,8 +14,8 @@ include(MacroLogFeature)
 find_package(Qt4 COMPONENTS QtCore QtGui QtTest)
 macro_log_feature(QT4_FOUND "Qt 4" "Required for building everything" "http://qt.nokia.com/" TRUE "4.5")
 
-find_package(Boost)
-macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.40")
+find_package(Boost 1.39)
+macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.39")
 
 # this just sets the QTGSTREAMER_* cmake variables
 set(BUILDING_QTGSTREAMER TRUE)

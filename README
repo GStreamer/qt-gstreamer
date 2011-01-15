@@ -33,7 +33,7 @@ QtGStreamer requires the following software to be installed in order to build:
    and including gstreamer-plugins-base (0.10.31 or later)
  * Qt 4.5 or later <http://qt.nokia.com/>
  * Automoc <https://projects.kde.org/projects/kdesupport/automoc/>
- * Boost <http://www.boost.org/>
+ * Boost 1.39 or later <http://www.boost.org/>
  * Flex <http://flex.sourceforge.net/>
  * Bison <http://www.gnu.org/software/bison/>
 
