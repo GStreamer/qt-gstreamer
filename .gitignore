@@ -1,0 +1,7 @@
+# Kate - KDevelop files
+*~
+*.kdev*
+
+# Common build directory names
+build*
+b
