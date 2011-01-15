@@ -1,1 +1,2 @@
 make_tarballs.sh export-ignore
+.git*            export-ignore
