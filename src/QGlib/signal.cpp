@@ -171,7 +171,7 @@ Value emit(void *instance, const char *detailedSignal, Quark detail, const QList
 
         //set arguments
         for(int i=0; i<args.size(); i++) {
-            if (!paramTypes[i].isA(args[i].type())) {
+            if (!args[i].type().isA(paramTypes[i])) {
                 throw QString(QLatin1String("Argument %1 provided to emit is not of the "
                                             "type that the signal expects")).arg(i);
             } else {

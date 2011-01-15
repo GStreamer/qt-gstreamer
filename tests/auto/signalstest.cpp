@@ -25,7 +25,7 @@ class SignalsTest : public QGstTest
 {
     Q_OBJECT
 private:
-   void closureTestClosure(const QGst::ObjectPtr & obj, QGst::ObjectPtr parentObj);
+   void closureTestClosure(const QGst::ObjectPtr & obj, const QGst::ObjectPtr & parentObj);
    void emitTestClosure(const QGlib::ObjectPtr & instance, const QGlib::ParamSpecPtr & param);
    void disconnectTestClosure(const QGlib::ParamSpecPtr &) {}
 
@@ -33,13 +33,14 @@ private Q_SLOTS:
    void closureTest();
    void queryTest();
    void emitTest();
+   void emitTypeTest();
    void disconnectTest();
    void autoDisconnectTest();
 };
 
 static bool closureCalled = false;
 
-void SignalsTest::closureTestClosure(const QGst::ObjectPtr & obj, QGst::ObjectPtr parentObj)
+void SignalsTest::closureTestClosure(const QGst::ObjectPtr & obj, const QGst::ObjectPtr & parentObj)
 {
     qDebug() << "closureTestClosure called";
     QCOMPARE(obj->property("name").get<QString>(), QString("mybin"));
@@ -121,6 +122,17 @@ void SignalsTest::emitTest()
     closureCalled = false;
     QGlib::emit<void>(bin, "notify::name", bin->findProperty("name"));
     QCOMPARE(closureCalled, false);
+}
+
+void SignalsTest::emitTypeTest()
+{
+    QGst::BinPtr bin = QGst::Bin::create("mybin");
+    QGlib::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure, QGlib::PassSender);
+
+    closureCalled = false;
+    QGst::PipelinePtr pipeline = QGst::Pipeline::create("mypipeline");
+    QGlib::emit<void>(bin, "parent-set", pipeline);
+    QCOMPARE(closureCalled, true);
 }
 
 void SignalsTest::disconnectTest()
