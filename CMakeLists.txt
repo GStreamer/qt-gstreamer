@@ -32,7 +32,10 @@ macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
                                                "Used for building the qwidgetvideosink element"
                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.31")
 
-find_package(GStreamerPluginsBase 0.10.31 COMPONENTS interfaces video)
+find_package(GStreamerPluginsBase 0.10.31 COMPONENTS app interfaces video)
+macro_log_feature(GSTREAMER_APP_LIBRARY_FOUND "GStreamer app library"
+                                              "Required to build QtGStreamerUtils"
+                                              "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
 macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
                                                 "Required to build QtGStreamer"
                                                 "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
