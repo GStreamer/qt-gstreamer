@@ -19,8 +19,17 @@
 #include "miniobject.h"
 #include "structure.h"
 #include "../QGlib/value.h"
+#include <cmath>
 #include <gst/gstvalue.h>
 #include <gst/gstminiobject.h>
+#include <gst/gstdatetime.h>
+
+namespace QGlib {
+
+GetTypeImpl<QDate>::operator Type() { return GST_TYPE_DATE; }
+GetTypeImpl<QDateTime>::operator Type() { return GST_TYPE_DATE_TIME; }
+
+} //namespace QGlib
 
 namespace QGst {
 namespace Private {
@@ -153,6 +162,89 @@ void registerValueVTables()
     };
     QGlib::Value::registerValueVTable(QGlib::GetType<Structure>(),
             QGlib::ValueVTable(ValueVTable_Structure::set, ValueVTable_Structure::get));
+
+    struct ValueVTable_QDate
+    {
+        static void get(const QGlib::Value & value, void *data)
+        {
+            const GDate *gdate = gst_value_get_date(value);
+            *reinterpret_cast<QDate*>(data) = QDate(g_date_get_year(gdate),
+                                                    g_date_get_month(gdate),
+                                                    g_date_get_day(gdate));
+        }
+
+        static void set(QGlib::Value & value, const void *data)
+        {
+            const QDate *qdate = reinterpret_cast<QDate const *>(data);
+            GDate *gdate = g_date_new_dmy(qdate->day(),
+                                          static_cast<GDateMonth>(qdate->month()),
+                                          qdate->year());
+            gst_value_set_date(value, gdate);
+            g_date_free(gdate);
+        }
+    };
+    QGlib::Value::registerValueVTable(QGlib::GetType<QDate>(),
+            QGlib::ValueVTable(ValueVTable_QDate::set, ValueVTable_QDate::get));
+
+    struct ValueVTable_QDateTime
+    {
+        static void get(const QGlib::Value & value, void *data)
+        {
+            const GstDateTime *gdatetime = static_cast<GstDateTime*>(g_value_get_boxed(value));
+
+            QDate date = QDate(gst_date_time_get_year(gdatetime),
+                               gst_date_time_get_month(gdatetime),
+                               gst_date_time_get_day(gdatetime));
+
+            /* timezone conversion */
+            float tzoffset = gst_date_time_get_time_zone_offset(gdatetime);
+            float hourOffset;
+            float minutesOffset = std::modf(tzoffset, &hourOffset);
+
+            int hour = gst_date_time_get_hour(gdatetime) - hourOffset;
+            int minute = gst_date_time_get_minute(gdatetime) - (minutesOffset * 60);
+
+            /* handle overflow */
+            if (minute >= 60) {
+                hour++;
+                minute -= 60;
+            } else if (minute < 0) {
+                hour--;
+                minute = 60 + minute;
+            }
+
+            if (hour >= 24) {
+                date = date.addDays(1);
+                hour -= 24;
+            } else if (hour < 0) {
+                date = date.addDays(-1);
+                hour = 24 + hour;
+            }
+
+            QTime time = QTime(hour, minute,
+                               gst_date_time_get_second(gdatetime),
+                               gst_date_time_get_microsecond(gdatetime)/1000);
+
+            *reinterpret_cast<QDateTime*>(data) = QDateTime(date, time, Qt::UTC);
+        }
+
+        static void set(QGlib::Value & value, const void *data)
+        {
+            QDateTime qdatetime = reinterpret_cast<QDateTime const *>(data)->toUTC();
+            GstDateTime *gdatetime = gst_date_time_new(0.0f,
+                qdatetime.date().year(),
+                qdatetime.date().month(),
+                qdatetime.date().day(),
+                qdatetime.time().hour(),
+                qdatetime.time().minute(),
+                qdatetime.time().second() + (qdatetime.time().msec()/1000.0)
+            );
+
+            g_value_take_boxed(value, gdatetime);
+        }
+    };
+    QGlib::Value::registerValueVTable(QGlib::GetType<QDateTime>(),
+            QGlib::ValueVTable(ValueVTable_QDateTime::set, ValueVTable_QDateTime::get));
 }
 
 } //namespace Private

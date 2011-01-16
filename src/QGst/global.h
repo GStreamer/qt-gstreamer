@@ -19,6 +19,7 @@
 
 #include "../QGlib/type.h"
 #include <QtCore/QtGlobal>
+#include <QtCore/QDate>
 #include <QtCore/QSharedPointer>
 
 /* defined by cmake when building this library */
@@ -40,6 +41,11 @@
 
 //cyclic dependency, must include after defining the above
 #include "enums.h"
+
+//registered in value.cpp
+QGST_REGISTER_TYPE(QDate) //codegen: skip=true
+QGST_REGISTER_TYPE(QDateTime) //codegen: skip=true
+
 
 #define QGST_WRAPPER_GSTCLASS_DECLARATION(Class) \
     typedef struct _Gst##Class Gst##Class;

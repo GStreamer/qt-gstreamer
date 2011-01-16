@@ -41,6 +41,7 @@ private Q_SLOTS:
     void copyTest();
     void castTest();
     void qdebugTest();
+    void datetimeTest();
 };
 
 void ValueTest::intTest()
@@ -225,6 +226,38 @@ void ValueTest::qdebugTest()
     qDebug() << QGlib::Value::create(QGlib::ObjectPtr());
 }
 
+void ValueTest::datetimeTest()
+{
+    {
+        QDateTime d = QDateTime::currentDateTime();
+        QGlib::Value v = QGlib::Value::create(d);
+        QCOMPARE(v.get<QDateTime>(), d);
+    }
+
+    {
+        GstDateTime *gstDateTime = gst_date_time_new(1.0f,
+                                                     2011, 01, 16,
+                                                     15, 15, 23.132);
+        QGlib::Value v;
+        v.init(GST_TYPE_DATE_TIME);
+        g_value_take_boxed(v, gstDateTime);
+
+        QDateTime d = v.get<QDateTime>();
+        QCOMPARE(d, QDateTime(QDate(2011, 01, 16), QTime(14, 15, 23, 132), Qt::UTC));
+    }
+
+    {
+        GstDateTime *gstDateTime = gst_date_time_new(-10.0f,
+                                                     2011, 01, 16,
+                                                     20, 50, 43.592);
+        QGlib::Value v;
+        v.init(GST_TYPE_DATE_TIME);
+        g_value_take_boxed(v, gstDateTime);
+
+        QDateTime d = v.get<QDateTime>();
+        QCOMPARE(d, QDateTime(QDate(2011, 01, 17), QTime(6, 50, 43, 592), Qt::UTC));
+    }
+}
 
 QTEST_APPLESS_MAIN(ValueTest)
 
