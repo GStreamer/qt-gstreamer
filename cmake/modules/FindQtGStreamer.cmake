@@ -10,6 +10,8 @@
 #  QTGSTREAMER_LIBRARIES - the libraries needed to use QtGStreamer
 #  QTGSTREAMER_UI_LIBRARY - the QtGStreamerUi library
 #  QTGSTREAMER_UI_LIBRARIES - the libraries needed to use QtGStreamerUi
+#  QTGSTREAMER_UTILS_LIBRARY - the QtGStreamerUtils library
+#  QTGSTREAMER_UTILS_LIBRARIES - the libraries needed to use QtGStreamerUtils
 #  QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGStreamer
 #  QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGStreamer
 #
@@ -32,6 +34,7 @@ if(BUILDING_QTGSTREAMER)
     set(QTGLIB_LIBRARY QtGLib)
     set(QTGSTREAMER_LIBRARY QtGStreamer)
     set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
+    set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
     set(QTGSTREAMER_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 else()
     # Attempt to find the generated QtGStreamerTargets.cmake in the same directory
@@ -47,11 +50,14 @@ else()
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
         find_library(QTGSTREAMER_UI_LIBRARY QtGStreamerUi-0.10
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
+        find_library(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils-0.10
+                     PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
         find_path(QTGSTREAMER_INCLUDE_DIR QGst/global.h
                   PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../include"
                   PATH_SUFFIXES QtGStreamer)
         set(_QTGSTREAMER_LINK_TO_QT_REQUIRED TRUE)
-        mark_as_advanced(QTGLIB_LIBRARY QTGSTREAMER_LIBRARY QTGSTREAMER_UI_LIBRARY QTGSTREAMER_INCLUDE_DIR)
+        mark_as_advanced(QTGLIB_LIBRARY QTGSTREAMER_LIBRARY QTGSTREAMER_UI_LIBRARY
+                         QTGSTREAMER_UTILS_LIBRARY QTGSTREAMER_INCLUDE_DIR)
     else()
         # Targets file found. Use imported QtGStreamer target and relative include path.
         # We assume that this file has been installed in $PREFIX/lib/QtGStreamer/,
@@ -60,13 +66,15 @@ else()
         set(QTGLIB_LIBRARY QtGLib)
         set(QTGSTREAMER_LIBRARY QtGStreamer)
         set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
+        set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
         get_filename_component(QTGSTREAMER_INCLUDE_DIR "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGStreamer" ABSOLUTE)
     endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(QtGStreamer DEFAULT_MSG QTGSTREAMER_INCLUDE_DIR QTGLIB_LIBRARY
-                                                          QTGSTREAMER_LIBRARY QTGSTREAMER_UI_LIBRARY)
+                                                          QTGSTREAMER_LIBRARY QTGSTREAMER_UI_LIBRARY
+                                                          QTGSTREAMER_UTILS_LIBRARY)
 
 if(QTGSTREAMER_FOUND)
     # Find dependencies, if not already found
@@ -88,10 +96,12 @@ if(QTGSTREAMER_FOUND)
         set(QTGLIB_LIBRARIES ${QTGLIB_LIBRARY} ${QT_QTCORE_LIBRARY})
         set(QTGSTREAMER_LIBRARIES ${QTGSTREAMER_LIBRARY} ${QTGLIB_LIBRARIES})
         set(QTGSTREAMER_UI_LIBRARIES ${QTGSTREAMER_UI_LIBRARY} ${QT_QTGUI_LIBRARY} ${QTGSTREAMER_LIBRARIES})
+        set(QTGSTREAMER_UTILS_LIBRARIES ${QTGSTREAMER_UTILS_LIBRARY} ${QTGSTREAMER_LIBRARIES})
     else()
         set(QTGLIB_LIBRARIES ${QTGLIB_LIBRARY})
         set(QTGSTREAMER_LIBRARIES ${QTGSTREAMER_LIBRARY})
         set(QTGSTREAMER_UI_LIBRARIES ${QTGSTREAMER_UI_LIBRARY})
+        set(QTGSTREAMER_UTILS_LIBRARIES ${QTGSTREAMER_UTILS_LIBRARY})
     endif()
 
     if (CMAKE_COMPILER_IS_GNUCXX)

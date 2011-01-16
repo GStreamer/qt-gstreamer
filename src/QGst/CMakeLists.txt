@@ -37,6 +37,9 @@ set(QtGStreamerUi_SRCS
     Ui/videowidget.cpp
 )
 
+set(QtGStreamerUtils_SRCS
+)
+
 set(QtGStreamer_INSTALLED_HEADERS
     global.h            Global
     init.h              Init
@@ -126,6 +129,7 @@ set(QtGStreamer_CODEGEN_INCLUDES
 set(QTGSTREAMER_API_VERSION 0.10)
 set(QTGSTREAMER_SOVERSION 0)
 set(QTGSTREAMER_UI_SOVERSION 0)
+set(QTGSTREAMER_UTILS_SOVERSION 0)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GSTREAMER_INCLUDE_DIR}
                     ${GSTREAMER_INTERFACES_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR})
 add_definitions(-DGST_DISABLE_XML -DGST_DISABLE_LOADSAVE)
@@ -149,7 +153,15 @@ set_target_properties(QtGStreamerUi PROPERTIES OUTPUT_NAME QtGStreamerUi-${QTGST
                                                    VERSION ${QTGSTREAMER_VERSION})
 target_link_libraries(QtGStreamerUi ${QT_QTGUI_LIBRARY} ${QTGSTREAMER_LIBRARY})
 
+# Build and link QtGStreamerUtils
+automoc4_add_library(QtGStreamerUtils ${SHARED_OR_STATIC} ${QtGStreamerUtils_SRCS})
+set_target_properties(QtGStreamerUtils PROPERTIES OUTPUT_NAME QtGStreamerUtils-${QTGSTREAMER_API_VERSION}
+                                                    SOVERSION ${QTGSTREAMER_UTILS_SOVERSION}
+                                                      VERSION ${QTGSTREAMER_VERSION})
+target_link_libraries(QtGStreamerUtils ${QTGSTREAMER_LIBRARY})
+
 # Install
 install(TARGETS QtGStreamer DESTINATION ${LIB_INSTALL_DIR} EXPORT ${EXPORT_TARGET_SET})
 install(TARGETS QtGStreamerUi DESTINATION ${LIB_INSTALL_DIR} EXPORT ${EXPORT_TARGET_SET})
+install(TARGETS QtGStreamerUtils DESTINATION ${LIB_INSTALL_DIR} EXPORT ${EXPORT_TARGET_SET})
 install_headers("QGst" ${QtGStreamer_INSTALLED_HEADERS})

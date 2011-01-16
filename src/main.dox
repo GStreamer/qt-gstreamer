@@ -31,6 +31,7 @@
  * \li QtGStreamer - Library providing C++/Qt bindings for GStreamer
  * \li QtGStreamerUi - Library providing integration with QtGui. Currently,
  * it only provides a video widget that embeds GStreamer's video sinks.
+ * \li QtGStreamerUtils - Library providing some high level utility classes.
  *
  * In addition, it provides a "qwidgetvideosink" GStreamer element, an video
  * sink element that can draw directly on QWidgets using QPainter.
@@ -66,6 +67,8 @@
  * \li QTGSTREAMER_LIBRARIES - the libraries needed to use QtGStreamer
  * \li QTGSTREAMER_UI_LIBRARY - the QtGStreamerUi library
  * \li QTGSTREAMER_UI_LIBRARIES - the libraries needed to use QtGStreamerUi
+ * \li QTGSTREAMER_UTILS_LIBRARY - the QtGStreamerUtils library
+ * \li QTGSTREAMER_UTILS_LIBRARIES - the libraries needed to use QtGStreamerUtils
  * \li QTGSTREAMER_DEFINITIONS - definitions recommended for using QtGStreamer
  * \li QTGSTREAMER_FLAGS - extra compiler switches recommended for using QtGStreamer
  *
@@ -86,6 +89,7 @@
  * \li QtGLib-2.0 - the libraries needed to use QtGLib
  * \li QtGStreamer-0.10 - the libraries needed to use QtGStreamer
  * \li QtGStreamerUi-0.10 - the libraries needed to use QtGStreamerUi
+ * \li QtGStreamerUtils-0.10 - the libraries needed to use QtGStreamerUtils
  *
  * \section other_build_systems Other build systems
  *
@@ -146,6 +150,15 @@
  * in graphical Qt applications.
  *
  * \note This namespace is contained in the QtGStreamerUi library.
+ */
+
+/*! \namespace QGst::Utils
+ * \brief High level utility classes
+ *
+ * This namespace provides some high level utility classes for easier usage
+ * of certain GStreamer functionality.
+ *
+ * \note This namespace is contained in the QtGStreamerUtils library.
  */
 
 /*! \page internal_design_details Internal Design Details
