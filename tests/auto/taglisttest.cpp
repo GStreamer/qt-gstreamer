@@ -83,20 +83,21 @@ void TagListTest::dateTest()
 
 void TagListTest::dateTimeTest()
 {
-    /*
     QGst::TagList tl;
+    QCOMPARE(tl.dateTime(), QDateTime());
+
     QDate date(1969, 8, 4);
     QTime time(1, 10, 15, 432);
     QDateTime dateTime(date, time);
     tl.setDateTime(dateTime);
     QCOMPARE(tl.dateTime(), dateTime);
+
     //replace and retest
     QDate date2(100, 12, 30);
     QTime time2(14, 50, 38, 0);
     QDateTime dateTime2(date2, time2);
     tl.setDateTime(dateTime2);
     QCOMPARE(tl.dateTime(), dateTime2);
-    */
 }
 
 void TagListTest::copyTest()

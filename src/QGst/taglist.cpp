@@ -1059,32 +1059,17 @@ void TagList::setApplicationData(const BufferPtr & value)
                            GST_TAG_APPLICATION_DATA, QGlib::Value::create(value));
 }
 
-/*
 QDateTime TagList::dateTime() const
 {
-    GstDateTime * value;
-    if (gst_tag_list_get_date_time(d->taglist, GST_TAG_DATE_TIME, &value)) {
-        QDateTime ret(QDate(gst_date_time_get_year(value),
-                            gst_date_time_get_month(value),
-                            gst_date_time_get_day(value)),
-                      QTime(gst_date_time_get_hour(value),
-                            gst_date_time_get_minute(value),
-                            gst_date_time_get_second(value),
-                            gst_date_time_get_microsecond(value)*1000), Qt::LocalTime);
-        gst_date_time_unref(value);
-        return ret;
-    }
-    return QDateTime();
+    return tagValue(GST_TAG_DATE_TIME).get<QDateTime>();
 }
 
 void TagList::setDateTime(const QDateTime & value)
 {
-    GstDateTime * datetime = gst_date_time_new_local_time(value.date().year(),
-                    value.date().month(), value.date().day(), value.time().hour(),
-                    value.time().minute(),value.time().second()+(value.time().msec()/1000.0));
-    gst_tag_list_add (d->taglist, GST_TAG_MERGE_REPLACE_ALL, GST_TAG_DATE_TIME, datetime, NULL);
+    gst_tag_list_add_value(d->taglist, GST_TAG_MERGE_REPLACE_ALL,
+                           GST_TAG_DATE_TIME, QGlib::Value::create(value));
 }
-*/
+
 
 QDebug operator<<(QDebug debug, const TagList & taglist)
 {

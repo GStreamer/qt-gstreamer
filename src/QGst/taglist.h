@@ -329,10 +329,8 @@ public:
     BufferPtr applicationData() const;
     void setApplicationData(const BufferPtr & value);
 
-    /*
     QDateTime dateTime() const;
     void setDateTime(const QDateTime & value);
-    */
 
     double geoLocationHorizontalError() const;
     void setGeoLocationHorizontalError(double value);
