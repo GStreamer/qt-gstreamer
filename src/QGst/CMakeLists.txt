@@ -29,6 +29,7 @@ set(QtGStreamer_SRCS
     event.cpp
     clocktime.cpp
     taglist.cpp
+    bufferlist.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -72,6 +73,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     event.h             Event
     clocktime.h         ClockTime
     taglist.h           TagList
+    bufferlist.h        BufferList
 
     Ui/global.h
     Ui/videowidget.h    Ui/VideoWidget
@@ -105,6 +107,7 @@ set(QtGStreamer_CODEGEN_HEADERS
     buffer.h
     event.h
     taglist.h
+    bufferlist.h
 )
 
 set(QtGStreamer_CODEGEN_INCLUDES
