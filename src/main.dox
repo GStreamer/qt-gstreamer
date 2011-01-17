@@ -204,10 +204,6 @@
  * the data of a GClosure and this GClosure is connected to the signal.
  */
 
-/*! \example echo/main.cpp
- * This is a trivial example which echoes the microphone input to the output
- */
-
 /*! \example player/main.cpp
  * This is an example audio player using QtGStreamer
  */
