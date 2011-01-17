@@ -28,6 +28,63 @@ namespace Utils {
 /*! \headerfile applicationsource.h <QGst/Utils/ApplicationSource>
  * \brief Helper class for using a GstAppSrc
  *
+ * Appsrc is an element that can be used by applications to insert data into a GStreamer
+ * pipeline. Unlike most GStreamer elements, appsrc provides external API functions.
+ * This class exports those API functions in the bindings and makes it easy to implement
+ * a custom source.
+ *
+ * Before operating appsrc, the caps() must be set to a fixed caps describing the format
+ * of the data that will be pushed with appsrc. An exception to this is when pushing buffers
+ * with unknown caps, in which case no caps should be set. This is typically true of file-like
+ * sources that push raw byte buffers.
+ *
+ * The main way of handing data to the appsrc element is by calling the pushBuffer() method.
+ * This will put the buffer onto a queue from which appsrc will read from in its streaming thread.
+ * It is important to note that data transport will not happen from the thread that performed
+ * the pushBuffer() call.
+ *
+ * maxBytes() controls how much data can be queued in appsrc before appsrc considers the queue full.
+ * A filled internal queue will always cause enoughData() to be called, which signals the
+ * application that it should stop pushing data into appsrc. Use setBlock() to cause appsrc to
+ * block the pushBuffer() method until free data becomes available again.
+ *
+ * When the internal queue is running out of data, the needData() function is called, which signals
+ * the application that it should start pushing more data into appsrc.
+ *
+ * In addition to the needData() and enoughData() functions, appsrc can also call the seekData()
+ * function when streamMode() is set to AppStreamTypeSeekable or AppStreamTypeRandomAccess.
+ * The  seekData() argument will contain the new desired position in the stream expressed in the
+ * unit set with setFormat(). After seekData() has been called, the application should push buffers
+ * from the new position.
+ *
+ * Appsrc can operate in two different ways:
+ *
+ * \li The push model, in which the application repeadedly calls the pushBuffer() method with
+ * a new buffer. Optionally, the queue size in the appsrc can be controlled with the enoughData()
+ * and needData() functions by respectively stopping/starting the pushBuffer() calls. This is a
+ * typical mode of operation for the stream types AppStreamTypeStream and AppStreamTypeSeekable.
+ * Use this model when implementing various network protocols or hardware devices.
+ *
+ * \li The pull model where the needData() function triggers the next pushBuffer() call. This mode
+ * is typically used in the AppStreamTypeRandomAccess stream type. Use this model for file access
+ * or other randomly accessable sources. In this mode, a buffer of exactly the amount of bytes
+ * given by the needData() function should be pushed into appsrc.
+ *
+ * In all modes, the size() should contain the total stream size in bytes. Setting the size is
+ * mandatory in the AppStreamTypeRandomAccess mode. For the AppStreamTypeStream and
+ * AppStreamTypeSeekable modes, setting the size is optional but recommended.
+ *
+ * When the application is finished pushing data into appsrc, it should call endOfStream().
+ * After this call, no more buffers can be pushed into appsrc until a flushing seek happened or
+ * the state of the appsrc has gone through READY.
+ *
+ * The actuall appsrc element can be retrieved with element() and set with setElement(). It is
+ * not necessary to set an appsrc, as this class will create one as soon as it is needed.
+ *
+ * \note It is not necessary to use this class in order to use GstAppSrc. GstAppSrc
+ * also provides signals and properties that fully substitute the functionality of this class.
+ *
+ * \sa ApplicationSink
  */
 class QTGSTREAMERUTILS_EXPORT ApplicationSource
 {

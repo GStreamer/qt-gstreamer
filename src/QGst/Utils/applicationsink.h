@@ -33,17 +33,35 @@ namespace Utils {
  * provides external API functions. This class exports those API functions in the bindings
  * and makes it easy to implement a custom sink.
  *
- * There are two ways to use this class. The first method is to construct an instance and use
- * the pull* methods to pull buffers into your code. Those functions will block until a buffer
- * is available. The second method is to subclass and re-implement one of the virtual protected
- * functions, to get notifications of events that happen in the pipeline. Note that these
- * functions will be called from the streaming thread.
+ * The normal way of retrieving buffers from appsink is by using the pullBuffer() and pullPreroll()
+ * methods. These methods block until a buffer becomes available in the sink or when the sink is
+ * shut down or reaches EOS.
+ *
+ * Appsink will internally use a queue to collect buffers from the streaming thread. If the
+ * application is not pulling buffers fast enough, this queue will consume a lot of memory over
+ * time. setMaxBuffers() can be used to limit the queue size. enableDrop() controls whether the
+ * streaming thread blocks or if older buffers are dropped when the maximum queue size is reached.
+ * Note that blocking the streaming thread can negatively affect real-time performance and
+ * should be avoided.
+ *
+ * If a blocking behaviour is not desirable, you can subclass this class and implement the
+ * newPreroll(), newBuffer() and newBufferList() which will be called to notify you when a new
+ * buffer is available.
+ *
+ * setCaps() can be used to control the formats that appsink can receive. This property can contain
+ * non-fixed caps. The format of the pulled buffers can be obtained by getting the buffer caps.
+ *
+ * If one of the pullPreroll() or pullBuffer() methods return NULL, the appsink is stopped or in
+ * the EOS state. You can check for the EOS state with isEos(). The eos() virtual method can also
+ * be reimplemented to be informed when the EOS state is reached to avoid polling.
  *
  * The actuall appsink element can be retrieved with element() and set with setElement(). It is
  * not necessary to set an appsink, as this class will create one as soon as it is needed.
  *
  * \note It is not necessary to use this class in order to use GstAppSink. GstAppSink
  * also provides signals and properties that fully substitute the functionality of this class.
+ *
+ * \sa ApplicationSource
  */
 class QTGSTREAMERUTILS_EXPORT ApplicationSink
 {
