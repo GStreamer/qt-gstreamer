@@ -148,9 +148,9 @@ automoc4_add_library(QtGStreamer ${SHARED_OR_STATIC} ${QtGStreamer_SRCS})
 set_target_properties(QtGStreamer PROPERTIES OUTPUT_NAME QtGStreamer-${QTGSTREAMER_API_VERSION}
                                                SOVERSION ${QTGSTREAMER_SOVERSION}
                                                  VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGStreamer ${QT_QTCORE_LIBRARY} ${QTGLIB_LIBRARY} ${GOBJECT_LIBRARIES}
+target_link_libraries(QtGStreamer ${QTGLIB_LIBRARY} ${GOBJECT_LIBRARIES}
                                   ${GSTREAMER_LIBRARY} ${GSTREAMER_INTERFACES_LIBRARY})
-target_link_libraries(QtGStreamer LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY} ${QTGLIB_LIBRARY})
+target_link_libraries(QtGStreamer LINK_INTERFACE_LIBRARIES ${QTGLIB_LIBRARY})
 
 # Build and link QtGStreamerUi
 automoc4_add_library(QtGStreamerUi ${SHARED_OR_STATIC} ${QtGStreamerUi_SRCS})
