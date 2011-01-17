@@ -394,4 +394,25 @@ namespace QGst {
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::TagFlags)
 QGLIB_REGISTER_TYPE(QGst::TagFlags) //codegen: GType=GST_TYPE_TAG_FLAG
 
+namespace QGst {
+    enum AppStreamType {
+        /*! No seeking is supported in the stream, such as a live stream. */
+        AppStreamTypeStream,
+        /*! The stream is seekable but seeking might not be very
+         * fast, such as data from a webserver. */
+        AppStreamTypeSeekable,
+        /*! The stream is seekable and seeking is fast, such as in a local file. */
+        AppStreamTypeRandomAccess
+    };
+}
+//FIXME: GST_TYPE_APP_STREAM_TYPE is not exported from libgstapp,
+//so we have to reside in this method...
+namespace QGlib {
+    template <>
+    struct GetTypeImpl<QGst::AppStreamType>
+    {
+        inline operator Type() { return Type::fromName("GstAppStreamType"); }
+    };
+}
+
 #endif

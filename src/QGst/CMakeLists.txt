@@ -39,6 +39,7 @@ set(QtGStreamerUi_SRCS
 
 set(QtGStreamerUtils_SRCS
     Utils/applicationsink.cpp
+    Utils/applicationsource.cpp
 )
 
 set(QtGStreamer_INSTALLED_HEADERS
@@ -82,7 +83,8 @@ set(QtGStreamer_INSTALLED_HEADERS
     Ui/global.h
     Ui/videowidget.h    Ui/VideoWidget
 
-    Utils/applicationsink.h Utils/ApplicationSink
+    Utils/applicationsink.h     Utils/ApplicationSink
+    Utils/applicationsource.h   Utils/ApplicationSource
 )
 
 set(QtGStreamer_CODEGEN_HEADERS
@@ -124,6 +126,7 @@ set(QtGStreamer_CODEGEN_INCLUDES
     -Igst/interfaces/colorbalance.h
     -Igst/interfaces/videoorientation.h
     -Igst/interfaces/propertyprobe.h
+    -Igst/app/gstappsrc.h
     -IQGlib/Quark
 )
 
@@ -161,7 +164,8 @@ automoc4_add_library(QtGStreamerUtils ${SHARED_OR_STATIC} ${QtGStreamerUtils_SRC
 set_target_properties(QtGStreamerUtils PROPERTIES OUTPUT_NAME QtGStreamerUtils-${QTGSTREAMER_API_VERSION}
                                                     SOVERSION ${QTGSTREAMER_UTILS_SOVERSION}
                                                       VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGStreamerUtils ${QTGSTREAMER_LIBRARY} ${GSTREAMER_APP_LIBRARY})
+target_link_libraries(QtGStreamerUtils ${QTGSTREAMER_LIBRARY} ${GSTREAMER_LIBRARY} ${GSTREAMER_APP_LIBRARY})
+target_link_libraries(QtGStreamerUtils LINK_INTERFACE_LIBRARIES ${QTGSTREAMER_LIBRARY})
 
 # Install
 install(TARGETS QtGStreamer DESTINATION ${LIB_INSTALL_DIR} EXPORT ${EXPORT_TARGET_SET})

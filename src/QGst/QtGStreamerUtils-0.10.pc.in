@@ -6,6 +6,7 @@ includedir=@INCLUDES_INSTALL_DIR@
 Name: QtGStreamerUtils-0.10
 Description: QtGStreamer's high level utility classes
 Requires: QtGStreamer-0.10
+Requires.private: gstreamer-0.10 gstreamer-app-0.10
 Version: @QTGSTREAMER_VERSION@
 Cflags: -I${includedir}
 Libs: -L${libdir} -lQtGStreamerUtils-0.10
