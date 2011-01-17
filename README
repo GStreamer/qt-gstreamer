@@ -6,12 +6,13 @@ GStreamer [1] with a Qt-style API plus some helper classes for integrating
 GStreamer better in Qt [2] applications.
 
 Currently, it consists of the following parts:
- * QtGLib        - Library providing C++/Qt bindings for parts of the GLib
-                   and GObject APIs, a base on which QtGStreamer is built.
- * QtGStreamer   - Library providing C++/Qt bindings for GStreamer
- * QtGStreamerUi - Library providing integration with QtGui. Currently,
-                   it only provides a video widget that embeds GStreamer's
-                   video sinks.
+ * QtGLib           - Library providing C++/Qt bindings for parts of the GLib
+                      and GObject APIs, a base on which QtGStreamer is built.
+ * QtGStreamer      - Library providing C++/Qt bindings for GStreamer
+ * QtGStreamerUi    - Library providing integration with QtGui. Currently,
+                      it only provides a video widget that embeds GStreamer's
+                      video sinks.
+ * QtGStreamerUtils - Library providing some high level utility classes.
 
 In addition, it provides a "qwidgetvideosink" GStreamer element, an video
 sink element that can draw directly on QWidgets using QPainter.
