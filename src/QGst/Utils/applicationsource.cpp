@@ -227,6 +227,19 @@ void ApplicationSource::setMinPercent(uint min)
     }
 }
 
+Format ApplicationSource::format() const
+{
+    return d->m_appsrc ? d->m_appsrc->property("format").get<Format>() : FormatBytes;
+}
+
+void ApplicationSource::setFormat(Format f)
+{
+    d->lazyConstruct(this);
+    if (d->m_appsrc) {
+        d->m_appsrc->setProperty("format", f);
+    }
+}
+
 FlowReturn ApplicationSource::pushBuffer(const BufferPtr & buffer)
 {
     if (d->appSrc()) {

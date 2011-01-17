@@ -171,6 +171,10 @@ public:
     void setMinPercent(uint min);
 
 
+    Format format() const;
+    void setFormat(Format f);
+
+
     /*! Adds a buffer to the queue of buffers that the appsrc element will
      * push to its source pad. When the block property is TRUE, this function
      * can block until free space becomes available in the queue.
