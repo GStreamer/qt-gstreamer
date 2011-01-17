@@ -211,3 +211,16 @@
 /*! \example player/main.cpp
  * This is an example audio player using QtGStreamer
  */
+
+/*! \example appsink-src/main.cpp
+ * This example demonstrates how to use QGst::Utils::ApplicationSource and
+ * QGst::Utils::ApplicationSink to create a custom source and sink respectively.
+ *
+ * In this example, we have two pipelines, one pipeline that gets data from a file,
+ * decodes the audio stream and sends the audio buffers to appsink, and a second
+ * pipeline that gets data from appsrc and pushes them to an audio sink. Appsink
+ * from the first pipeline is linked with appsrc from the second pipeline in our
+ * code, by listening to appsink's newBuffer() signal, getting the buffer
+ * and pushing it to appsrc with the pushBuffer() method. The result is a choppy
+ * audio player.
+ */
