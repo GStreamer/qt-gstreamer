@@ -379,7 +379,7 @@ namespace QGst {
         TagMergeCount
     };
 }
-QGLIB_REGISTER_TYPE(QGst::TagMergeMode)
+QGST_REGISTER_TYPE(QGst::TagMergeMode)
 
 namespace QGst {
     enum TagFlag {
@@ -392,7 +392,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(TagFlags, TagFlag);
 }
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::TagFlags)
-QGLIB_REGISTER_TYPE(QGst::TagFlags) //codegen: GType=GST_TYPE_TAG_FLAG
+QGST_REGISTER_TYPE(QGst::TagFlags) //codegen: GType=GST_TYPE_TAG_FLAG
 
 namespace QGst {
     enum AppStreamType {
