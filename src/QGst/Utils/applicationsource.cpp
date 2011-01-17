@@ -41,6 +41,10 @@ private:
     static void need_data(GstAppSrc *src, guint length, gpointer user_data);
     static void enough_data(GstAppSrc *src, gpointer user_data);
     static gboolean seek_data(GstAppSrc *src, guint64 offset, gpointer user_data);
+
+    static void need_data_noop(GstAppSrc*, guint, gpointer) {}
+    static void enough_data_noop(GstAppSrc*, gpointer) {}
+    static gboolean seek_data_noop(GstAppSrc*, guint64, gpointer) { return FALSE; }
 };
 
 void ApplicationSource::Priv::lazyConstruct(ApplicationSource *self)
@@ -57,8 +61,13 @@ void ApplicationSource::Priv::lazyConstruct(ApplicationSource *self)
 void ApplicationSource::Priv::setCallbacks(ApplicationSource *self)
 {
     if (m_appsrc) {
-        static GstAppSrcCallbacks callbacks = { &need_data, &enough_data, &seek_data };
-        gst_app_src_set_callbacks(appSrc(), &callbacks, self, NULL);
+        if (self) {
+            static GstAppSrcCallbacks callbacks = { &need_data, &enough_data, &seek_data };
+            gst_app_src_set_callbacks(appSrc(), &callbacks, self, NULL);
+        } else {
+            static GstAppSrcCallbacks callbacks = { &need_data_noop, &enough_data_noop, &seek_data_noop };
+            gst_app_src_set_callbacks(appSrc(), &callbacks, NULL, NULL);
+        }
     }
 }
 
@@ -89,6 +98,7 @@ ApplicationSource::ApplicationSource()
 
 ApplicationSource::~ApplicationSource()
 {
+    d->setCallbacks(NULL); //remove the callbacks from the source
     delete d;
 }
 
@@ -100,7 +110,8 @@ ElementPtr ApplicationSource::element() const
 
 void ApplicationSource::setElement(const ElementPtr & appsrc)
 {
-    Q_ASSERT(!appsrc || QGlib::Type::fromInstance(appsrc).isA(GST_TYPE_APP_SRC));
+    Q_ASSERT(QGlib::Type::fromInstance(appsrc).isA(GST_TYPE_APP_SRC));
+    d->setCallbacks(NULL); //remove the callbacks from the previous source
     d->m_appsrc = appsrc;
     d->setCallbacks(this);
 }

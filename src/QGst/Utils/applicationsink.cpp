@@ -42,6 +42,11 @@ private:
     static GstFlowReturn new_preroll(GstAppSink *sink, gpointer user_data);
     static GstFlowReturn new_buffer(GstAppSink *sink, gpointer user_data);
     static GstFlowReturn new_buffer_list(GstAppSink *sink, gpointer user_data);
+
+    static void eos_noop(GstAppSink*, gpointer) {}
+    static GstFlowReturn new_preroll_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
+    static GstFlowReturn new_buffer_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
+    static GstFlowReturn new_buffer_list_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
 };
 
 void ApplicationSink::Priv::lazyConstruct(ApplicationSink *self)
@@ -58,8 +63,15 @@ void ApplicationSink::Priv::lazyConstruct(ApplicationSink *self)
 void ApplicationSink::Priv::setCallbacks(ApplicationSink *self)
 {
     if (m_appsink) {
-        static GstAppSinkCallbacks callbacks = { &eos, &new_preroll, &new_buffer, &new_buffer_list };
-        gst_app_sink_set_callbacks(appSink(), &callbacks, self, NULL);
+        if (self) {
+            static GstAppSinkCallbacks callbacks = { &eos, &new_preroll,
+                                                     &new_buffer, &new_buffer_list };
+            gst_app_sink_set_callbacks(appSink(), &callbacks, self, NULL);
+        } else {
+            static GstAppSinkCallbacks callbacks = { &eos_noop, &new_preroll_noop,
+                                                     &new_buffer_noop, &new_buffer_list_noop };
+            gst_app_sink_set_callbacks(appSink(), &callbacks, NULL, NULL);
+        }
     }
 }
 
@@ -97,6 +109,7 @@ ApplicationSink::ApplicationSink()
 
 ApplicationSink::~ApplicationSink()
 {
+    d->setCallbacks(NULL); //remove the callbacks from the sink
     delete d;
 }
 
@@ -108,7 +121,8 @@ ElementPtr ApplicationSink::element() const
 
 void ApplicationSink::setElement(const ElementPtr & appsink)
 {
-    Q_ASSERT(!appsink || QGlib::Type::fromInstance(appsink).isA(GST_TYPE_APP_SINK));
+    Q_ASSERT(QGlib::Type::fromInstance(appsink).isA(GST_TYPE_APP_SINK));
+    d->setCallbacks(NULL); //remove the callbacks from the previous sink
     d->m_appsink = appsink;
     d->setCallbacks(this);
 }
