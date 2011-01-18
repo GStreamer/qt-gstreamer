@@ -1,5 +1,7 @@
 /*
-   Copyright (C) 2010  Marco Ballesio <gibrovacco@gmail.com>
+   Copyright (C) 2010 Marco Ballesio <gibrovacco@gmail.com>
+   Copyright (C) 2011 Collabora Ltd.
+     @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
    This library is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published
@@ -14,145 +16,164 @@
    You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <QtGui>
-#include <QtCore/QTime>
 #include "mediaapp.h"
+#include "player.h"
+#include <QtGui/QBoxLayout>
+#include <QtGui/QFileDialog>
+#include <QtGui/QToolButton>
+#include <QtGui/QLabel>
+#include <QtGui/QSlider>
+#include <QtGui/QMouseEvent>
 
-MediaApp::MediaApp(QWidget *parent) : QWidget(parent)
+MediaApp::MediaApp(QWidget *parent)
+    : QWidget(parent)
 {
-    player = new Player(this);
-    player->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    player->setAutoFillBackground(false);
-    connect(player, SIGNAL(positionChanged(QTime)), this, SLOT(posChanged()));
-    connect(player, SIGNAL(stateChanged(QGst::State)), this, SLOT(stateChanged()));
+    //create the player
+    m_player = new Player(this);
+    connect(m_player, SIGNAL(positionChanged()), this, SLOT(onPositionChanged()));
+    connect(m_player, SIGNAL(stateChanged()), this, SLOT(onStateChanged()));
 
-    baseDir = ".";
-    fsTimer.setSingleShot(true);
-    connect(&fsTimer, SIGNAL(timeout()), this, SLOT(hideControls()));
+    //m_baseDir is used to remember the last directory that was used.
+    //defaults to the current working directory
+    m_baseDir = QLatin1String(".");
 
+    //this timer (re-)hides the controls after a few seconds when we are in fullscreen mode
+    m_fullScreenTimer.setSingleShot(true);
+    connect(&m_fullScreenTimer, SIGNAL(timeout()), this, SLOT(hideControls()));
+
+    //create the UI
     QVBoxLayout *appLayout = new QVBoxLayout;
     appLayout->setContentsMargins(0, 0, 0, 0);
     createUI(appLayout);
     setLayout(appLayout);
 
-    stateChanged();
-    setWindowTitle(tr("QtGstreamer example player"));
+    onStateChanged(); //set the controls to their default state
+
+    setWindowTitle(tr("QtGStreamer example player"));
     resize(400, 400);
 }
 
 MediaApp::~MediaApp()
 {
-    delete player;
+    delete m_player;
+}
+
+void MediaApp::openFile(const QString & fileName)
+{
+    m_baseDir = QFileInfo(fileName).path();
+
+    m_player->stop();
+    m_player->setUri(fileName);
+    m_player->play();
 }
 
 void MediaApp::open()
 {
-    player->stop();
-    QString fileName = QFileDialog::getOpenFileName(
-                           this, tr("Open a Movie"), baseDir);
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open a Movie"), m_baseDir);
 
     if (!fileName.isEmpty()) {
         openFile(fileName);
     }
 }
 
-void MediaApp::mouseMoveEvent(QMouseEvent* event)
-{
-    if (isFullScreen()) {
-        if (!openButton->isVisible()) {
-            showControls(true);
-        }
-
-        fsTimer.start(3000);
-    }
-}
-
-
-void MediaApp::showControls(bool show)
-{
-    openButton->setVisible(show);
-    fullScreenButton->setVisible(show);
-    playButton->setVisible(show);
-    pauseButton->setVisible(show);
-    stopButton->setVisible(show);
-    posSlider->setVisible(show);
-    posLabel->setVisible(show);
-}
-
 void MediaApp::toggleFullScreen()
 {
     if (isFullScreen()) {
         setMouseTracking(false);
-        fsTimer.stop();
+        m_player->setMouseTracking(false);
+        m_fullScreenTimer.stop();
+        showControls();
         showNormal();
     } else {
-        showFullScreen();
         setMouseTracking(true);
-        showControls(false);
+        m_player->setMouseTracking(true);
+        hideControls();
+        showFullScreen();
     }
 }
 
-void MediaApp::openFile(const QString &fileName)
+void MediaApp::onStateChanged()
 {
-    baseDir = QFileInfo(fileName).path();
+    QGst::State newState = m_player->state();
+    m_playButton->setEnabled(newState != QGst::StatePlaying);
+    m_pauseButton->setEnabled(newState == QGst::StatePlaying);
+    m_stopButton->setEnabled(newState != QGst::StateNull);
+    m_positionSlider->setEnabled(newState != QGst::StateNull);
 
-    player->setUri(fileName);
-    player->play();
+    //if we are in Null state, call onPositionChanged() to restore
+    //the position of the slider and the text on the label
+    if (newState == QGst::StateNull) {
+        onPositionChanged();
+    }
 }
 
-void MediaApp::posChanged()
+/* Called when the positionChanged() is received from the player */
+void MediaApp::onPositionChanged()
 {
-    QTime length;
-    QTime curpos;
+    QTime length(0,0);
+    QTime curpos(0,0);
 
-    if (player->state() != QGst::StateReady && 
-            player->state() != QGst::StateNull)
+    if (m_player->state() != QGst::StateReady &&
+        m_player->state() != QGst::StateNull)
     {
-        length = player->length();
-        curpos = player->position();
+        length = m_player->length();
+        curpos = m_player->position();
     }
 
-    posLabel->setText(curpos.toString() + "/" + length.toString());
+    m_positionLabel->setText(curpos.toString("hh:mm:ss.zzz")
+                                        + "/" +
+                             length.toString("hh:mm:ss.zzz"));
 
-    if (length != QTime()) {
-        posSlider->setValue(curpos.msecsTo(QTime()) * 100 /
-                            length.msecsTo(QTime()));
+    if (length != QTime(0,0)) {
+        m_positionSlider->setValue(curpos.msecsTo(QTime()) * 1000 / length.msecsTo(QTime()));
+    } else {
+        m_positionSlider->setValue(0);
     }
 
-    if (curpos != QTime()) {
-        posLabel->setEnabled(true);
-        posSlider->setEnabled(true);
+    if (curpos != QTime(0,0)) {
+        m_positionLabel->setEnabled(true);
+        m_positionSlider->setEnabled(true);
     }
 }
 
-void MediaApp::stateChanged()
+/* Called when the user changes the slider's position */
+void MediaApp::setPosition(int value)
 {
-    playButton->setEnabled(player->state() != QGst::StatePlaying);
-    pauseButton->setEnabled(player->state() == QGst::StatePlaying);
-    stopButton->setEnabled(player->state() != QGst::StateReady);
-}
-
-void MediaApp::setPos(int value)
-{
-    quint64 length = -player->length().msecsTo(QTime());
+    uint length = -m_player->length().msecsTo(QTime());
     if (length != 0 && value > 0) {
         QTime pos;
-        pos = pos.addMSecs(length * value / 100);
-        player->setPosition(pos);
+        pos = pos.addMSecs(length * (value / 1000.0));
+        m_player->setPosition(pos);
     }
 }
 
-inline QToolButton* MediaApp::initButton(
-    QStyle::StandardPixmap icon,
-    const char *tip,
-    QObject *dstobj, const char* slot_method,
-    QLayout *layout)
+void MediaApp::showControls(bool show)
+{
+    m_openButton->setVisible(show);
+    m_playButton->setVisible(show);
+    m_pauseButton->setVisible(show);
+    m_stopButton->setVisible(show);
+    m_fullScreenButton->setVisible(show);
+    m_positionSlider->setVisible(show);
+    m_positionLabel->setVisible(show);
+}
+
+void MediaApp::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    if (isFullScreen()) {
+        showControls();
+        m_fullScreenTimer.start(3000); //re-hide controls after 3s
+    }
+}
+
+QToolButton *MediaApp::initButton(QStyle::StandardPixmap icon, const QString & tip,
+                                  QObject *dstobj, const char *slot_method, QLayout *layout)
 {
     QToolButton *button = new QToolButton;
     button->setIcon(style()->standardIcon(icon));
     button->setIconSize(QSize(36, 36));
-    button->setToolTip(tr(tip));
+    button->setToolTip(tip);
     connect(button, SIGNAL(clicked()), dstobj, slot_method);
     layout->addWidget(button);
 
@@ -161,40 +182,42 @@ inline QToolButton* MediaApp::initButton(
 
 void MediaApp::createUI(QBoxLayout *appLayout)
 {
-    appLayout->addWidget(player);
+    appLayout->addWidget(m_player);
 
-    posLabel = new QLabel();
+    m_positionLabel = new QLabel();
 
-    posSlider = new QSlider(Qt::Horizontal);
-    posSlider->setTickPosition(QSlider::TicksBelow);
-    posSlider->setTickInterval(10);
-    posSlider->setMaximum(100);
+    m_positionSlider = new QSlider(Qt::Horizontal);
+    m_positionSlider->setTickPosition(QSlider::TicksBelow);
+    m_positionSlider->setTickInterval(10);
+    m_positionSlider->setMaximum(1000);
 
-    connect(posSlider, SIGNAL(sliderMoved(int)), this, SLOT(setPos(int)));
+    connect(m_positionSlider, SIGNAL(sliderMoved(int)), this, SLOT(setPosition(int)));
 
     QGridLayout *posLayout = new QGridLayout;
-    posLayout->addWidget(posLabel, 1, 0);
-    posLayout->addWidget(posSlider, 1, 1, 1, 2);
+    posLayout->addWidget(m_positionLabel, 1, 0);
+    posLayout->addWidget(m_positionSlider, 1, 1, 1, 2);
     appLayout->addLayout(posLayout);
 
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->addStretch();
 
-    openButton = initButton(
-                     QStyle::SP_DialogOpenButton, "Open File", this, SLOT(open()), btnLayout);
+    m_openButton = initButton(QStyle::SP_DialogOpenButton, tr("Open File"),
+                              this, SLOT(open()), btnLayout);
 
-    playButton = initButton(
-                     QStyle::SP_MediaPlay, "Play", player, SLOT(play()), btnLayout);
+    m_playButton = initButton(QStyle::SP_MediaPlay, tr("Play"),
+                              m_player, SLOT(play()), btnLayout);
 
-    pauseButton = initButton(
-                      QStyle::SP_MediaPause, "Pause", player, SLOT(pause()), btnLayout);
+    m_pauseButton = initButton(QStyle::SP_MediaPause, tr("Pause"),
+                               m_player, SLOT(pause()), btnLayout);
 
-    stopButton = initButton(
-                     QStyle::SP_MediaStop, "Stop", player, SLOT(stop()), btnLayout);
+    m_stopButton = initButton(QStyle::SP_MediaStop, tr("Stop"),
+                              m_player, SLOT(stop()), btnLayout);
 
-    fullScreenButton = initButton(
-                           QStyle::SP_TitleBarMaxButton, "Fullscreen", this, SLOT(toggleFullScreen()), btnLayout);
+    m_fullScreenButton = initButton(QStyle::SP_TitleBarMaxButton, tr("Fullscreen"),
+                                    this, SLOT(toggleFullScreen()), btnLayout);
 
     btnLayout->addStretch();
     appLayout->addLayout(btnLayout);
 }
+
+#include "mediaapp.moc"

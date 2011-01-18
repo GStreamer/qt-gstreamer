@@ -1,5 +1,4 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
     Copyright (C) 2010  Marco Ballesio <gibrovacco@gmail.com>
 
     This library is free software; you can redistribute it and/or modify
@@ -15,20 +14,21 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QtGui/QApplication>
-#include <QGst/Global>
 #include "mediaapp.h"
+#include <QtGui/QApplication>
+#include <QGst/Init>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     QApplication app(argc, argv);
     QGst::init(&argc, &argv);
+
     MediaApp media;
     media.show();
 
-    if(argc == 2){
+    if (argc == 2) {
         media.openFile(argv[1]);
     }
 
     return app.exec();
 }
-
