@@ -32,3 +32,21 @@
  * and pushing it to appsrc with the pushBuffer() method. The result is a choppy
  * audio player.
  */
+
+/*! \example recorder/main.cpp
+ * This is a recording application that takes audio from a microphone
+ * and video from either a camera or the X11 screen, encodes them with
+ * theora and speex and saves the result in a file.
+ *
+ * The intention of this example is to show how simple it is to perform such
+ * complex tasks with GStreamer and how easy it is to change the functionality
+ * of the program by changing just one element (with autovideosrc it will
+ * do a webcam recording, but with ximagesrc it will do a screencast).
+ *
+ * Tasks demonstrated in this example include:
+ * \li How to create and link elements manually.
+ * \li How to create and link elements using a pipeline description.
+ * \li How to use the QGst::PropertyProbe interface.
+ * \li How to handle bus messages.
+ * \li Others...
+ */
