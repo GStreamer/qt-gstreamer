@@ -310,7 +310,7 @@ T Value::get(bool *ok) const
 
     try {
         return ValueImpl<T>::get(*this);
-    } catch (const std::exception & e) {
+    } catch (const std::exception &) {
         if (ok) {
             *ok = false;
         }
