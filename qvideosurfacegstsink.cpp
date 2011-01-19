@@ -460,19 +460,24 @@ GstCaps *QVideoSurfaceGstSink::get_caps(GstBaseSink *base)
 {
     VO_SINK(base);
 
+    qDebug() << "QVideoSurfaceGstSink::get_caps";
+
     GstCaps *caps = gst_caps_new_empty();
 
     foreach (QVideoFrame::PixelFormat format, sink->delegate->supportedPixelFormats()) {
         int index = indexOfYuvColor(format);
 
         if (index != -1) {
-            gst_caps_append_structure(caps, gst_structure_new(
+	    GstStructure *structure = gst_structure_new(
                     "video/x-raw-yuv",
                     "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
                     "width"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
                     "height"   , GST_TYPE_INT_RANGE, 1, INT_MAX,
                     "format"   , GST_TYPE_FOURCC, qt_yuvColorLookup[index].fourcc,
-                    NULL));
+                    NULL);
+	    
+	    gst_caps_append_structure(caps, structure);
+	    GST_DEBUG("%" GST_PTR_FORMAT, structure);
             continue;
         }
 
@@ -498,6 +503,7 @@ GstCaps *QVideoSurfaceGstSink::get_caps(GstBaseSink *base)
                             structure, "alpha_mask", G_TYPE_INT, qt_rgbColorLookup[i].alpha, NULL);
                 }
                 gst_caps_append_structure(caps, structure);
+		GST_DEBUG("%" GST_PTR_FORMAT, structure);
             }
         }
     }
