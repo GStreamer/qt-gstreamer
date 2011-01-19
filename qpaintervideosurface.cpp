@@ -1026,18 +1026,21 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
 {
     qDebug() << "GlslPainter";
     m_imagePixelFormats
+            << QVideoFrame::Format_YUV420P
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_BGR32
-            << QVideoFrame::Format_ARGB32
-#ifndef QT_OPENGL_ES
+#if !defined(QT_OPENGL_ES) && !defined(QT_OPENGL_ES_2)
             << QVideoFrame::Format_RGB24
             << QVideoFrame::Format_BGR24
-#endif
+
             << QVideoFrame::Format_RGB565
             << QVideoFrame::Format_YUV444
             << QVideoFrame::Format_AYUV444
             << QVideoFrame::Format_YV12
-            << QVideoFrame::Format_YUV420P;
+#endif
+	    << QVideoFrame::Format_ARGB32;
+
+
     m_glPixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_ARGB32;
