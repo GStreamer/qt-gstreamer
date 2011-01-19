@@ -92,6 +92,7 @@ QVideoSurfaceGenericPainter::QVideoSurfaceGenericPainter()
     : m_imageFormat(QImage::Format_Invalid)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
 {
+    qDebug() << "GenericPainter";
     m_imagePixelFormats
         << QVideoFrame::Format_RGB32
 #ifndef QT_OPENGL_ES // The raster formats should be a subset of the GL formats.
@@ -104,6 +105,7 @@ QVideoSurfaceGenericPainter::QVideoSurfaceGenericPainter()
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGenericPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
+  qDebug() << "GenericPainter::supportedPixelFormats";
     switch (handleType) {
     case QAbstractVideoBuffer::QPixmapHandle:
     case QAbstractVideoBuffer::NoHandle:
@@ -307,6 +309,7 @@ void QVideoSurfaceGLPainter::viewportDestroyed()
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGLPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
+  qDebug() << "GLPainter::supportedPixelFormats";
     switch (handleType) {
     case QAbstractVideoBuffer::NoHandle:
         return m_imagePixelFormats;
@@ -647,6 +650,7 @@ QVideoSurfaceArbFpPainter::QVideoSurfaceArbFpPainter(QGLContext *context)
     : QVideoSurfaceGLPainter(context)
     , m_programId(0)
 {
+    qDebug() << "ArbFpPainter";
     glProgramStringARB = (_glProgramStringARB) m_context->getProcAddress(
                 QLatin1String("glProgramStringARB"));
     glBindProgramARB = (_glBindProgramARB) m_context->getProcAddress(
@@ -1020,6 +1024,7 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     : QVideoSurfaceGLPainter(context)
     , m_program(context)
 {
+    qDebug() << "GlslPainter";
     m_imagePixelFormats
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_BGR32
@@ -1533,6 +1538,11 @@ const QGLContext *QPainterVideoSurface::glContext() const
 */
 void QPainterVideoSurface::setGLContext(QGLContext *context)
 {
+    qDebug() << "QPainterVideoSurface::setGLContext context=" 
+	     << context
+	     << " m_glContext=" << m_glContext
+	     << " m_painter=" << m_painter;
+
     if (m_glContext == context)
         return;
 
@@ -1605,6 +1615,11 @@ QPainterVideoSurface::ShaderType QPainterVideoSurface::shaderType() const
 */
 void QPainterVideoSurface::setShaderType(ShaderType type)
 {
+    qDebug() << "QPainterVideoSurface::setShaderType"
+	     << " type=" << type
+	     << " m_shaderType" << m_shaderType
+	     << " m_shaderTypes" << m_shaderTypes;
+
     if (!(type & m_shaderTypes))
         type = NoShaders;
 
@@ -1643,6 +1658,10 @@ void QPainterVideoSurface::viewportDestroyed()
 
 void QPainterVideoSurface::createPainter()
 {
+    qDebug() << "QPainterVideoSurface::createPainter "
+	     << " m_glContext=" << m_glContext
+	     << " m_painter=" << m_painter;
+
     Q_ASSERT(!m_painter);
 
 #ifdef Q_WS_MAC
