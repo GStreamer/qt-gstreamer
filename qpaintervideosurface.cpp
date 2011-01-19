@@ -1306,6 +1306,9 @@ QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
     , m_colorsDirty(true)
     , m_ready(false)
 {
+#if !defined(QT_NO_OPENGL)
+    setGLContext(const_cast<QGLContext *> (QGLContext::currentContext()));
+#endif
 }
 
 /*!
@@ -1564,26 +1567,19 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
 
         if (QGLShaderProgram::hasOpenGLShaderPrograms(m_glContext)
                 && extensions.contains("ARB_shader_objects"))
-            m_shaderTypes |= GlslShader;
+#endif
+	    m_shaderTypes |= GlslShader;
+
     }
 
-    ShaderType type = (m_shaderType & m_shaderTypes)
-            ? m_shaderType
-            : NoShaders;
+    qDebug() << "QVideoSurfacePainter::setGLContext"
+	     << " m_shaderType=" << m_shaderType
+	     << " m_shaderTypes=" << m_shaderTypes;
 
-    if (type != m_shaderType || type != NoShaders) {
-        m_shaderType = type;
-
-        if (isActive()) {
-            m_painter->stop();
-            delete m_painter;
-            m_painter = 0;
-            m_ready = false;
-
-            setError(ResourceError);
-            QAbstractVideoSurface::stop();
-        }
-        emit supportedFormatsChanged();
+    if (supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
+	setShaderType(QPainterVideoSurface::GlslShader);
+    } else {
+	setShaderType(QPainterVideoSurface::FragmentProgramShader);
     }
 }
 
@@ -1642,6 +1638,9 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
         }
         emit supportedFormatsChanged();
     }
+
+    if (!m_painter)
+	createPainter();
 }
 
 #endif
