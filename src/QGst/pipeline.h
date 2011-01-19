@@ -19,6 +19,11 @@
 
 #include "bin.h"
 
+#ifdef Q_CC_MSVC
+# pragma warning(push)
+# pragma warning(disable:4250) //Pipeline inherits QGst::Object::ref/unref via dominance
+#endif
+
 namespace QGst {
 
 /*! \headerfile pipeline.h <QGst/Pipeline>
@@ -41,5 +46,9 @@ public:
 }
 
 QGST_REGISTER_TYPE(QGst::Pipeline)
+
+#ifdef Q_CC_MSVC
+# pragma warning(pop)
+#endif
 
 #endif
