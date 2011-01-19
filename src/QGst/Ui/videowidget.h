@@ -103,6 +103,9 @@ public:
      */
     void stopPipelineWatch();
 
+protected:
+    virtual void paintEvent(QPaintEvent *event);
+
 private:
     AbstractRenderer *d;
 };

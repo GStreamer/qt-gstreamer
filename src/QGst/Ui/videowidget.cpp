@@ -274,5 +274,11 @@ void VideoWidget::stopPipelineWatch()
     }
 }
 
+void VideoWidget::paintEvent(QPaintEvent *event)
+{
+    QPainter p(this);
+    p.fillRect(event->rect(), Qt::black);
+}
+
 } //namespace Ui
 } //namespace QGst
