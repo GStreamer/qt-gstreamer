@@ -283,7 +283,14 @@ bool RefPointer<T>::operator!=(const X & other) const
  * \relates QGlib::RefPointer
  */
 template <class T, class X>
-bool operator==(const X & other, const RefPointer<T> & self)
+//use this function only if X is a pointer and is NOT the same as T::CType*, otherwise
+//it is ambiguous with RefPointer::operator==() and the built-in operator== for pointers.
+typename boost::enable_if_c<
+    boost::is_pointer<X>::value &&
+    !boost::is_same<X, typename boost::add_pointer<typename T::CType>::type>::value,
+    bool
+>::type
+operator==(const X & other, const RefPointer<T> & self)
 {
     return Private::RefPointerEqualityCheck<T, X>::check(self, other);
 }
@@ -292,7 +299,14 @@ bool operator==(const X & other, const RefPointer<T> & self)
  * \relates QGlib::RefPointer
  */
 template <class T, class X>
-bool operator!=(const X & other, const RefPointer<T> & self)
+//use this function only if X is a pointer and is NOT the same as T::CType*, otherwise
+//it is ambiguous with RefPointer::operator!=() and the built-in operator!= for pointers.
+typename boost::enable_if_c<
+    boost::is_pointer<X>::value &&
+    !boost::is_same<X, typename boost::add_pointer<typename T::CType>::type>::value,
+    bool
+>::type
+operator!=(const X & other, const RefPointer<T> & self)
 {
     return !Private::RefPointerEqualityCheck<T, X>::check(self, other);
 }
