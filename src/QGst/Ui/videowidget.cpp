@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2010  George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2011 Collabora Ltd.
+      @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -16,9 +18,13 @@
 */
 #include "videowidget.h"
 #include "../xoverlay.h"
-#include "../childproxy.h"
+#include "../pipeline.h"
+#include "../bus.h"
+#include "../message.h"
 #include "../../QGlib/connect.h"
 #include <QtCore/QDebug>
+#include <QtCore/QMutex>
+#include <QtCore/QThread>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
@@ -40,12 +46,11 @@ public:
 class XOverlayRenderer : public QObject, public AbstractRenderer
 {
 public:
-    XOverlayRenderer(const XOverlayPtr & sink, QWidget *parent)
-        : QObject(parent), m_sink(sink)
+    XOverlayRenderer(QWidget *parent)
+        : QObject(parent)
     {
-        WId windowId = widget()->winId(); //create a new X window (if we are on X11 with alien widgets)
+        m_windowId = widget()->winId(); //create a new X window (if we are on X11 with alien widgets)
         QApplication::syncX(); //inform other applications about the new window (on X11)
-        m_sink->setWindowHandle(windowId);
 
         widget()->installEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, true);
@@ -55,20 +60,40 @@ public:
 
     virtual ~XOverlayRenderer()
     {
-        m_sink->setWindowHandle(0);
+        if (m_sink) {
+            m_sink->setWindowHandle(0);
+        }
         widget()->removeEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, false);
         widget()->setAttribute(Qt::WA_PaintOnScreen, false);
         widget()->update();
     }
 
-    virtual ElementPtr videoSink() const { return m_sink.dynamicCast<Element>(); }
+    void setVideoSink(const XOverlayPtr & sink)
+    {
+        QMutexLocker l(&m_sinkMutex);
+        if (m_sink) {
+            m_sink->setWindowHandle(0);
+        }
+        m_sink = sink;
+        if (m_sink) {
+            m_sink->setWindowHandle(m_windowId);
+        }
+    }
 
+    virtual ElementPtr videoSink() const
+    {
+        QMutexLocker l(&m_sinkMutex);
+        return m_sink.dynamicCast<Element>();
+    }
+
+protected:
     virtual bool eventFilter(QObject *filteredObject, QEvent *event)
     {
         if (filteredObject == parent() && event->type() == QEvent::Paint) {
-            State currentState;
-            videoSink()->getState(&currentState, NULL, 0);
+            QMutexLocker l(&m_sinkMutex);
+            State currentState = m_sink ? m_sink.dynamicCast<Element>()->currentState() : StateNull;
+
             if (currentState == StatePlaying || currentState == StatePaused) {
                 m_sink->expose();
             } else {
@@ -83,6 +108,8 @@ public:
 
 private:
     inline QWidget *widget() { return static_cast<QWidget*>(parent()); }
+    WId m_windowId;
+    mutable QMutex m_sinkMutex;
     XOverlayPtr m_sink;
 };
 
@@ -109,49 +136,52 @@ private:
 };
 
 
-class ProxyRenderer : public QObject, public AbstractRenderer
+class PipelineWatch : public QObject, public AbstractRenderer
 {
 public:
-    ProxyRenderer(const ChildProxyPtr & sink, QWidget *parent)
-        : m_renderer(NULL), m_parent(parent), m_sink(sink)
+    PipelineWatch(const PipelinePtr & pipeline, QWidget *parent)
+        : QObject(parent), m_renderer(new XOverlayRenderer(parent)), m_pipeline(pipeline)
     {
-        for (uint i=0; m_renderer == NULL && i<sink->childrenCount(); i++) {
-            childAdded(sink->childByIndex(i));
-        }
-
-        QGlib::connect(sink, "child-added", this, &ProxyRenderer::childAdded);
-        QGlib::connect(sink, "child-removed", this, &ProxyRenderer::childRemoved);
+        pipeline->bus()->enableSyncMessageEmission();
+        QGlib::connect(pipeline->bus(), "sync-message",
+                       this, &PipelineWatch::onBusSyncMessage);
     }
 
-    virtual ~ProxyRenderer()
+    virtual ~PipelineWatch()
     {
-        QGlib::disconnect(m_sink, 0, this);
+        m_pipeline->bus()->disableSyncMessageEmission();
+        delete m_renderer;
     }
 
-    virtual ElementPtr videoSink() const { return m_sink.dynamicCast<Element>(); }
+    virtual ElementPtr videoSink() const { return m_renderer->videoSink(); }
 
-    void childAdded(const QGlib::ObjectPtr & child)
+    void releaseSink() { m_renderer->setVideoSink(XOverlayPtr()); }
+
+private:
+    void onBusSyncMessage(const MessagePtr & msg)
     {
-        if (!m_renderer) {
-            ElementPtr element = child.dynamicCast<Element>();
-            if (element) {
-                m_renderer = AbstractRenderer::create(element, m_parent);
+        switch (msg->type()) {
+        case MessageElement:
+            if (msg->internalStructure()->name() == QLatin1String("prepare-xwindow-id")) {
+                XOverlayPtr overlay = msg->source().dynamicCast<XOverlay>();
+                m_renderer->setVideoSink(overlay);
             }
-        }
-    }
-
-    void childRemoved(const QGlib::ObjectPtr & child)
-    {
-        if (m_renderer && m_renderer->videoSink() == child) {
-            delete m_renderer;
-            m_renderer = NULL;
+            break;
+        case MessageStateChanged:
+            //release the sink when it goes back to null state
+            if (msg.staticCast<StateChangedMessage>()->newState() == StateNull &&
+                msg->source() == m_renderer->videoSink())
+            {
+                releaseSink();
+            }
+        default:
+            break;
         }
     }
 
 private:
-    AbstractRenderer *m_renderer;
-    QWidget *m_parent;
-    ChildProxyPtr m_sink;
+    XOverlayRenderer *m_renderer;
+    PipelinePtr m_pipeline;
 };
 
 
@@ -160,17 +190,14 @@ AbstractRenderer *AbstractRenderer::create(const ElementPtr & sink, QWidget *vid
 #if !defined(Q_WS_QWS)
     XOverlayPtr overlay = sink.dynamicCast<XOverlay>();
     if (overlay) {
-        return new XOverlayRenderer(overlay, videoWidget);
+        XOverlayRenderer *r = new XOverlayRenderer(videoWidget);
+        r->setVideoSink(overlay);
+        return r;
     }
 #endif
 
     if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQWidgetVideoSink")) {
         return new QWidgetVideoSinkRenderer(sink, videoWidget);
-    }
-
-    ChildProxyPtr childProxy = sink.dynamicCast<ChildProxy>();
-    if (childProxy) {
-        return new ProxyRenderer(childProxy, videoWidget);
     }
 
     return NULL;
@@ -194,15 +221,56 @@ ElementPtr VideoWidget::videoSink() const
 
 void VideoWidget::setVideoSink(const ElementPtr & sink)
 {
-    delete d;
-    d = NULL;
+    if (!sink) {
+        releaseVideoSink();
+        return;
+    }
 
-    if (sink) {
-        d = AbstractRenderer::create(sink, this);
+    Q_ASSERT(QThread::currentThread() == QApplication::instance()->thread());
+    Q_ASSERT(d == NULL);
 
-        if (!d) {
-            qCritical() << "QGst::Ui::VideoWidget: Could not construct a renderer for the specified element";
+    d = AbstractRenderer::create(sink, this);
+
+    if (!d) {
+        qCritical() << "QGst::Ui::VideoWidget: Could not construct a renderer for the specified element";
+    }
+}
+
+void VideoWidget::releaseVideoSink()
+{
+    Q_ASSERT(QThread::currentThread() == QApplication::instance()->thread());
+
+    if (d) {
+        PipelineWatch *pw = dynamic_cast<PipelineWatch*>(d);
+        if (pw) {
+            pw->releaseSink();
+        } else {
+            delete d;
+            d = NULL;
         }
+    }
+}
+
+void VideoWidget::watchPipeline(const PipelinePtr & pipeline)
+{
+    if (!pipeline) {
+        stopPipelineWatch();
+        return;
+    }
+
+    Q_ASSERT(QThread::currentThread() == QApplication::instance()->thread());
+    Q_ASSERT(d == NULL);
+
+    d = new PipelineWatch(pipeline, this);
+}
+
+void VideoWidget::stopPipelineWatch()
+{
+    Q_ASSERT(QThread::currentThread() == QApplication::instance()->thread());
+
+    if (dynamic_cast<PipelineWatch*>(d)) {
+        delete d;
+        d = NULL;
     }
 }
 

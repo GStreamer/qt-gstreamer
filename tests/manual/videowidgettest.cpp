@@ -68,7 +68,7 @@ void VideoWidgetTest::onButtonClicked(int id)
 
     if (currentState == QGst::StateNull) {
         if (m_sink) {
-            m_ui.videoWidget->setVideoSink(QGst::ElementPtr());
+            m_ui.videoWidget->releaseVideoSink();;
             m_pipeline->remove(m_sink);
         }
 
