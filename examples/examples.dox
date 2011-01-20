@@ -17,7 +17,26 @@
 */
 
 /*! \example player/main.cpp
- * This is an example audio player using QtGStreamer
+ * This is an example audio/video player using QtGStreamer.
+ *
+ * In this example, the GStreamer playbin2 element is used to perform most
+ * of the tasks. Our code is mostly integrating the UI with the pipeline,
+ * handling state changes, doing queries to learn about the position
+ * and duration of the stream, performing seeking, etc...
+ *
+ * player.h:
+ * \include player/player.h
+ *
+ * player.cpp:
+ * \include player/player.cpp
+ *
+ * mediaapp.h:
+ * \include player/mediaapp.h
+ *
+ * mediaapp.cpp:
+ * \include player/mediaapp.cpp
+ *
+ * main.cpp:
  */
 
 /*! \example appsink-src/main.cpp
