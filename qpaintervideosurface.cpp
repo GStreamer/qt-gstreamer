@@ -1027,6 +1027,7 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
     qDebug() << "GlslPainter";
     m_imagePixelFormats
             << QVideoFrame::Format_YUV420P
+            << QVideoFrame::Format_YV12
             << QVideoFrame::Format_RGB32
             << QVideoFrame::Format_BGR32
 #if !defined(QT_OPENGL_ES) && !defined(QT_OPENGL_ES_2)
@@ -1034,9 +1035,8 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
             << QVideoFrame::Format_BGR24
 
             << QVideoFrame::Format_RGB565
-            << QVideoFrame::Format_YUV444
             << QVideoFrame::Format_AYUV444
-            << QVideoFrame::Format_YV12
+            << QVideoFrame::Format_YUV444
 #endif
 	    << QVideoFrame::Format_ARGB32;
 
