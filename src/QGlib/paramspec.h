@@ -71,4 +71,12 @@ QGLIB_REGISTER_TYPE(QGlib::ParamSpec) //codegen: GType=G_TYPE_PARAM
 QGLIB_REGISTER_TYPE(QGlib::ParamSpec::ParamFlags)
 QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGlib::ParamSpec, QGlib::Private::wrapParamSpec)
 
+// HACK to support glib 2.24 when compiling the generated assertions of ParamFlag
+// REMOVE THIS in future versions
+#ifdef INCLUDED_FROM_CODEGEN
+# if !GLIB_CHECK_VERSION(2,26,0)
+#  define G_PARAM_DEPRECATED QGlib::ParamSpec::Deprecated
+# endif
+#endif //CODEGEN_RUN
+
 #endif
