@@ -187,14 +187,12 @@ private:
 
 AbstractRenderer *AbstractRenderer::create(const ElementPtr & sink, QWidget *videoWidget)
 {
-#if !defined(Q_WS_QWS)
     XOverlayPtr overlay = sink.dynamicCast<XOverlay>();
     if (overlay) {
         XOverlayRenderer *r = new XOverlayRenderer(videoWidget);
         r->setVideoSink(overlay);
         return r;
     }
-#endif
 
     if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQWidgetVideoSink")) {
         return new QWidgetVideoSinkRenderer(sink, videoWidget);
