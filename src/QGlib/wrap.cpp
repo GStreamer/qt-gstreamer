@@ -37,7 +37,7 @@ RefCountedObject *constructWrapper(Type instanceType, void *instance)
     }
 
     Q_ASSERT_X(false, "QGlib::constructWrapper",
-               "No wrapper constructor found for this type. This is a bug in the bindings library.");
+               "No wrapper constructor found for this type. Did you forget to call init()?.");
     return cppClass;
 }
 
