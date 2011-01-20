@@ -231,9 +231,17 @@ QGLIB_REGISTER_NATIVE_TYPE(const char*, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QByteArray, Type::String)
 QGLIB_REGISTER_NATIVE_TYPE(QString, Type::String)
 
+//partial specializations for string literals
 namespace QGlib {
     template <int N>
-    struct GetTypeImpl<char[N]> {
+    struct GetTypeImpl<const char[N]> { //ISO C++ string literals are const char[]
+        inline operator Type() { return Type::String; };
+    };
+}
+
+namespace QGlib {
+    template <int N>
+    struct GetTypeImpl<char[N]> { //gcc string literals are char[]
         inline operator Type() { return Type::String; };
     };
 }

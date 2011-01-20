@@ -393,10 +393,22 @@ struct ValueImpl< RefPointer<T> >
     }
 };
 
-// -- ValueImpl specialization for string literals --
+// -- ValueImpl specializations for string literals --
 
 template <int N>
-struct ValueImpl<char[N]>
+struct ValueImpl<const char[N]> //ISO C++ string literals are const char[]
+{
+    //No get method, obviously.
+
+    static inline void set(Value & value, const char (&data)[N])
+    {
+        QByteArray str = QByteArray::fromRawData(data, N);
+        value.setData(Type::String, &str);
+    }
+};
+
+template <int N>
+struct ValueImpl<char[N]> //gcc string literals are char[]
 {
     //No get method, obviously.
 
