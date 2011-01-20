@@ -48,7 +48,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
         Value result(returnValue);
         cdata->marshaller(result, params);
 
-        if (returnValue) {
+        if (returnValue && G_IS_VALUE(returnValue)) {
             g_value_copy(result, returnValue);
         }
     } catch (const std::exception & e) {
