@@ -26,6 +26,7 @@ private Q_SLOTS:
     void systemTest();
     void timeFromClockTimeTest();
     void clockTimeFromTimeTest();
+    void valueTest();
 };
 
 void ClockTest::systemTest()
@@ -64,6 +65,12 @@ void ClockTest::clockTimeFromTimeTest()
              static_cast<quint64>((50001 * 1000 +15) * Q_UINT64_C(1000000)));
 }
 
+void ClockTest::valueTest()
+{
+    QGst::ClockTime time = QGst::ClockTime(123456789);
+    QGlib::Value v = QGlib::Value::create(time);
+    QCOMPARE(v.get<QGst::ClockTime>(), time);
+}
 
 QTEST_MAIN(ClockTest)
 

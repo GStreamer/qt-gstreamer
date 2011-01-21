@@ -61,4 +61,6 @@ private:
 
 } //namspace QGst
 
+QGST_REGISTER_TYPE(QGst::ClockTime)
+
 #endif // QGST_CLOCKTIME_H
