@@ -27,6 +27,10 @@
 # pragma warning(disable:4250) //Bin inherits QGst::Object::ref/unref via dominance
 #endif
 
+#if !QGLIB_HAVE_CXX0X
+# include <boost/preprocessor.hpp>
+#endif
+
 namespace QGst {
 
 /*! \headerfile bin.h <QGst/Bin>
@@ -72,6 +76,48 @@ public:
      * the element is added to the bin.
      */
     bool add(const ElementPtr & element);
+
+#if QGLIB_HAVE_CXX0X
+
+# ifndef DOXYGEN_RUN
+private:
+    inline void add() {} //terminate condition for the variadic template recursion
+public:
+# endif
+
+    /*! Adds two or more elements to the bin. This function is equivalent to calling
+     * add() for each of the elements. The return value of each add() is ignored.
+     * \note This function makes use of C++0x features. If your compiler doesn't support
+     * this, a different version will be compiled. That version supports up to
+     * QGST_BIN_ADD_MAX_ARGS arguments, which defaults to 10. If you need more, define
+     * this to a greater value before including any QtGStreamer headers.
+     */
+    template <typename First, typename Second, typename... Rest>
+    inline void add(const First & first, const Second & second, const Rest & ... rest)
+    {
+        add(first);
+        add(second);
+        add(rest...);
+    }
+
+#else //QGLIB_HAVE_CXX0X
+
+# ifndef QGST_BIN_ADD_MAX_ARGS
+#  define QGST_BIN_ADD_MAX_ARGS 10
+# endif
+
+# define QGST_BIN_ADD_DECLARATION(z, n, data) \
+    inline void add(BOOST_PP_ENUM_PARAMS(n, const ElementPtr & e)) \
+    { \
+        add(e0); \
+        add(BOOST_PP_ENUM_SHIFTED_PARAMS(n, e)); \
+    };
+
+    BOOST_PP_REPEAT_FROM_TO(2, BOOST_PP_INC(QGST_BIN_ADD_MAX_ARGS), QGST_BIN_ADD_DECLARATION, dummy)
+
+# undef QGST_BIN_ADD_DECLARATION
+
+#endif //QGLIB_HAVE_CXX0X
 
     /*! Removes the element from the bin, unparenting it as well.
      *

@@ -164,3 +164,38 @@ int main()
 ")
 
 ######### END disconnect tests ########
+######### BEGIN bin add() tests ########
+
+cxx_compilation_test(bin_add_test_1 SHOULD_COMPILE "
+#include <QGst/Bin>
+
+int main()
+{
+    QGst::ElementPtr tee;
+    QGst::BinPtr bin;
+
+    bool b = bin->add(tee);
+    bin->add(tee, tee);
+    bin->add(tee, tee, tee);
+    bin->add(tee, tee, tee, tee);
+    bin->add(tee, tee, tee, tee, tee);
+    bin->add(tee, tee, tee, tee, tee, tee);
+    bin->add(tee, tee, tee, tee, tee, tee, tee);
+    bin->add(tee, tee, tee, tee, tee, tee, tee, tee);
+    bin->add(tee, tee, tee, tee, tee, tee, tee, tee, tee);
+    bin->add(tee, tee, tee, tee, tee, tee, tee, tee, tee, tee);
+}
+")
+
+cxx_compilation_test(bin_add_test_2 SHOULD_COMPILE "
+#define QGST_BIN_ADD_MAX_ARGS 12
+#include <QGst/Bin>
+
+int main()
+{
+    QGst::ElementPtr tee;
+    QGst::BinPtr bin;
+    bin->add(tee, tee, tee, tee, tee, tee, tee, tee, tee, tee, tee, tee);
+}
+")
+######### END bin add() tests ########
