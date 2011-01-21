@@ -199,3 +199,44 @@ int main()
 }
 ")
 ######### END bin add() tests ########
+######### BEGIN element linkMany/unlinkMany tests ########
+
+cxx_compilation_test(element_linkMany_test_1 SHOULD_COMPILE "
+#include <QGst/Element>
+
+int main()
+{
+    QGst::ElementPtr tee;
+    bool b = QGst::Element::linkMany(tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee, tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee, tee, tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee, tee, tee, tee, tee, tee);
+    b = QGst::Element::linkMany(tee, tee, tee, tee, tee, tee, tee, tee, tee, tee);
+
+    QGst::Element::unlinkMany(tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee, tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee, tee, tee, tee, tee, tee);
+}
+")
+
+cxx_compilation_test(element_linkMany_test_2 SHOULD_COMPILE "
+#define QGST_ELEMENT_LINK_MANY_MAX_ARGS 12
+#define QGST_ELEMENT_UNLINK_MANY_MAX_ARGS 12
+#include <QGst/Element>
+
+int main()
+{
+    QGst::ElementPtr tee;
+    bool b = QGst::Element::linkMany(tee, tee, tee, tee, tee, tee, tee, tee, tee, tee, tee, tee);
+    QGst::Element::unlinkMany(tee, tee, tee, tee, tee, tee, tee, tee, tee, tee, tee, tee);
+}
+")
+######### END element linkMany/unlinkMany tests ########

@@ -21,6 +21,10 @@
 #include "caps.h"
 #include "clocktime.h"
 
+#if !QGLIB_HAVE_CXX0X
+# include <boost/preprocessor.hpp>
+#endif
+
 namespace QGst {
 
 /*! \headerfile element.h <QGst/Element>
@@ -58,6 +62,82 @@ public:
     void unlink(const char *srcPadName, const ElementPtr & dest,
                 const char *sinkPadName = NULL);
     void unlink(const ElementPtr & dest, const char *sinkPadName = NULL);
+
+#ifndef DOXYGEN_RUN
+private:
+    static inline bool linkMany(const ElementPtr & first, const ElementPtr & second)
+    {
+        return first->link(second);
+    }
+
+    static inline void unlinkMany(const ElementPtr & first, const ElementPtr & second)
+    {
+        first->unlink(second);
+    }
+public:
+#endif
+
+#if QGLIB_HAVE_CXX0X
+    /*! Links together a series of elements in the order that they are provided.
+     * \note This function makes use of C++0x features. If your compiler doesn't support
+     * this, a different version will be compiled. That version supports up to
+     * QGST_ELEMENT_LINK_MANY_MAX_ARGS arguments, which defaults to 10. If you need more,
+     * define this to a greater value before including any QtGStreamer headers.
+     */
+    template <typename First, typename Second, typename Third, typename... Rest>
+    static inline bool linkMany(const First & first, const Second & second,
+                                const Third & third, const Rest & ... rest)
+    {
+        if (!first->link(second)) return false;
+        return linkMany(second, third, rest...);
+    }
+
+    /*! Unlinks a chain of elements.
+     * \note This function makes use of C++0x features. If your compiler doesn't support
+     * this, a different version will be compiled. That version supports up to
+     * QGST_ELEMENT_UNLINK_MANY_MAX_ARGS arguments, which defaults to 10. If you need more,
+     * define this to a greater value before including any QtGStreamer headers.
+     */
+    template <typename First, typename Second, typename Third, typename... Rest>
+    static inline void unlinkMany(const First & first, const Second & second,
+                                  const Third & third, const Rest & ... rest)
+    {
+        first->unlink(second);
+        unlinkMany(second, third, rest...);
+    }
+#else //QGLIB_HAVE_CXX0X
+
+# ifndef QGST_ELEMENT_LINK_MANY_MAX_ARGS
+#  define QGST_ELEMENT_LINK_MANY_MAX_ARGS 10
+# endif
+
+# ifndef QGST_ELEMENT_UNLINK_MANY_MAX_ARGS
+#  define QGST_ELEMENT_UNLINK_MANY_MAX_ARGS 10
+# endif
+
+# define QGST_ELEMENT_LINK_MANY_DECLARATION(z, n, data) \
+    static inline bool linkMany(BOOST_PP_ENUM_PARAMS(n, const ElementPtr & e)) \
+    { \
+        if (!e0->link(e1)) return false; \
+        return linkMany(BOOST_PP_ENUM_SHIFTED_PARAMS(n, e)); \
+    };
+
+# define QGST_ELEMENT_UNLINK_MANY_DECLARATION(z, n, data) \
+    static inline void unlinkMany(BOOST_PP_ENUM_PARAMS(n, const ElementPtr & e)) \
+    { \
+        e0->unlink(e1); \
+        unlinkMany(BOOST_PP_ENUM_SHIFTED_PARAMS(n, e)); \
+    };
+
+    BOOST_PP_REPEAT_FROM_TO(3, BOOST_PP_INC(QGST_ELEMENT_LINK_MANY_MAX_ARGS),
+                            QGST_ELEMENT_LINK_MANY_DECLARATION, dummy)
+    BOOST_PP_REPEAT_FROM_TO(3, BOOST_PP_INC(QGST_ELEMENT_UNLINK_MANY_MAX_ARGS),
+                            QGST_ELEMENT_UNLINK_MANY_DECLARATION, dummy)
+
+# undef QGST_ELEMENT_LINK_MANY_DECLARATION
+# undef QGST_ELEMENT_UNLINK_MANY_DECLARATION
+
+#endif //QGLIB_HAVE_CXX0X
 
     bool query(const QueryPtr & query);
     bool sendEvent(const EventPtr & event);
