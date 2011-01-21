@@ -245,10 +245,7 @@ void Recorder::start()
     sink->setProperty("location", m_ui.outputFileEdit->text());
 
     m_pipeline = QGst::Pipeline::create();
-    m_pipeline->add(audioSrcBin);
-    m_pipeline->add(videoSrcBin);
-    m_pipeline->add(mux);
-    m_pipeline->add(sink);
+    m_pipeline->add(audioSrcBin, videoSrcBin, mux, sink);
 
     //link elements
     QGst::PadPtr audioPad = mux->getRequestPad("sink_%d");

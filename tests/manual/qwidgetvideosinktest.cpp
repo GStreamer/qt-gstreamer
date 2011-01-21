@@ -57,8 +57,7 @@ QWidgetVideoSinkTest::QWidgetVideoSinkTest(QWidget *parent, Qt::WindowFlags f)
         throw std::runtime_error("Unable to initialize the required elements");
     }
 
-    m_pipeline->add(src);
-    m_pipeline->add(m_sink);
+    m_pipeline->add(src, m_sink);
     src->link(m_sink);
 
     //GValue of G_TYPE_POINTER can only be set as void* in the bindings
