@@ -87,36 +87,8 @@ set(QtGStreamer_INSTALLED_HEADERS
     Utils/applicationsource.h   Utils/ApplicationSource
 )
 
-set(QtGStreamer_CODEGEN_HEADERS
-    enums.h
-    structs.h
-    structure.h
-    caps.h
-    miniobject.h
-    object.h
-    pad.h
-    ghostpad.h
-    element.h
-    pluginfeature.h
-    elementfactory.h
-    bin.h
-    childproxy.h
-    pipeline.h
-    message.h
-    bus.h
-    urihandler.h
-    videoorientation.h
-    xoverlay.h
-    streamvolume.h
-    colorbalance.h
-    propertyprobe.h
-    query.h
-    clock.h
-    buffer.h
-    event.h
-    taglist.h
-    bufferlist.h
-)
+file(GLOB QtGStreamer_CODEGEN_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.h")
+list(REMOVE_ITEM QtGStreamer_CODEGEN_HEADERS "global.h")
 
 set(QtGStreamer_CODEGEN_INCLUDES
     -Igst/gst.h

@@ -29,13 +29,8 @@ set(QtGLib_INSTALLED_HEADERS
     error.h       Error
 )
 
-set(QtGLib_CODEGEN_HEADERS
-    type.h
-    paramspec.h
-    object.h
-    signal.h
-    value.h
-)
+file(GLOB QtGLib_CODEGEN_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.h")
+list(REMOVE_ITEM QtGLib_CODEGEN_HEADERS "connectimpl.h" "emitimpl.h")
 
 set(QtGLib_CODEGEN_INCLUDES
     -Iglib-object.h
