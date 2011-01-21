@@ -40,6 +40,8 @@ public:
     QString klass() const;
     QString description() const;
     QString author() const;
+    QString documentationUri() const;
+    QString iconName() const;
 
     uint padTemplatesCount() const;
     int uriType() const;

@@ -63,6 +63,16 @@ QString ElementFactory::author() const
     return QString::fromUtf8(gst_element_factory_get_author(object<GstElementFactory>()));
 }
 
+QString ElementFactory::documentationUri() const
+{
+    return QString::fromUtf8(gst_element_factory_get_documentation_uri(object<GstElementFactory>()));
+}
+
+QString ElementFactory::iconName() const
+{
+    return QString::fromUtf8(gst_element_factory_get_icon_name(object<GstElementFactory>()));
+}
+
 uint ElementFactory::padTemplatesCount() const
 {
     return gst_element_factory_get_num_pad_templates(object<GstElementFactory>());
