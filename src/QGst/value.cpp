@@ -103,6 +103,23 @@ void registerValueVTables()
     QGlib::Value::registerValueVTable(QGlib::GetType<IntRange>(),
             QGlib::ValueVTable(ValueVTable_IntRange::set, ValueVTable_IntRange::get));
 
+    struct ValueVTable_Int64Range
+    {
+        static void get(const QGlib::Value & value, void *data)
+        {
+            reinterpret_cast<Int64Range*>(data)->start = gst_value_get_int64_range_min(value);
+            reinterpret_cast<Int64Range*>(data)->end = gst_value_get_int64_range_max(value);
+        };
+
+        static void set(QGlib::Value & value, const void *data)
+        {
+            gst_value_set_int64_range(value, reinterpret_cast<Int64Range const *>(data)->start,
+                                             reinterpret_cast<Int64Range const *>(data)->end);
+        };
+    };
+    QGlib::Value::registerValueVTable(QGlib::GetType<Int64Range>(),
+            QGlib::ValueVTable(ValueVTable_Int64Range::set, ValueVTable_Int64Range::get));
+
 
     struct ValueVTable_DoubleRange
     {

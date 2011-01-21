@@ -83,9 +83,9 @@ QGST_REGISTER_TYPE(QGst::Fraction)
 
 namespace QGst {
     namespace Private {
-        /*! \brief Common template for QGst::IntRange, QGst::DoubleRange and QGst::FractionRange
+        /*! \brief Common template for IntRange, Int64Range, DoubleRange and FractionRange
          * \note This structure is private and should not be used directly. You should use
-         * QGst::IntRange, QGst::DoubleRange and QGst::FractionRange instead.
+         * QGst::IntRange, QGst::Int64Range, QGst::DoubleRange and QGst::FractionRange instead.
          */
         template <typename T>
         struct Range
@@ -105,6 +105,11 @@ namespace QGst {
      */
     typedef Private::Range<int> IntRange;
 
+    /*! \headerfile structs.h <QGst/Int64Range>
+     * \brief Helper structure for accessing qint64 ranges
+     */
+    typedef Private::Range<qint64> Int64Range;
+
     /*! \headerfile structs.h <QGst/DoubleRange>
      * \brief Helper structure for accessing double ranges
      */
@@ -116,6 +121,7 @@ namespace QGst {
     typedef Private::Range<Fraction> FractionRange;
 }
 QGST_REGISTER_TYPE(QGst::IntRange)
+QGST_REGISTER_TYPE(QGst::Int64Range)
 QGST_REGISTER_TYPE(QGst::DoubleRange)
 QGST_REGISTER_TYPE(QGst::FractionRange)
 

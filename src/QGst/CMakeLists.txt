@@ -49,6 +49,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     structs.h           Fourcc
                         Fraction
                         IntRange
+                        Int64Range
                         DoubleRange
                         FractionRange
     structure.h         Structure
