@@ -222,6 +222,11 @@ struct QTGSTREAMER_NO_EXPORT SharedStructure::Data : public Structure::Data
 
 #endif
 
+Structure SharedStructure::copy() const
+{
+    return Structure(d->structure);
+}
+
 SharedStructure::SharedStructure(SharedStructure::Data* data)
     : Structure(data)
 {

@@ -131,6 +131,9 @@ class QTGSTREAMER_EXPORT SharedStructure : public Structure
 public:
     virtual ~SharedStructure();
 
+    /*! \returns a deep copy of the structure */
+    Structure copy() const;
+
 private:
     //Only these classes can call our constructor, others should use a StructurePtr passed to them
     friend class Caps;

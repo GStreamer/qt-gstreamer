@@ -18,6 +18,8 @@
 */
 #include "qgsttest.h"
 #include <QGst/Structure>
+#include <QGst/Buffer>
+#include <QGst/Caps>
 
 class StructureTest : public QGstTest
 {
@@ -26,6 +28,7 @@ private Q_SLOTS:
     void bindingsTest();
     void copyTest();
     void valueTest();
+    void sharedStructureTest();
 };
 
 void StructureTest::bindingsTest()
@@ -100,6 +103,27 @@ void StructureTest::valueTest()
         QCOMPARE(s.name(), QString("mystructure"));
         QCOMPARE(s.value("foo").toInt(), 1);
     }
+}
+
+void StructureTest::sharedStructureTest()
+{
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
+    {
+        QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+        caps->setValue("width", 320);
+        caps->setValue("height", 240);
+        buffer->setCaps(caps);
+    }
+
+    QGst::StructurePtr structure = buffer->caps()->internalStructure(0);
+    QCOMPARE(structure->name(), QString("video/x-raw-yuv"));
+    QCOMPARE(structure->value("width").toInt(), 320);
+    QCOMPARE(structure->value("height").toInt(), 240);
+
+    QGst::Structure s = structure->copy();
+    QCOMPARE(s.name(), QString("video/x-raw-yuv"));
+    QCOMPARE(s.value("width").toInt(), 320);
+    QCOMPARE(s.value("height").toInt(), 240);
 }
 
 
