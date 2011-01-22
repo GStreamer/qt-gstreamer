@@ -107,7 +107,7 @@ void TagListTest::copyTest()
     tl.setDuration(1234567);
     tl.setBitrate(320);
     tl.setAlbumGain(0.85);
-    QGst::BufferPtr buffer = QGst::Buffer::create(100000);
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
@@ -357,20 +357,20 @@ void TagListTest::stringsTest()
 void TagListTest::bufferTest()
 {
     QGst::TagList tl;
-    QGst::BufferPtr buffer = QGst::Buffer::create(100000);
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
     buffer->setCaps(caps);
     tl.setImage(buffer);
 
-    QGst::BufferPtr bufferb = QGst::Buffer::create(100000);
+    QGst::BufferPtr bufferb = QGst::Buffer::create(10);
     QGst::CapsPtr capsb = QGst::Caps::createSimple("video/x-raw-rgb");
     capsb->setValue("width", 160);
     bufferb->setCaps(capsb);
     tl.setPreviewImage(bufferb);
 
-    QGst::BufferPtr bufferc = QGst::Buffer::create(100000);
+    QGst::BufferPtr bufferc = QGst::Buffer::create(10);
     QGst::CapsPtr capsc = QGst::Caps::createSimple("files");
     capsc->setValue("attachment", QString("avalue"));
     bufferc->setCaps(capsc);

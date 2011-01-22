@@ -31,15 +31,15 @@ private Q_SLOTS:
 
 void BufferTest::simpleTest()
 {
-    QGst::BufferPtr buffer = QGst::Buffer::create(100000);
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
 
-    QCOMPARE(buffer->size(), (quint32) 100000);
+    QCOMPARE(buffer->size(), (quint32) 10);
     QVERIFY(buffer->data());
 }
 
 void BufferTest::capsTest()
 {
-    QGst::BufferPtr buffer = QGst::Buffer::create(100000);
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
@@ -53,7 +53,7 @@ void BufferTest::capsTest()
 
 void BufferTest::flagsTest()
 {
-    QGst::BufferPtr buffer = QGst::Buffer::create(100000);
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
     QGst::BufferFlags flags(QGst::BufferFlagReadOnly & QGst::BufferFlagDiscont);
     buffer->setFlags(flags);
 
@@ -66,7 +66,7 @@ void BufferTest::flagsTest()
 
 void BufferTest::copyTest()
 {
-    QGst::BufferPtr buffer = QGst::Buffer::create(100000);
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
     QGst::BufferFlags flags(QGst::BufferFlagReadOnly & QGst::BufferFlagDiscont);
     buffer->setFlags(flags);
 
