@@ -38,6 +38,10 @@ QtGStreamer requires the following software to be installed in order to build:
  * Flex <http://flex.sourceforge.net/>
  * Bison <http://www.gnu.org/software/bison/>
 
+In addition, if gcc is used as the compiler, libstdc++ version 4.5 or later is
+required at runtime. This is due to a bug in earlier versions of libstdc++ that
+sometimes makes dynamic_cast fail under conditions where it should not.
+
 2.2 Compiler
 ------------
 
