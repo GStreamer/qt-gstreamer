@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-set(QTGSTREAMER_VERSION 0.10.1)
+set(QTGSTREAMER_VERSION 0.10.1.1)
 
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
