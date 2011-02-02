@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <boost/type_traits.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <QtCore/QHash>
 
 namespace QGlib {
 
@@ -486,6 +487,13 @@ struct GetTypeImpl< RefPointer<T> >
     inline operator Type() { return GetType<T>(); }
 };
 
+/*! \relates QGlib::RefPointer */
+template <typename T>
+inline uint qHash(const RefPointer<T> & ptr)
+{
+    return qHash(static_cast<typename T::CType*>(ptr));
 }
+
+} //namespace QGlib
 
 #endif
