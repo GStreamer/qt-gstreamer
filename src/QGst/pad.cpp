@@ -95,6 +95,11 @@ bool Pad::isActive() const
     return gst_pad_is_active(object<GstPad>());
 }
 
+bool Pad::setActive(bool active)
+{
+    return gst_pad_set_active(object<GstPad>(), active);
+}
+
 bool Pad::isBlocked() const
 {
     return gst_pad_is_blocked(object<GstPad>());

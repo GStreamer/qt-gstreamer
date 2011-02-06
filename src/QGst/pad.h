@@ -55,6 +55,8 @@ public:
     bool setCaps(const CapsPtr & caps);
 
     bool isActive() const;
+    bool setActive(bool active);
+
     bool isBlocked() const;
     bool isBlocking() const;
     bool setBlocked(bool blocked);
