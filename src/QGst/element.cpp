@@ -78,6 +78,11 @@ bool Element::addPad(const PadPtr & pad)
     return gst_element_add_pad(object<GstElement>(), pad);
 }
 
+bool Element::removePad(const PadPtr & pad)
+{
+    return gst_element_remove_pad(object<GstElement>(), pad);
+}
+
 PadPtr Element::getStaticPad(const char *name)
 {
     GstPad *pad = gst_element_get_static_pad(object<GstElement>(), name);

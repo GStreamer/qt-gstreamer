@@ -44,6 +44,8 @@ public:
     bool setStateLocked(bool locked);
 
     bool addPad(const PadPtr & pad);
+    bool removePad(const PadPtr & pad);
+
     PadPtr getStaticPad(const char *name);
     PadPtr getRequestPad(const char *name);
     void releaseRequestPad(const PadPtr & pad);
