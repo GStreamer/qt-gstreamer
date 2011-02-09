@@ -17,7 +17,7 @@
 **
 ****************************************************************************/
 
-#include "qpaintervideosurface.h"
+#include "qmlpaintervideosurface.h"
 //#include <qpaintervideosurface_mac_p.h>
 
 #include <qmath.h>
@@ -33,14 +33,14 @@
 #include <QtDebug>
 QT_BEGIN_NAMESPACE
 
-QVideoSurfacePainter::~QVideoSurfacePainter()
+QmlVideoSurfacePainter::~QmlVideoSurfacePainter()
 {
 }
 
-class QVideoSurfaceGenericPainter : public QVideoSurfacePainter
+class QmlVideoSurfaceGenericPainter : public QmlVideoSurfacePainter
 {
 public:
-    QVideoSurfaceGenericPainter();
+    QmlVideoSurfaceGenericPainter();
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType) const;
@@ -66,7 +66,7 @@ private:
     QVideoSurfaceFormat::Direction m_scanLineDirection;
 };
 
-QVideoSurfaceGenericPainter::QVideoSurfaceGenericPainter()
+QmlVideoSurfaceGenericPainter::QmlVideoSurfaceGenericPainter()
     : m_imageFormat(QImage::Format_Invalid)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
 {
@@ -80,7 +80,7 @@ QVideoSurfaceGenericPainter::QVideoSurfaceGenericPainter()
         << QVideoFrame::Format_RGB565;
 }
 
-QList<QVideoFrame::PixelFormat> QVideoSurfaceGenericPainter::supportedPixelFormats(
+QList<QVideoFrame::PixelFormat> QmlVideoSurfaceGenericPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
   qDebug() << "GenericPainter::supportedPixelFormats";
@@ -94,7 +94,7 @@ QList<QVideoFrame::PixelFormat> QVideoSurfaceGenericPainter::supportedPixelForma
     return QList<QVideoFrame::PixelFormat>();
 }
 
-bool QVideoSurfaceGenericPainter::isFormatSupported(
+bool QmlVideoSurfaceGenericPainter::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *) const
 {
     switch (format.handleType()) {
@@ -109,7 +109,7 @@ bool QVideoSurfaceGenericPainter::isFormatSupported(
     return false;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::start(const QVideoSurfaceFormat &format)
+QAbstractVideoSurface::Error QmlVideoSurfaceGenericPainter::start(const QVideoSurfaceFormat &format)
 {
     m_frame = QVideoFrame();
     m_imageFormat = QVideoFrame::imageFormatFromPixelFormat(format.pixelFormat());
@@ -131,19 +131,19 @@ QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::start(const QVideoSurf
     return QAbstractVideoSurface::UnsupportedFormatError;
 }
 
-void QVideoSurfaceGenericPainter::stop()
+void QmlVideoSurfaceGenericPainter::stop()
 {
     m_frame = QVideoFrame();
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::setCurrentFrame(const QVideoFrame &frame)
+QAbstractVideoSurface::Error QmlVideoSurfaceGenericPainter::setCurrentFrame(const QVideoFrame &frame)
 {
     m_frame = frame;
 
     return QAbstractVideoSurface::NoError;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::paint(
+QAbstractVideoSurface::Error QmlVideoSurfaceGenericPainter::paint(
             const QRectF &target, QPainter *painter, const QRectF &source)
 {
     if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
@@ -177,7 +177,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::paint(
     return QAbstractVideoSurface::NoError;
 }
 
-void QVideoSurfaceGenericPainter::updateColors(int, int, int, int)
+void QmlVideoSurfaceGenericPainter::updateColors(int, int, int, int)
 {
 }
 
@@ -210,11 +210,11 @@ void QVideoSurfaceGenericPainter::updateColors(int, int, int, int)
 #  define GL_UNSIGNED_SHORT_5_6_5 33635
 #endif
 
-class QVideoSurfaceGLPainter : public QVideoSurfacePainter
+class QmlVideoSurfaceGLPainter : public QmlVideoSurfacePainter
 {
 public:
-    QVideoSurfaceGLPainter(QGLContext *context);
-    ~QVideoSurfaceGLPainter();
+    QmlVideoSurfaceGLPainter(QGLContext *context);
+    ~QmlVideoSurfaceGLPainter();
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType) const;
 
@@ -259,7 +259,7 @@ protected:
     bool m_yuv;
 };
 
-QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
+QmlVideoSurfaceGLPainter::QmlVideoSurfaceGLPainter(QGLContext *context)
     : m_context(context)
     , m_handleType(QAbstractVideoBuffer::NoHandle)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
@@ -275,16 +275,16 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
 #endif
 }
 
-QVideoSurfaceGLPainter::~QVideoSurfaceGLPainter()
+QmlVideoSurfaceGLPainter::~QmlVideoSurfaceGLPainter()
 {
 }
 
-void QVideoSurfaceGLPainter::viewportDestroyed()
+void QmlVideoSurfaceGLPainter::viewportDestroyed()
 {
     m_context = 0;
 }
 
-QList<QVideoFrame::PixelFormat> QVideoSurfaceGLPainter::supportedPixelFormats(
+QList<QVideoFrame::PixelFormat> QmlVideoSurfaceGLPainter::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
   qDebug() << "GLPainter::supportedPixelFormats";
@@ -300,7 +300,7 @@ QList<QVideoFrame::PixelFormat> QVideoSurfaceGLPainter::supportedPixelFormats(
     return QList<QVideoFrame::PixelFormat>();
 }
 
-bool QVideoSurfaceGLPainter::isFormatSupported(
+bool QmlVideoSurfaceGLPainter::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *) const
 {
     if (format.frameSize().isEmpty()) {
@@ -319,7 +319,7 @@ bool QVideoSurfaceGLPainter::isFormatSupported(
     return false;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVideoFrame &frame)
+QAbstractVideoSurface::Error QmlVideoSurfaceGLPainter::setCurrentFrame(const QVideoFrame &frame)
 {
     m_frame = frame;
 
@@ -353,7 +353,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
     return QAbstractVideoSurface::NoError;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGLPainter::paint(
+QAbstractVideoSurface::Error QmlVideoSurfaceGLPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
     if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
@@ -366,7 +366,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::paint(
     return QAbstractVideoSurface::NoError;
 }
 
-void QVideoSurfaceGLPainter::updateColors(int brightness, int contrast, int hue, int saturation)
+void QmlVideoSurfaceGLPainter::updateColors(int brightness, int contrast, int hue, int saturation)
 {
     const qreal b = brightness / 200.0;
     const qreal c = contrast / 100.0 + 1.0;
@@ -449,7 +449,7 @@ void QVideoSurfaceGLPainter::updateColors(int brightness, int contrast, int hue,
     }
 }
 
-void QVideoSurfaceGLPainter::initRgbTextureInfo(
+void QmlVideoSurfaceGLPainter::initRgbTextureInfo(
         GLenum internalFormat, GLuint format, GLenum type, const QSize &size)
 {
     m_yuv = false;
@@ -462,7 +462,7 @@ void QVideoSurfaceGLPainter::initRgbTextureInfo(
     m_textureOffsets[0] = 0;
 }
 
-void QVideoSurfaceGLPainter::initYuv420PTextureInfo(const QSize &size)
+void QmlVideoSurfaceGLPainter::initYuv420PTextureInfo(const QSize &size)
 {
     int bytesPerLine = (size.width() + 3) & ~3;
     int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
@@ -483,7 +483,7 @@ void QVideoSurfaceGLPainter::initYuv420PTextureInfo(const QSize &size)
     m_textureOffsets[2] = bytesPerLine * size.height() + bytesPerLine2 * size.height()/2;
 }
 
-void QVideoSurfaceGLPainter::initYv12TextureInfo(const QSize &size)
+void QmlVideoSurfaceGLPainter::initYv12TextureInfo(const QSize &size)
 {
     int bytesPerLine = (size.width() + 3) & ~3;
     int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
@@ -594,7 +594,7 @@ static const char *qt_arbfp_ayuvShaderProgram =
     "TEX result.color.w, fragment.texcoord[0], texture, 2D;\n"
     "END";
 
-class QVideoSurfaceArbFpPainter : public QVideoSurfaceGLPainter
+class QVideoSurfaceArbFpPainter : public QmlVideoSurfaceGLPainter
 {
 public:
     QVideoSurfaceArbFpPainter(QGLContext *context);
@@ -625,7 +625,7 @@ private:
 };
 
 QVideoSurfaceArbFpPainter::QVideoSurfaceArbFpPainter(QGLContext *context)
-    : QVideoSurfaceGLPainter(context)
+    : QmlVideoSurfaceGLPainter(context)
     , m_programId(0)
 {
     qDebug() << "ArbFpPainter";
@@ -736,7 +736,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
 
         GLenum glError = glGetError();
         if (glError != GL_NO_ERROR) {
-            qWarning("QPainterVideoSurface: ARBfb Shader allocation error %x", int(glError));
+            qWarning("QmlPainterVideoSurface: ARBfb Shader allocation error %x", int(glError));
             m_textureCount = 0;
             m_programId = 0;
 
@@ -752,7 +752,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
             if ((glError = glGetError()) != GL_NO_ERROR) {
                 const GLubyte* errorString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
 
-                qWarning("QPainterVideoSurface: ARBfp Shader compile error %x, %s",
+                qWarning("QmlPainterVideoSurface: ARBfp Shader compile error %x, %s",
                          int(glError),
                          reinterpret_cast<const char *>(errorString));
                 glDeleteProgramsARB(1, &m_programId);
@@ -891,7 +891,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         return QAbstractVideoSurface::NoError;
     }
 
-    return QVideoSurfaceGLPainter::paint(target, painter, source);
+    return QmlVideoSurfaceGLPainter::paint(target, painter, source);
 }
 
 #endif
@@ -982,10 +982,10 @@ static const char *qt_glsl_ayuvShaderProgram =
         "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).r);\n"
         "}\n";
 
-class QVideoSurfaceGlslPainter : public QVideoSurfaceGLPainter
+class QmlVideoSurfaceGlslPainter : public QmlVideoSurfaceGLPainter
 {
 public:
-    QVideoSurfaceGlslPainter(QGLContext *context);
+    QmlVideoSurfaceGlslPainter(QGLContext *context);
 
     QAbstractVideoSurface::Error start(const QVideoSurfaceFormat &format);
     void stop();
@@ -998,8 +998,8 @@ private:
     QSize m_frameSize;
 };
 
-QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
-    : QVideoSurfaceGLPainter(context)
+QmlVideoSurfaceGlslPainter::QmlVideoSurfaceGlslPainter(QGLContext *context)
+    : QmlVideoSurfaceGLPainter(context)
     , m_program(context)
 {
     qDebug() << "GlslPainter";
@@ -1024,7 +1024,7 @@ QVideoSurfaceGlslPainter::QVideoSurfaceGlslPainter(QGLContext *context)
             << QVideoFrame::Format_ARGB32;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurfaceFormat &format)
+QAbstractVideoSurface::Error QmlVideoSurfaceGlslPainter::start(const QVideoSurfaceFormat &format)
 {
     Q_ASSERT(m_textureCount == 0);
 
@@ -1102,15 +1102,15 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
     if (!fragmentProgram) {
         error = QAbstractVideoSurface::UnsupportedFormatError;
     } else if (!m_program.addShaderFromSourceCode(QGLShader::Vertex, qt_glsl_vertexShaderProgram)) {
-        qWarning("QPainterVideoSurface: Vertex shader compile error %s",
+        qWarning("QmlPainterVideoSurface: Vertex shader compile error %s",
                  qPrintable(m_program.log()));
         error = QAbstractVideoSurface::ResourceError;
     } else if (!m_program.addShaderFromSourceCode(QGLShader::Fragment, fragmentProgram)) {
-        qWarning("QPainterVideoSurface: Shader compile error %s", qPrintable(m_program.log()));
+        qWarning("QmlPainterVideoSurface: Shader compile error %s", qPrintable(m_program.log()));
         error = QAbstractVideoSurface::ResourceError;
         m_program.removeAllShaders();
     } else if(!m_program.link()) {
-        qWarning("QPainterVideoSurface: Shader link error %s", qPrintable(m_program.log()));
+        qWarning("QmlPainterVideoSurface: Shader link error %s", qPrintable(m_program.log()));
         m_program.removeAllShaders();
         error = QAbstractVideoSurface::ResourceError;
     } else {
@@ -1126,7 +1126,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
     return error;
 }
 
-void QVideoSurfaceGlslPainter::stop()
+void QmlVideoSurfaceGlslPainter::stop()
 {
     if (m_context) {
         m_context->makeCurrent();
@@ -1141,7 +1141,7 @@ void QVideoSurfaceGlslPainter::stop()
     m_handleType = QAbstractVideoBuffer::NoHandle;
 }
 
-QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
+QAbstractVideoSurface::Error QmlVideoSurfaceGlslPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
     const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
@@ -1259,19 +1259,19 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         return QAbstractVideoSurface::NoError;
     }
 
-    return QVideoSurfaceGLPainter::paint(target, painter, source);
+    return QmlVideoSurfaceGLPainter::paint(target, painter, source);
 }
 
 #endif
 
 /*!
-    \class QPainterVideoSurface
+    \class QmlPainterVideoSurface
     \internal
 */
 
 /*!
 */
-QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
+QmlPainterVideoSurface::QmlPainterVideoSurface(QObject *parent)
     : QAbstractVideoSurface(parent)
     , m_painter(0)
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
@@ -1294,7 +1294,7 @@ QPainterVideoSurface::QPainterVideoSurface(QObject *parent)
 
 /*!
 */
-QPainterVideoSurface::~QPainterVideoSurface()
+QmlPainterVideoSurface::~QmlPainterVideoSurface()
 {
     if (isActive())
         m_painter->stop();
@@ -1304,29 +1304,29 @@ QPainterVideoSurface::~QPainterVideoSurface()
 
 /*!
 */
-QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
+QList<QVideoFrame::PixelFormat> QmlPainterVideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
     if (!m_painter)
-        const_cast<QPainterVideoSurface *>(this)->createPainter();
+        const_cast<QmlPainterVideoSurface *>(this)->createPainter();
 
     return m_painter->supportedPixelFormats(handleType);
 }
 
 /*!
 */
-bool QPainterVideoSurface::isFormatSupported(
+bool QmlPainterVideoSurface::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const
 {
     if (!m_painter)
-        const_cast<QPainterVideoSurface *>(this)->createPainter();
+        const_cast<QmlPainterVideoSurface *>(this)->createPainter();
 
     return m_painter->isFormatSupported(format, similar);
 }
 
 /*!
 */
-bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
+bool QmlPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 {
     if (isActive())
         m_painter->stop();
@@ -1359,7 +1359,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 
 /*!
 */
-void QPainterVideoSurface::stop()
+void QmlPainterVideoSurface::stop()
 {
     if (isActive()) {
         m_painter->stop();
@@ -1371,7 +1371,7 @@ void QPainterVideoSurface::stop()
 
 /*!
 */
-bool QPainterVideoSurface::present(const QVideoFrame &frame)
+bool QmlPainterVideoSurface::present(const QVideoFrame &frame)
 {
     if (!m_ready) {
         if (!isActive())
@@ -1401,14 +1401,14 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
 
 /*!
 */
-int QPainterVideoSurface::brightness() const
+int QmlPainterVideoSurface::brightness() const
 {
     return m_brightness;
 }
 
 /*!
 */
-void QPainterVideoSurface::setBrightness(int brightness)
+void QmlPainterVideoSurface::setBrightness(int brightness)
 {
     m_brightness = brightness;
 
@@ -1417,14 +1417,14 @@ void QPainterVideoSurface::setBrightness(int brightness)
 
 /*!
 */
-int QPainterVideoSurface::contrast() const
+int QmlPainterVideoSurface::contrast() const
 {
     return m_contrast;
 }
 
 /*!
 */
-void QPainterVideoSurface::setContrast(int contrast)
+void QmlPainterVideoSurface::setContrast(int contrast)
 {
     m_contrast = contrast;
 
@@ -1433,14 +1433,14 @@ void QPainterVideoSurface::setContrast(int contrast)
 
 /*!
 */
-int QPainterVideoSurface::hue() const
+int QmlPainterVideoSurface::hue() const
 {
     return m_hue;
 }
 
 /*!
 */
-void QPainterVideoSurface::setHue(int hue)
+void QmlPainterVideoSurface::setHue(int hue)
 {
     m_hue = hue;
 
@@ -1449,14 +1449,14 @@ void QPainterVideoSurface::setHue(int hue)
 
 /*!
 */
-int QPainterVideoSurface::saturation() const
+int QmlPainterVideoSurface::saturation() const
 {
     return m_saturation;
 }
 
 /*!
 */
-void QPainterVideoSurface::setSaturation(int saturation)
+void QmlPainterVideoSurface::setSaturation(int saturation)
 {
     m_saturation = saturation;
 
@@ -1465,21 +1465,21 @@ void QPainterVideoSurface::setSaturation(int saturation)
 
 /*!
 */
-bool QPainterVideoSurface::isReady() const
+bool QmlPainterVideoSurface::isReady() const
 {
     return m_ready;
 }
 
 /*!
 */
-void QPainterVideoSurface::setReady(bool ready)
+void QmlPainterVideoSurface::setReady(bool ready)
 {
     m_ready = ready;
 }
 
 /*!
 */
-void QPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const QRectF &source)
+void QmlPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const QRectF &source)
 {
     if (!isActive()) {
         painter->fillRect(target, QBrush(Qt::black));
@@ -1506,23 +1506,23 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const 
 }
 
 /*!
-    \fn QPainterVideoSurface::frameChanged()
+    \fn QmlPainterVideoSurface::frameChanged()
 */
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 
 /*!
 */
-const QGLContext *QPainterVideoSurface::glContext() const
+const QGLContext *QmlPainterVideoSurface::glContext() const
 {
     return m_glContext;
 }
 
 /*!
 */
-void QPainterVideoSurface::setGLContext(QGLContext *context)
+void QmlPainterVideoSurface::setGLContext(QGLContext *context)
 {
-    qDebug() << "QPainterVideoSurface::setGLContext context=" 
+    qDebug() << "QmlPainterVideoSurface::setGLContext context="
 	     << context
 	     << " m_glContext=" << m_glContext
 	     << " m_painter=" << m_painter;
@@ -1557,15 +1557,15 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
 	     << " m_shaderType=" << m_shaderType
 	     << " m_shaderTypes=" << m_shaderTypes;
 
-    if (supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
-	setShaderType(QPainterVideoSurface::GlslShader);
+    if (supportedShaderTypes() & QmlPainterVideoSurface::GlslShader) {
+        setShaderType(QmlPainterVideoSurface::GlslShader);
     } else {
-	setShaderType(QPainterVideoSurface::FragmentProgramShader);
+        setShaderType(QmlPainterVideoSurface::FragmentProgramShader);
     }
 }
 
 /*!
-    \enum QPainterVideoSurface::ShaderType
+    \enum QmlPainterVideoSurface::ShaderType
 
     \value NoShaders
     \value FragmentProgramShader
@@ -1573,28 +1573,28 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
 */
 
 /*!
-    \typedef QPainterVideoSurface::ShaderTypes
+    \typedef QmlPainterVideoSurface::ShaderTypes
 */
 
 /*!
 */
-QPainterVideoSurface::ShaderTypes QPainterVideoSurface::supportedShaderTypes() const
+QmlPainterVideoSurface::ShaderTypes QmlPainterVideoSurface::supportedShaderTypes() const
 {
     return m_shaderTypes;
 }
 
 /*!
 */
-QPainterVideoSurface::ShaderType QPainterVideoSurface::shaderType() const
+QmlPainterVideoSurface::ShaderType QmlPainterVideoSurface::shaderType() const
 {
     return m_shaderType;
 }
 
 /*!
 */
-void QPainterVideoSurface::setShaderType(ShaderType type)
+void QmlPainterVideoSurface::setShaderType(ShaderType type)
 {
-    qDebug() << "QPainterVideoSurface::setShaderType"
+    qDebug() << "QmlPainterVideoSurface::setShaderType"
 	     << " type=" << type
 	     << " m_shaderType" << m_shaderType
 	     << " m_shaderTypes" << m_shaderTypes;
@@ -1626,7 +1626,7 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
 
 #endif
 
-void QPainterVideoSurface::viewportDestroyed()
+void QmlPainterVideoSurface::viewportDestroyed()
 {
     if (m_painter) {
         m_painter->viewportDestroyed();
@@ -1638,9 +1638,9 @@ void QPainterVideoSurface::viewportDestroyed()
     }
 }
 
-void QPainterVideoSurface::createPainter()
+void QmlPainterVideoSurface::createPainter()
 {
-    qDebug() << "QPainterVideoSurface::createPainter "
+    qDebug() << "QmlPainterVideoSurface::createPainter "
 	     << " m_glContext=" << m_glContext
 	     << " m_painter=" << m_painter;
 
@@ -1666,18 +1666,18 @@ void QPainterVideoSurface::createPainter()
     case GlslShader:
         Q_ASSERT(m_glContext);
         m_glContext->makeCurrent();
-        m_painter = new QVideoSurfaceGlslPainter(m_glContext);
+        m_painter = new QmlVideoSurfaceGlslPainter(m_glContext);
         break;
     default:
-        m_painter = new QVideoSurfaceGenericPainter;
+        m_painter = new QmlVideoSurfaceGenericPainter;
         break;
     }
 #else
-    m_painter = new QVideoSurfaceGenericPainter;
+    m_painter = new QmlVideoSurfaceGenericPainter;
 #endif
 }
 
-//#include "moc_qpaintervideosurface_p.cpp"
+//#include "moc_qmlpaintervideosurface_p.cpp"
 QT_END_NAMESPACE
 
 

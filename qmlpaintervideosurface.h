@@ -47,10 +47,10 @@ QT_USE_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 
-class QVideoSurfacePainter
+class QmlVideoSurfacePainter
 {
 public:
-    virtual ~QVideoSurfacePainter();
+    virtual ~QmlVideoSurfacePainter();
 
     virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType) const = 0;
@@ -71,12 +71,12 @@ public:
 };
 
 
-class QM_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
+class QM_AUTOTEST_EXPORT QmlPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
 public:
-    explicit QPainterVideoSurface(QObject *parent = 0);
-    ~QPainterVideoSurface();
+    explicit QmlPainterVideoSurface(QObject *parent = 0);
+    ~QmlPainterVideoSurface();
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
@@ -134,7 +134,7 @@ Q_SIGNALS:
 private:
     void createPainter();
 
-    QVideoSurfacePainter *m_painter;
+    QmlVideoSurfacePainter *m_painter;
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     QGLContext *m_glContext;
     ShaderTypes m_shaderTypes;
@@ -153,7 +153,7 @@ private:
 };
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QmlPainterVideoSurface::ShaderTypes)
 #endif
 
 QT_END_NAMESPACE

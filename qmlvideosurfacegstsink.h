@@ -36,15 +36,15 @@ class QAbstractVideoSurface;
 QT_END_NAMESPACE
 
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-class QGstXvImageBuffer;
-class QGstXvImageBufferPool;
+class QmlGstXvImageBuffer;
+class QmlGstXvImageBufferPool;
 #endif
 
-class QVideoSurfaceGstDelegate : public QObject
+class QmlVideoSurfaceGstDelegate : public QObject
 {
     Q_OBJECT
 public:
-    QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface);
+    QmlVideoSurfaceGstDelegate(QAbstractVideoSurface *surface);
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
@@ -79,12 +79,12 @@ private:
     bool m_started;
 };
 
-class QVideoSurfaceGstSink
+class QmlVideoSurfaceGstSink
 {
 public:
     GstVideoSink parent;
 
-    static QVideoSurfaceGstSink *createSink(QAbstractVideoSurface *surface);
+    static QmlVideoSurfaceGstSink *createSink(QAbstractVideoSurface *surface);
     static QVideoSurfaceFormat formatForCaps(GstCaps *caps, int *bytesPerLine = 0);
 
 private:
@@ -113,10 +113,10 @@ private:
     static GstFlowReturn render(GstBaseSink *sink, GstBuffer *buffer);
 
 private:
-    QVideoSurfaceGstDelegate *delegate;
+    QmlVideoSurfaceGstDelegate *delegate;
 
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    QGstXvImageBufferPool *pool;
+    QmlGstXvImageBufferPool *pool;
 #endif
 
     GstCaps *lastRequestedCaps;
@@ -125,7 +125,7 @@ private:
 };
 
 
-class QVideoSurfaceGstSinkClass
+class QmlVideoSurfaceGstSinkClass
 {
 public:
     GstVideoSinkClass parent_class;
