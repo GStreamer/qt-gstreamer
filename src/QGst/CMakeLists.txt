@@ -84,6 +84,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     Ui/global.h
     Ui/videowidget.h    Ui/VideoWidget
 
+    Utils/global.h
     Utils/applicationsink.h     Utils/ApplicationSink
     Utils/applicationsource.h   Utils/ApplicationSource
 )
