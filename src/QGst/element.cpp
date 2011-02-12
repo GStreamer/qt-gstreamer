@@ -124,12 +124,28 @@ bool Element::link(const ElementPtr & dest, const CapsPtr & filter)
 
 void Element::unlink(const char *srcPadName, const ElementPtr & dest, const char *sinkPadName)
 {
+    //FIXME-0.11 This is not entirely correct. Unfortunately I didn't notice
+    //that gst_element_unlink_pads requires both pad names when I wrote this
+    //function, and it cannot be changed now. For the moment, if the sink
+    //pad name is not given, we will assume it is "sink".
+    if (!sinkPadName) {
+        sinkPadName = "sink";
+    }
+
     gst_element_unlink_pads(object<GstElement>(), srcPadName, dest, sinkPadName);
 }
 
 void Element::unlink(const ElementPtr & dest, const char *sinkPadName)
 {
-    unlink(NULL, dest, sinkPadName);
+    if (sinkPadName) {
+        //FIXME-0.11 This is not entirely correct. Unfortunately I didn't notice
+        //that gst_element_unlink_pads requires both pad names when I wrote this
+        //function, and it cannot be changed now. For the moment, if the source
+        //pad name is not given, we will assume it is "src".
+        unlink("src", dest, sinkPadName);
+    } else {
+        gst_element_unlink(object<GstElement>(), dest);
+    }
 }
 
 bool Element::query(const QueryPtr & query)

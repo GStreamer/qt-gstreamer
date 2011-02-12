@@ -61,6 +61,8 @@ public:
               const CapsPtr & filter = CapsPtr());
     bool link(const ElementPtr & dest, const CapsPtr & filter = CapsPtr());
 
+    //FIXME-0.11 Remove the default NULL parameter from the first version
+    //and remove entirely sinkPadName from the second version
     void unlink(const char *srcPadName, const ElementPtr & dest,
                 const char *sinkPadName = NULL);
     void unlink(const ElementPtr & dest, const char *sinkPadName = NULL);
