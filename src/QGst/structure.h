@@ -101,7 +101,7 @@ inline void Structure::setValue(const char *fieldName, const T & value)
 }
 
 //static
-inline Structure fromString(const QString & str)
+inline Structure Structure::fromString(const QString & str)
 {
     return fromString(str.toUtf8().constData());
 }
