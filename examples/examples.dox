@@ -69,3 +69,13 @@
  * \li How to handle bus messages.
  * \li Others...
  */
+
+/*! \example voip/main.cpp
+ * This is a simple VoIP application that takes audio from a microphone and
+ * video from the video test source, encodes them with speex and h264 respectively
+ * and sends them to the other side using RTP.
+ *
+ * The same application is both a client and a server. To make a call between them,
+ * you need to configure the destination ports of the one side to be the source
+ * ports of the other and vice versa.
+ */
