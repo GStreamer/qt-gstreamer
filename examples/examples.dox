@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*! \example player/main.cpp
+/*! \example examples/player/main.cpp
  * This is an example audio/video player using QtGStreamer.
  *
  * In this example, the GStreamer playbin2 element is used to perform most
@@ -25,21 +25,21 @@
  * and duration of the stream, performing seeking, etc...
  *
  * player.h:
- * \include player/player.h
+ * \include examples/player/player.h
  *
  * player.cpp:
- * \include player/player.cpp
+ * \include examples/player/player.cpp
  *
  * mediaapp.h:
- * \include player/mediaapp.h
+ * \include examples/player/mediaapp.h
  *
  * mediaapp.cpp:
- * \include player/mediaapp.cpp
+ * \include examples/player/mediaapp.cpp
  *
  * main.cpp:
  */
 
-/*! \example appsink-src/main.cpp
+/*! \example examples/appsink-src/main.cpp
  * This example demonstrates how to use QGst::Utils::ApplicationSource and
  * QGst::Utils::ApplicationSink to create a custom source and sink respectively.
  *
@@ -52,7 +52,7 @@
  * audio player.
  */
 
-/*! \example recorder/main.cpp
+/*! \example examples/recorder/main.cpp
  * This is a recording application that takes audio from a microphone
  * and video from either a camera or the X11 screen, encodes them with
  * theora and speex and saves the result in a file.
@@ -70,7 +70,7 @@
  * \li Others...
  */
 
-/*! \example voip/main.cpp
+/*! \example examples/voip/main.cpp
  * This is a simple VoIP application that takes audio from a microphone and
  * video from the video test source, encodes them with speex and h264 respectively
  * and sends them to the other side using RTP.
