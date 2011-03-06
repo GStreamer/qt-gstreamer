@@ -202,4 +202,7 @@
  * the GValues that the signal provides to the C++ types that the slot expects.
  * This marshaller and the structure holding the receiver & slot are then attached on
  * the data of a GClosure and this GClosure is connected to the signal.
+ *
+ * \section wrap_design Wrapping System Design
+ * \include docs/design/wrap.txt
  */
