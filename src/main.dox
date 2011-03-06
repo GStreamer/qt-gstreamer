@@ -167,16 +167,12 @@
  * in contributing to the library itself or who are just interesting in learning how
  * some things work.
  *
- * \section connect_design Connect Design
- * connect() is a template method. When it is used, it takes the arguments of the given
- * slot and instantiates a template marshaller that is responsible for converting
- * the GValues that the signal provides to the C++ types that the slot expects.
- * This marshaller and the structure holding the receiver & slot are then attached on
- * the data of a GClosure and this GClosure is connected to the signal.
- *
  * \section wrap_design Wrapping System Design
  * \include docs/design/wrap.txt
  *
  * \section value_design Value Design
  * \include docs/design/gvalue.txt
+ *
+ * \section connect_design Connect Design
+ * \include docs/design/connect.txt
  */
