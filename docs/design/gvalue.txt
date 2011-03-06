@@ -1,0 +1,27 @@
+What is interesting about QGlib::Value is how its set/get methods handle all possible
+kinds of data in a unified way and call the appropriate g(st)_value_set/get_* methods
+internally. This is handled like this: Every type passed to set/get is converted into
+a void* and then it is passed to setData/getData, which use the GType of this type to
+determine if it can be directly assigned to the GValue or if it needs conversion.
+If it can be directly assigned, a dispatcher that holds set/get methods for the various
+GTypes is used to get the appropriate set/get method that knows how to convert void* back
+to the original type and handle it. A method (Value::registerValueVTable()) is
+provided to register additional such methods from client code, if necessary.
+If a conversion is required, it is handled by g_value_transform. This of course means
+that an intermediate GValue that holds the given GType is created and transformed
+accordingly.
+
+Between Value::set/get and Value::setData/getData, there is an intermediate layer,
+struct ValueImpl<T>. This struct provides the actual implementation of set() and get().
+This is provided as an external template, so that it is possible to specialize it for
+specific C++ types that need special handling. Examples include RefPointer<T>, QFlags<T>,
+the various string types (internally, the dispatcher's set/get methods only handle QByteArray
+for Type::String) and others. This is also useful to prevent a certain C++ type from
+being used with Value, if necessary (for example, get<const char*>() is disabled and
+will result in compilation error).
+
+One more thing to note here is that Value::setData/getData are implemented to throw exceptions
+when something goes wrong. These exceptions are later catched in Value::set/get, so that users
+are not faced with exceptions, however, they are used internally from the signals/slots code
+to handle errors and show friendlier error messages. Because Value::set/get catch these
+exceptions, the signals/slots code uses directly ValueImpl<T>.
