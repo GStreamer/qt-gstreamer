@@ -27,6 +27,7 @@
 #include <QGst/Query>
 #include <QGst/ClockTime>
 #include <QGst/Event>
+#include <QGst/StreamVolume>
 
 Player::Player(QWidget *parent)
     : QGst::Ui::VideoWidget(parent)
@@ -95,6 +96,33 @@ void Player::setPosition(const QTime & pos)
     );
 
     m_pipeline->sendEvent(evt);
+}
+
+int Player::volume() const
+{
+    if (m_pipeline) {
+        QGst::StreamVolumePtr svp =
+            m_pipeline.dynamicCast<QGst::StreamVolume>();
+
+        if (svp) {
+            return svp->volume(QGst::StreamVolumeFormatCubic) * 10;
+        }
+    }
+
+    return 0;
+}
+
+
+void Player::setVolume(int volume)
+{
+    if (m_pipeline) {
+        QGst::StreamVolumePtr svp =
+            m_pipeline.dynamicCast<QGst::StreamVolume>();
+
+        if(svp) {
+            svp->setVolume((double)volume / 10, QGst::StreamVolumeFormatCubic);
+        }
+    }
 }
 
 QTime Player::length() const

@@ -67,7 +67,9 @@ private:
     QToolButton *m_pauseButton;
     QToolButton *m_stopButton;
     QSlider *m_positionSlider;
+    QSlider *m_volumeSlider;
     QLabel *m_positionLabel;
+    QLabel *m_volumeLabel;
     QTimer m_fullScreenTimer;
 };
 

@@ -99,6 +99,9 @@ void MediaApp::onStateChanged()
     m_pauseButton->setEnabled(newState == QGst::StatePlaying);
     m_stopButton->setEnabled(newState != QGst::StateNull);
     m_positionSlider->setEnabled(newState != QGst::StateNull);
+    m_volumeSlider->setEnabled(newState != QGst::StateNull);
+    m_volumeLabel->setEnabled(newState != QGst::StateNull);
+    m_volumeSlider->setValue(m_player->volume());
 
     //if we are in Null state, call onPositionChanged() to restore
     //the position of the slider and the text on the label
@@ -155,6 +158,8 @@ void MediaApp::showControls(bool show)
     m_stopButton->setVisible(show);
     m_fullScreenButton->setVisible(show);
     m_positionSlider->setVisible(show);
+    m_volumeSlider->setVisible(show);
+    m_volumeLabel->setVisible(show);
     m_positionLabel->setVisible(show);
 }
 
@@ -193,6 +198,14 @@ void MediaApp::createUI(QBoxLayout *appLayout)
 
     connect(m_positionSlider, SIGNAL(sliderMoved(int)), this, SLOT(setPosition(int)));
 
+    m_volumeSlider = new QSlider(Qt::Horizontal);
+    m_volumeSlider->setTickPosition(QSlider::TicksLeft);
+    m_volumeSlider->setTickInterval(2);
+    m_volumeSlider->setMaximum(10);
+    m_volumeSlider->setMaximumSize(64,32);
+
+    connect(m_volumeSlider, SIGNAL(sliderMoved(int)), m_player, SLOT(setVolume(int)));
+
     QGridLayout *posLayout = new QGridLayout;
     posLayout->addWidget(m_positionLabel, 1, 0);
     posLayout->addWidget(m_positionSlider, 1, 1, 1, 2);
@@ -215,8 +228,15 @@ void MediaApp::createUI(QBoxLayout *appLayout)
 
     m_fullScreenButton = initButton(QStyle::SP_TitleBarMaxButton, tr("Fullscreen"),
                                     this, SLOT(toggleFullScreen()), btnLayout);
-
     btnLayout->addStretch();
+
+    m_volumeLabel = new QLabel();
+    m_volumeLabel->setPixmap(
+        style()->standardIcon(QStyle::SP_MediaVolume).pixmap(QSize(32, 32),
+                QIcon::Normal, QIcon::On));
+
+    btnLayout->addWidget(m_volumeLabel);
+    btnLayout->addWidget(m_volumeSlider);
     appLayout->addLayout(btnLayout);
 }
 

@@ -35,6 +35,7 @@ public:
 
     QTime position() const;
     void setPosition(const QTime & pos);
+    int volume() const;
 
     QTime length() const;
     QGst::State state() const;
@@ -43,6 +44,7 @@ public Q_SLOTS:
     void play();
     void pause();
     void stop();
+    void setVolume(int volume);
 
 Q_SIGNALS:
     void positionChanged();
