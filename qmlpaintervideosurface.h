@@ -104,6 +104,9 @@ public:
     bool isReady() const;
     void setReady(bool ready);
 
+    bool isPlaying() const;
+    void setPlaying(bool playing);
+
     void paint(QPainter *painter, const QRectF &target, const QRectF &source = QRectF(0, 0, 1, 1));
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
@@ -150,6 +153,7 @@ private:
     QRect m_sourceRect;
     bool m_colorsDirty;
     bool m_ready;
+    bool m_playing;
 };
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)

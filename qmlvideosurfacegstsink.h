@@ -56,6 +56,8 @@ public:
 
     bool isActive();
 
+    void setPlaying(bool playing);
+
     GstFlowReturn render(GstBuffer *buffer);
 
 private slots:

@@ -1286,6 +1286,7 @@ QmlPainterVideoSurface::QmlPainterVideoSurface(QObject *parent)
     , m_pixelFormat(QVideoFrame::Format_Invalid)
     , m_colorsDirty(true)
     , m_ready(false)
+    , m_playing(false)
 {
 #if !defined(QT_NO_OPENGL)
     setGLContext(const_cast<QGLContext *> (QGLContext::currentContext()));
@@ -1479,9 +1480,23 @@ void QmlPainterVideoSurface::setReady(bool ready)
 
 /*!
 */
+bool QmlPainterVideoSurface::isPlaying() const
+{
+    return m_playing;
+}
+
+/*!
+*/
+void QmlPainterVideoSurface::setPlaying(bool playing)
+{
+    m_playing = playing;
+}
+
+/*!
+*/
 void QmlPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const QRectF &source)
 {
-    if (!isActive()) {
+    if (!isActive() || !isPlaying()) {
         painter->fillRect(target, QBrush(Qt::black));
     } else {
         if (m_colorsDirty) {

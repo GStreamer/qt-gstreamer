@@ -18,6 +18,7 @@
 ****************************************************************************/
 
 #include <qabstractvideosurface.h>
+#include <qmlpaintervideosurface.h>
 #include <qvideoframe.h>
 #include <QDebug>
 #include <QMap>
@@ -116,6 +117,15 @@ bool QmlVideoSurfaceGstDelegate::isActive()
 {
     QMutexLocker locker(&m_mutex);
     return !m_surface.isNull() && m_surface->isActive();
+}
+
+void QmlVideoSurfaceGstDelegate::setPlaying(bool playing)
+{
+    if (!m_surface.isNull()) {
+        QmlPainterVideoSurface *surface = qobject_cast<QmlPainterVideoSurface*>(m_surface.data());
+        if (surface)
+            surface->setPlaying(playing);
+    }
 }
 
 GstFlowReturn QmlVideoSurfaceGstDelegate::render(GstBuffer *buffer)
@@ -428,7 +438,20 @@ void QmlVideoSurfaceGstSink::finalize(GObject *object)
 GstStateChangeReturn QmlVideoSurfaceGstSink::change_state(
         GstElement *element, GstStateChange transition)
 {
-    Q_UNUSED(element);
+    VO_SINK(element);
+
+    if (sink->delegate != NULL) {
+        switch (transition) {
+          case GST_STATE_CHANGE_READY_TO_PAUSED:
+            sink->delegate->setPlaying(true);
+            break;
+          case GST_STATE_CHANGE_PAUSED_TO_READY:
+            sink->delegate->setPlaying(false);
+            break;
+          default:
+            break;
+        }
+    }
 
     return GST_ELEMENT_CLASS(sink_parent_class)->change_state(
             element, transition);
