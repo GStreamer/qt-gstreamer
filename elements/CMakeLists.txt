@@ -16,5 +16,5 @@ if (GSTREAMER_BASE_LIBRARY_FOUND AND GSTREAMER_VIDEO_LIBRARY_FOUND)
     target_link_libraries(gstqwidgetvideosink ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY}
                                               ${GOBJECT_LIBRARIES} ${GSTREAMER_LIBRARY}
                                               ${GSTREAMER_BASE_LIBRARY} ${GSTREAMER_VIDEO_LIBRARY})
-    install(TARGETS gstqwidgetvideosink DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/gstreamer-0.10)
+    install(TARGETS gstqwidgetvideosink DESTINATION ${PLUGINS_INSTALL_DIR})
 endif()

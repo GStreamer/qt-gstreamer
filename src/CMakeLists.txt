@@ -1,6 +1,3 @@
-# Common variables
-set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib)
-set(INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/QtGStreamer)
 set(EXPORT_TARGET_SET QtGStreamerTargets)
 
 if (QTGSTREAMER_STATIC)

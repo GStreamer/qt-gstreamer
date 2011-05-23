@@ -8,6 +8,7 @@ set(QTGSTREAMER_VERSION 0.10.1.1)
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
+option(USE_GST_PLUGIN_DIR "Install plugins together with the other gstreamer plugins" ON)
 
 include(MacroLogFeature)
 
@@ -61,6 +62,15 @@ macro_log_feature(BISON_FOUND "Bison" "Required to build codegen, a helper code 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat-security -Wundef -Wpointer-arith -Wcast-align -fno-common")
 endif ()
+
+set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE STRING "Destination directory for libraries")
+set(INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/QtGStreamer)
+
+if (USE_GST_PLUGIN_DIR)
+    set(PLUGINS_INSTALL_DIR ${GSTREAMER_PLUGIN_DIR})
+else()
+    set(PLUGINS_INSTALL_DIR ${LIB_INSTALL_DIR}/gstreamer-0.10)
+endif()
 
 add_subdirectory(codegen)
 add_subdirectory(src)

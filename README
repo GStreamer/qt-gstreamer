@@ -89,6 +89,13 @@ Other options that can be passed to cmake include:
 * -DQTGSTREAMER_TESTS=[ON|OFF]
   Allows you to choose whether to build tests or not.
 
+* -DUSE_GST_PLUGIN_DIR=[ON|OFF]
+  Allows you to choose whether to install plugin together with the rest of the
+  gstreamer plugins or whether to install them in the same prefix as QtGStreamer.
+  You will probably want to set this to OFF if you are installing in a prefix
+  different than GStreamer (say somewhere in $HOME) while GStreamer is installed
+  in a system location and you don't want to gain root privileges to do "make install".
+
 * -DGST_PACKAGE_NAME="some string"
   Allows you to specify the name that gst-inspect will show as the "Binary package"
   name for all the element plugins that are build from this source package.
@@ -96,6 +103,9 @@ Other options that can be passed to cmake include:
 * -DGST_PACKAGE_ORIGIN="http://some.url"
   Allows you to specify the url that gst-inspect will show as the "Origin URL"
   for all the element plugins that are build from this source package.
+
+* -DLIB_SUFFIX=64
+  Set this to install in $prefix/lib64 instead of $prefix/lib.
 
 2.4 Generating documentation
 ----------------------------
@@ -137,4 +147,4 @@ Bugs, feature requests & patches should be sent at:
 
 --
 George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
-Last updated: Jan 10, 2011
+Last updated: May 23, 2011
