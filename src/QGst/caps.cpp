@@ -126,7 +126,8 @@ bool Caps::isFixed() const
 
 bool Caps::isWritable() const
 {
-    return (GST_CAPS_REFCOUNT_VALUE(object<GstCaps>()) == 1);
+    GstCaps *caps = object<GstCaps>(); //workaround for bug #653266
+    return (GST_CAPS_REFCOUNT_VALUE(caps) == 1);
 }
 
 bool Caps::equals(const CapsPtr & caps2) const
