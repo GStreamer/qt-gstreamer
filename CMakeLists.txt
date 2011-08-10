@@ -8,6 +8,7 @@ set(QTGSTREAMER_VERSION 0.10.1.1)
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
+option(QTGSTREAMER_CODEGEN "Build and use QtGStreamer's codegen" OFF)
 option(USE_GST_PLUGIN_DIR "Install plugins together with the other gstreamer plugins" ON)
 
 include(MacroLogFeature)
@@ -50,13 +51,20 @@ macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.
 find_package(GObject)
 macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
 
-find_package(FLEX)
-macro_log_feature(FLEX_FOUND "Flex" "Required to build codegen, a helper code generator"
-                             "http://flex.sourceforge.net/" TRUE)
+if (QTGSTREAMER_CODEGEN AND CMAKE_CROSSCOMPILING)
+    message(WARNING "Codegen use requested, but we are crosscompiling. Disabling...")
+    set(QTGSTREAMER_CODEGEN OFF)
+endif()
 
-find_package(BISON)
-macro_log_feature(BISON_FOUND "Bison" "Required to build codegen, a helper code generator"
-                              "http://www.gnu.org/software/bison/" TRUE)
+if (QTGSTREAMER_CODEGEN)
+    find_package(FLEX)
+    macro_log_feature(FLEX_FOUND "Flex" "Required to build codegen, a helper code generator"
+                                 "http://flex.sourceforge.net/" TRUE)
+
+    find_package(BISON)
+    macro_log_feature(BISON_FOUND "Bison" "Required to build codegen, a helper code generator"
+                                  "http://www.gnu.org/software/bison/" TRUE)
+endif()
 
 
 if (CMAKE_COMPILER_IS_GNUCXX)
@@ -72,7 +80,10 @@ else()
     set(PLUGINS_INSTALL_DIR ${LIB_INSTALL_DIR}/gstreamer-0.10)
 endif()
 
-add_subdirectory(codegen)
+if (QTGSTREAMER_CODEGEN AND FLEX_FOUND AND BISON_FOUND)
+    add_subdirectory(codegen)
+endif()
+
 add_subdirectory(src)
 add_subdirectory(elements)
 

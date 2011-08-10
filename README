@@ -89,6 +89,15 @@ Other options that can be passed to cmake include:
 * -DQTGSTREAMER_TESTS=[ON|OFF]
   Allows you to choose whether to build tests or not.
 
+* -DQTGSTREAMER_CODEGEN=[ON|OFF]
+  Allows you to choose whether to build and use the QtGStreamer code generator or not.
+  This code generator generates some extra code based on the QtGlib/QtGStreamer
+  headers. This extra code is required, but it is also shipped in the source tree,
+  so it is not necessary to regenerate it, unless you are developing QtGStreamer and
+  you are making changes to the headers. If you are crosscompiling, you should make
+  sure to turn this feature off, since this will compile codegen for the target
+  architecture and then try to run it, which will fail.
+
 * -DUSE_GST_PLUGIN_DIR=[ON|OFF]
   Allows you to choose whether to install plugin together with the rest of the
   gstreamer plugins or whether to install them in the same prefix as QtGStreamer.
