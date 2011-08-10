@@ -84,15 +84,17 @@ if (QTGSTREAMER_CODEGEN AND FLEX_FOUND AND BISON_FOUND)
     add_subdirectory(codegen)
 endif()
 
-add_subdirectory(src)
-add_subdirectory(elements)
+if (Automoc4_FOUND) # avoid errors about missing automoc4_add_* macros
+    add_subdirectory(src)
+    add_subdirectory(elements)
 
-if (QTGSTREAMER_TESTS)
-    add_subdirectory(tests)
-endif()
+    if (QTGSTREAMER_TESTS)
+        add_subdirectory(tests)
+    endif()
 
-if (QTGSTREAMER_EXAMPLES)
-    add_subdirectory(examples)
+    if (QTGSTREAMER_EXAMPLES)
+        add_subdirectory(examples)
+    endif()
 endif()
 
 # Add uninstall target. Taken from the KDE4 scripts
