@@ -292,6 +292,16 @@ void Value::registerValueVTable(Type type, const ValueVTable & vtable)
     s_dispatcher()->setVTable(type, vtable);
 }
 
+static inline std::string toStdStringHelper(const QString & str)
+{
+#ifndef QT_NO_STL
+    return str.toStdString();
+#else
+    const QByteArray asc = str.toAscii();
+    return std::string(asc.constData(), asc.length());
+#endif
+}
+
 void Value::getData(Type dataType, void *data) const
 {
     if (!isValid()) {
@@ -301,21 +311,21 @@ void Value::getData(Type dataType, void *data) const
         if (vtable.get != NULL) {
             vtable.get(*this, data);
         } else {
-            throw Private::UnregisteredTypeException(dataType.name().toStdString());
+            throw Private::UnregisteredTypeException(toStdStringHelper(dataType.name()));
         }
     } else if (dataType.isValueType() && g_value_type_transformable(type(), dataType)) {
         Value v;
         v.init(dataType);
 
         if (!g_value_transform(d->value(), v.d->value())) {
-            throw Private::TransformationFailedException(type().name().toStdString(),
-                                                         dataType.name().toStdString());
+            throw Private::TransformationFailedException(toStdStringHelper(type().name()),
+                                                         toStdStringHelper(dataType.name()));
         }
 
         v.getData(dataType, data);
     } else {
-        throw Private::InvalidTypeException(dataType.name().toStdString(),
-                                            type().name().toStdString());
+        throw Private::InvalidTypeException(toStdStringHelper(dataType.name()),
+                                            toStdStringHelper(type().name()));
     }
 }
 
@@ -328,7 +338,7 @@ void Value::setData(Type dataType, const void *data)
         if (vtable.set != NULL) {
             vtable.set(*this, data);
         } else {
-            throw Private::UnregisteredTypeException(dataType.name().toStdString());
+            throw Private::UnregisteredTypeException(toStdStringHelper(dataType.name()));
         }
     } else if (dataType.isValueType() && g_value_type_transformable(dataType, type())) {
         Value v;
@@ -336,12 +346,12 @@ void Value::setData(Type dataType, const void *data)
         v.setData(dataType, data);
 
         if (!g_value_transform(v.d->value(), d->value())) {
-            throw Private::TransformationFailedException(dataType.name().toStdString(),
-                                                         type().name().toStdString());
+            throw Private::TransformationFailedException(toStdStringHelper(dataType.name()),
+                                                         toStdStringHelper(type().name()));
         }
     } else {
-        throw Private::InvalidTypeException(dataType.name().toStdString(),
-                                            type().name().toStdString());
+        throw Private::InvalidTypeException(toStdStringHelper(dataType.name()),
+                                            toStdStringHelper(type().name()));
     }
 }
 
