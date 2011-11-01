@@ -1,749 +1,306 @@
-/****************************************************************************
-**
-** Copyright (C) 2011 Collabora Ltd
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** This file was originally part of the Qt Mobility Components.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-****************************************************************************/
+/*
+    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
+    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
 
-#include <qabstractvideosurface.h>
-#include <qmlpaintervideosurface.h>
-#include <qvideoframe.h>
-#include <QDebug>
-#include <QMap>
-#include <QDebug>
-#include <QThread>
+    This library is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License version 2.1
+    as published by the Free Software Foundation.
 
-#include "qmlgstvideobuffer.h"
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-#include <QtGui/qx11info_x11.h>
-#include "qmlgstxvimagebuffer.h"
-#endif
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-#include "qmlvideosurfacegstsink.h"
+/**
+ * SECTION:element-qtvideosink
+ *
+ * qtvideosink is a video sink element that can draw directly on a Qt
+ * surface, such as QWidget or QGraphicsItem, using either the QPainter API
+ * or the OpenGL/OpenGLES API.
+ */
 
-//#define DEBUG_VIDEO_SURFACE_SINK
+#include "gstqtvideosink.h"
+#include "gstqtvideosinksurface.h"
+#include "gstqtvideosinkmarshal.h"
 
+#include <QtCore/QCoreApplication>
 
-Q_DECLARE_METATYPE(QVideoSurfaceFormat)
+guint GstQtVideoSink::s_signals[];
+GstVideoSinkClass *GstQtVideoSink::s_parent_class = NULL;
 
-QmlVideoSurfaceGstDelegate::QmlVideoSurfaceGstDelegate(QAbstractVideoSurface *surface)
-    : m_surface(surface)
-    , m_renderReturn(GST_FLOW_ERROR)
-    , m_bytesPerLine(0)
+GType GstQtVideoSink::get_type()
 {
-    if (m_surface) {
-        m_supportedPixelFormats = m_surface->supportedPixelFormats();
-        m_supportedXVideoPixelFormats = m_surface->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle);
-        connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+  /* The typedef for GType may be gulong or gsize, depending on the
+   * system and whether the compiler is c++ or not. The g_once_init_*
+   * functions always take a gsize * though ... */
+    static volatile gsize gonce_data = 0;
+    if (g_once_init_enter(&gonce_data)) {
+        GType type;
+        type = gst_type_register_static_full(
+            GST_TYPE_VIDEO_SINK,
+            g_intern_static_string("GstQtVideoSink"),
+            sizeof(GstQtVideoSinkClass),
+            &GstQtVideoSink::base_init,
+            NULL,   /* base_finalize */
+            &GstQtVideoSink::class_init,
+            NULL,   /* class_finalize */
+            NULL,   /* class_data */
+            sizeof(GstQtVideoSink),
+            0,      /* n_preallocs */
+            &GstQtVideoSink::init,
+            NULL,
+            (GTypeFlags) 0);
+        g_once_init_leave(&gonce_data, (gsize) type);
     }
+    return (GType) gonce_data;
 }
 
-QList<QVideoFrame::PixelFormat> QmlVideoSurfaceGstDelegate::supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType) const
+void GstQtVideoSink::base_init(gpointer g_class)
 {
-    QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
+    GstElementClass *element_class = GST_ELEMENT_CLASS(g_class);
 
-    if (!m_surface)
-        return QList<QVideoFrame::PixelFormat>();
-    else if (handleType == QAbstractVideoBuffer::NoHandle)
-        return m_supportedPixelFormats;
-    else if (handleType == QAbstractVideoBuffer::XvShmImageHandle)
-        return m_supportedXVideoPixelFormats;
-    else
-        return m_surface->supportedPixelFormats(handleType);
+    static GstStaticPadTemplate sink_pad_template =
+        GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
+            GST_STATIC_CAPS(
+                "video/x-raw-rgb, "
+                "framerate = (fraction) [ 0, MAX ], "
+                "width = (int) [ 1, MAX ], "
+                "height = (int) [ 1, MAX ]"
+                "; "
+                "video/x-raw-yuv, "
+                "framerate = (fraction) [ 0, MAX ], "
+                "width = (int) [ 1, MAX ], "
+                "height = (int) [ 1, MAX ]"
+                "; "
+            )
+        );
+
+    gst_element_class_set_details_simple(element_class, "Qt video sink", "Sink/Video",
+        "A video sink that can draw on any Qt surface (QPaintDevice/QWidget/QGraphicsItem/QML)",
+        "George Kiagiadakis <george.kiagiadakis@collabora.com>");
+
+    gst_element_class_add_pad_template(
+            element_class, gst_static_pad_template_get(&sink_pad_template));
 }
 
-QVideoSurfaceFormat QmlVideoSurfaceGstDelegate::surfaceFormat() const
-{
-    QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
-    return m_format;
-}
-
-bool QmlVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int bytesPerLine)
-{
-    if (!m_surface)
-        return false;
-
-    QMutexLocker locker(&m_mutex);
-
-    m_format = format;
-    m_bytesPerLine = bytesPerLine;
-
-    if (QThread::currentThread() == thread()) {
-        m_started = !m_surface.isNull() ? m_surface->start(m_format) : false;
-    } else {
-        QMetaObject::invokeMethod(this, "queuedStart", Qt::QueuedConnection);
-
-        m_setupCondition.wait(&m_mutex);
-    }
-
-    m_format = m_surface->surfaceFormat();
-
-    return m_started;
-}
-
-void QmlVideoSurfaceGstDelegate::stop()
-{
-    if (!m_surface)
-        return;
-
-    QMutexLocker locker(&m_mutex);
-
-    if (QThread::currentThread() == thread()) {
-        if (!m_surface.isNull())
-            m_surface->stop();
-    } else {
-        QMetaObject::invokeMethod(this, "queuedStop", Qt::QueuedConnection);
-
-        m_setupCondition.wait(&m_mutex);
-    }
-
-    m_started = false;
-}
-
-bool QmlVideoSurfaceGstDelegate::isActive()
-{
-    QMutexLocker locker(&m_mutex);
-    return !m_surface.isNull() && m_surface->isActive();
-}
-
-void QmlVideoSurfaceGstDelegate::setPlaying(bool playing)
-{
-    if (!m_surface.isNull()) {
-        QmlPainterVideoSurface *surface = qobject_cast<QmlPainterVideoSurface*>(m_surface.data());
-        if (surface)
-            surface->setPlaying(playing);
-    }
-}
-
-GstFlowReturn QmlVideoSurfaceGstDelegate::render(GstBuffer *buffer)
-{
-    if (!m_surface) {
-        qWarning() << "Rendering video frame to deleted surface, skip.";
-        //return GST_FLOW_NOT_NEGOTIATED;
-        return GST_FLOW_OK;
-    }
-
-    QMutexLocker locker(&m_mutex);
-
-    QmlGstVideoBuffer *videoBuffer = 0;
-
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    if (G_TYPE_CHECK_INSTANCE_TYPE(buffer, QmlGstXvImageBuffer::get_type())) {
-        QmlGstXvImageBuffer *xvBuffer = reinterpret_cast<QmlGstXvImageBuffer *>(buffer);
-        QVariant handle = QVariant::fromValue(xvBuffer->xvImage);
-        videoBuffer = new QmlGstVideoBuffer(buffer, m_bytesPerLine, QAbstractVideoBuffer::XvShmImageHandle, handle);
-    } else
-#endif
-        videoBuffer = new QmlGstVideoBuffer(buffer, m_bytesPerLine);
-
-    m_frame = QVideoFrame(
-            videoBuffer,
-            m_format.frameSize(),
-            m_format.pixelFormat());
-
-    qint64 startTime = GST_BUFFER_TIMESTAMP(buffer);
-
-    if (startTime >= 0) {
-        m_frame.setStartTime(startTime/G_GINT64_CONSTANT (1000000));
-
-        qint64 duration = GST_BUFFER_DURATION(buffer);
-
-        if (duration >= 0)
-            m_frame.setEndTime((startTime + duration)/G_GINT64_CONSTANT (1000000));
-    }
-
-    QMetaObject::invokeMethod(this, "queuedRender", Qt::QueuedConnection);
-
-    if (!m_renderCondition.wait(&m_mutex, 300)) {
-        m_frame = QVideoFrame();
-
-        return GST_FLOW_OK;
-    } else {
-        return m_renderReturn;
-    }
-}
-
-void QmlVideoSurfaceGstDelegate::queuedStart()
-{
-    QMutexLocker locker(&m_mutex);
-
-    m_started = m_surface->start(m_format);
-
-    m_setupCondition.wakeAll();
-}
-
-void QmlVideoSurfaceGstDelegate::queuedStop()
-{
-    QMutexLocker locker(&m_mutex);
-
-    m_surface->stop();
-
-    m_setupCondition.wakeAll();
-}
-
-void QmlVideoSurfaceGstDelegate::queuedRender()
-{
-    QMutexLocker locker(&m_mutex);
-
-    if (m_surface.isNull()) {
-        qWarning() << "Rendering video frame to deleted surface, skip the frame";
-        m_renderReturn = GST_FLOW_OK;
-    } else if (m_surface->present(m_frame)) {
-        m_renderReturn = GST_FLOW_OK;
-    } else {
-        switch (m_surface->error()) {
-        case QAbstractVideoSurface::NoError:
-            m_renderReturn = GST_FLOW_OK;
-            break;
-        case QAbstractVideoSurface::StoppedError:
-            //It's likely we are in process of changing video output
-            //and the surface is already stopped, ignore the frame
-            m_renderReturn = GST_FLOW_OK;
-            break;
-        default:
-            qWarning() << "Failed to render video frame:" << m_surface->error();
-            m_renderReturn = GST_FLOW_OK;
-            break;
-        }
-    }
-
-    m_renderCondition.wakeAll();
-}
-
-void QmlVideoSurfaceGstDelegate::supportedFormatsChanged()
-{
-    QMutexLocker locker(&m_mutex);
-
-    m_supportedPixelFormats.clear();
-    m_supportedXVideoPixelFormats.clear();
-    if (m_surface) {
-        m_supportedPixelFormats = m_surface->supportedPixelFormats();
-        m_supportedXVideoPixelFormats = m_surface->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle);
-    }
-}
-
-struct YuvFormat
-{
-    QVideoFrame::PixelFormat pixelFormat;
-    guint32 fourcc;
-    int bitsPerPixel;
-};
-
-static const YuvFormat qt_yuvColorLookup[] =
-{
-    { QVideoFrame::Format_YUV420P, GST_MAKE_FOURCC('I','4','2','0'), 8 },
-    { QVideoFrame::Format_YV12,    GST_MAKE_FOURCC('Y','V','1','2'), 8 },
-    { QVideoFrame::Format_UYVY,    GST_MAKE_FOURCC('U','Y','V','Y'), 16 },
-    { QVideoFrame::Format_YUYV,    GST_MAKE_FOURCC('Y','U','Y','2'), 16 },
-    { QVideoFrame::Format_NV12,    GST_MAKE_FOURCC('N','V','1','2'), 8 },
-    { QVideoFrame::Format_NV21,    GST_MAKE_FOURCC('N','V','2','1'), 8 },
-    { QVideoFrame::Format_AYUV444, GST_MAKE_FOURCC('A','Y','U','V'), 32 }
-};
-
-static int indexOfYuvColor(QVideoFrame::PixelFormat format)
-{
-    const int count = sizeof(qt_yuvColorLookup) / sizeof(YuvFormat);
-
-    for (int i = 0; i < count; ++i)
-        if (qt_yuvColorLookup[i].pixelFormat == format)
-            return i;
-
-    return -1;
-}
-
-static int indexOfYuvColor(guint32 fourcc)
-{
-    const int count = sizeof(qt_yuvColorLookup) / sizeof(YuvFormat);
-
-    for (int i = 0; i < count; ++i)
-        if (qt_yuvColorLookup[i].fourcc == fourcc)
-            return i;
-
-    return -1;
-}
-
-struct RgbFormat
-{
-    QVideoFrame::PixelFormat pixelFormat;
-    int bitsPerPixel;
-    int depth;
-    int endianness;
-    int red;
-    int green;
-    int blue;
-    int alpha;
-};
-
-static const RgbFormat qt_rgbColorLookup[] =
-{
-    { QVideoFrame::Format_RGB32 , 32, 24, 4321, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x00000000 },
-    { QVideoFrame::Format_RGB32 , 32, 24, 1234, 0x00FF0000, 0x0000FF00, 0x000000FF, 0x00000000 },
-    { QVideoFrame::Format_BGR32 , 32, 24, 4321, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x00000000 },
-    { QVideoFrame::Format_BGR32 , 32, 24, 1234, 0x000000FF, 0x0000FF00, 0x00FF0000, 0x00000000 },
-    { QVideoFrame::Format_ARGB32, 32, 24, 4321, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF },
-    { QVideoFrame::Format_ARGB32, 32, 24, 1234, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000 },
-    { QVideoFrame::Format_RGB24 , 24, 24, 4321, 0x00FF0000, 0x0000FF00, 0x000000FF, 0x00000000 },
-    { QVideoFrame::Format_BGR24 , 24, 24, 4321, 0x000000FF, 0x0000FF00, 0x00FF0000, 0x00000000 },
-    { QVideoFrame::Format_RGB565, 16, 16, 1234, 0x0000F800, 0x000007E0, 0x0000001F, 0x00000000 }
-};
-
-static int indexOfRgbColor(
-        int bits, int depth, int endianness, int red, int green, int blue, int alpha)
-{
-    const int count = sizeof(qt_rgbColorLookup) / sizeof(RgbFormat);
-
-    for (int i = 0; i < count; ++i) {
-        if (qt_rgbColorLookup[i].bitsPerPixel == bits
-            && qt_rgbColorLookup[i].depth == depth
-            && qt_rgbColorLookup[i].endianness == endianness
-            && qt_rgbColorLookup[i].red == red
-            && qt_rgbColorLookup[i].green == green
-            && qt_rgbColorLookup[i].blue == blue
-            && qt_rgbColorLookup[i].alpha == alpha) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-static GstVideoSinkClass *sink_parent_class;
-
-#define VO_SINK(s) QmlVideoSurfaceGstSink *sink(reinterpret_cast<QmlVideoSurfaceGstSink *>(s))
-
-QmlVideoSurfaceGstSink *QmlVideoSurfaceGstSink::createSink(QAbstractVideoSurface *surface)
-{
-    QmlVideoSurfaceGstSink *sink = reinterpret_cast<QmlVideoSurfaceGstSink *>(
-            g_object_new(QmlVideoSurfaceGstSink::get_type(), 0));
-
-    sink->delegate = new QmlVideoSurfaceGstDelegate(surface);
-
-    return sink;
-}
-
-GType QmlVideoSurfaceGstSink::get_type()
-{
-    static GType type = 0;
-
-    if (type == 0) {
-        static const GTypeInfo info =
-        {
-            sizeof(QmlVideoSurfaceGstSinkClass),                    // class_size
-            base_init,                                         // base_init
-            NULL,                                              // base_finalize
-            class_init,                                        // class_init
-            NULL,                                              // class_finalize
-            NULL,                                              // class_data
-            sizeof(QmlVideoSurfaceGstSink),                         // instance_size
-            0,                                                 // n_preallocs
-            instance_init,                                     // instance_init
-            0                                                  // value_table
-        };
-
-        type = g_type_register_static(
-                GST_TYPE_VIDEO_SINK, "QmlVideoSurfaceGstSink", &info, GTypeFlags(0));
-    }
-
-    return type;
-}
-
-void QmlVideoSurfaceGstSink::class_init(gpointer g_class, gpointer class_data)
+void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
 {
     Q_UNUSED(class_data);
 
-    sink_parent_class = reinterpret_cast<GstVideoSinkClass *>(g_type_class_peek_parent(g_class));
+    s_parent_class = reinterpret_cast<GstVideoSinkClass*>(g_type_class_peek_parent(g_class));
 
-    GstBaseSinkClass *base_sink_class = reinterpret_cast<GstBaseSinkClass *>(g_class);
-    base_sink_class->get_caps = QmlVideoSurfaceGstSink::get_caps;
-    base_sink_class->set_caps = QmlVideoSurfaceGstSink::set_caps;
-    base_sink_class->buffer_alloc = QmlVideoSurfaceGstSink::buffer_alloc;
-    base_sink_class->start = QmlVideoSurfaceGstSink::start;
-    base_sink_class->stop = QmlVideoSurfaceGstSink::stop;
-    // base_sink_class->unlock = QmlVideoSurfaceGstSink::unlock; // Not implemented.
-    // base_sink_class->event = QmlVideoSurfaceGstSink::event; // Not implemented.
-    base_sink_class->preroll = QmlVideoSurfaceGstSink::preroll;
-    base_sink_class->render = QmlVideoSurfaceGstSink::render;
+    GObjectClass *object_class = G_OBJECT_CLASS(g_class);
+    object_class->finalize = GstQtVideoSink::finalize;
+    object_class->set_property = GstQtVideoSink::set_property;
+    object_class->get_property = GstQtVideoSink::get_property;
 
-    GstElementClass *element_class = reinterpret_cast<GstElementClass *>(g_class);
-    element_class->change_state = QmlVideoSurfaceGstSink::change_state;
+    GstElementClass *element_class = GST_ELEMENT_CLASS(g_class);
+    element_class->change_state = GstQtVideoSink::change_state;
 
-    GObjectClass *object_class = reinterpret_cast<GObjectClass *>(g_class);
-    object_class->finalize = QmlVideoSurfaceGstSink::finalize;
+    GstBaseSinkClass *base_sink_class = GST_BASE_SINK_CLASS(g_class);
+    base_sink_class->get_caps = GstQtVideoSink::get_caps;
+    base_sink_class->set_caps = GstQtVideoSink::set_caps;
+    base_sink_class->buffer_alloc = GstQtVideoSink::buffer_alloc;
+
+    GstVideoSinkClass *video_sink_class = GST_VIDEO_SINK_CLASS(g_class);
+    video_sink_class->show_frame = GstQtVideoSink::show_frame;
+
+    GstQtVideoSinkClass *qt_video_sink_class = GST_QT_VIDEO_SINK_CLASS(g_class);
+    qt_video_sink_class->paint = GstQtVideoSink::paint;
+
+
+    /**
+     * GstQtVideoSink::force-aspect-ratio
+     *
+     * If set to TRUE, the sink will scale the video respecting its original aspect ratio
+     * and any remaining space will be filled with black.
+     * If set to FALSE, the sink will scale the video to fit the whole drawing area.
+     **/
+    g_object_class_install_property(object_class, PROP_FORCE_ASPECT_RATIO,
+        g_param_spec_boolean("force-aspect-ratio", "Force aspect ratio",
+                             "When enabled, scaling will respect original aspect ratio",
+                             FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE)));
+
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    /**
+     * GstQtVideoSink::glcontext
+     *
+     * This property holds a pointer to the QGLContext that will be used to render
+     * the video using OpenGL acceleration. You must set this to a valid QGLContext
+     * pointer before linking this element, or else OpenGL acceleration will be disabled.
+     **/
+    g_object_class_install_property(object_class, PROP_GLCONTEXT,
+        g_param_spec_pointer("glcontext", "GL context",
+                             "The QGLContext that will be used to do OpenGL-accelerated rendering",
+                             static_cast<GParamFlags>(G_PARAM_READWRITE)));
+#endif
+
+    /**
+     * GstQtVideoSink::paint
+     * @painter: A valid QPainter pointer that will be used to paint the video
+     * @x: The x coordinate of the target area rectangle
+     * @y: The y coordinate of the target area rectangle
+     * @width: The width of the target area rectangle
+     * @height: The height of the target area rectangle
+     *
+     * This is an action signal that you can call from your Qt surface class inside
+     * its paint function to render the video. It takes a QPainter* and the target
+     * area rectangle as arguments. You should schedule to call this function to
+     * repaint the surface whenever the ::update signal is emited.
+     */
+    s_signals[PAINT_SIGNAL] =
+        g_signal_new("paint", G_TYPE_FROM_CLASS(g_class),
+                     static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+                     G_STRUCT_OFFSET(GstQtVideoSinkClass, paint),
+                     NULL, NULL,
+                     g_cclosure_user_marshal_VOID__POINTER_INT_INT_INT_INT,
+                     G_TYPE_NONE, 5,
+                     G_TYPE_POINTER, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+
+    /**
+     * GstQtVideoSink::update
+     *
+     * This signal is emited when the surface should be repainted. It should
+     * be connected to QWidget::update() or QGraphicsItem::update() or any
+     * other similar function in your surface.
+     */
+    s_signals[UPDATE_SIGNAL] =
+        g_signal_new("update", G_TYPE_FROM_CLASS(g_class),
+                     G_SIGNAL_RUN_LAST,
+                     0, NULL, NULL,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 }
 
-void QmlVideoSurfaceGstSink::base_init(gpointer g_class)
+void GstQtVideoSink::init(GTypeInstance *instance, gpointer g_class)
 {
-    static GstStaticPadTemplate sink_pad_template = GST_STATIC_PAD_TEMPLATE(
-            "sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS(
-                    "video/x-raw-rgb, "
-                    "framerate = (fraction) [ 0, MAX ], "
-                    "width = (int) [ 1, MAX ], "
-                    "height = (int) [ 1, MAX ]; "
-                    "video/x-raw-yuv, "
-                    "framerate = (fraction) [ 0, MAX ], "
-                    "width = (int) [ 1, MAX ], "
-                    "height = (int) [ 1, MAX ]"));
-
-    gst_element_class_add_pad_template(
-            GST_ELEMENT_CLASS(g_class), gst_static_pad_template_get(&sink_pad_template));
-}
-
-void QmlVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_class)
-{
-    VO_SINK(instance);
-
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(instance);
     Q_UNUSED(g_class);
 
-    sink->delegate = 0;
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    sink->pool = new QmlGstXvImageBufferPool();
-#endif
-    sink->lastRequestedCaps = 0;
-    sink->lastBufferCaps = 0;
-    sink->lastSurfaceFormat = new QVideoSurfaceFormat;
+    sink->surface = new GstQtVideoSinkSurface(sink);
+    sink->formatDirty = true;
 }
 
-void QmlVideoSurfaceGstSink::finalize(GObject *object)
+void GstQtVideoSink::finalize(GObject *object)
 {
-    VO_SINK(object);
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-    delete sink->pool;
-    sink->pool = 0;
-#endif
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(object);
 
-    delete sink->lastSurfaceFormat;
-    sink->lastSurfaceFormat = 0;
-
-    if (sink->lastBufferCaps)
-        gst_caps_unref(sink->lastBufferCaps);
-    sink->lastBufferCaps = 0;
-
-    if (sink->lastRequestedCaps)
-        gst_caps_unref(sink->lastRequestedCaps);
-    sink->lastRequestedCaps = 0;
+    delete sink->surface;
+    sink->surface = 0;
 }
 
-GstStateChangeReturn QmlVideoSurfaceGstSink::change_state(
-        GstElement *element, GstStateChange transition)
+void GstQtVideoSink::set_property(GObject *object, guint prop_id,
+                                  const GValue *value, GParamSpec *pspec)
 {
-    VO_SINK(element);
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(object);
 
-    if (sink->delegate != NULL) {
-        switch (transition) {
-          case GST_STATE_CHANGE_READY_TO_PAUSED:
-            sink->delegate->setPlaying(true);
-            break;
-          case GST_STATE_CHANGE_PAUSED_TO_READY:
-            sink->delegate->setPlaying(false);
-            break;
-          default:
-            break;
-        }
+    switch (prop_id) {
+    case PROP_FORCE_ASPECT_RATIO:
+        sink->surface->setForceAspectRatio(g_value_get_boolean(value));
+        break;
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    case PROP_GLCONTEXT:
+        sink->surface->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
+        break;
+#endif
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+void GstQtVideoSink::get_property(GObject *object, guint prop_id,
+                                  GValue *value, GParamSpec *pspec)
+{
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(object);
+
+    switch (prop_id) {
+    case PROP_FORCE_ASPECT_RATIO:
+        g_value_set_boolean(value, sink->surface->forceAspectRatio());
+        break;
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    case PROP_GLCONTEXT:
+        g_value_set_pointer(value, sink->surface->glContext());
+        break;
+#endif
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+GstStateChangeReturn GstQtVideoSink::change_state(GstElement *element, GstStateChange transition)
+{
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(element);
+
+    switch (transition) {
+    case GST_STATE_CHANGE_READY_TO_PAUSED:
+        sink->surface->setActive(true);
+        break;
+    case GST_STATE_CHANGE_PAUSED_TO_READY:
+        sink->surface->setActive(false);
+        break;
+    default:
+        break;
     }
 
-    return GST_ELEMENT_CLASS(sink_parent_class)->change_state(
-            element, transition);
+    return GST_ELEMENT_CLASS(s_parent_class)->change_state(element, transition);
 }
 
-GstCaps *QmlVideoSurfaceGstSink::get_caps(GstBaseSink *base)
+GstCaps *GstQtVideoSink::get_caps(GstBaseSink *base)
 {
-    VO_SINK(base);
-
-    qDebug() << "QmlVideoSurfaceGstSink::get_caps";
-
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(base);
     GstCaps *caps = gst_caps_new_empty();
 
-    foreach (QVideoFrame::PixelFormat format, sink->delegate->supportedPixelFormats()) {
-        int index = indexOfYuvColor(format);
-
-        if (index != -1) {
-	    GstStructure *structure = gst_structure_new(
-                    "video/x-raw-yuv",
-                    "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
-                    "width"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                    "height"   , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                    "format"   , GST_TYPE_FOURCC, qt_yuvColorLookup[index].fourcc,
-                    NULL);
-	    
-	    gst_caps_append_structure(caps, structure);
-	    GST_DEBUG("%" GST_PTR_FORMAT, structure);
-            continue;
-        }
-
-        const int count = sizeof(qt_rgbColorLookup) / sizeof(RgbFormat);
-
-        for (int i = 0; i < count; ++i) {
-            if (qt_rgbColorLookup[i].pixelFormat == format) {
-                GstStructure *structure = gst_structure_new(
-                        "video/x-raw-rgb",
-                        "framerate" , GST_TYPE_FRACTION_RANGE, 0, 1, INT_MAX, 1,
-                        "width"     , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                        "height"    , GST_TYPE_INT_RANGE, 1, INT_MAX,
-                        "bpp"       , G_TYPE_INT, qt_rgbColorLookup[i].bitsPerPixel,
-                        "depth"     , G_TYPE_INT, qt_rgbColorLookup[i].depth,
-                        "endianness", G_TYPE_INT, qt_rgbColorLookup[i].endianness,
-                        "red_mask"  , G_TYPE_INT, qt_rgbColorLookup[i].red,
-                        "green_mask", G_TYPE_INT, qt_rgbColorLookup[i].green,
-                        "blue_mask" , G_TYPE_INT, qt_rgbColorLookup[i].blue,
-                        NULL);
-
-                if (qt_rgbColorLookup[i].alpha != 0) {
-                    gst_structure_set(
-                            structure, "alpha_mask", G_TYPE_INT, qt_rgbColorLookup[i].alpha, NULL);
-                }
-                gst_caps_append_structure(caps, structure);
-		GST_DEBUG("%" GST_PTR_FORMAT, structure);
-            }
-        }
+    Q_FOREACH(BufferFormat::PixelFormat format, sink->surface->supportedPixelFormats()) {
+        gst_caps_append(caps, BufferFormat::pixelFormatToCaps(format));
     }
 
     return caps;
 }
 
-gboolean QmlVideoSurfaceGstSink::set_caps(GstBaseSink *base, GstCaps *caps)
+gboolean GstQtVideoSink::set_caps(GstBaseSink *base, GstCaps *caps)
 {
-    VO_SINK(base);
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(base);
 
-#ifdef DEBUG_VIDEO_SURFACE_SINK
-    qDebug() << "set_caps:";
-    qDebug() << gst_caps_to_string(caps);
-#endif
-
-    if (!caps) {
-        sink->delegate->stop();
-
-        return TRUE;
-    } else {
-        int bytesPerLine = 0;
-        QVideoSurfaceFormat format = formatForCaps(caps, &bytesPerLine);
-
-        if (sink->delegate->isActive()) {
-            QVideoSurfaceFormat surfaceFormst = sink->delegate->surfaceFormat();
-
-            if (format.pixelFormat() == surfaceFormst.pixelFormat() &&
-                format.frameSize() == surfaceFormst.frameSize())
-                return TRUE;
-            else
-                sink->delegate->stop();
-        }
-
-        if (sink->lastRequestedCaps)
-            gst_caps_unref(sink->lastRequestedCaps);
-        sink->lastRequestedCaps = 0;
-
-#ifdef DEBUG_VIDEO_SURFACE_SINK
-        qDebug() << "Staring video surface, format:";
-        qDebug() << format;
-        qDebug() << "bytesPerLine:" << bytesPerLine;
-#endif
-
-        if (sink->delegate->start(format, bytesPerLine))
-            return TRUE;
-        else
-            qWarning() << "Failed to start video surface";
-    }
-
-    return FALSE;
+    GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
+    sink->formatDirty = true;
+    return TRUE;
 }
 
-QVideoSurfaceFormat QmlVideoSurfaceGstSink::formatForCaps(GstCaps *caps, int *bytesPerLine)
+GstFlowReturn GstQtVideoSink::buffer_alloc(GstBaseSink *base, guint64 offset, guint size,
+                                           GstCaps *caps, GstBuffer **buffer)
 {
-    const GstStructure *structure = gst_caps_get_structure(caps, 0);
-
-    QVideoFrame::PixelFormat pixelFormat = QVideoFrame::Format_Invalid;
-    int bitsPerPixel = 0;
-
-    QSize size;
-    gst_structure_get_int(structure, "width", &size.rwidth());
-    gst_structure_get_int(structure, "height", &size.rheight());
-
-    if (qstrcmp(gst_structure_get_name(structure), "video/x-raw-yuv") == 0) {
-        guint32 fourcc = 0;
-        gst_structure_get_fourcc(structure, "format", &fourcc);
-
-        int index = indexOfYuvColor(fourcc);
-        if (index != -1) {
-            pixelFormat = qt_yuvColorLookup[index].pixelFormat;
-            bitsPerPixel = qt_yuvColorLookup[index].bitsPerPixel;
-        }
-    } else if (qstrcmp(gst_structure_get_name(structure), "video/x-raw-rgb") == 0) {
-        int depth = 0;
-        int endianness = 0;
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-        int alpha = 0;
-
-        gst_structure_get_int(structure, "bpp", &bitsPerPixel);
-        gst_structure_get_int(structure, "depth", &depth);
-        gst_structure_get_int(structure, "endianness", &endianness);
-        gst_structure_get_int(structure, "red_mask", &red);
-        gst_structure_get_int(structure, "green_mask", &green);
-        gst_structure_get_int(structure, "blue_mask", &blue);
-        gst_structure_get_int(structure, "alpha_mask", &alpha);
-
-        int index = indexOfRgbColor(bitsPerPixel, depth, endianness, red, green, blue, alpha);
-
-        if (index != -1)
-            pixelFormat = qt_rgbColorLookup[index].pixelFormat;
-    }
-
-    if (pixelFormat != QVideoFrame::Format_Invalid) {
-        QVideoSurfaceFormat format(size, pixelFormat);
-
-        QPair<int, int> rate;
-        gst_structure_get_fraction(structure, "framerate", &rate.first, &rate.second);
-
-        if (rate.second)
-            format.setFrameRate(qreal(rate.first)/rate.second);
-
-        gint aspectNum = 0;
-        gint aspectDenum = 0;
-        if (gst_structure_get_fraction(
-                structure, "pixel-aspect-ratio", &aspectNum, &aspectDenum)) {
-            if (aspectDenum > 0)
-                format.setPixelAspectRatio(aspectNum, aspectDenum);
-        }
-
-        if (bytesPerLine)
-            *bytesPerLine = ((size.width() * bitsPerPixel / 8) + 3) & ~3;
-
-        return format;
-    }
-
-    return QVideoSurfaceFormat();
-}
-
-
-GstFlowReturn QmlVideoSurfaceGstSink::buffer_alloc(
-        GstBaseSink *base, guint64 offset, guint size, GstCaps *caps, GstBuffer **buffer)
-{
-    VO_SINK(base);
-
+    Q_UNUSED(base);
     Q_UNUSED(offset);
     Q_UNUSED(size);
+    Q_UNUSED(caps);
 
     *buffer = 0;
 
-#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
-
-    if (sink->lastRequestedCaps && gst_caps_is_equal(sink->lastRequestedCaps, caps)) {
-        //qDebug() << "reusing last caps";
-        *buffer = GST_BUFFER(sink->pool->takeBuffer(*sink->lastSurfaceFormat, sink->lastBufferCaps));
-        return GST_FLOW_OK;
-    }
-
-    if (sink->delegate->supportedPixelFormats(QAbstractVideoBuffer::XvShmImageHandle).isEmpty()) {
-        //qDebug() << "sink doesn't support Xv buffers, skip buffers allocation";
-        return GST_FLOW_OK;
-    }
-
-    GstCaps *intersection = gst_caps_intersect(get_caps(GST_BASE_SINK(sink)), caps);
-
-    if (gst_caps_is_empty (intersection)) {
-        gst_caps_unref(intersection);
-        return GST_FLOW_NOT_NEGOTIATED;
-    }
-
-    if (sink->delegate->isActive()) {
-        //if format was changed, restart the surface
-        QVideoSurfaceFormat format = formatForCaps(intersection);
-        QVideoSurfaceFormat surfaceFormat = sink->delegate->surfaceFormat();
-
-        if (format.pixelFormat() != surfaceFormat.pixelFormat() ||
-            format.frameSize() != surfaceFormat.frameSize()) {
-#ifdef DEBUG_VIDEO_SURFACE_SINK
-            qDebug() << "new format requested, restart video surface";
-#endif
-            sink->delegate->stop();
-        }
-    }
-
-    if (!sink->delegate->isActive()) {
-        int bytesPerLine = 0;
-        QVideoSurfaceFormat format = formatForCaps(intersection, &bytesPerLine);
-
-        if (!sink->delegate->start(format, bytesPerLine)) {
-            qWarning() << "failed to start video surface";
-            return GST_FLOW_NOT_NEGOTIATED;
-        }
-    }
-
-    QVideoSurfaceFormat surfaceFormat = sink->delegate->surfaceFormat();
-
-    if (!sink->pool->isFormatSupported(surfaceFormat)) {
-        //qDebug() << "sink doesn't provide Xv buffer details, skip buffers allocation";
-        return GST_FLOW_OK;
-    }
-
-    if (sink->lastRequestedCaps)
-        gst_caps_unref(sink->lastRequestedCaps);
-    sink->lastRequestedCaps = caps;
-    gst_caps_ref(sink->lastRequestedCaps);
-
-    if (sink->lastBufferCaps)
-        gst_caps_unref(sink->lastBufferCaps);
-    sink->lastBufferCaps = intersection;
-    gst_caps_ref(sink->lastBufferCaps);
-
-    *sink->lastSurfaceFormat = surfaceFormat;
-
-    *buffer =  GST_BUFFER(sink->pool->takeBuffer(surfaceFormat, intersection));
-
-#endif
     return GST_FLOW_OK;
 }
 
-gboolean QmlVideoSurfaceGstSink::start(GstBaseSink *base)
+GstFlowReturn GstQtVideoSink::show_frame(GstVideoSink *video_sink, GstBuffer *buffer)
 {
-    Q_UNUSED(base);
+    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(video_sink);
 
-    return TRUE;
+    GST_TRACE_OBJECT(sink, "Posting new buffer (%"GST_PTR_FORMAT") for rendering. "
+                           "Format dirty: %d", buffer, (int)sink->formatDirty);
+
+    QCoreApplication::postEvent(sink->surface,
+            new GstQtVideoSinkSurface::BufferEvent(buffer, sink->formatDirty));
+
+    sink->formatDirty = false;
+    return GST_FLOW_OK;
 }
 
-gboolean QmlVideoSurfaceGstSink::stop(GstBaseSink *base)
+void GstQtVideoSink::paint(GstQtVideoSink *sink, gpointer painter,
+                           gint x, gint y, gint width, gint height)
 {
-    Q_UNUSED(base);
-
-    return TRUE;
+    sink->surface->paint(static_cast<QPainter*>(painter), x, y, width, height);
 }
-
-gboolean QmlVideoSurfaceGstSink::unlock(GstBaseSink *base)
-{
-    Q_UNUSED(base);
-
-    return TRUE;
-}
-
-gboolean QmlVideoSurfaceGstSink::event(GstBaseSink *base, GstEvent *event)
-{
-    Q_UNUSED(base);
-    Q_UNUSED(event);
-
-    return TRUE;
-}
-
-GstFlowReturn QmlVideoSurfaceGstSink::preroll(GstBaseSink *base, GstBuffer *buffer)
-{
-    VO_SINK(base);
-    return sink->delegate->render(buffer);
-}
-
-GstFlowReturn QmlVideoSurfaceGstSink::render(GstBaseSink *base, GstBuffer *buffer)
-{
-    VO_SINK(base);
-    return sink->delegate->render(buffer);
-}
-

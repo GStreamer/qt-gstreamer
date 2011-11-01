@@ -1,93 +1,84 @@
-/****************************************************************************
-**
-** Copyright (C) 2011 Collabora Ltd
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
-**
-** This file was originally part of the Qt Mobility Components.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-****************************************************************************/
+/*
+    Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
+    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
 
-#ifndef QPAINTERVIDEOSURFACE_P_H
-#define QPAINTERVIDEOSURFACE_P_H
+    This library is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License version 2.1
+    as published by the Free Software Foundation.
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-#include <qmobilityglobal.h>
-#include <QtCore/qsize.h>
-#include <QtGui/qimage.h>
-#include <QtGui/qmatrix4x4.h>
-#include <QtGui/qpaintengine.h>
-#include <qabstractvideosurface.h>
-#include <qvideoframe.h>
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
-QT_BEGIN_NAMESPACE
+#ifndef GST_QT_VIDEO_SINK_SURFACE_H
+#define GST_QT_VIDEO_SINK_SURFACE_H
+
+#include "gstqtvideosink.h"
+#include "bufferformat.h"
+#include "abstractsurfacepainter.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QEvent>
+#include <QtCore/QSet>
+#include <QtCore/QReadWriteLock>
+
 class QGLContext;
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-
-class QmlVideoSurfacePainter
-{
-public:
-    virtual ~QmlVideoSurfacePainter();
-
-    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-            QAbstractVideoBuffer::HandleType handleType) const = 0;
-
-    virtual bool isFormatSupported(
-            const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const = 0;
-
-    virtual QAbstractVideoSurface::Error start(const QVideoSurfaceFormat &format) = 0;
-    virtual void stop() = 0;
-
-    virtual QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame) = 0;
-
-    virtual QAbstractVideoSurface::Error paint(
-            const QRectF &target, QPainter *painter, const QRectF &source) = 0;
-
-    virtual void updateColors(int brightness, int contrast, int hue, int saturation) = 0;
-    virtual void viewportDestroyed() {}
-};
 
 
-class QM_AUTOTEST_EXPORT QmlPainterVideoSurface : public QAbstractVideoSurface
+class GstQtVideoSinkSurface : public QObject
 {
     Q_OBJECT
 public:
-    explicit QmlPainterVideoSurface(QObject *parent = 0);
-    ~QmlPainterVideoSurface();
+    enum EventType {
+        BufferEventType = QEvent::User,
+        DeactivateEventType
+    };
 
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+    //-------------------------------------
 
-    bool isFormatSupported(
-            const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar = 0) const;
+    class BufferEvent : public QEvent
+    {
+    public:
+        inline BufferEvent(GstBuffer *buf, bool formatDirty)
+            : QEvent(static_cast<QEvent::Type>(BufferEventType)),
+              buffer(gst_buffer_ref(buf)),
+              formatDirty(formatDirty)
+        {
+        }
 
-    bool start(const QVideoSurfaceFormat &format);
-    void stop();
+        GstBuffer *buffer;
+        bool formatDirty;
+    };
 
-    bool present(const QVideoFrame &frame);
+    //-------------------------------------
+
+    class DeactivateEvent : public QEvent
+    {
+    public:
+        inline DeactivateEvent()
+            : QEvent(static_cast<QEvent::Type>(DeactivateEventType))
+        {
+        }
+    };
+
+    //-------------------------------------
+
+    explicit GstQtVideoSinkSurface(GstQtVideoSink *sink, QObject *parent = 0);
+    ~GstQtVideoSinkSurface();
+
+    // API for GstQtVideoSink
+
+    QSet<BufferFormat::PixelFormat> supportedPixelFormats() const;
+
+    bool isActive() const;
+    void setActive(bool playing);
+
+    // GstColorBalance interface
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -101,16 +92,15 @@ public:
     int saturation() const;
     void setSaturation(int saturation);
 
-    bool isReady() const;
-    void setReady(bool ready);
+    // force-aspect-ratio property
 
-    bool isPlaying() const;
-    void setPlaying(bool playing);
+    bool forceAspectRatio() const;
+    void setForceAspectRatio(bool force);
 
-    void paint(QPainter *painter, const QRectF &target, const QRectF &source = QRectF(0, 0, 1, 1));
+    // glcontext property
 
-#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
-    const QGLContext *glContext() const;
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    QGLContext *glContext() const;
     void setGLContext(QGLContext *context);
 
     enum ShaderType
@@ -121,45 +111,60 @@ public:
     };
 
     Q_DECLARE_FLAGS(ShaderTypes, ShaderType)
-
-    ShaderTypes supportedShaderTypes() const;
-
-    ShaderType shaderType() const;
-    void setShaderType(ShaderType type);
 #endif
 
-public Q_SLOTS:
-    void viewportDestroyed();
+    // paint action signal
 
-Q_SIGNALS:
-    void frameChanged();
+    void paint(QPainter *painter, int x, int y, int width, int height);
+
+protected:
+    bool event(QEvent *event);
 
 private:
-    void createPainter();
+    void changePainter(const BufferFormat & format);
+    void destroyPainter();
 
-    QmlVideoSurfacePainter *m_painter;
-#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
+
+    AbstractSurfacePainter *m_painter;
+
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     QGLContext *m_glContext;
-    ShaderTypes m_shaderTypes;
+    ShaderTypes m_supportedShaderTypes;
     ShaderType m_shaderType;
 #endif
+
+    // colorbalance interface properties
+    mutable QReadWriteLock m_colorsLock;
+    bool m_colorsDirty;
     int m_brightness;
     int m_contrast;
     int m_hue;
     int m_saturation;
 
-    QVideoFrame::PixelFormat m_pixelFormat;
-    QSize m_frameSize;
-    QRect m_sourceRect;
-    bool m_colorsDirty;
-    bool m_ready;
-    bool m_playing;
+    // force-aspect-ratio property
+    mutable QReadWriteLock m_forceAspectRatioLock;
+    bool m_forceAspectRatioDirty;
+    bool m_forceAspectRatio;
+
+    // format caching
+    bool m_formatDirty;
+    BufferFormat m_bufferFormat;
+    QRect m_targetArea;
+    QRect m_videoArea;
+    QRect m_clipRect;
+
+    // whether the sink is active (PAUSED or PLAYING)
+    mutable QReadWriteLock m_isActiveLock;
+    bool m_isActive;
+
+    // the buffer to be drawn next
+    GstBuffer *m_buffer;
+
+    GstQtVideoSink *m_sink;
 };
 
-#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QmlPainterVideoSurface::ShaderTypes)
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+Q_DECLARE_OPERATORS_FOR_FLAGS(GstQtVideoSinkSurface::ShaderTypes)
 #endif
 
-QT_END_NAMESPACE
-
-#endif
+#endif // GST_QT_VIDEO_SINK_SURFACE_H
