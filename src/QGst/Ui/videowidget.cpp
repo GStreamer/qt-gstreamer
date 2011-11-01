@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
-    Copyright (C) 2011 Collabora Ltd.
+    Copyright (C) 2011-2012 Collabora Ltd.
       @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
     This library is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 #include "../bus.h"
 #include "../message.h"
 #include "../../QGlib/connect.h"
+#include "../../QGlib/signal.h"
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
 #include <QtCore/QThread>
@@ -114,6 +115,48 @@ private:
 };
 
 
+class QtVideoSinkRenderer : public QObject, public AbstractRenderer
+{
+public:
+    QtVideoSinkRenderer(const ElementPtr & sink, QWidget *parent)
+        : QObject(parent), m_sink(sink)
+    {
+        QGlib::connect(sink, "update", this, &QtVideoSinkRenderer::onUpdate);
+        parent->installEventFilter(this);
+        parent->setAttribute(Qt::WA_OpaquePaintEvent, true);
+    }
+
+    virtual ~QtVideoSinkRenderer()
+    {
+        widget()->removeEventFilter(this);
+        widget()->setAttribute(Qt::WA_OpaquePaintEvent, false);
+    }
+
+    virtual ElementPtr videoSink() const { return m_sink; }
+
+protected:
+    virtual bool eventFilter(QObject *filteredObject, QEvent *event)
+    {
+        if (filteredObject == parent() && event->type() == QEvent::Paint) {
+            QPainter painter(widget());
+            QRect targetArea = widget()->rect();
+            QGlib::emit<void>(m_sink, "paint", (void*) &painter,
+                              (qreal) targetArea.x(), (qreal) targetArea.y(),
+                              (qreal) targetArea.width(), (qreal) targetArea.height());
+            return true;
+        } else {
+            return QObject::eventFilter(filteredObject, event);
+        }
+    }
+
+private:
+    inline QWidget *widget() { return static_cast<QWidget*>(parent()); }
+    void onUpdate() { widget()->update(); }
+
+    ElementPtr m_sink;
+};
+
+
 class QWidgetVideoSinkRenderer : public AbstractRenderer
 {
 public:
@@ -192,6 +235,10 @@ AbstractRenderer *AbstractRenderer::create(const ElementPtr & sink, QWidget *vid
         XOverlayRenderer *r = new XOverlayRenderer(videoWidget);
         r->setVideoSink(overlay);
         return r;
+    }
+
+    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtVideoSink")) {
+        return new QtVideoSinkRenderer(sink, videoWidget);
     }
 
     if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQWidgetVideoSink")) {
