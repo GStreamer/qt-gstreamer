@@ -17,4 +17,6 @@ if (GSTREAMER_BASE_LIBRARY_FOUND AND GSTREAMER_VIDEO_LIBRARY_FOUND)
                                               ${GOBJECT_LIBRARIES} ${GSTREAMER_LIBRARY}
                                               ${GSTREAMER_BASE_LIBRARY} ${GSTREAMER_VIDEO_LIBRARY})
     install(TARGETS gstqwidgetvideosink DESTINATION ${PLUGINS_INSTALL_DIR})
+
+    add_subdirectory(gstqtvideosink)
 endif()

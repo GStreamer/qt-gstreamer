@@ -15,6 +15,8 @@ include(MacroLogFeature)
 
 find_package(Qt4 COMPONENTS QtCore QtGui QtTest)
 macro_log_feature(QT4_FOUND "Qt 4" "Required for building everything" "http://qt.nokia.com/" TRUE "4.5")
+macro_log_feature(QT_QTOPENGL_FOUND "QtOpenGL" "Required for OpenGL rendering support in qtvideosink"
+                                    "http://qt.nokia.com/" FALSE "4.5")
 
 find_package(Boost 1.39)
 macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.39")
@@ -50,6 +52,9 @@ macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.
 
 find_package(GObject)
 macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
+
+find_package(OpenGL)
+macro_log_feature(OPENGL_FOUND "OpenGL" "Required for OpenGL rendering support in qtvideosink" FALSE)
 
 if (QTGSTREAMER_CODEGEN AND CMAKE_CROSSCOMPILING)
     message(WARNING "Codegen use requested, but we are crosscompiling. Disabling...")

@@ -46,3 +46,19 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GLIB2  DEFAULT_MSG  GLIB2_LIBRARIES GLIB2_MAIN_INCLUDE_DIR)
 
 mark_as_advanced(GLIB2_INCLUDE_DIR GLIB2_LIBRARIES)
+
+
+find_program(GLIB2_GENMARSHAL_UTIL glib-genmarshal)
+
+macro(glib2_genmarshal output_name)
+    file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/genmarshal_tmp)
+    foreach(_declaration ${ARGN})
+        file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/genmarshal_tmp "${_declaration}\n")
+    endforeach()
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${output_name}.h ${CMAKE_CURRENT_BINARY_DIR}/${output_name}.c
+        COMMAND ${GLIB2_GENMARSHAL_UTIL} --header genmarshal_tmp > ${output_name}.h
+        COMMAND ${GLIB2_GENMARSHAL_UTIL} --body genmarshal_tmp > ${output_name}.c
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endmacro()
