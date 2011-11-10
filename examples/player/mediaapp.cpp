@@ -240,4 +240,4 @@ void MediaApp::createUI(QBoxLayout *appLayout)
     appLayout->addLayout(btnLayout);
 }
 
-#include "mediaapp.moc"
+#include "moc_mediaapp.cpp"

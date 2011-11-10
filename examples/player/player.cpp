@@ -209,4 +209,4 @@ void Player::handlePipelineStateChange(const QGst::StateChangedMessagePtr & scm)
     Q_EMIT stateChanged();
 }
 
-#include "player.moc"
+#include "moc_player.cpp"

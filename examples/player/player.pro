@@ -7,8 +7,7 @@ TARGET = player
 CONFIG += link_pkgconfig
 
 # Now tell qmake to link to QtGStreamer-0.10 and also use its include path and Cflags.
-# Also add QtGStreamerUi-0.10 here if you are using classes from QGst::Ui
-PKGCONFIG += QtGStreamer-0.10
+PKGCONFIG += QtGStreamer-0.10 QtGStreamerUi-0.10
 
 # Recommended if you are using g++ 4.5 or later. Must be removed for other compilers.
 #QMAKE_CXXFLAGS += -std=c++0x
@@ -21,5 +20,6 @@ DEFINES += QT_NO_KEYWORDS
 QT -= gui
 
 # Input
-HEADERS += movieplayer.h player.h
-SOURCES += main.cpp movieplayer.cpp player.cpp
+HEADERS += mediaapp.h player.h
+SOURCES += main.cpp mediaapp.cpp player.cpp
+
