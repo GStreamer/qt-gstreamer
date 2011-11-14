@@ -18,6 +18,7 @@
 */
 #include "player.h"
 #include <QtCore/QDir>
+#include <QtCore/QUrl>
 #include <QGlib/Connect>
 #include <QGlib/Error>
 #include <QGst/Pipeline>
@@ -51,7 +52,7 @@ void Player::setUri(const QString & uri)
 
     //if uri is not a real uri, assume it is a file path
     if (realUri.indexOf("://") < 0) {
-        realUri = "file://" + QFileInfo(realUri).absoluteFilePath();
+        realUri = QUrl::fromLocalFile(realUri).toEncoded();
     }
 
     if (!m_pipeline) {
