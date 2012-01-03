@@ -223,11 +223,12 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, in
 
         //TODO add properties for modifying clipRect
 
-        if (m_formatDirty) {
+        if (m_formatDirty || !m_painter) {
             //if either pixelFormat or frameSize have changed, we need to reset the painter
             //and/or change painter, in case the current one does not handle the requested format
             if (format.pixelFormat() != m_bufferFormat.pixelFormat()
-                || format.frameSize() != m_bufferFormat.frameSize())
+                || format.frameSize() != m_bufferFormat.frameSize()
+                || !m_painter)
             {
                 changePainter(format);
             }
@@ -419,8 +420,10 @@ bool GstQtVideoSinkSurface::event(QEvent *event)
             m_buffer = NULL;
         }
 
-        m_painter->cleanup();
-        destroyPainter();
+        if (m_painter) {
+            m_painter->cleanup();
+            destroyPainter();
+        }
 
         g_signal_emit(m_sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
 
