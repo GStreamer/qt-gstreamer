@@ -218,6 +218,8 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, in
             } else {
                 m_videoArea = m_targetArea;
             }
+
+            m_clipRect = QRect(QPoint(0,0), format.frameSize());
         }
         forceAspectRatioLocker.unlock();
 

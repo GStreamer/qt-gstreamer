@@ -446,9 +446,9 @@ void ArbFpSurfacePainter::paint(quint8 *data,
         glEnable(GL_SCISSOR_TEST);
 
     const float txLeft = clipRect.left() / frameFormat.frameSize().width();
-    const float txRight = clipRect.right() / frameFormat.frameSize().width();
+    const float txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
     const float txTop = clipRect.top() / frameFormat.frameSize().height();
-    const float txBottom = clipRect.bottom() / frameFormat.frameSize().height();
+    const float txBottom = (clipRect.bottom() + 1) / frameFormat.frameSize().height();
 
     const float tx_array[] =
     {
@@ -784,9 +784,9 @@ void GlslSurfacePainter::paint(quint8 *data,
     };
 
     const GLfloat txLeft = clipRect.left() / frameFormat.frameSize().width();
-    const GLfloat txRight = clipRect.right() / frameFormat.frameSize().width();
+    const GLfloat txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
     const GLfloat txTop = clipRect.top() / frameFormat.frameSize().height();
-    const GLfloat txBottom = clipRect.bottom() / frameFormat.frameSize().height();
+    const GLfloat txBottom = (clipRect.bottom() + 1) / frameFormat.frameSize().height();
 
     const GLfloat textureCoordArray[] =
     {
