@@ -189,7 +189,7 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal wid
 {
     QRectF targetArea(x, y, width, height);
 
-    if (!isActive()) {
+    if (!m_buffer) {
         painter->fillRect(targetArea, Qt::black);
     } else {
         BufferFormat format = m_formatDirty ?
