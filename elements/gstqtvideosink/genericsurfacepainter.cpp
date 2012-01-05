@@ -47,9 +47,9 @@ void GenericSurfacePainter::cleanup()
 
 void GenericSurfacePainter::paint(quint8 *data,
         const BufferFormat & frameFormat,
+        const QRectF & clipRect,
         QPainter *painter,
-        const QRect & videoArea,
-        const QRect & clipRect)
+        const PaintAreas & areas)
 {
     Q_ASSERT(m_imageFormat != QImage::Format_Invalid);
 
@@ -60,7 +60,9 @@ void GenericSurfacePainter::paint(quint8 *data,
         frameFormat.bytesPerLine(),
         m_imageFormat);
 
-    painter->drawImage(videoArea, image, clipRect);
+    painter->fillRect(areas.blackArea1, Qt::black);
+    painter->drawImage(areas.videoArea, image, clipRect);
+    painter->fillRect(areas.blackArea2, Qt::black);
 }
 
 void GenericSurfacePainter::updateColors(int, int, int, int, BufferFormat::YCbCrColorSpace)

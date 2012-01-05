@@ -22,6 +22,20 @@
 
 class QPainter;
 
+struct PaintAreas
+{
+    // the area that we paint on
+    QRectF targetArea;
+
+    // the area where the video should be painted on (subrect of or equal to targetArea)
+    QRectF videoArea;
+
+    // these are small subrects of targetArea that are not
+    // covered by videoArea to keep the video's aspect ratio
+    QRectF blackArea1;
+    QRectF blackArea2;
+};
+
 /** Common interface for all the painters */
 class AbstractSurfacePainter
 {
@@ -33,8 +47,8 @@ public:
     virtual void init(const BufferFormat & format) = 0;
     virtual void cleanup() = 0;
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat,
-                       QPainter *painter, const QRect & videoArea, const QRect & clipRect) = 0;
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+                       QPainter *painter, const PaintAreas & areas) = 0;
 
     virtual void updateColors(int brightness, int contrast, int hue, int saturation,
                               BufferFormat::YCbCrColorSpace colorSpace) = 0;

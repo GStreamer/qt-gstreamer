@@ -23,6 +23,14 @@
 #include <QtCore/QStack>
 #include <QtGui/QPainter>
 
+#define QSIZE_FORMAT "(%d x %d)"
+#define QSIZE_FORMAT_ARGS(size) \
+    size.width(), size.height()
+#define QRECTF_FORMAT "(x: %f, y: %f, w: %f, h: %f)"
+#define QRECTF_FORMAT_ARGS(rect) \
+    (float) rect.x(), (float) rect.y(), (float) rect.width(), (float) rect.height()
+
+
 GstQtVideoSinkSurface::GstQtVideoSinkSurface(GstQtVideoSink *sink, QObject *parent)
     : QObject(parent)
     , m_painter(0)
@@ -155,9 +163,31 @@ void GstQtVideoSinkSurface::setForceAspectRatio(bool force)
 
 //-------------------------------------
 
+/* Modified version of gst_video_sink_center_rect */
+static QRectF centerRect(const QRectF & src, const QRectF & dst)
+{
+    QRectF result;
+    qreal srcRatio = src.width() / src.height();
+    qreal dstRatio = dst.width() / dst.height();
+
+    if (srcRatio > dstRatio) {
+        result.setWidth(dst.width());
+        result.setHeight(dst.width() / srcRatio);
+        result.moveTop((dst.height() - result.height()) / 2);
+    } else if (srcRatio < dstRatio) {
+        result.setWidth(dst.height() * srcRatio);
+        result.setHeight(dst.height());
+        result.moveLeft((dst.width() - result.width()) / 2);
+    } else {
+        result = dst;
+    }
+
+    return result;
+}
+
 void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, int height)
 {
-    QRect targetArea(x, y, width, height);
+    QRectF targetArea(x, y, width, height);
 
     if (!isActive()) {
         painter->fillRect(targetArea, Qt::black);
@@ -167,63 +197,68 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, in
 
         //recalculate the video area if needed
         QReadLocker forceAspectRatioLocker(&m_forceAspectRatioLock);
-        if (targetArea != m_targetArea
+        if (targetArea != m_areas.targetArea
              || (m_formatDirty && (format.frameSize() != m_bufferFormat.frameSize()
                                || format.pixelAspectRatio() != m_bufferFormat.pixelAspectRatio()))
              || m_forceAspectRatioDirty)
         {
-            m_targetArea = targetArea;
+            m_areas.targetArea = targetArea;
             m_forceAspectRatioDirty = false;
 
             if (m_forceAspectRatio) {
-                GstVideoRectangle srcRect;
-                srcRect.x = srcRect.y = 0;
-                srcRect.w = format.frameSize().width() *
-                        format.pixelAspectRatio().width() / format.pixelAspectRatio().height();
-                srcRect.h = format.frameSize().height() *
-                        format.pixelAspectRatio().height() / format.pixelAspectRatio().width();
+                qreal aspectRatio = (qreal) format.pixelAspectRatio().width() / format.pixelAspectRatio().height();
+                qreal aspectRatioInv = (qreal) format.pixelAspectRatio().height() / format.pixelAspectRatio().width();
 
-                GstVideoRectangle destRect;
-                destRect.x = destRect.y = 0;
-                destRect.w = m_targetArea.width();
-                destRect.h = m_targetArea.height();
+                QRectF srcRect(QPointF(0,0), QSizeF(format.frameSize().width() * aspectRatio,
+                                                    format.frameSize().height() * aspectRatioInv));
+                QRectF destRect(QPointF(0,0), m_areas.targetArea.size());
 
-                GstVideoRectangle resultRect;
-                gst_video_sink_center_rect(srcRect, destRect, &resultRect, TRUE);
-                m_videoArea = QRect(resultRect.x, resultRect.y, resultRect.w, resultRect.h);
+                m_areas.videoArea = centerRect(srcRect, destRect);
 
-                //Is this really worth it, or should I paint everything black?
-                QRect blackArea1(
-                    m_targetArea.left(),
-                    m_targetArea.top(),
-                    m_videoArea.left() == m_targetArea.left() ?
-                        m_targetArea.width() : m_videoArea.left() - m_targetArea.left(),
-                    m_videoArea.top() == m_targetArea.top() ?
-                        m_targetArea.height() : m_videoArea.top() - m_targetArea.top()
+                m_areas.blackArea1 = QRectF(
+                    m_areas.targetArea.left(),
+                    m_areas.targetArea.top(),
+                    m_areas.videoArea.left() == m_areas.targetArea.left() ?
+                        m_areas.targetArea.width() : m_areas.videoArea.left() - m_areas.targetArea.left(),
+                    m_areas.videoArea.top() == m_areas.targetArea.top() ?
+                        m_areas.targetArea.height() : m_areas.videoArea.top() - m_areas.targetArea.top()
                 );
 
-                QRect blackArea2(
-                    m_videoArea.right() == m_targetArea.right() ?
-                        m_targetArea.left() : m_videoArea.right() + 1,
-                    m_videoArea.bottom() == m_targetArea.bottom() ?
-                        m_targetArea.top() : m_videoArea.bottom() + 1,
-                    m_videoArea.right() == m_targetArea.right() ?
-                        m_targetArea.width() : m_targetArea.right() - m_videoArea.right(),
-                    m_videoArea.bottom() == m_targetArea.bottom() ?
-                        m_targetArea.height() : m_targetArea.bottom() - m_videoArea.bottom()
+                m_areas.blackArea2 = QRectF(
+                    m_areas.videoArea.right() == m_areas.targetArea.right() ?
+                        m_areas.targetArea.left() : m_areas.videoArea.right() + 1,
+                    m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
+                        m_areas.targetArea.top() : m_areas.videoArea.bottom() + 1,
+                    m_areas.videoArea.right() == m_areas.targetArea.right() ?
+                        m_areas.targetArea.width() : m_areas.targetArea.right() - m_areas.videoArea.right(),
+                    m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
+                        m_areas.targetArea.height() : m_areas.targetArea.bottom() - m_areas.videoArea.bottom()
                 );
-
-                painter->fillRect(blackArea1, Qt::black);
-                painter->fillRect(blackArea2, Qt::black);
             } else {
-                m_videoArea = m_targetArea;
+                m_areas.videoArea = m_areas.targetArea;
+                m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
             }
 
-            m_clipRect = QRect(QPoint(0,0), format.frameSize());
+            GST_LOG_OBJECT(m_sink,
+                "Recalculated paint areas: "
+                "Frame size: " QSIZE_FORMAT ", "
+                "target area: " QRECTF_FORMAT ", "
+                "video area: " QRECTF_FORMAT ", "
+                "black1: " QRECTF_FORMAT ", "
+                "black2: " QRECTF_FORMAT,
+                QSIZE_FORMAT_ARGS(format.frameSize()),
+                QRECTF_FORMAT_ARGS(m_areas.targetArea),
+                QRECTF_FORMAT_ARGS(m_areas.videoArea),
+                QRECTF_FORMAT_ARGS(m_areas.blackArea1),
+                QRECTF_FORMAT_ARGS(m_areas.blackArea2)
+            );
         }
         forceAspectRatioLocker.unlock();
 
-        //TODO add properties for modifying clipRect
+        if (m_formatDirty /* || m_clipRectDirty */) {
+            //TODO add properties for modifying clipRect
+            m_clipRect = QRectF(QPointF(0,0), format.frameSize());
+        }
 
         if (m_formatDirty || !m_painter) {
             //if either pixelFormat or frameSize have changed, we need to reset the painter
@@ -245,17 +280,7 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, in
             m_formatDirty = false;
         }
 
-        GST_TRACE_OBJECT(m_sink,
-            "Rendering buffer %"GST_PTR_FORMAT". "
-            "Frame size is (%d, %d), "
-            "widget size is (%d, %d), "
-            "calculated video area is (%d, %d)",
-            m_buffer,
-            m_bufferFormat.frameSize().width(), m_bufferFormat.frameSize().height(),
-            m_targetArea.width(), m_targetArea.height(),
-            m_videoArea.width(), m_videoArea.height());
-
-        if (m_painter) {
+        if (G_LIKELY(m_painter)) {
             QReadLocker colorsLocker(&m_colorsLock);
             if (m_colorsDirty) {
                 m_painter->updateColors(m_brightness, m_contrast, m_hue, m_saturation,
@@ -264,7 +289,7 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, in
             }
             colorsLocker.unlock();
 
-            m_painter->paint(m_buffer->data, m_bufferFormat, painter, m_videoArea, m_clipRect);
+            m_painter->paint(m_buffer->data, m_bufferFormat, m_clipRect, painter, m_areas);
         }
     }
 }

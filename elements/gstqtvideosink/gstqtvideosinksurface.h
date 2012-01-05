@@ -149,9 +149,8 @@ private:
     // format caching
     bool m_formatDirty;
     BufferFormat m_bufferFormat;
-    QRect m_targetArea;
-    QRect m_videoArea;
-    QRect m_clipRect;
+    PaintAreas m_areas;
+    QRectF m_clipRect;
 
     // whether the sink is active (PAUSED or PLAYING)
     mutable QReadWriteLock m_isActiveLock;

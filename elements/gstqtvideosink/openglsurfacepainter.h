@@ -46,6 +46,7 @@ public:
 
 protected:
     void setCurrentFrame(quint8 *data);
+    void paintBlackAreas(const PaintAreas & areas);
     void initRgbTextureInfo(GLenum internalFormat, GLuint format, GLenum type, const QSize &size);
     void initYuv420PTextureInfo(const QSize &size);
     void initYv12TextureInfo(const QSize &size);
@@ -84,8 +85,8 @@ public:
     virtual void init(const BufferFormat & format);
     virtual void cleanup();
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat,
-                       QPainter *painter, const QRect & videoArea, const QRect & clipRect);
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+                       QPainter *painter, const PaintAreas & areas);
 
 private:
     typedef void (APIENTRY *_glProgramStringARB) (GLenum, GLenum, GLsizei, const GLvoid *);
@@ -120,8 +121,8 @@ public:
     virtual void init(const BufferFormat & format);
     virtual void cleanup();
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat,
-                       QPainter *painter, const QRect & videoArea, const QRect & clipRect);
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+                       QPainter *painter, const PaintAreas & areas);
 
 private:
     QGLShaderProgram m_program;

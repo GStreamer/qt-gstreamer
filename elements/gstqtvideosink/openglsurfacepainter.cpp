@@ -30,6 +30,13 @@
 #  define GL_UNSIGNED_SHORT_5_6_5 33635
 #endif
 
+#define QRECT_TO_GLMATRIX(rect) \
+    { \
+        GLfloat(rect.left())     , GLfloat(rect.bottom() + 1), \
+        GLfloat(rect.right() + 1), GLfloat(rect.bottom() + 1), \
+        GLfloat(rect.left())     , GLfloat(rect.top()), \
+        GLfloat(rect.right() + 1), GLfloat(rect.top()) \
+    }
 
 OpenGLSurfacePainter::OpenGLSurfacePainter(QGLContext *context)
     : m_context(context)
@@ -149,6 +156,18 @@ void OpenGLSurfacePainter::setCurrentFrame(quint8 *data)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
+}
+
+void OpenGLSurfacePainter::paintBlackAreas(const PaintAreas & areas)
+{
+    const GLfloat black1[] = QRECT_TO_GLMATRIX(areas.blackArea1);
+    const GLfloat black2[] = QRECT_TO_GLMATRIX(areas.blackArea2);
+
+    glColor3f(0.0, 0.0, 0.0);
+    glVertexPointer(2, GL_FLOAT, 0, black1);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glVertexPointer(2, GL_FLOAT, 0, black2);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 void OpenGLSurfacePainter::initRgbTextureInfo(
@@ -429,9 +448,9 @@ void ArbFpSurfacePainter::cleanup()
 
 void ArbFpSurfacePainter::paint(quint8 *data,
         const BufferFormat & frameFormat,
+        const QRectF & clipRect,
         QPainter *painter,
-        const QRect & videoArea,
-        const QRect & clipRect)
+        const PaintAreas & areas)
 {
     setCurrentFrame(data);
 
@@ -458,16 +477,7 @@ void ArbFpSurfacePainter::paint(quint8 *data,
         txRight, txTop
     };
 
-    const GLfloat vTop = videoArea.top();
-    const GLfloat vBottom = videoArea.bottom() + 1;
-
-    const GLfloat v_array[] =
-    {
-        GLfloat(videoArea.left())     , GLfloat(vBottom),
-        GLfloat(videoArea.right() + 1), GLfloat(vBottom),
-        GLfloat(videoArea.left())     , GLfloat(vTop),
-        GLfloat(videoArea.right() + 1), GLfloat(vTop)
-    };
+    const GLfloat v_array[] = QRECT_TO_GLMATRIX(areas.videoArea);
 
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
     glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_programId);
@@ -514,8 +524,11 @@ void ArbFpSurfacePainter::paint(quint8 *data,
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
+
+    paintBlackAreas(areas);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     painter->endNativePainting();
 }
@@ -723,9 +736,9 @@ void GlslSurfacePainter::cleanup()
 
 void GlslSurfacePainter::paint(quint8 *data,
         const BufferFormat & frameFormat,
+        const QRectF & clipRect,
         QPainter *painter,
-        const QRect & videoArea,
-        const QRect & clipRect)
+        const PaintAreas & areas)
 {
     setCurrentFrame(data);
 
@@ -772,16 +785,7 @@ void GlslSurfacePainter::paint(quint8 *data,
         }
     };
 
-    const GLfloat vTop = videoArea.top();
-    const GLfloat vBottom = videoArea.bottom() + 1;
-
-    const GLfloat vertexCoordArray[] =
-    {
-        GLfloat(videoArea.left())     , GLfloat(vBottom),
-        GLfloat(videoArea.right() + 1), GLfloat(vBottom),
-        GLfloat(videoArea.left())     , GLfloat(vTop),
-        GLfloat(videoArea.right() + 1), GLfloat(vTop)
-    };
+    const GLfloat vertexCoordArray[] = QRECT_TO_GLMATRIX(areas.videoArea);
 
     const GLfloat txLeft = clipRect.left() / frameFormat.frameSize().width();
     const GLfloat txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
@@ -827,6 +831,10 @@ void GlslSurfacePainter::paint(quint8 *data,
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     m_program.release();
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    paintBlackAreas(areas);
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     painter->endNativePainting();
 }

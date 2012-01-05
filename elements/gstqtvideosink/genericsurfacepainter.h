@@ -37,8 +37,8 @@ public:
     virtual void init(const BufferFormat &format);
     virtual void cleanup();
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat,
-                       QPainter *painter, const QRect & videoArea, const QRect & clipRect);
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+                       QPainter *painter, const PaintAreas & areas);
 
     virtual void updateColors(int brightness, int contrast, int hue, int saturation,
                               BufferFormat::YCbCrColorSpace colorSpace);
