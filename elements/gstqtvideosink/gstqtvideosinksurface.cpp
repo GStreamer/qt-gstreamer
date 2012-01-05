@@ -393,13 +393,15 @@ void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
             m_painter->init(format);
             return;
         } catch (const QString & error) {
-            GST_WARNING_OBJECT(m_sink, "Failed to start painter: %s", error.toUtf8().constData());
+            GST_ELEMENT_WARNING(m_sink, RESOURCE, FAILED,
+                    ("Failed to start painter"), ("%s", error.toUtf8().constData()));
             delete m_painter;
             m_painter = 0;
         }
     }
 
-    GST_ERROR_OBJECT(m_sink, "Failed to create a painter for the given format");
+    GST_ELEMENT_ERROR(m_sink, RESOURCE, FAILED,
+            ("Failed to create a painter for the given format"), (NULL));
 }
 
 void GstQtVideoSinkSurface::destroyPainter()
