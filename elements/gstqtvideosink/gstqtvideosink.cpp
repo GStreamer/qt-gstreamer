@@ -29,6 +29,13 @@
 
 #include <QtCore/QCoreApplication>
 
+//------------------------------
+
+inline bool qRealIsDouble() { return sizeof(qreal) == sizeof(double); }
+#define G_TYPE_QREAL qRealIsDouble() ? G_TYPE_DOUBLE : G_TYPE_FLOAT
+
+//------------------------------
+
 guint GstQtVideoSink::s_signals[];
 GstVideoSinkClass *GstQtVideoSink::s_parent_class = NULL;
 
@@ -157,9 +164,11 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
                      static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
                      G_STRUCT_OFFSET(GstQtVideoSinkClass, paint),
                      NULL, NULL,
-                     g_cclosure_user_marshal_VOID__POINTER_INT_INT_INT_INT,
+                     qRealIsDouble() ?
+                        g_cclosure_user_marshal_VOID__POINTER_DOUBLE_DOUBLE_DOUBLE_DOUBLE :
+                        g_cclosure_user_marshal_VOID__POINTER_FLOAT_FLOAT_FLOAT_FLOAT,
                      G_TYPE_NONE, 5,
-                     G_TYPE_POINTER, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+                     G_TYPE_POINTER, G_TYPE_QREAL, G_TYPE_QREAL, G_TYPE_QREAL, G_TYPE_QREAL);
 
     /**
      * GstQtVideoSink::update
@@ -300,7 +309,7 @@ GstFlowReturn GstQtVideoSink::show_frame(GstVideoSink *video_sink, GstBuffer *bu
 }
 
 void GstQtVideoSink::paint(GstQtVideoSink *sink, gpointer painter,
-                           gint x, gint y, gint width, gint height)
+                           qreal x, qreal y, qreal width, qreal height)
 {
     sink->surface->paint(static_cast<QPainter*>(painter), x, y, width, height);
 }

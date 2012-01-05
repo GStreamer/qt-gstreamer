@@ -185,7 +185,7 @@ static QRectF centerRect(const QRectF & src, const QRectF & dst)
     return result;
 }
 
-void GstQtVideoSinkSurface::paint(QPainter *painter, int x, int y, int width, int height)
+void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height)
 {
     QRectF targetArea(x, y, width, height);
 

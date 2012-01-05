@@ -115,7 +115,7 @@ public:
 
     // paint action signal
 
-    void paint(QPainter *painter, int x, int y, int width, int height);
+    void paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height);
 
 protected:
     bool event(QEvent *event);

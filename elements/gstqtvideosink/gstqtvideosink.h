@@ -20,6 +20,7 @@
 
 #include "gstqtvideosinkplugin.h"
 #include <gst/video/gstvideosink.h>
+#include <QtCore/QtGlobal>
 
 #define GST_TYPE_QT_VIDEO_SINK \
   (GstQtVideoSink::get_type())
@@ -58,7 +59,7 @@ private:
     static GstFlowReturn show_frame(GstVideoSink *sink, GstBuffer *buffer);
 
     static void paint(GstQtVideoSink *sink, gpointer painter,
-                      gint x, gint y, gint width, gint height);
+                      qreal x, qreal y, qreal width, qreal height);
 
 private:
     GstQtVideoSinkSurface *surface;
@@ -91,7 +92,7 @@ struct GstQtVideoSinkClass
 
     /* paint action signal */
     void (*paint) (GstQtVideoSink *sink, gpointer painter,
-                   gint x, gint y, gint width, gint height);
+                   qreal x, qreal y, qreal width, qreal height);
 };
 
 #endif
