@@ -429,7 +429,9 @@ bool GstQtVideoSinkSurface::event(QEvent *event)
         if (isActive()) {
             //schedule this frame for rendering
             m_buffer = bufEvent->buffer;
-            m_formatDirty = bufEvent->formatDirty;
+            if (bufEvent->formatDirty) {
+                m_formatDirty = true;
+            }
             g_signal_emit(m_sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
         } else {
             //not active, drop the frame
