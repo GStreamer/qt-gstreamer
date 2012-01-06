@@ -215,25 +215,29 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal wid
 
                 m_areas.videoArea = centerRect(srcRect, destRect);
 
-                m_areas.blackArea1 = QRectF(
-                    m_areas.targetArea.left(),
-                    m_areas.targetArea.top(),
-                    m_areas.videoArea.left() == m_areas.targetArea.left() ?
-                        m_areas.targetArea.width() : m_areas.videoArea.left() - m_areas.targetArea.left(),
-                    m_areas.videoArea.top() == m_areas.targetArea.top() ?
-                        m_areas.targetArea.height() : m_areas.videoArea.top() - m_areas.targetArea.top()
-                );
+                if (m_areas.videoArea == m_areas.targetArea) {
+                    m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
+                } else {
+                    m_areas.blackArea1 = QRectF(
+                        m_areas.targetArea.left(),
+                        m_areas.targetArea.top(),
+                        m_areas.videoArea.left() == m_areas.targetArea.left() ?
+                            m_areas.targetArea.width() : m_areas.videoArea.left() - m_areas.targetArea.left(),
+                        m_areas.videoArea.top() == m_areas.targetArea.top() ?
+                            m_areas.targetArea.height() : m_areas.videoArea.top() - m_areas.targetArea.top()
+                    );
 
-                m_areas.blackArea2 = QRectF(
-                    m_areas.videoArea.right() == m_areas.targetArea.right() ?
-                        m_areas.targetArea.left() : m_areas.videoArea.right() + 1,
-                    m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
-                        m_areas.targetArea.top() : m_areas.videoArea.bottom() + 1,
-                    m_areas.videoArea.right() == m_areas.targetArea.right() ?
-                        m_areas.targetArea.width() : m_areas.targetArea.right() - m_areas.videoArea.right(),
-                    m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
-                        m_areas.targetArea.height() : m_areas.targetArea.bottom() - m_areas.videoArea.bottom()
-                );
+                    m_areas.blackArea2 = QRectF(
+                        m_areas.videoArea.right() == m_areas.targetArea.right() ?
+                            m_areas.targetArea.left() : m_areas.videoArea.right() + 1,
+                        m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
+                            m_areas.targetArea.top() : m_areas.videoArea.bottom() + 1,
+                        m_areas.videoArea.right() == m_areas.targetArea.right() ?
+                            m_areas.targetArea.width() : m_areas.targetArea.right() - m_areas.videoArea.right(),
+                        m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
+                            m_areas.targetArea.height() : m_areas.targetArea.bottom() - m_areas.videoArea.bottom()
+                    );
+                }
             } else {
                 m_areas.videoArea = m_areas.targetArea;
                 m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
