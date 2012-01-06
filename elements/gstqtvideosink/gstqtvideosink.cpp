@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
-    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2011-2012 Collabora Ltd. <info@collabora.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License version 2.1
@@ -24,10 +24,8 @@
  */
 
 #include "gstqtvideosink.h"
-#include "gstqtvideosinksurface.h"
 #include "gstqtvideosinkmarshal.h"
-
-#include <QtCore/QCoreApplication>
+#include "gstqtvideosinksurface.h"
 
 //------------------------------
 
@@ -37,7 +35,7 @@ inline bool qRealIsDouble() { return sizeof(qreal) == sizeof(double); }
 //------------------------------
 
 guint GstQtVideoSink::s_signals[];
-GstVideoSinkClass *GstQtVideoSink::s_parent_class = NULL;
+GstQtVideoSinkBaseClass *GstQtVideoSink::s_parent_class = NULL;
 
 GType GstQtVideoSink::get_type()
 {
@@ -48,7 +46,7 @@ GType GstQtVideoSink::get_type()
     if (g_once_init_enter(&gonce_data)) {
         GType type;
         type = gst_type_register_static_full(
-            GST_TYPE_VIDEO_SINK,
+            GST_TYPE_QT_VIDEO_SINK_BASE,
             g_intern_static_string("GstQtVideoSink"),
             sizeof(GstQtVideoSinkClass),
             &GstQtVideoSink::base_init,
@@ -58,7 +56,7 @@ GType GstQtVideoSink::get_type()
             NULL,   /* class_data */
             sizeof(GstQtVideoSink),
             0,      /* n_preallocs */
-            &GstQtVideoSink::init,
+            NULL,
             NULL,
             (GTypeFlags) 0);
         g_once_init_leave(&gonce_data, (gsize) type);
@@ -70,67 +68,26 @@ void GstQtVideoSink::base_init(gpointer g_class)
 {
     GstElementClass *element_class = GST_ELEMENT_CLASS(g_class);
 
-    static GstStaticPadTemplate sink_pad_template =
-        GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
-            GST_STATIC_CAPS(
-                "video/x-raw-rgb, "
-                "framerate = (fraction) [ 0, MAX ], "
-                "width = (int) [ 1, MAX ], "
-                "height = (int) [ 1, MAX ]"
-                "; "
-                "video/x-raw-yuv, "
-                "framerate = (fraction) [ 0, MAX ], "
-                "width = (int) [ 1, MAX ], "
-                "height = (int) [ 1, MAX ]"
-                "; "
-            )
-        );
-
     gst_element_class_set_details_simple(element_class, "Qt video sink", "Sink/Video",
         "A video sink that can draw on any Qt surface (QPaintDevice/QWidget/QGraphicsItem/QML)",
         "George Kiagiadakis <george.kiagiadakis@collabora.com>");
-
-    gst_element_class_add_pad_template(
-            element_class, gst_static_pad_template_get(&sink_pad_template));
 }
 
 void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
 {
     Q_UNUSED(class_data);
 
-    s_parent_class = reinterpret_cast<GstVideoSinkClass*>(g_type_class_peek_parent(g_class));
+    s_parent_class = reinterpret_cast<GstQtVideoSinkBaseClass*>(g_type_class_peek_parent(g_class));
 
     GObjectClass *object_class = G_OBJECT_CLASS(g_class);
-    object_class->finalize = GstQtVideoSink::finalize;
     object_class->set_property = GstQtVideoSink::set_property;
     object_class->get_property = GstQtVideoSink::get_property;
 
-    GstElementClass *element_class = GST_ELEMENT_CLASS(g_class);
-    element_class->change_state = GstQtVideoSink::change_state;
-
-    GstBaseSinkClass *base_sink_class = GST_BASE_SINK_CLASS(g_class);
-    base_sink_class->get_caps = GstQtVideoSink::get_caps;
-    base_sink_class->set_caps = GstQtVideoSink::set_caps;
-    base_sink_class->buffer_alloc = GstQtVideoSink::buffer_alloc;
-
-    GstVideoSinkClass *video_sink_class = GST_VIDEO_SINK_CLASS(g_class);
-    video_sink_class->show_frame = GstQtVideoSink::show_frame;
+    GstQtVideoSinkBaseClass *qt_video_sink_base_class = GST_QT_VIDEO_SINK_BASE_CLASS(g_class);
+    qt_video_sink_base_class->update = GstQtVideoSink::update;
 
     GstQtVideoSinkClass *qt_video_sink_class = GST_QT_VIDEO_SINK_CLASS(g_class);
     qt_video_sink_class->paint = GstQtVideoSink::paint;
-
-
-    /**
-     * GstQtVideoSink::force-aspect-ratio
-     *
-     * If set to TRUE, the sink will scale the video respecting its original aspect ratio
-     * and any remaining space will be filled with black.
-     * If set to FALSE, the sink will scale the video to fit the whole drawing area.
-     **/
-    g_object_class_install_property(object_class, PROP_FORCE_ASPECT_RATIO,
-        g_param_spec_boolean("force-aspect-ratio", "Force aspect ratio",
-                             "When enabled, scaling will respect original aspect ratio",
-                             FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE)));
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     /**
@@ -185,35 +142,15 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
                      G_TYPE_NONE, 0);
 }
 
-void GstQtVideoSink::init(GTypeInstance *instance, gpointer g_class)
-{
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(instance);
-    Q_UNUSED(g_class);
-
-    sink->surface = new GstQtVideoSinkSurface(sink);
-    sink->formatDirty = true;
-}
-
-void GstQtVideoSink::finalize(GObject *object)
-{
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(object);
-
-    delete sink->surface;
-    sink->surface = 0;
-}
-
 void GstQtVideoSink::set_property(GObject *object, guint prop_id,
                                   const GValue *value, GParamSpec *pspec)
 {
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(object);
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
-    case PROP_FORCE_ASPECT_RATIO:
-        sink->surface->setForceAspectRatio(g_value_get_boolean(value));
-        break;
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     case PROP_GLCONTEXT:
-        sink->surface->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
+        sinkBase->surface->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
         break;
 #endif
     default:
@@ -225,15 +162,12 @@ void GstQtVideoSink::set_property(GObject *object, guint prop_id,
 void GstQtVideoSink::get_property(GObject *object, guint prop_id,
                                   GValue *value, GParamSpec *pspec)
 {
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(object);
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
-    case PROP_FORCE_ASPECT_RATIO:
-        g_value_set_boolean(value, sink->surface->forceAspectRatio());
-        break;
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     case PROP_GLCONTEXT:
-        g_value_set_pointer(value, sink->surface->glContext());
+        g_value_set_pointer(value, sinkBase->surface->glContext());
         break;
 #endif
     default:
@@ -242,74 +176,14 @@ void GstQtVideoSink::get_property(GObject *object, guint prop_id,
     }
 }
 
-GstStateChangeReturn GstQtVideoSink::change_state(GstElement *element, GstStateChange transition)
+void GstQtVideoSink::update(GstQtVideoSinkBase *sink)
 {
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(element);
-
-    switch (transition) {
-    case GST_STATE_CHANGE_READY_TO_PAUSED:
-        sink->surface->setActive(true);
-        break;
-    case GST_STATE_CHANGE_PAUSED_TO_READY:
-        sink->surface->setActive(false);
-        break;
-    default:
-        break;
-    }
-
-    return GST_ELEMENT_CLASS(s_parent_class)->change_state(element, transition);
-}
-
-GstCaps *GstQtVideoSink::get_caps(GstBaseSink *base)
-{
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(base);
-    GstCaps *caps = gst_caps_new_empty();
-
-    Q_FOREACH(BufferFormat::PixelFormat format, sink->surface->supportedPixelFormats()) {
-        gst_caps_append(caps, BufferFormat::pixelFormatToCaps(format));
-    }
-
-    return caps;
-}
-
-gboolean GstQtVideoSink::set_caps(GstBaseSink *base, GstCaps *caps)
-{
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(base);
-
-    GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
-    sink->formatDirty = true;
-    return TRUE;
-}
-
-GstFlowReturn GstQtVideoSink::buffer_alloc(GstBaseSink *base, guint64 offset, guint size,
-                                           GstCaps *caps, GstBuffer **buffer)
-{
-    Q_UNUSED(base);
-    Q_UNUSED(offset);
-    Q_UNUSED(size);
-    Q_UNUSED(caps);
-
-    *buffer = 0;
-
-    return GST_FLOW_OK;
-}
-
-GstFlowReturn GstQtVideoSink::show_frame(GstVideoSink *video_sink, GstBuffer *buffer)
-{
-    GstQtVideoSink *sink = GST_QT_VIDEO_SINK(video_sink);
-
-    GST_TRACE_OBJECT(sink, "Posting new buffer (%"GST_PTR_FORMAT") for rendering. "
-                           "Format dirty: %d", buffer, (int)sink->formatDirty);
-
-    QCoreApplication::postEvent(sink->surface,
-            new GstQtVideoSinkSurface::BufferEvent(buffer, sink->formatDirty));
-
-    sink->formatDirty = false;
-    return GST_FLOW_OK;
+    g_signal_emit(sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
 }
 
 void GstQtVideoSink::paint(GstQtVideoSink *sink, gpointer painter,
                            qreal x, qreal y, qreal width, qreal height)
 {
-    sink->surface->paint(static_cast<QPainter*>(painter), x, y, width, height);
+    GST_QT_VIDEO_SINK_BASE(sink)->surface->paint(static_cast<QPainter*>(painter),
+                                                 x, y, width, height);
 }

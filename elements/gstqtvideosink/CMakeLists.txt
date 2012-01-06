@@ -8,6 +8,7 @@ glib2_genmarshal(gstqtvideosinkmarshal
 set(GstQtVideoSink_SRCS
     bufferformat.cpp
     genericsurfacepainter.cpp
+    gstqtvideosinkbase.cpp
     gstqtvideosink.cpp
     gstqtvideosinkplugin.cpp
     gstqtvideosinksurface.cpp

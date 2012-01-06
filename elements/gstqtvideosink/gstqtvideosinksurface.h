@@ -18,7 +18,7 @@
 #ifndef GST_QT_VIDEO_SINK_SURFACE_H
 #define GST_QT_VIDEO_SINK_SURFACE_H
 
-#include "gstqtvideosink.h"
+#include "gstqtvideosinkbase.h"
 #include "bufferformat.h"
 #include "abstractsurfacepainter.h"
 
@@ -68,7 +68,7 @@ public:
 
     //-------------------------------------
 
-    explicit GstQtVideoSinkSurface(GstQtVideoSink *sink, QObject *parent = 0);
+    explicit GstQtVideoSinkSurface(GstQtVideoSinkBase *sink, QObject *parent = 0);
     ~GstQtVideoSinkSurface();
 
     // API for GstQtVideoSink
@@ -159,7 +159,7 @@ private:
     // the buffer to be drawn next
     GstBuffer *m_buffer;
 
-    GstQtVideoSink *m_sink;
+    GstQtVideoSinkBase *m_sink;
 };
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL

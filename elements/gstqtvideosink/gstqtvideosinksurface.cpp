@@ -31,7 +31,7 @@
     (float) rect.x(), (float) rect.y(), (float) rect.width(), (float) rect.height()
 
 
-GstQtVideoSinkSurface::GstQtVideoSinkSurface(GstQtVideoSink *sink, QObject *parent)
+GstQtVideoSinkSurface::GstQtVideoSinkSurface(GstQtVideoSinkBase *sink, QObject *parent)
     : QObject(parent)
     , m_painter(0)
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
@@ -438,7 +438,7 @@ bool GstQtVideoSinkSurface::event(QEvent *event)
             if (bufEvent->formatDirty) {
                 m_formatDirty = true;
             }
-            g_signal_emit(m_sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
+            GstQtVideoSinkBase::emit_update(m_sink);
         } else {
             //not active, drop the frame
             gst_buffer_unref(bufEvent->buffer);
@@ -460,7 +460,7 @@ bool GstQtVideoSinkSurface::event(QEvent *event)
             destroyPainter();
         }
 
-        g_signal_emit(m_sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
+        GstQtVideoSinkBase::emit_update(m_sink);
 
         return true;
     }
