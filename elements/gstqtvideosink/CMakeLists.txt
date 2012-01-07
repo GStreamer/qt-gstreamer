@@ -10,6 +10,7 @@ set(GstQtVideoSink_SRCS
     genericsurfacepainter.cpp
     gstqtvideosinkbase.cpp
     gstqtvideosink.cpp
+    gstqwidgetvideosink.cpp
     gstqtvideosinkplugin.cpp
     gstqtvideosinksurface.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gstqtvideosinkmarshal.c

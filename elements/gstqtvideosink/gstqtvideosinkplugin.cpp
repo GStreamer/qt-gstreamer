@@ -17,6 +17,7 @@
 
 #include "gstqtvideosinkplugin.h"
 #include "gstqtvideosink.h"
+#include "gstqwidgetvideosink.h"
 
 GST_DEBUG_CATEGORY(gst_qt_video_sink_debug);
 
@@ -26,7 +27,11 @@ static gboolean plugin_init(GstPlugin *plugin)
     GST_DEBUG_CATEGORY_INIT(gst_qt_video_sink_debug, "qtvideosink", 0,
                             "Debug category for GstQtVideoSink");
 
-    return gst_element_register(plugin, "qtvideosink", GST_RANK_NONE, GST_TYPE_QT_VIDEO_SINK);
+    gboolean r1 = gst_element_register(plugin, "qtvideosink",
+                                       GST_RANK_NONE, GST_TYPE_QT_VIDEO_SINK);
+    gboolean r2 = gst_element_register(plugin, "qwidgetvideosink",
+                                       GST_RANK_NONE, GST_TYPE_QWIDGET_VIDEO_SINK);
+    return r1 && r2;
 }
 
 GST_PLUGIN_DEFINE (
