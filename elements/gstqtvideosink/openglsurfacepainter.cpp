@@ -22,6 +22,7 @@
 #  define GL_TEXTURE1    0x84C1
 #  define GL_TEXTURE2    0x84C2
 #endif
+
 #ifndef GL_PROGRAM_ERROR_STRING_ARB
 #  define GL_PROGRAM_ERROR_STRING_ARB       0x8874
 #endif
@@ -38,16 +39,16 @@
         GLfloat(rect.right() + 1), GLfloat(rect.top()) \
     }
 
-OpenGLSurfacePainter::OpenGLSurfacePainter(QGLContext *context)
-    : m_context(context)
-    , m_textureFormat(0)
+OpenGLSurfacePainter::OpenGLSurfacePainter()
+    : m_textureFormat(0)
     , m_textureInternalFormat(0)
     , m_textureType(0)
     , m_textureCount(0)
     , m_videoColorMatrix(GST_VIDEO_COLOR_MATRIX_UNKNOWN)
 {
 #ifndef QT_OPENGL_ES
-    glActiveTexture = (_glActiveTexture)m_context->getProcAddress(QLatin1String("glActiveTexture"));
+    glActiveTexture = (_glActiveTexture) QGLContext::currentContext()->getProcAddress(
+            QLatin1String("glActiveTexture"));
 #endif
 }
 
@@ -132,7 +133,7 @@ void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, i
 #if 0
     //I have no idea what this is - it's not needed currently in this code
     case BufferFormat::YCbCr_JPEG:
-        m_colorMatrix = m_colorMatrix * QMatrix4x4(
+        m_colorMatrix *= QMatrix4x4(
                     1.0,  0.000,  1.402, -0.701,
                     1.0, -0.344, -0.714,  0.529,
                     1.0,  1.772,  0.000, -0.886,
@@ -140,14 +141,14 @@ void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, i
         break;
 #endif
     case GST_VIDEO_COLOR_MATRIX_BT709:
-        m_colorMatrix = m_colorMatrix * QMatrix4x4(
+        m_colorMatrix *= QMatrix4x4(
                     1.164,  0.000,  1.793, -0.5727,
                     1.164, -0.534, -0.213,  0.3007,
                     1.164,  2.115,  0.000, -1.1302,
                     0.0,    0.000,  0.000,  1.0000);
         break;
     case GST_VIDEO_COLOR_MATRIX_BT601:
-        m_colorMatrix = m_colorMatrix * QMatrix4x4(
+        m_colorMatrix *= QMatrix4x4(
                     1.164,  0.000,  1.596, -0.8708,
                     1.164, -0.392, -0.813,  0.5296,
                     1.164,  2.017,  0.000, -1.081,
@@ -158,9 +159,38 @@ void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, i
     }
 }
 
-void OpenGLSurfacePainter::setCurrentFrame(quint8 *data)
+void OpenGLSurfacePainter::paint(quint8 *data,
+        const BufferFormat & frameFormat,
+        const QRectF & clipRect,
+        QPainter *painter,
+        const PaintAreas & areas)
 {
-    m_context->makeCurrent();
+    // if these are enabled, we need to reenable them after beginNativePainting()
+    // has been called, as they may get disabled
+    bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+    bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
+
+    painter->beginNativePainting();
+
+    if (stencilTestEnabled)
+        glEnable(GL_STENCIL_TEST);
+    if (scissorTestEnabled)
+        glEnable(GL_SCISSOR_TEST);
+
+    const GLfloat vertexCoordArray[] = QRECT_TO_GLMATRIX(areas.videoArea);
+
+    const GLfloat txLeft = clipRect.left() / frameFormat.frameSize().width();
+    const GLfloat txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
+    const GLfloat txTop = clipRect.top() / frameFormat.frameSize().height();
+    const GLfloat txBottom = (clipRect.bottom() + 1) / frameFormat.frameSize().height();
+
+    const GLfloat textureCoordArray[] =
+    {
+        txLeft , txBottom,
+        txRight, txBottom,
+        txLeft , txTop,
+        txRight, txTop
+    };
 
     for (int i = 0; i < m_textureCount; ++i) {
         glBindTexture(GL_TEXTURE_2D, m_textureIds[i]);
@@ -179,18 +209,12 @@ void OpenGLSurfacePainter::setCurrentFrame(quint8 *data)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
-}
 
-void OpenGLSurfacePainter::paintBlackAreas(const PaintAreas & areas)
-{
-    const GLfloat black1[] = QRECT_TO_GLMATRIX(areas.blackArea1);
-    const GLfloat black2[] = QRECT_TO_GLMATRIX(areas.blackArea2);
+    paintImpl(painter, vertexCoordArray, textureCoordArray);
 
-    glColor3f(0.0, 0.0, 0.0);
-    glVertexPointer(2, GL_FLOAT, 0, black1);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glVertexPointer(2, GL_FLOAT, 0, black2);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    painter->endNativePainting();
+    painter->fillRect(areas.blackArea1, Qt::black);
+    painter->fillRect(areas.blackArea2, Qt::black);
 }
 
 void OpenGLSurfacePainter::initRgbTextureInfo(
@@ -350,27 +374,27 @@ static const char *qt_arbfp_yuvPlanarShaderProgram =
 
 
 
-ArbFpSurfacePainter::ArbFpSurfacePainter(QGLContext *context)
-    : OpenGLSurfacePainter(context)
+ArbFpSurfacePainter::ArbFpSurfacePainter()
+    : OpenGLSurfacePainter()
     , m_programId(0)
 {
-    glProgramStringARB = (_glProgramStringARB) m_context->getProcAddress(
+    const QGLContext *context = QGLContext::currentContext();
+
+    glProgramStringARB = (_glProgramStringARB) context->getProcAddress(
                 QLatin1String("glProgramStringARB"));
-    glBindProgramARB = (_glBindProgramARB) m_context->getProcAddress(
+    glBindProgramARB = (_glBindProgramARB) context->getProcAddress(
                 QLatin1String("glBindProgramARB"));
-    glDeleteProgramsARB = (_glDeleteProgramsARB) m_context->getProcAddress(
+    glDeleteProgramsARB = (_glDeleteProgramsARB) context->getProcAddress(
                 QLatin1String("glDeleteProgramsARB"));
-    glGenProgramsARB = (_glGenProgramsARB) m_context->getProcAddress(
+    glGenProgramsARB = (_glGenProgramsARB) context->getProcAddress(
                 QLatin1String("glGenProgramsARB"));
-    glProgramLocalParameter4fARB = (_glProgramLocalParameter4fARB) m_context->getProcAddress(
+    glProgramLocalParameter4fARB = (_glProgramLocalParameter4fARB) context->getProcAddress(
                 QLatin1String("glProgramLocalParameter4fARB"));
 }
 
 void ArbFpSurfacePainter::init(const BufferFormat &format)
 {
     Q_ASSERT(m_textureCount == 0);
-
-    m_context->makeCurrent();
 
     const char *program = 0;
 
@@ -460,8 +484,6 @@ void ArbFpSurfacePainter::init(const BufferFormat &format)
 
 void ArbFpSurfacePainter::cleanup()
 {
-    m_context->makeCurrent();
-
     glDeleteTextures(m_textureCount, m_textureIds);
     glDeleteProgramsARB(1, &m_programId);
 
@@ -469,38 +491,11 @@ void ArbFpSurfacePainter::cleanup()
     m_programId = 0;
 }
 
-void ArbFpSurfacePainter::paint(quint8 *data,
-        const BufferFormat & frameFormat,
-        const QRectF & clipRect,
-        QPainter *painter,
-        const PaintAreas & areas)
+void ArbFpSurfacePainter::paintImpl(const QPainter *painter,
+        const GLfloat *vertexCoordArray,
+        const GLfloat *textureCoordArray)
 {
-    setCurrentFrame(data);
-
-    bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
-    bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
-
-    painter->beginNativePainting();
-
-    if (stencilTestEnabled)
-        glEnable(GL_STENCIL_TEST);
-    if (scissorTestEnabled)
-        glEnable(GL_SCISSOR_TEST);
-
-    const float txLeft = clipRect.left() / frameFormat.frameSize().width();
-    const float txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
-    const float txTop = clipRect.top() / frameFormat.frameSize().height();
-    const float txBottom = (clipRect.bottom() + 1) / frameFormat.frameSize().height();
-
-    const float tx_array[] =
-    {
-        txLeft , txBottom,
-        txRight, txBottom,
-        txLeft , txTop,
-        txRight, txTop
-    };
-
-    const GLfloat v_array[] = QRECT_TO_GLMATRIX(areas.videoArea);
+    Q_UNUSED(painter);
 
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
     glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_programId);
@@ -538,22 +533,17 @@ void ArbFpSurfacePainter::paint(quint8 *data,
         glActiveTexture(GL_TEXTURE0);
     }
 
-    glVertexPointer(2, GL_FLOAT, 0, v_array);
-    glTexCoordPointer(2, GL_FLOAT, 0, tx_array);
+    glVertexPointer(2, GL_FLOAT, 0, vertexCoordArray);
+    glTexCoordPointer(2, GL_FLOAT, 0, textureCoordArray);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+    glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-    paintBlackAreas(areas);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    painter->endNativePainting();
 }
 
 #endif
@@ -644,17 +634,14 @@ static const char *qt_glsl_yuvPlanarShaderProgram =
         "}\n";
 
 
-GlslSurfacePainter::GlslSurfacePainter(QGLContext *context)
-    : OpenGLSurfacePainter(context)
-    , m_program(context)
+GlslSurfacePainter::GlslSurfacePainter()
+    : OpenGLSurfacePainter()
 {
 }
 
 void GlslSurfacePainter::init(const BufferFormat &format)
 {
     Q_ASSERT(m_textureCount == 0);
-
-    m_context->makeCurrent();
 
     const char *fragmentProgram = 0;
 
@@ -712,59 +699,40 @@ void GlslSurfacePainter::init(const BufferFormat &format)
 
     m_videoColorMatrix = format.colorMatrix();
 
-    if (!m_program.addShaderFromSourceCode(QGLShader::Vertex, qt_glsl_vertexShaderProgram))
-    {
+    if (!m_program.addShaderFromSourceCode(QGLShader::Vertex, qt_glsl_vertexShaderProgram)) {
         throw QString("Vertex shader compile error ") + m_program.log();
     }
-    else if (!m_program.addShaderFromSourceCode(QGLShader::Fragment, fragmentProgram))
-    {
+
+    if (!m_program.addShaderFromSourceCode(QGLShader::Fragment, fragmentProgram)) {
         throw QString("Shader compile error ") + m_program.log();
     }
-    else if(!m_program.link())
-    {
+
+    if(!m_program.link()) {
         throw QString("Shader link error ") + m_program.log();
     }
-    else
-    {
-        glGenTextures(m_textureCount, m_textureIds);
-    }
+
+    glGenTextures(m_textureCount, m_textureIds);
 }
 
 void GlslSurfacePainter::cleanup()
 {
-    m_context->makeCurrent();
-
     glDeleteTextures(m_textureCount, m_textureIds);
     m_program.removeAllShaders();
 
     m_textureCount = 0;
 }
 
-void GlslSurfacePainter::paint(quint8 *data,
-        const BufferFormat & frameFormat,
-        const QRectF & clipRect,
-        QPainter *painter,
-        const PaintAreas & areas)
+void GlslSurfacePainter::paintImpl(const QPainter *painter,
+        const GLfloat *vertexCoordArray,
+        const GLfloat *textureCoordArray)
 {
-    setCurrentFrame(data);
-
-    bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
-    bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
-
-    painter->beginNativePainting();
-
-    if (stencilTestEnabled)
-        glEnable(GL_STENCIL_TEST);
-    if (scissorTestEnabled)
-        glEnable(GL_SCISSOR_TEST);
-
-    const int width = QGLContext::currentContext()->device()->width();
-    const int height = QGLContext::currentContext()->device()->height();
+    const int deviceWidth = QGLContext::currentContext()->device()->width();
+    const int deviceHeight = QGLContext::currentContext()->device()->height();
 
     const QTransform transform = painter->deviceTransform();
 
-    const GLfloat wfactor = 2.0 / width;
-    const GLfloat hfactor = -2.0 / height;
+    const GLfloat wfactor = 2.0 / deviceWidth;
+    const GLfloat hfactor = -2.0 / deviceHeight;
 
     const GLfloat positionMatrix[4][4] =
     {
@@ -789,21 +757,6 @@ void GlslSurfacePainter::paint(quint8 *data,
             /*(3,2)*/ 0.0,
             /*(3,3)*/ GLfloat(transform.m33())
         }
-    };
-
-    const GLfloat vertexCoordArray[] = QRECT_TO_GLMATRIX(areas.videoArea);
-
-    const GLfloat txLeft = clipRect.left() / frameFormat.frameSize().width();
-    const GLfloat txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
-    const GLfloat txTop = clipRect.top() / frameFormat.frameSize().height();
-    const GLfloat txBottom = (clipRect.bottom() + 1) / frameFormat.frameSize().height();
-
-    const GLfloat textureCoordArray[] =
-    {
-        txLeft , txBottom,
-        txRight, txBottom,
-        txLeft , txTop,
-        txRight, txTop
     };
 
     m_program.bind();
@@ -837,10 +790,4 @@ void GlslSurfacePainter::paint(quint8 *data,
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     m_program.release();
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    paintBlackAreas(areas);
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    painter->endNativePainting();
 }

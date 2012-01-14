@@ -194,6 +194,8 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal wid
     if (!m_buffer) {
         painter->fillRect(targetArea, Qt::black);
     } else {
+        m_glContext->makeCurrent();
+
         BufferFormat format = m_formatDirty ?
                 BufferFormat::fromCaps(GST_BUFFER_CAPS(m_buffer)) : m_bufferFormat;
 
@@ -376,12 +378,12 @@ void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
             case Glsl:
                 GST_LOG_OBJECT(m_sink, "Creating GLSL painter");
-                m_painter = new GlslSurfacePainter(m_glContext);
+                m_painter = new GlslSurfacePainter;
                 break;
 # ifndef QT_OPENGL_ES
             case ArbFp:
                 GST_LOG_OBJECT(m_sink, "Creating ARB Fragment Shader painter");
-                m_painter = new ArbFpSurfacePainter(m_glContext);
+                m_painter = new ArbFpSurfacePainter;
                 break;
 # endif
 #endif

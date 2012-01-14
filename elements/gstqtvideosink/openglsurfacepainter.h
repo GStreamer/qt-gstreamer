@@ -39,7 +39,7 @@
 class OpenGLSurfacePainter : public AbstractSurfacePainter
 {
 public:
-    OpenGLSurfacePainter(QGLContext *context);
+    OpenGLSurfacePainter();
 
     static QSet<GstVideoFormat> supportedPixelFormats();
 
@@ -48,20 +48,23 @@ public:
     }
 
     virtual void updateColors(int brightness, int contrast, int hue, int saturation);
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+                       QPainter *painter, const PaintAreas & areas);
 
 protected:
-    void setCurrentFrame(quint8 *data);
-    void paintBlackAreas(const PaintAreas & areas);
     void initRgbTextureInfo(GLenum internalFormat, GLuint format, GLenum type, const QSize &size);
     void initYuv420PTextureInfo(const QSize &size);
     void initYv12TextureInfo(const QSize &size);
+
+    virtual void paintImpl(const QPainter *painter,
+                           const GLfloat *vertexCoordArray,
+                           const GLfloat *textureCoordArray) = 0;
 
 #ifndef QT_OPENGL_ES
     typedef void (APIENTRY *_glActiveTexture) (GLenum);
     _glActiveTexture glActiveTexture;
 #endif
 
-    QGLContext *m_context;
     GLenum m_textureFormat;
     GLuint m_textureInternalFormat;
     GLenum m_textureType;
@@ -80,13 +83,15 @@ protected:
 class ArbFpSurfacePainter : public OpenGLSurfacePainter
 {
 public:
-    ArbFpSurfacePainter(QGLContext *context);
+    ArbFpSurfacePainter();
 
     virtual void init(const BufferFormat & format);
     virtual void cleanup();
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
-                       QPainter *painter, const PaintAreas & areas);
+protected:
+    virtual void paintImpl(const QPainter *painter,
+                           const GLfloat *vertexCoordArray,
+                           const GLfloat *textureCoordArray);
 
 private:
     typedef void (APIENTRY *_glProgramStringARB) (GLenum, GLenum, GLsizei, const GLvoid *);
@@ -111,13 +116,15 @@ private:
 class GlslSurfacePainter : public OpenGLSurfacePainter
 {
 public:
-    GlslSurfacePainter(QGLContext *context);
+    GlslSurfacePainter();
 
     virtual void init(const BufferFormat & format);
     virtual void cleanup();
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
-                       QPainter *painter, const PaintAreas & areas);
+protected:
+    virtual void paintImpl(const QPainter *painter,
+                           const GLfloat *vertexCoordArray,
+                           const GLfloat *textureCoordArray);
 
 private:
     QGLShaderProgram m_program;
