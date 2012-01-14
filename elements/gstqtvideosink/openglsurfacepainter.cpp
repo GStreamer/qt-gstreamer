@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
-    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2011-2012 Collabora Ltd. <info@collabora.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License version 2.1
@@ -44,15 +44,39 @@ OpenGLSurfacePainter::OpenGLSurfacePainter(QGLContext *context)
     , m_textureInternalFormat(0)
     , m_textureType(0)
     , m_textureCount(0)
-    , m_yuv(false)
+    , m_videoColorMatrix(GST_VIDEO_COLOR_MATRIX_UNKNOWN)
 {
 #ifndef QT_OPENGL_ES
     glActiveTexture = (_glActiveTexture)m_context->getProcAddress(QLatin1String("glActiveTexture"));
 #endif
 }
 
-void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, int saturation,
-                                        BufferFormat::YCbCrColorSpace colorSpace)
+//static
+QSet<GstVideoFormat> OpenGLSurfacePainter::supportedPixelFormats()
+{
+    return QSet<GstVideoFormat>()
+        //also handled by the generic painter on LE
+        << GST_VIDEO_FORMAT_BGRA
+        << GST_VIDEO_FORMAT_BGRx
+
+        //also handled by the generic painter on BE
+        << GST_VIDEO_FORMAT_ARGB
+        << GST_VIDEO_FORMAT_xRGB
+
+        //also handled by the generic painter everywhere
+        << GST_VIDEO_FORMAT_RGB
+        << GST_VIDEO_FORMAT_RGB16
+
+        //not handled by the generic painter
+        << GST_VIDEO_FORMAT_BGR
+        << GST_VIDEO_FORMAT_v308
+        << GST_VIDEO_FORMAT_AYUV
+        << GST_VIDEO_FORMAT_YV12
+        << GST_VIDEO_FORMAT_I420
+        ;
+}
+
+void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, int saturation)
 {
     const qreal b = brightness / 200.0;
     const qreal c = contrast / 100.0 + 1.0;
@@ -104,34 +128,33 @@ void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, i
     m_colorMatrix(3, 2) = 0.0;
     m_colorMatrix(3, 3) = 1.0;
 
-    if (m_yuv) {
-        QMatrix4x4 colorSpaceMatrix;
-
-        switch (colorSpace) {
-        case BufferFormat::YCbCr_JPEG:
-            colorSpaceMatrix = QMatrix4x4(
-                        1.0,  0.000,  1.402, -0.701,
-                        1.0, -0.344, -0.714,  0.529,
-                        1.0,  1.772,  0.000, -0.886,
-                        0.0,  0.000,  0.000,  1.0000);
-            break;
-        case BufferFormat::YCbCr_BT709:
-        case BufferFormat::YCbCr_xvYCC709:
-            colorSpaceMatrix = QMatrix4x4(
-                        1.164,  0.000,  1.793, -0.5727,
-                        1.164, -0.534, -0.213,  0.3007,
-                        1.164,  2.115,  0.000, -1.1302,
-                        0.0,    0.000,  0.000,  1.0000);
-            break;
-        default: //BT 601:
-            colorSpaceMatrix = QMatrix4x4(
-                        1.164,  0.000,  1.596, -0.8708,
-                        1.164, -0.392, -0.813,  0.5296,
-                        1.164,  2.017,  0.000, -1.081,
-                        0.0,    0.000,  0.000,  1.0000);
-        }
-
-        m_colorMatrix = m_colorMatrix * colorSpaceMatrix;
+    switch (m_videoColorMatrix) {
+#if 0
+    //I have no idea what this is - it's not needed currently in this code
+    case BufferFormat::YCbCr_JPEG:
+        m_colorMatrix = m_colorMatrix * QMatrix4x4(
+                    1.0,  0.000,  1.402, -0.701,
+                    1.0, -0.344, -0.714,  0.529,
+                    1.0,  1.772,  0.000, -0.886,
+                    0.0,  0.000,  0.000,  1.0000);
+        break;
+#endif
+    case GST_VIDEO_COLOR_MATRIX_BT709:
+        m_colorMatrix = m_colorMatrix * QMatrix4x4(
+                    1.164,  0.000,  1.793, -0.5727,
+                    1.164, -0.534, -0.213,  0.3007,
+                    1.164,  2.115,  0.000, -1.1302,
+                    0.0,    0.000,  0.000,  1.0000);
+        break;
+    case GST_VIDEO_COLOR_MATRIX_BT601:
+        m_colorMatrix = m_colorMatrix * QMatrix4x4(
+                    1.164,  0.000,  1.596, -0.8708,
+                    1.164, -0.392, -0.813,  0.5296,
+                    1.164,  2.017,  0.000, -1.081,
+                    0.0,    0.000,  0.000,  1.0000);
+        break;
+    default:
+        break;
     }
 }
 
@@ -173,7 +196,20 @@ void OpenGLSurfacePainter::paintBlackAreas(const PaintAreas & areas)
 void OpenGLSurfacePainter::initRgbTextureInfo(
         GLenum internalFormat, GLuint format, GLenum type, const QSize &size)
 {
-    m_yuv = false;
+#ifndef QT_OPENGL_ES
+    //make sure we get 8 bits per component, at least on the desktop GL where we can
+    switch(internalFormat) {
+    case GL_RGBA:
+        internalFormat = GL_RGBA8;
+        break;
+    case GL_RGB:
+        internalFormat = GL_RGB8;
+        break;
+    default:
+        break;
+    }
+#endif
+
     m_textureInternalFormat = internalFormat;
     m_textureFormat = format;
     m_textureType = type;
@@ -188,7 +224,6 @@ void OpenGLSurfacePainter::initYuv420PTextureInfo(const QSize &size)
     int bytesPerLine = (size.width() + 3) & ~3;
     int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
 
-    m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
     m_textureType = GL_UNSIGNED_BYTE;
@@ -209,7 +244,6 @@ void OpenGLSurfacePainter::initYv12TextureInfo(const QSize &size)
     int bytesPerLine = (size.width() + 3) & ~3;
     int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
 
-    m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
     m_textureType = GL_UNSIGNED_BYTE;
@@ -232,45 +266,71 @@ void OpenGLSurfacePainter::initYv12TextureInfo(const QSize &size)
 #  define GL_PROGRAM_FORMAT_ASCII_ARB       0x8875
 # endif
 
-// Paints an RGB32 frame
+// Interprets the RGBA texture as in fact being BGRx and paints it.
+static const char *qt_arbfp_bgrxShaderProgram =
+    "!!ARBfp1.0\n"
+    "PARAM matrix[4] = { program.local[0..2],"
+    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
+    "TEMP bgrx;\n"
+    "TEX bgrx.xyz, fragment.texcoord[0], texture[0], 2D;\n"
+    "MOV bgrx.w, matrix[3].w;\n"
+    "DP4 result.color.x, bgrx.zyxw, matrix[0];\n"
+    "DP4 result.color.y, bgrx.zyxw, matrix[1];\n"
+    "DP4 result.color.z, bgrx.zyxw, matrix[2];\n"
+    "END";
+
+// Interprets the RGBA texture as in fact being BGRA and paints it.
+static const char *qt_arbfp_bgraShaderProgram =
+    "!!ARBfp1.0\n"
+    "PARAM matrix[4] = { program.local[0..2],"
+    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
+    "TEMP bgra;\n"
+    "TEX bgra, fragment.texcoord[0], texture[0], 2D;\n"
+    "MOV bgra.w, matrix[3].w;\n"
+    "DP4 result.color.x, bgra.zyxw, matrix[0];\n"
+    "DP4 result.color.y, bgra.zyxw, matrix[1];\n"
+    "DP4 result.color.z, bgra.zyxw, matrix[2];\n"
+    "TEX result.color.w, fragment.texcoord[0], texture, 2D;\n"
+    "END";
+
+// Interprets the RGBA texture as in fact being xRGB and paints it.
 static const char *qt_arbfp_xrgbShaderProgram =
     "!!ARBfp1.0\n"
     "PARAM matrix[4] = { program.local[0..2],"
     "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP xrgb;\n"
-    "TEX xrgb.xyz, fragment.texcoord[0], texture[0], 2D;\n"
-    "MOV xrgb.w, matrix[3].w;\n"
-    "DP4 result.color.x, xrgb.zyxw, matrix[0];\n"
-    "DP4 result.color.y, xrgb.zyxw, matrix[1];\n"
-    "DP4 result.color.z, xrgb.zyxw, matrix[2];\n"
+    "TEX xrgb, fragment.texcoord[0], texture[0], 2D;\n"
+    "MOV xrgb.x, matrix[3].w;\n"
+    "DP4 result.color.x, xrgb.yzwx, matrix[0];\n"
+    "DP4 result.color.y, xrgb.yzwx, matrix[1];\n"
+    "DP4 result.color.z, xrgb.yzwx, matrix[2];\n"
     "END";
 
-// Paints an ARGB frame.
+// Interprets the RGBA texture as in fact being ARGB and paints it.
 static const char *qt_arbfp_argbShaderProgram =
     "!!ARBfp1.0\n"
     "PARAM matrix[4] = { program.local[0..2],"
     "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP argb;\n"
     "TEX argb, fragment.texcoord[0], texture[0], 2D;\n"
-    "MOV argb.w, matrix[3].w;\n"
-    "DP4 result.color.x, argb.zyxw, matrix[0];\n"
-    "DP4 result.color.y, argb.zyxw, matrix[1];\n"
-    "DP4 result.color.z, argb.zyxw, matrix[2];\n"
+    "MOV argb.x, matrix[3].w;\n"
+    "DP4 result.color.x, argb.yzwx, matrix[0];\n"
+    "DP4 result.color.y, argb.yzwx, matrix[1];\n"
+    "DP4 result.color.z, argb.yzwx, matrix[2];\n"
     "TEX result.color.w, fragment.texcoord[0], texture, 2D;\n"
     "END";
 
-// Paints an RGB(A) frame.
-static const char *qt_arbfp_rgbShaderProgram =
+// Paints RGB frames without doing any color channel flipping.
+static const char *qt_arbfp_rgbxShaderProgram =
     "!!ARBfp1.0\n"
     "PARAM matrix[4] = { program.local[0..2],"
     "{ 0.0, 0.0, 0.0, 1.0 } };\n"
     "TEMP rgb;\n"
-    "TEX rgb, fragment.texcoord[0], texture[0], 2D;\n"
+    "TEX rgb.xyz, fragment.texcoord[0], texture[0], 2D;\n"
     "MOV rgb.w, matrix[3].w;\n"
     "DP4 result.color.x, rgb, matrix[0];\n"
     "DP4 result.color.y, rgb, matrix[1];\n"
     "DP4 result.color.z, rgb, matrix[2];\n"
-    "TEX result.color.w, fragment.texcoord[0], texture, 2D;\n"
     "END";
 
 // Paints a YUV420P or YV12 frame.
@@ -286,33 +346,6 @@ static const char *qt_arbfp_yuvPlanarShaderProgram =
     "DP4 result.color.x, yuv, matrix[0];\n"
     "DP4 result.color.y, yuv, matrix[1];\n"
     "DP4 result.color.z, yuv, matrix[2];\n"
-    "END";
-
-// Paints a YUV444 frame.
-static const char *qt_arbfp_xyuvShaderProgram =
-    "!!ARBfp1.0\n"
-    "PARAM matrix[4] = { program.local[0..2],"
-    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
-    "TEMP ayuv;\n"
-    "TEX ayuv, fragment.texcoord[0], texture[0], 2D;\n"
-    "MOV ayuv.x, matrix[3].w;\n"
-    "DP4 result.color.x, ayuv.yzwx, matrix[0];\n"
-    "DP4 result.color.y, ayuv.yzwx, matrix[1];\n"
-    "DP4 result.color.z, ayuv.yzwx, matrix[2];\n"
-    "END";
-
-// Paints a AYUV444 frame.
-static const char *qt_arbfp_ayuvShaderProgram =
-    "!!ARBfp1.0\n"
-    "PARAM matrix[4] = { program.local[0..2],"
-    "{ 0.0, 0.0, 0.0, 1.0 } };\n"
-    "TEMP ayuv;\n"
-    "TEX ayuv, fragment.texcoord[0], texture[0], 2D;\n"
-    "MOV ayuv.x, matrix[3].w;\n"
-    "DP4 result.color.x, ayuv.yzwx, matrix[0];\n"
-    "DP4 result.color.y, ayuv.yzwx, matrix[1];\n"
-    "DP4 result.color.z, ayuv.yzwx, matrix[2];\n"
-    "TEX result.color.w, fragment.texcoord[0], texture, 2D;\n"
     "END";
 
 
@@ -333,22 +366,6 @@ ArbFpSurfacePainter::ArbFpSurfacePainter(QGLContext *context)
                 QLatin1String("glProgramLocalParameter4fARB"));
 }
 
-//static
-QSet<BufferFormat::PixelFormat> ArbFpSurfacePainter::supportedPixelFormats()
-{
-    return QSet<BufferFormat::PixelFormat>()
-        << BufferFormat::RGB32
-        << BufferFormat::BGR32
-        << BufferFormat::ARGB32
-        << BufferFormat::RGB24
-        << BufferFormat::BGR24
-        << BufferFormat::RGB565
-        << BufferFormat::AYUV444
-        << BufferFormat::YUV444
-        << BufferFormat::YV12
-        << BufferFormat::YUV420P;
-}
-
 void ArbFpSurfacePainter::init(const BufferFormat &format)
 {
     Q_ASSERT(m_textureCount == 0);
@@ -357,46 +374,50 @@ void ArbFpSurfacePainter::init(const BufferFormat &format)
 
     const char *program = 0;
 
-    switch (format.pixelFormat()) {
-    case BufferFormat::RGB32:
+    switch (format.videoFormat()) {
+    case GST_VIDEO_FORMAT_BGRx:
+        initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
+        program = qt_arbfp_bgrxShaderProgram;
+        break;
+    case GST_VIDEO_FORMAT_xRGB:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
         program = qt_arbfp_xrgbShaderProgram;
         break;
-    case BufferFormat::BGR32:
+    case GST_VIDEO_FORMAT_BGRA:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
-        program = qt_arbfp_rgbShaderProgram;
+        program = qt_arbfp_bgraShaderProgram;
         break;
-    case BufferFormat::ARGB32:
+    case GST_VIDEO_FORMAT_ARGB:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
         program = qt_arbfp_argbShaderProgram;
         break;
-    case BufferFormat::RGB24:
-        initRgbTextureInfo(GL_RGB8, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
-        program = qt_arbfp_rgbShaderProgram;
-        break;
-    case BufferFormat::BGR24:
-        initRgbTextureInfo(GL_RGB8, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
-        program = qt_arbfp_xrgbShaderProgram;
-        break;
-    case BufferFormat::RGB565:
-        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
-        program = qt_arbfp_rgbShaderProgram;
-        break;
-    case BufferFormat::YUV444:
+    case GST_VIDEO_FORMAT_RGB:
         initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
-        program = qt_arbfp_xyuvShaderProgram;
-        m_yuv = true;
+        program = qt_arbfp_rgbxShaderProgram;
         break;
-    case BufferFormat::AYUV444:
+    case GST_VIDEO_FORMAT_BGR:
+        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
+        program = qt_arbfp_bgrxShaderProgram;
+        break;
+    //NOTE: unlike the other formats, this is endianness-dependent,
+    //but using GL_UNSIGNED_SHORT_5_6_5 ensures that it's handled correctly
+    case GST_VIDEO_FORMAT_RGB16:
+        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
+        program = qt_arbfp_rgbxShaderProgram;
+        break;
+    case GST_VIDEO_FORMAT_v308:
+        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
+        program = qt_arbfp_rgbxShaderProgram;
+        break;
+    case GST_VIDEO_FORMAT_AYUV:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
-        program = qt_arbfp_ayuvShaderProgram;
-        m_yuv = true;
+        program = qt_arbfp_argbShaderProgram;
         break;
-    case BufferFormat::YV12:
+    case GST_VIDEO_FORMAT_YV12:
         initYv12TextureInfo(format.frameSize());
         program = qt_arbfp_yuvPlanarShaderProgram;
         break;
-    case BufferFormat::YUV420P:
+    case GST_VIDEO_FORMAT_I420:
         initYuv420PTextureInfo(format.frameSize());
         program = qt_arbfp_yuvPlanarShaderProgram;
         break;
@@ -404,6 +425,8 @@ void ArbFpSurfacePainter::init(const BufferFormat &format)
         Q_ASSERT(false);
         break;
     }
+
+    m_videoColorMatrix = format.colorMatrix();
 
     glGenProgramsARB(1, &m_programId);
 
@@ -546,8 +569,8 @@ static const char *qt_glsl_vertexShaderProgram =
         "   textureCoord = textureCoordArray;\n"
         "}\n";
 
-// Paints an RGB32 frame
-static const char *qt_glsl_xrgbShaderProgram =
+// Interprets the RGBA texture as in fact being BGRx and paints it.
+static const char *qt_glsl_bgrxShaderProgram =
         "uniform sampler2D texRgb;\n"
         "uniform mediump mat4 colorMatrix;\n"
         "varying highp vec2 textureCoord;\n"
@@ -557,8 +580,8 @@ static const char *qt_glsl_xrgbShaderProgram =
         "    gl_FragColor = colorMatrix * color;\n"
         "}\n";
 
-// Paints an ARGB frame.
-static const char *qt_glsl_argbShaderProgram =
+// Interprets the RGBA texture as in fact being BGRA and paints it.
+static const char *qt_glsl_bgraShaderProgram =
         "uniform sampler2D texRgb;\n"
         "uniform mediump mat4 colorMatrix;\n"
         "varying highp vec2 textureCoord;\n"
@@ -569,19 +592,41 @@ static const char *qt_glsl_argbShaderProgram =
         "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).a);\n"
         "}\n";
 
-// Paints an RGB(A) frame.
-static const char *qt_glsl_rgbShaderProgram =
+// Interprets the RGBA texture as in fact being xRGB and paints it.
+static const char *qt_glsl_xrgbShaderProgram =
+        "uniform sampler2D texRgb;\n"
+        "uniform mediump mat4 colorMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
+        "void main(void)\n"
+        "{\n"
+        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).gba, 1.0);\n"
+        "    gl_FragColor = colorMatrix * color;\n"
+        "}\n";
+
+// Interprets the RGBA texture as in fact being ARGB and paints it.
+static const char *qt_glsl_argbShaderProgram =
+        "uniform sampler2D texRgb;\n"
+        "uniform mediump mat4 colorMatrix;\n"
+        "varying highp vec2 textureCoord;\n"
+        "void main(void)\n"
+        "{\n"
+        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).gba, 1.0);\n"
+        "    color = colorMatrix * color;\n"
+        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).r);\n"
+        "}\n";
+
+// Paints RGB frames without doing any color channel flipping.
+static const char *qt_glsl_rgbxShaderProgram =
         "uniform sampler2D texRgb;\n"
         "uniform mediump mat4 colorMatrix;\n"
         "varying highp vec2 textureCoord;\n"
         "void main(void)\n"
         "{\n"
         "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).rgb, 1.0);\n"
-        "    color = colorMatrix * color;\n"
-        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).a);\n"
+        "    gl_FragColor = colorMatrix * color;\n"
         "}\n";
 
-// Paints a YUV420P or YV12 frame.
+// Paints planar yuv frames.
 static const char *qt_glsl_yuvPlanarShaderProgram =
         "uniform sampler2D texY;\n"
         "uniform sampler2D texU;\n"
@@ -598,54 +643,11 @@ static const char *qt_glsl_yuvPlanarShaderProgram =
         "    gl_FragColor = colorMatrix * color;\n"
         "}\n";
 
-// Paints a YUV444 frame.
-static const char *qt_glsl_xyuvShaderProgram =
-        "uniform sampler2D texRgb;\n"
-        "uniform mediump mat4 colorMatrix;\n"
-        "varying highp vec2 textureCoord;\n"
-        "void main(void)\n"
-        "{\n"
-        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).gba, 1.0);\n"
-        "    gl_FragColor = colorMatrix * color;\n"
-        "}\n";
-
-// Paints a AYUV444 frame.
-static const char *qt_glsl_ayuvShaderProgram =
-        "uniform sampler2D texRgb;\n"
-        "uniform mediump mat4 colorMatrix;\n"
-        "varying highp vec2 textureCoord;\n"
-        "void main(void)\n"
-        "{\n"
-        "    highp vec4 color = vec4(texture2D(texRgb, textureCoord.st).gba, 1.0);\n"
-        "    color = colorMatrix * color;\n"
-        "    gl_FragColor = vec4(color.rgb, texture2D(texRgb, textureCoord.st).r);\n"
-        "}\n";
-
-
 
 GlslSurfacePainter::GlslSurfacePainter(QGLContext *context)
     : OpenGLSurfacePainter(context)
     , m_program(context)
 {
-}
-
-//static
-QSet<BufferFormat::PixelFormat> GlslSurfacePainter::supportedPixelFormats()
-{
-    return QSet<BufferFormat::PixelFormat>()
-        << BufferFormat::YUV420P
-        << BufferFormat::YV12
-        << BufferFormat::RGB32
-        << BufferFormat::BGR32
-#if !defined(QT_OPENGL_ES) && !defined(QT_OPENGL_ES_2)
-        << BufferFormat::RGB24
-        << BufferFormat::BGR24
-
-        << BufferFormat::RGB565
-        << BufferFormat::AYUV444
-        << BufferFormat::YUV444
-#endif
-        << BufferFormat::ARGB32;
 }
 
 void GlslSurfacePainter::init(const BufferFormat &format)
@@ -656,48 +658,50 @@ void GlslSurfacePainter::init(const BufferFormat &format)
 
     const char *fragmentProgram = 0;
 
-    switch (format.pixelFormat()) {
-    case BufferFormat::RGB32:
+    switch (format.videoFormat()) {
+    case GST_VIDEO_FORMAT_BGRx:
+        initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
+        fragmentProgram = qt_glsl_bgrxShaderProgram;
+        break;
+    case GST_VIDEO_FORMAT_xRGB:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
         fragmentProgram = qt_glsl_xrgbShaderProgram;
         break;
-    case BufferFormat::BGR32:
-        initRgbTextureInfo(GL_RGB, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
-        fragmentProgram = qt_glsl_rgbShaderProgram;
+    case GST_VIDEO_FORMAT_BGRA:
+        initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
+        fragmentProgram = qt_glsl_bgraShaderProgram;
         break;
-    case BufferFormat::ARGB32:
+    case GST_VIDEO_FORMAT_ARGB:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
         fragmentProgram = qt_glsl_argbShaderProgram;
         break;
-#ifndef QT_OPENGL_ES
-    case BufferFormat::RGB24:
-        initRgbTextureInfo(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
-        fragmentProgram = qt_glsl_rgbShaderProgram;
-        break;
-    case BufferFormat::BGR24:
-        initRgbTextureInfo(GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
-        fragmentProgram = qt_glsl_argbShaderProgram;
-        break;
-#endif
-    case BufferFormat::RGB565:
-        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
-        fragmentProgram = qt_glsl_rgbShaderProgram;
-        break;
-    case BufferFormat::YUV444:
+    case GST_VIDEO_FORMAT_RGB:
         initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
-        fragmentProgram = qt_glsl_xyuvShaderProgram;
-        m_yuv = true;
+        fragmentProgram = qt_glsl_rgbxShaderProgram;
         break;
-    case BufferFormat::AYUV444:
+    case GST_VIDEO_FORMAT_BGR:
+        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
+        fragmentProgram = qt_glsl_bgrxShaderProgram;
+        break;
+    //NOTE: unlike the other formats, this is endianness-dependent,
+    //but using GL_UNSIGNED_SHORT_5_6_5 ensures that it's handled correctly
+    case GST_VIDEO_FORMAT_RGB16:
+        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, format.frameSize());
+        fragmentProgram = qt_glsl_rgbxShaderProgram;
+        break;
+    case GST_VIDEO_FORMAT_v308:
+        initRgbTextureInfo(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, format.frameSize());
+        fragmentProgram = qt_glsl_rgbxShaderProgram;
+        break;
+    case GST_VIDEO_FORMAT_AYUV:
         initRgbTextureInfo(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, format.frameSize());
-        fragmentProgram = qt_glsl_ayuvShaderProgram;
-        m_yuv = true;
+        fragmentProgram = qt_glsl_argbShaderProgram;
         break;
-    case BufferFormat::YV12:
+    case GST_VIDEO_FORMAT_YV12:
         initYv12TextureInfo(format.frameSize());
         fragmentProgram = qt_glsl_yuvPlanarShaderProgram;
         break;
-    case BufferFormat::YUV420P:
+    case GST_VIDEO_FORMAT_I420:
         initYuv420PTextureInfo(format.frameSize());
         fragmentProgram = qt_glsl_yuvPlanarShaderProgram;
         break;
@@ -705,6 +709,8 @@ void GlslSurfacePainter::init(const BufferFormat &format)
         Q_ASSERT(false);
         break;
     }
+
+    m_videoColorMatrix = format.colorMatrix();
 
     if (!m_program.addShaderFromSourceCode(QGLShader::Vertex, qt_glsl_vertexShaderProgram))
     {

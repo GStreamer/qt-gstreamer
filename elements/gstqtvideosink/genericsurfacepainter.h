@@ -18,6 +18,8 @@
 #define GENERICSURFACEPAINTER_H
 
 #include "abstractsurfacepainter.h"
+#include <QtCore/QSet>
+#include <QtGui/QImage>
 
 /**
  * Generic painter that paints using the QPainter API.
@@ -28,9 +30,9 @@ class GenericSurfacePainter : public AbstractSurfacePainter
 public:
     GenericSurfacePainter();
 
-    static QSet<BufferFormat::PixelFormat> supportedPixelFormats();
+    static QSet<GstVideoFormat> supportedPixelFormats();
 
-    virtual bool supportsFormat(BufferFormat::PixelFormat format) const {
+    virtual bool supportsFormat(GstVideoFormat format) const {
         return supportedPixelFormats().contains(format);
     }
 
@@ -40,8 +42,7 @@ public:
     virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
                        QPainter *painter, const PaintAreas & areas);
 
-    virtual void updateColors(int brightness, int contrast, int hue, int saturation,
-                              BufferFormat::YCbCrColorSpace colorSpace);
+    virtual void updateColors(int brightness, int contrast, int hue, int saturation);
 
 private:
     QImage::Format m_imageFormat;

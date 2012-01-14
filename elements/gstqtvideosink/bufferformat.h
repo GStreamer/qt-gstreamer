@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
-    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2011-2012 Collabora Ltd. <info@collabora.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License version 2.1
@@ -19,9 +19,33 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QSize>
-#include <QtGui/QImage>
+#include <QtCore/QMetaType>
+#include <gst/video/video.h>
 
-typedef struct _GstCaps GstCaps;
+//0.11 stuff
+typedef enum {
+  GST_VIDEO_COLOR_MATRIX_UNKNOWN = 0,
+  GST_VIDEO_COLOR_MATRIX_RGB,
+  GST_VIDEO_COLOR_MATRIX_FCC,
+  GST_VIDEO_COLOR_MATRIX_BT709,
+  GST_VIDEO_COLOR_MATRIX_BT601,
+  GST_VIDEO_COLOR_MATRIX_SMPTE240M
+} GstVideoColorMatrix;
+
+struct Fraction
+{
+    inline Fraction() {}
+    inline Fraction(int numerator, int denominator)
+        : numerator(numerator), denominator(denominator) {}
+
+    inline bool operator==(const Fraction & other) const
+    { return numerator == other.numerator && denominator == other.denominator; }
+    inline bool operator!=(const Fraction & other) const
+    { return !operator==(other); }
+
+    int numerator;
+    int denominator;
+};
 
 
 /**
@@ -31,65 +55,39 @@ typedef struct _GstCaps GstCaps;
 class BufferFormat
 {
 public:
-    enum PixelFormat {
-        Invalid,
-        ARGB32,
-        RGB32,
-        RGB24,
-        RGB565,
-        RGB555, /* unused */
-        BGRA32, /* unused */
-        BGR32,
-        BGR24,
-        BGR565, /* unused */
-        BGR555, /* unused */
-        AYUV444,
-        YUV444, /* unused */
-        YUV420P,
-        YV12,
-        UYVY,
-        YUYV,
-        NV12,
-        NV21
-    };
+    static BufferFormat fromCaps(GstCaps *caps);
+    static GstCaps *newTemplateCaps(GstVideoFormat format);
+    static GstCaps *newCaps(GstVideoFormat format, const QSize & size,
+            const Fraction & framerate, const Fraction & pixelAspectRatio);
 
-    enum YCbCrColorSpace {
-        YCbCr_Undefined,
-        YCbCr_BT601,
-        YCbCr_BT709,
-        YCbCr_xvYCC601,
-        YCbCr_xvYCC709,
-        YCbCr_JPEG
-    };
-
-    static QImage::Format pixelFormatToImageFormat(PixelFormat format);
-    static GstCaps *pixelFormatToCaps(PixelFormat format);
-
-    static BufferFormat fromCaps(const GstCaps *caps);
     inline BufferFormat() : d(new Data) {}
 
-    inline PixelFormat pixelFormat() const          { return d->pixelFormat; }
-    inline YCbCrColorSpace yCbCrColorSpace() const  { return d->colorSpace; }
+    inline GstVideoFormat videoFormat() const       { return d->videoFormat; }
+    inline GstVideoColorMatrix colorMatrix() const  { return d->colorMatrix; }
     inline QSize frameSize() const                  { return d->frameSize; }
-    inline QSize pixelAspectRatio() const           { return d->pixelAspectRatio; }
-    inline int bytesPerLine() const                 { return d->bytesPerLine; }
+    inline Fraction pixelAspectRatio() const        { return d->pixelAspectRatio; }
+    int bytesPerLine(int component = 0) const;
 
 private:
     struct Data : public QSharedData
     {
         Data() :
-            pixelFormat(Invalid),
-            colorSpace(BufferFormat::YCbCr_Undefined),
-            bytesPerLine(0)
+            videoFormat(GST_VIDEO_FORMAT_UNKNOWN),
+            colorMatrix(GST_VIDEO_COLOR_MATRIX_UNKNOWN)
         {}
 
-        PixelFormat pixelFormat;
-        YCbCrColorSpace colorSpace;
+        GstVideoFormat videoFormat;
+        GstVideoColorMatrix colorMatrix;
         QSize frameSize;
-        QSize pixelAspectRatio;
-        int bytesPerLine;
+        Fraction pixelAspectRatio;
     };
     QSharedDataPointer<Data> d;
 };
+
+
+Q_DECLARE_METATYPE(GstVideoFormat)
+Q_DECLARE_METATYPE(GstVideoColorMatrix)
+Q_DECLARE_METATYPE(Fraction)
+Q_DECLARE_METATYPE(BufferFormat)
 
 #endif // BUFFERFORMAT_H

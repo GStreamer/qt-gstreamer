@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
-    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2011-2012 Collabora Ltd. <info@collabora.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License version 2.1
@@ -18,7 +18,7 @@
 #define ABSTRACTSURFACEPAINTER_H
 
 #include "bufferformat.h"
-#include <QtCore/QSet>
+#include <QtCore/QRectF>
 
 class QPainter;
 
@@ -42,7 +42,7 @@ class AbstractSurfacePainter
 public:
     virtual ~AbstractSurfacePainter() {}
 
-    virtual bool supportsFormat(BufferFormat::PixelFormat format) const = 0;
+    virtual bool supportsFormat(GstVideoFormat format) const = 0;
 
     virtual void init(const BufferFormat & format) = 0;
     virtual void cleanup() = 0;
@@ -50,8 +50,7 @@ public:
     virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
                        QPainter *painter, const PaintAreas & areas) = 0;
 
-    virtual void updateColors(int brightness, int contrast, int hue, int saturation,
-                              BufferFormat::YCbCrColorSpace colorSpace) = 0;
+    virtual void updateColors(int brightness, int contrast, int hue, int saturation) = 0;
 };
 
 #endif

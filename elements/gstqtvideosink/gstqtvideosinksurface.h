@@ -73,7 +73,7 @@ public:
 
     // API for GstQtVideoSink
 
-    QSet<BufferFormat::PixelFormat> supportedPixelFormats() const;
+    QSet<GstVideoFormat> supportedPixelFormats() const;
 
     bool isActive() const;
     void setActive(bool playing);

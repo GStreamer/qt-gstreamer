@@ -197,8 +197,8 @@ GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base)
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
     GstCaps *caps = gst_caps_new_empty();
 
-    Q_FOREACH(BufferFormat::PixelFormat format, sink->surface->supportedPixelFormats()) {
-        gst_caps_append(caps, BufferFormat::pixelFormatToCaps(format));
+    Q_FOREACH(GstVideoFormat format, sink->surface->supportedPixelFormats()) {
+        gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
     }
 
     return caps;

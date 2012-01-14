@@ -60,16 +60,16 @@ GstQtVideoSinkSurface::~GstQtVideoSinkSurface()
 
 //-------------------------------------
 
-QSet<BufferFormat::PixelFormat> GstQtVideoSinkSurface::supportedPixelFormats() const
+QSet<GstVideoFormat> GstQtVideoSinkSurface::supportedPixelFormats() const
 {
-    QSet<BufferFormat::PixelFormat> result;
+    QSet<GstVideoFormat> result;
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    if (m_glContext) {
-        result += GlslSurfacePainter::supportedPixelFormats();
-        result += ArbFpSurfacePainter::supportedPixelFormats();
-    }
+    if (m_glContext)
+        result = OpenGLSurfacePainter::supportedPixelFormats();
+    else
 #endif
-    result += GenericSurfacePainter::supportedPixelFormats();
+        result = GenericSurfacePainter::supportedPixelFormats();
+
     return result;
 }
 
@@ -187,6 +187,8 @@ static QRectF centerRect(const QRectF & src, const QRectF & dst)
 
 void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height)
 {
+    GST_TRACE_OBJECT(m_sink, "paint called");
+
     QRectF targetArea(x, y, width, height);
 
     if (!m_buffer) {
@@ -206,8 +208,8 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal wid
             m_forceAspectRatioDirty = false;
 
             if (m_forceAspectRatio) {
-                qreal aspectRatio = (qreal) format.pixelAspectRatio().width() / format.pixelAspectRatio().height();
-                qreal aspectRatioInv = (qreal) format.pixelAspectRatio().height() / format.pixelAspectRatio().width();
+                qreal aspectRatio = (qreal) format.pixelAspectRatio().numerator / format.pixelAspectRatio().denominator;
+                qreal aspectRatioInv = (qreal) format.pixelAspectRatio().denominator / format.pixelAspectRatio().numerator;
 
                 QRectF srcRect(QPointF(0,0), QSizeF(format.frameSize().width() * aspectRatio,
                                                     format.frameSize().height() * aspectRatioInv));
@@ -264,31 +266,26 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal wid
             m_clipRect = QRectF(QPointF(0,0), format.frameSize());
         }
 
-        if (m_formatDirty || !m_painter) {
-            //if either pixelFormat or frameSize have changed, we need to reset the painter
-            //and/or change painter, in case the current one does not handle the requested format
-            if (format.pixelFormat() != m_bufferFormat.pixelFormat()
-                || format.frameSize() != m_bufferFormat.frameSize()
-                || !m_painter)
-            {
-                changePainter(format);
-            }
-
-            //if we have a different colorspace, we need to update the colors
-            if (format.yCbCrColorSpace() != m_bufferFormat.yCbCrColorSpace()) {
-                QReadLocker l(&m_colorsLock);
-                m_colorsDirty = true;
-            }
+        //if either pixelFormat or frameSize have changed, we need to reset the painter
+        //and/or change painter, in case the current one does not handle the requested format
+        if ((m_formatDirty && (format.videoFormat() != m_bufferFormat.videoFormat()
+                || format.colorMatrix() != m_bufferFormat.colorMatrix()
+                || format.frameSize() != m_bufferFormat.frameSize()))
+            || !m_painter)
+        {
+            changePainter(format);
 
             m_bufferFormat = format;
             m_formatDirty = false;
+
+            //make sure to update the colors after changing painter
+            m_colorsDirty = true;
         }
 
         if (G_LIKELY(m_painter)) {
             QReadLocker colorsLocker(&m_colorsLock);
             if (m_colorsDirty) {
-                m_painter->updateColors(m_brightness, m_contrast, m_hue, m_saturation,
-                                        m_bufferFormat.yCbCrColorSpace());
+                m_painter->updateColors(m_brightness, m_contrast, m_hue, m_saturation);
                 m_colorsDirty = false;
             }
             colorsLocker.unlock();
@@ -347,25 +344,27 @@ void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
 {
     if (m_painter) {
         m_painter->cleanup();
-        if (!m_painter->supportsFormat(format.pixelFormat())) {
+        if (!m_painter->supportsFormat(format.videoFormat())) {
             delete m_painter;
             m_painter = 0;
         }
     }
 
     QStack<PainterType> possiblePainters;
-    if (GenericSurfacePainter::supportedPixelFormats().contains(format.pixelFormat())) {
+    if (GenericSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
         possiblePainters.push(Generic);
     }
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+# ifndef QT_OPENGL_ES
     if (m_supportedShaderTypes & GstQtVideoSinkSurface::FragmentProgramShader
-        && ArbFpSurfacePainter::supportedPixelFormats().contains(format.pixelFormat())) {
+        && ArbFpSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
         possiblePainters.push(ArbFp);
     }
+# endif
 
     if (m_supportedShaderTypes & GstQtVideoSinkSurface::GlslShader
-        && GlslSurfacePainter::supportedPixelFormats().contains(format.pixelFormat())) {
+        && GlslSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
         possiblePainters.push(Glsl);
     }
 #endif
@@ -379,10 +378,12 @@ void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
                 GST_LOG_OBJECT(m_sink, "Creating GLSL painter");
                 m_painter = new GlslSurfacePainter(m_glContext);
                 break;
+# ifndef QT_OPENGL_ES
             case ArbFp:
                 GST_LOG_OBJECT(m_sink, "Creating ARB Fragment Shader painter");
                 m_painter = new ArbFpSurfacePainter(m_glContext);
                 break;
+# endif
 #endif
             case Generic:
                 GST_LOG_OBJECT(m_sink, "Creating Generic painter");

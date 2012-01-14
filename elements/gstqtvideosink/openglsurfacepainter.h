@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). <qt-info@nokia.com>
-    Copyright (C) 2011 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2011-2012 Collabora Ltd. <info@collabora.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License version 2.1
@@ -41,8 +41,13 @@ class OpenGLSurfacePainter : public AbstractSurfacePainter
 public:
     OpenGLSurfacePainter(QGLContext *context);
 
-    virtual void updateColors(int brightness, int contrast, int hue, int saturation,
-                              BufferFormat::YCbCrColorSpace colorSpace);
+    static QSet<GstVideoFormat> supportedPixelFormats();
+
+    virtual bool supportsFormat(GstVideoFormat format) const {
+        return supportedPixelFormats().contains(format);
+    }
+
+    virtual void updateColors(int brightness, int contrast, int hue, int saturation);
 
 protected:
     void setCurrentFrame(quint8 *data);
@@ -56,8 +61,6 @@ protected:
     _glActiveTexture glActiveTexture;
 #endif
 
-    QMatrix4x4 m_colorMatrix;
-
     QGLContext *m_context;
     GLenum m_textureFormat;
     GLuint m_textureInternalFormat;
@@ -67,20 +70,17 @@ protected:
     int m_textureWidths[3];
     int m_textureHeights[3];
     int m_textureOffsets[3];
-    bool m_yuv;
+
+    QMatrix4x4 m_colorMatrix;
+    GstVideoColorMatrix m_videoColorMatrix;
 };
 
+#ifndef QT_OPENGL_ES
 
 class ArbFpSurfacePainter : public OpenGLSurfacePainter
 {
 public:
     ArbFpSurfacePainter(QGLContext *context);
-
-    static QSet<BufferFormat::PixelFormat> supportedPixelFormats();
-
-    virtual bool supportsFormat(BufferFormat::PixelFormat format) const {
-        return supportedPixelFormats().contains(format);
-    }
 
     virtual void init(const BufferFormat & format);
     virtual void cleanup();
@@ -106,17 +106,12 @@ private:
     GLuint m_programId;
 };
 
+#endif
 
 class GlslSurfacePainter : public OpenGLSurfacePainter
 {
 public:
     GlslSurfacePainter(QGLContext *context);
-
-    static QSet<BufferFormat::PixelFormat> supportedPixelFormats();
-
-    virtual bool supportsFormat(BufferFormat::PixelFormat format) const {
-        return supportedPixelFormats().contains(format);
-    }
 
     virtual void init(const BufferFormat & format);
     virtual void cleanup();
