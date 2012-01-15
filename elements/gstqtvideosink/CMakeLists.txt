@@ -21,14 +21,14 @@ set(GstQtVideoSink_SRCS
 )
 
 if (QT_QTOPENGL_FOUND AND OPENGL_FOUND)
-    set(GstQtVideoSink_SRCS ${GstQtVideoSink_SRCS} openglsurfacepainter.cpp)
+    set(GstQtVideoSink_GL_SRCS openglsurfacepainter.cpp)
     set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY} ${QT_QTOPENGL_LIBRARY})
     include_directories(${OPENGL_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
 else()
     add_definitions(-DGST_QT_VIDEO_SINK_NO_OPENGL)
 endif()
 
-automoc4_add_library(gstqtvideosink MODULE ${GstQtVideoSink_SRCS})
+automoc4_add_library(gstqtvideosink MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
 target_link_libraries(gstqtvideosink
     ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
@@ -39,3 +39,24 @@ target_link_libraries(gstqtvideosink
     ${GstQtVideoSink_GL_LIBS}
 )
 install(TARGETS gstqtvideosink DESTINATION ${PLUGINS_INSTALL_DIR})
+
+
+if (QTGSTREAMER_TESTS)
+    automoc4_add_executable(qtvideosink_autotest
+        autotest.cpp
+        bufferformat.cpp
+        genericsurfacepainter.cpp
+        ${GstQtVideoSink_GL_SRCS}
+    )
+    target_link_libraries(qtvideosink_autotest
+        ${QT_QTTEST_LIBRARY}
+        ${QT_QTCORE_LIBRARY}
+        ${QT_QTGUI_LIBRARY}
+        ${GOBJECT_LIBRARIES}
+        ${GSTREAMER_LIBRARY}
+        ${GSTREAMER_BASE_LIBRARY}
+        ${GSTREAMER_VIDEO_LIBRARY}
+        ${GstQtVideoSink_GL_LIBS}
+    )
+    #add_test(NAME qtvideosink_autotest COMMAND qtvideosink_autotest)
+endif()
