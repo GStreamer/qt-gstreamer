@@ -35,6 +35,8 @@ set(QtGStreamer_SRCS
 
 set(QtGStreamerUi_SRCS
     Ui/videowidget.cpp
+    Ui/graphicsvideosurface.cpp
+    Ui/graphicsvideowidget.cpp
 )
 
 set(QtGStreamerUtils_SRCS
@@ -82,7 +84,9 @@ set(QtGStreamer_INSTALLED_HEADERS
     bufferlist.h        BufferList
 
     Ui/global.h
-    Ui/videowidget.h    Ui/VideoWidget
+    Ui/videowidget.h            Ui/VideoWidget
+    Ui/graphicsvideosurface.h   Ui/GraphicsVideoSurface
+    Ui/graphicsvideowidget.h    Ui/GraphicsVideoWidget
 
     Utils/global.h
     Utils/applicationsink.h     Utils/ApplicationSink
@@ -120,6 +124,12 @@ include_directories(
 )
 add_definitions(-DGST_DISABLE_XML -DGST_DISABLE_LOADSAVE)
 
+if (QT_QTOPENGL_FOUND)
+    set(QtGStreamerUi_GL_LIBS ${QT_QTOPENGL_LIBRARY})
+else()
+    add_definitions(-DQTGSTREAMER_UI_NO_OPENGL)
+endif()
+
 # Add command to generate gen.cpp using codegen
 run_codegen("QGst" "${QtGStreamer_CODEGEN_INCLUDES}" "${QtGStreamer_CODEGEN_HEADERS}")
 
@@ -137,7 +147,8 @@ automoc4_add_library(QtGStreamerUi ${SHARED_OR_STATIC} ${QtGStreamerUi_SRCS})
 set_target_properties(QtGStreamerUi PROPERTIES OUTPUT_NAME QtGStreamerUi-${QTGSTREAMER_API_VERSION}
                                                  SOVERSION ${QTGSTREAMER_UI_SOVERSION}
                                                    VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGStreamerUi ${QT_QTGUI_LIBRARY} ${QTGSTREAMER_LIBRARY})
+target_link_libraries(QtGStreamerUi ${QT_QTGUI_LIBRARY} ${QTGSTREAMER_LIBRARY} ${QtGStreamerUi_GL_LIBS})
+target_link_libraries(QtGStreamerUi LINK_INTERFACE_LIBRARIES ${QT_QTGUI_LIBRARY} ${QTGSTREAMER_LIBRARY})
 
 # Build and link QtGStreamerUtils
 automoc4_add_library(QtGStreamerUtils ${SHARED_OR_STATIC} ${QtGStreamerUtils_SRCS})
