@@ -190,11 +190,19 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
 {
     GST_TRACE_OBJECT(m_sink, "paint called");
 
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    if (m_glContext) {
+        Q_ASSERT_X(m_glContext == QGLContext::currentContext(),
+            "qtvideosink - paint",
+            "Please use a QPainter that is initialized to paint on the "
+            "GL surface that has the same context as the one given on the glcontext property"
+        );
+    }
+#endif
+
     if (!m_buffer) {
         painter->fillRect(targetArea, Qt::black);
     } else {
-        m_glContext->makeCurrent();
-
         BufferFormat format = m_formatDirty ?
                 BufferFormat::fromCaps(GST_BUFFER_CAPS(m_buffer)) : m_bufferFormat;
 
