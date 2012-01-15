@@ -16,7 +16,7 @@
 */
 
 #include "gstqtvideosinkbase.h"
-#include "gstqtvideosinksurface.h"
+#include "qtvideosinkdelegate.h"
 
 #include <QtCore/QCoreApplication>
 
@@ -132,7 +132,7 @@ void GstQtVideoSinkBase::init(GTypeInstance *instance, gpointer g_class)
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(instance);
     Q_UNUSED(g_class);
 
-    sink->surface = new GstQtVideoSinkSurface(sink);
+    sink->surface = new QtVideoSinkDelegate(sink);
     sink->formatDirty = true;
 }
 
@@ -221,7 +221,7 @@ GstFlowReturn GstQtVideoSinkBase::show_frame(GstVideoSink *video_sink, GstBuffer
                            "Format dirty: %d", buffer, (int)sink->formatDirty);
 
     QCoreApplication::postEvent(sink->surface,
-            new GstQtVideoSinkSurface::BufferEvent(buffer, sink->formatDirty));
+            new QtVideoSinkDelegate::BufferEvent(buffer, sink->formatDirty));
 
     sink->formatDirty = false;
     return GST_FLOW_OK;

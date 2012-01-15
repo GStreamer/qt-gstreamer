@@ -25,7 +25,7 @@
 
 #include "gstqtvideosink.h"
 #include "gstqtvideosinkmarshal.h"
-#include "gstqtvideosinksurface.h"
+#include "qtvideosinkdelegate.h"
 
 //------------------------------
 

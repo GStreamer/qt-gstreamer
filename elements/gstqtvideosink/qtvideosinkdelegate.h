@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GST_QT_VIDEO_SINK_SURFACE_H
-#define GST_QT_VIDEO_SINK_SURFACE_H
+#ifndef QT_VIDEO_SINK_DELEGATE_H
+#define QT_VIDEO_SINK_DELEGATE_H
 
 #include "gstqtvideosinkbase.h"
 #include "bufferformat.h"
@@ -30,7 +30,7 @@
 class QGLContext;
 
 
-class GstQtVideoSinkSurface : public QObject
+class QtVideoSinkDelegate : public QObject
 {
     Q_OBJECT
 public:
@@ -68,8 +68,8 @@ public:
 
     //-------------------------------------
 
-    explicit GstQtVideoSinkSurface(GstQtVideoSinkBase *sink, QObject *parent = 0);
-    ~GstQtVideoSinkSurface();
+    explicit QtVideoSinkDelegate(GstQtVideoSinkBase *sink, QObject *parent = 0);
+    ~QtVideoSinkDelegate();
 
     // API for GstQtVideoSink
 
@@ -163,7 +163,7 @@ private:
 };
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-Q_DECLARE_OPERATORS_FOR_FLAGS(GstQtVideoSinkSurface::ShaderTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QtVideoSinkDelegate::ShaderTypes)
 #endif
 
-#endif // GST_QT_VIDEO_SINK_SURFACE_H
+#endif // QT_VIDEO_SINK_DELEGATE_H

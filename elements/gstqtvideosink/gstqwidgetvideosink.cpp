@@ -37,7 +37,7 @@
  */
 
 #include "gstqwidgetvideosink.h"
-#include "gstqtvideosinksurface.h"
+#include "qtvideosinkdelegate.h"
 #include <QtCore/QWeakPointer>
 #include <QtCore/QEvent>
 #include <QtGui/QWidget>

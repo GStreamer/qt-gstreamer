@@ -12,7 +12,7 @@ set(GstQtVideoSink_SRCS
     gstqtvideosink.cpp
     gstqwidgetvideosink.cpp
     gstqtvideosinkplugin.cpp
-    gstqtvideosinksurface.cpp
+    qtvideosinkdelegate.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gstqtvideosinkmarshal.c
 )
 

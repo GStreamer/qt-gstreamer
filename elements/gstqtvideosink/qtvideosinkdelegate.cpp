@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gstqtvideosinksurface.h"
+#include "qtvideosinkdelegate.h"
 #include "genericsurfacepainter.h"
 #include "openglsurfacepainter.h"
 
@@ -31,7 +31,7 @@
     (float) rect.x(), (float) rect.y(), (float) rect.width(), (float) rect.height()
 
 
-GstQtVideoSinkSurface::GstQtVideoSinkSurface(GstQtVideoSinkBase *sink, QObject *parent)
+QtVideoSinkDelegate::QtVideoSinkDelegate(GstQtVideoSinkBase *sink, QObject *parent)
     : QObject(parent)
     , m_painter(0)
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
@@ -52,7 +52,7 @@ GstQtVideoSinkSurface::GstQtVideoSinkSurface(GstQtVideoSinkBase *sink, QObject *
 {
 }
 
-GstQtVideoSinkSurface::~GstQtVideoSinkSurface()
+QtVideoSinkDelegate::~QtVideoSinkDelegate()
 {
     Q_ASSERT(!isActive());
     destroyPainter();
@@ -60,7 +60,7 @@ GstQtVideoSinkSurface::~GstQtVideoSinkSurface()
 
 //-------------------------------------
 
-QSet<GstVideoFormat> GstQtVideoSinkSurface::supportedPixelFormats() const
+QSet<GstVideoFormat> QtVideoSinkDelegate::supportedPixelFormats() const
 {
     QSet<GstVideoFormat> result;
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
@@ -73,13 +73,13 @@ QSet<GstVideoFormat> GstQtVideoSinkSurface::supportedPixelFormats() const
     return result;
 }
 
-bool GstQtVideoSinkSurface::isActive() const
+bool QtVideoSinkDelegate::isActive() const
 {
     QReadLocker l(&m_isActiveLock);
     return m_isActive;
 }
 
-void GstQtVideoSinkSurface::setActive(bool active)
+void QtVideoSinkDelegate::setActive(bool active)
 {
     GST_INFO_OBJECT(m_sink, active ? "Activating" : "Deactivating");
 
@@ -92,52 +92,52 @@ void GstQtVideoSinkSurface::setActive(bool active)
 
 //-------------------------------------
 
-int GstQtVideoSinkSurface::brightness() const
+int QtVideoSinkDelegate::brightness() const
 {
     QReadLocker l(&m_colorsLock);
     return m_brightness;
 }
 
-void GstQtVideoSinkSurface::setBrightness(int brightness)
+void QtVideoSinkDelegate::setBrightness(int brightness)
 {
     QWriteLocker l(&m_colorsLock);
     m_brightness = brightness;
     m_colorsDirty = true;
 }
 
-int GstQtVideoSinkSurface::contrast() const
+int QtVideoSinkDelegate::contrast() const
 {
     QReadLocker l(&m_colorsLock);
     return m_contrast;
 }
 
-void GstQtVideoSinkSurface::setContrast(int contrast)
+void QtVideoSinkDelegate::setContrast(int contrast)
 {
     QWriteLocker l(&m_colorsLock);
     m_contrast = contrast;
     m_colorsDirty = true;
 }
 
-int GstQtVideoSinkSurface::hue() const
+int QtVideoSinkDelegate::hue() const
 {
     QReadLocker l(&m_colorsLock);
     return m_hue;
 }
 
-void GstQtVideoSinkSurface::setHue(int hue)
+void QtVideoSinkDelegate::setHue(int hue)
 {
     QWriteLocker l(&m_colorsLock);
     m_hue = hue;
     m_colorsDirty = true;
 }
 
-int GstQtVideoSinkSurface::saturation() const
+int QtVideoSinkDelegate::saturation() const
 {
     QReadLocker l(&m_colorsLock);
     return m_saturation;
 }
 
-void GstQtVideoSinkSurface::setSaturation(int saturation)
+void QtVideoSinkDelegate::setSaturation(int saturation)
 {
     QWriteLocker l(&m_colorsLock);
     m_saturation = saturation;
@@ -146,13 +146,13 @@ void GstQtVideoSinkSurface::setSaturation(int saturation)
 
 //-------------------------------------
 
-bool GstQtVideoSinkSurface::forceAspectRatio() const
+bool QtVideoSinkDelegate::forceAspectRatio() const
 {
     QReadLocker l(&m_forceAspectRatioLock);
     return m_forceAspectRatio;
 }
 
-void GstQtVideoSinkSurface::setForceAspectRatio(bool force)
+void QtVideoSinkDelegate::setForceAspectRatio(bool force)
 {
     QWriteLocker l(&m_forceAspectRatioLock);
     if (m_forceAspectRatio != force) {
@@ -185,7 +185,7 @@ static QRectF centerRect(const QRectF & src, const QRectF & dst)
     return result;
 }
 
-void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height)
+void QtVideoSinkDelegate::paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height)
 {
     GST_TRACE_OBJECT(m_sink, "paint called");
 
@@ -299,12 +299,12 @@ void GstQtVideoSinkSurface::paint(QPainter *painter, qreal x, qreal y, qreal wid
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 
-QGLContext *GstQtVideoSinkSurface::glContext() const
+QGLContext *QtVideoSinkDelegate::glContext() const
 {
     return m_glContext;
 }
 
-void GstQtVideoSinkSurface::setGLContext(QGLContext *context)
+void QtVideoSinkDelegate::setGLContext(QGLContext *context)
 {
     GST_LOG_OBJECT(m_sink, "Setting GL context. context=%p m_glContext=%p m_painter=%p",
                    context, m_glContext, m_painter);
@@ -342,7 +342,7 @@ void GstQtVideoSinkSurface::setGLContext(QGLContext *context)
 
 enum PainterType { Glsl, ArbFp, Generic };
 
-void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
+void QtVideoSinkDelegate::changePainter(const BufferFormat & format)
 {
     if (m_painter) {
         m_painter->cleanup();
@@ -359,13 +359,13 @@ void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 # ifndef QT_OPENGL_ES
-    if (m_supportedShaderTypes & GstQtVideoSinkSurface::FragmentProgramShader
+    if (m_supportedShaderTypes & QtVideoSinkDelegate::FragmentProgramShader
         && ArbFpSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
         possiblePainters.push(ArbFp);
     }
 # endif
 
-    if (m_supportedShaderTypes & GstQtVideoSinkSurface::GlslShader
+    if (m_supportedShaderTypes & QtVideoSinkDelegate::GlslShader
         && GlslSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
         possiblePainters.push(Glsl);
     }
@@ -411,7 +411,7 @@ void GstQtVideoSinkSurface::changePainter(const BufferFormat & format)
             ("Failed to create a painter for the given format"), (NULL));
 }
 
-void GstQtVideoSinkSurface::destroyPainter()
+void QtVideoSinkDelegate::destroyPainter()
 {
     GST_LOG_OBJECT(m_sink, "Destroying painter");
 
@@ -419,7 +419,7 @@ void GstQtVideoSinkSurface::destroyPainter()
     m_painter = 0;
 }
 
-bool GstQtVideoSinkSurface::event(QEvent *event)
+bool QtVideoSinkDelegate::event(QEvent *event)
 {
     switch((int) event->type()) {
     case BufferEventType:
@@ -471,5 +471,3 @@ bool GstQtVideoSinkSurface::event(QEvent *event)
         return QObject::event(event);
     }
 }
-
-#include "gstqtvideosinksurface.moc"

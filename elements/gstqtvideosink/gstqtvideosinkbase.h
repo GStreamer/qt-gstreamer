@@ -31,7 +31,7 @@
 #define GST_QT_VIDEO_SINK_BASE_GET_CLASS(obj) \
   (G_TYPE_INSTANCE_GET_CLASS ((obj), GST_TYPE_QT_VIDEO_SINK_BASE, GstQtVideoSinkBaseClass))
 
-class GstQtVideoSinkSurface;
+class QtVideoSinkDelegate;
 
 struct GstQtVideoSinkBase
 {
@@ -66,7 +66,7 @@ private:
     static GstFlowReturn show_frame(GstVideoSink *sink, GstBuffer *buffer);
 
 public:
-    GstQtVideoSinkSurface *surface;
+    QtVideoSinkDelegate *surface;
 
 private:
     bool formatDirty;
