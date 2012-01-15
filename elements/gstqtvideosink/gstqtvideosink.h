@@ -19,6 +19,7 @@
 #define GST_QT_VIDEO_SINK_H
 
 #include "gstqtvideosinkbase.h"
+#include <QtCore/QtGlobal>
 
 #define GST_TYPE_QT_VIDEO_SINK \
   (GstQtVideoSink::get_type())
@@ -34,6 +35,7 @@ public:
     GstQtVideoSinkBase parent;
 
     static GType get_type();
+    static void emit_update(GstQtVideoSink *sink);
 
 private:
     enum {
@@ -51,13 +53,12 @@ private:
 
     static void base_init(gpointer g_class);
     static void class_init(gpointer g_class, gpointer class_data);
+    static void init(GTypeInstance *instance, gpointer g_class);
 
     static void set_property(GObject *object, guint prop_id,
                              const GValue *value, GParamSpec *pspec);
     static void get_property(GObject *object, guint prop_id,
                              GValue *value, GParamSpec *pspec);
-
-    static void update(GstQtVideoSinkBase *sink);
 
     static void paint(GstQtVideoSink *sink, gpointer painter,
                       qreal x, qreal y, qreal width, qreal height);

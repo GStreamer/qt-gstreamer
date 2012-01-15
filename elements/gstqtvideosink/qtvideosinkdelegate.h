@@ -34,6 +34,13 @@ class QtVideoSinkDelegate : public QObject
 {
     Q_OBJECT
 public:
+    enum PainterType {
+        Generic = 0x00,
+        ArbFp = 0x01,
+        Glsl = 0x02
+    };
+    Q_DECLARE_FLAGS(PainterTypes, PainterType);
+
     enum EventType {
         BufferEventType = QEvent::User,
         DeactivateEventType
@@ -55,8 +62,6 @@ public:
         bool formatDirty;
     };
 
-    //-------------------------------------
-
     class DeactivateEvent : public QEvent
     {
     public:
@@ -69,9 +74,9 @@ public:
     //-------------------------------------
 
     explicit QtVideoSinkDelegate(GstQtVideoSinkBase *sink, QObject *parent = 0);
-    ~QtVideoSinkDelegate();
+    virtual ~QtVideoSinkDelegate();
 
-    // API for GstQtVideoSink
+    // API for GstQtVideoSinkBase
 
     QSet<GstVideoFormat> supportedPixelFormats() const;
 
@@ -93,7 +98,6 @@ public:
     void setSaturation(int saturation);
 
     // force-aspect-ratio property
-
     bool forceAspectRatio() const;
     void setForceAspectRatio(bool force);
 
@@ -103,23 +107,19 @@ public:
     void setGLContext(QGLContext *context);
 #endif
 
-    // paint action signal
-
-    void paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height);
+    // paint action
+    void paint(QPainter *painter, const QRectF & targetArea);
 
 protected:
-    bool event(QEvent *event);
+    // internal event handling
+    virtual bool event(QEvent *event);
+
+    // tells the surface to repaint itself
+    virtual void update();
 
 private:
     void changePainter(const BufferFormat & format);
     void destroyPainter();
-
-    enum PainterType {
-        Generic = 0x00,
-        ArbFp = 0x01,
-        Glsl = 0x02
-    };
-    Q_DECLARE_FLAGS(PainterTypes, PainterType);
 
     AbstractSurfacePainter *m_painter;
     PainterTypes m_supportedPainters;
@@ -154,6 +154,7 @@ private:
     // the buffer to be drawn next
     GstBuffer *m_buffer;
 
+protected:
     GstQtVideoSinkBase *m_sink;
 };
 

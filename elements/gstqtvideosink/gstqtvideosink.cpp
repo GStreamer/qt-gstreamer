@@ -56,13 +56,22 @@ GType GstQtVideoSink::get_type()
             NULL,   /* class_data */
             sizeof(GstQtVideoSink),
             0,      /* n_preallocs */
-            NULL,
+            &GstQtVideoSink::init,
             NULL,
             (GTypeFlags) 0);
         g_once_init_leave(&gonce_data, (gsize) type);
     }
     return (GType) gonce_data;
 }
+
+//------------------------------
+
+void GstQtVideoSink::emit_update(GstQtVideoSink *sink)
+{
+    g_signal_emit(sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
+}
+
+//------------------------------
 
 void GstQtVideoSink::base_init(gpointer g_class)
 {
@@ -82,9 +91,6 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
     GObjectClass *object_class = G_OBJECT_CLASS(g_class);
     object_class->set_property = GstQtVideoSink::set_property;
     object_class->get_property = GstQtVideoSink::get_property;
-
-    GstQtVideoSinkBaseClass *qt_video_sink_base_class = GST_QT_VIDEO_SINK_BASE_CLASS(g_class);
-    qt_video_sink_base_class->update = GstQtVideoSink::update;
 
     GstQtVideoSinkClass *qt_video_sink_class = GST_QT_VIDEO_SINK_CLASS(g_class);
     qt_video_sink_class->paint = GstQtVideoSink::paint;
@@ -142,6 +148,14 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
                      G_TYPE_NONE, 0);
 }
 
+void GstQtVideoSink::init(GTypeInstance *instance, gpointer g_class)
+{
+    Q_UNUSED(g_class);
+
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(instance);
+    sinkBase->delegate = new QtVideoSinkDelegate(sinkBase);
+}
+
 void GstQtVideoSink::set_property(GObject *object, guint prop_id,
                                   const GValue *value, GParamSpec *pspec)
 {
@@ -150,7 +164,7 @@ void GstQtVideoSink::set_property(GObject *object, guint prop_id,
     switch (prop_id) {
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     case PROP_GLCONTEXT:
-        sinkBase->surface->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
+        sinkBase->delegate->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
         break;
 #endif
     default:
@@ -167,7 +181,7 @@ void GstQtVideoSink::get_property(GObject *object, guint prop_id,
     switch (prop_id) {
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     case PROP_GLCONTEXT:
-        g_value_set_pointer(value, sinkBase->surface->glContext());
+        g_value_set_pointer(value, sinkBase->delegate->glContext());
         break;
 #endif
     default:
@@ -176,14 +190,9 @@ void GstQtVideoSink::get_property(GObject *object, guint prop_id,
     }
 }
 
-void GstQtVideoSink::update(GstQtVideoSinkBase *sink)
-{
-    g_signal_emit(sink, GstQtVideoSink::s_signals[GstQtVideoSink::UPDATE_SIGNAL], 0);
-}
-
 void GstQtVideoSink::paint(GstQtVideoSink *sink, gpointer painter,
                            qreal x, qreal y, qreal width, qreal height)
 {
-    GST_QT_VIDEO_SINK_BASE(sink)->surface->paint(static_cast<QPainter*>(painter),
-                                                 x, y, width, height);
+    GST_QT_VIDEO_SINK_BASE(sink)->delegate->paint(static_cast<QPainter*>(painter),
+                                                  QRectF(x, y, width, height));
 }

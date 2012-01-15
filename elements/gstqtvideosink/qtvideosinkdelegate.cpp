@@ -18,6 +18,7 @@
 #include "qtvideosinkdelegate.h"
 #include "genericsurfacepainter.h"
 #include "openglsurfacepainter.h"
+#include "gstqtvideosink.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStack>
@@ -185,11 +186,9 @@ static QRectF centerRect(const QRectF & src, const QRectF & dst)
     return result;
 }
 
-void QtVideoSinkDelegate::paint(QPainter *painter, qreal x, qreal y, qreal width, qreal height)
+void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
 {
     GST_TRACE_OBJECT(m_sink, "paint called");
-
-    QRectF targetArea(x, y, width, height);
 
     if (!m_buffer) {
         painter->fillRect(targetArea, Qt::black);
@@ -343,9 +342,8 @@ void QtVideoSinkDelegate::changePainter(const BufferFormat & format)
 {
     if (m_painter) {
         m_painter->cleanup();
-        if (!m_painter->supportsFormat(format.videoFormat())) {
-            delete m_painter;
-            m_painter = 0;
+        if (G_UNLIKELY(!m_painter->supportsFormat(format.videoFormat()))) {
+            destroyPainter();
         }
     }
 
@@ -436,7 +434,7 @@ bool QtVideoSinkDelegate::event(QEvent *event)
             if (bufEvent->formatDirty) {
                 m_formatDirty = true;
             }
-            GstQtVideoSinkBase::emit_update(m_sink);
+            update();
         } else {
             //not active, drop the frame
             gst_buffer_unref(bufEvent->buffer);
@@ -458,11 +456,16 @@ bool QtVideoSinkDelegate::event(QEvent *event)
             destroyPainter();
         }
 
-        GstQtVideoSinkBase::emit_update(m_sink);
+        update();
 
         return true;
     }
     default:
         return QObject::event(event);
     }
+}
+
+void QtVideoSinkDelegate::update()
+{
+    GstQtVideoSink::emit_update(GST_QT_VIDEO_SINK(m_sink));
 }

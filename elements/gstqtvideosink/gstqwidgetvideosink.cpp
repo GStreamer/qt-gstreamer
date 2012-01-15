@@ -37,108 +37,7 @@
  */
 
 #include "gstqwidgetvideosink.h"
-#include "qtvideosinkdelegate.h"
-#include <QtCore/QWeakPointer>
-#include <QtCore/QEvent>
-#include <QtGui/QWidget>
-#include <QtGui/QPainter>
-
-//BEGIN ******** WidgetProxy ********
-
-class WidgetProxy : public QObject
-{
-    Q_OBJECT
-public:
-    WidgetProxy(GstQWidgetVideoSink *sink);
-    virtual ~WidgetProxy();
-
-    // "widget" property
-    QWidget *widget() const;
-    void setWidget(QWidget *widget);
-
-private Q_SLOTS:
-    void widgetDestroyed();
-
-protected:
-    virtual bool eventFilter(QObject *filteredObject, QEvent *event);
-
-private:
-    GstQWidgetVideoSink *m_sink;
-
-    // "widget" property
-    QWeakPointer<QWidget> m_widget;
-
-    // original value of the Qt::WA_OpaquePaintEvent attribute
-    bool m_opaquePaintEventAttribute;
-};
-
-WidgetProxy::WidgetProxy(GstQWidgetVideoSink *sink)
-    : QObject(),
-      m_sink(sink)
-{
-}
-
-WidgetProxy::~WidgetProxy()
-{
-    setWidget(NULL);
-}
-
-QWidget *WidgetProxy::widget() const
-{
-    return m_widget.data();
-}
-
-void WidgetProxy::setWidget(QWidget *widget)
-{
-    GST_LOG_OBJECT(m_sink, "Setting \"widget\" property to %"GST_PTR_FORMAT, widget);
-
-    if (m_widget) {
-        m_widget.data()->removeEventFilter(this);
-        m_widget.data()->setAttribute(Qt::WA_OpaquePaintEvent, m_opaquePaintEventAttribute);
-        m_widget.data()->update();
-        disconnect(m_widget.data(), SIGNAL(destroyed(QObject*)), this, SLOT(widgetDestroyed()));
-
-        m_widget = QWeakPointer<QWidget>();
-    }
-
-    if (widget) {
-        widget->installEventFilter(this);
-        m_opaquePaintEventAttribute = widget->testAttribute(Qt::WA_OpaquePaintEvent);
-        widget->setAttribute(Qt::WA_OpaquePaintEvent, true);
-        widget->update();
-        connect(widget, SIGNAL(destroyed(QObject*)), this, SLOT(widgetDestroyed()));
-
-        m_widget = widget;
-    }
-}
-
-void WidgetProxy::widgetDestroyed()
-{
-    m_widget = QWeakPointer<QWidget>();
-}
-
-bool WidgetProxy::eventFilter(QObject *filteredObject, QEvent *event)
-{
-    if (filteredObject == m_widget.data()) {
-        switch(event->type()) {
-        case QEvent::Paint:
-          {
-            QPainter painter(m_widget.data());
-            QRect rect = m_widget.data()->rect();
-            GST_QT_VIDEO_SINK_BASE(m_sink)->surface->paint(&painter,
-                    rect.x(), rect.y(), rect.width(), rect.height());
-            return true;
-          }
-        default:
-            return false;
-        }
-    } else {
-        return QObject::eventFilter(filteredObject, event);
-    }
-}
-
-//END ******** WidgetProxy ********
-//BEGIN ******** GstQWidgetVideoSink ********
+#include "qwidgetvideosinkdelegate.h"
 
 GstQtVideoSinkBaseClass *GstQWidgetVideoSink::s_parent_class = NULL;
 
@@ -169,6 +68,8 @@ GType GstQWidgetVideoSink::get_type()
     return (GType) gonce_data;
 }
 
+//------------------------------
+
 void GstQWidgetVideoSink::base_init(gpointer gclass)
 {
     GstElementClass *element_class = GST_ELEMENT_CLASS(gclass);
@@ -185,12 +86,8 @@ void GstQWidgetVideoSink::class_init(gpointer g_class, gpointer class_data)
     s_parent_class = GST_QT_VIDEO_SINK_BASE_CLASS(g_type_class_peek_parent(g_class));
 
     GObjectClass *gobject_class = G_OBJECT_CLASS(g_class);
-    gobject_class->finalize = GstQWidgetVideoSink::finalize;
     gobject_class->set_property = GstQWidgetVideoSink::set_property;
     gobject_class->get_property = GstQWidgetVideoSink::get_property;
-
-    GstQtVideoSinkBaseClass *qt_video_sink_base_class = GST_QT_VIDEO_SINK_BASE_CLASS(g_class);
-    qt_video_sink_base_class->update = GstQWidgetVideoSink::update;
 
     /**
      * GstQWidgetVideoSink::widget
@@ -213,28 +110,19 @@ void GstQWidgetVideoSink::init(GTypeInstance *instance, gpointer g_class)
 {
     Q_UNUSED(g_class);
 
-    GstQWidgetVideoSink *sink = GST_QWIDGET_VIDEO_SINK(instance);
-    sink->proxy = new WidgetProxy(sink);
-}
-
-void GstQWidgetVideoSink::finalize(GObject *object)
-{
-    GstQWidgetVideoSink *sink = GST_QWIDGET_VIDEO_SINK(object);
-
-    delete sink->proxy;
-    sink->proxy = NULL;
-
-    G_OBJECT_CLASS(s_parent_class)->finalize(object);
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(instance);
+    sinkBase->delegate = new QWidgetVideoSinkDelegate(sinkBase);
 }
 
 void GstQWidgetVideoSink::set_property(GObject *object, guint prop_id,
                                        const GValue *value, GParamSpec *pspec)
 {
-    GstQWidgetVideoSink *sink = GST_QWIDGET_VIDEO_SINK(object);
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
+    QWidgetVideoSinkDelegate *delegate = static_cast<QWidgetVideoSinkDelegate*>(sinkBase->delegate);
 
     switch (prop_id) {
     case PROP_WIDGET:
-        sink->proxy->setWidget(static_cast<QWidget*>(g_value_get_pointer(value)));
+        delegate->setWidget(static_cast<QWidget*>(g_value_get_pointer(value)));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -245,26 +133,15 @@ void GstQWidgetVideoSink::set_property(GObject *object, guint prop_id,
 void GstQWidgetVideoSink::get_property(GObject *object, guint prop_id,
                                        GValue *value, GParamSpec *pspec)
 {
-    GstQWidgetVideoSink *sink = GST_QWIDGET_VIDEO_SINK(object);
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
+    QWidgetVideoSinkDelegate *delegate = static_cast<QWidgetVideoSinkDelegate*>(sinkBase->delegate);
 
     switch (prop_id) {
     case PROP_WIDGET:
-        g_value_set_pointer(value, sink->proxy->widget());
+        g_value_set_pointer(value, delegate->widget());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
 }
-
-void GstQWidgetVideoSink::update(GstQtVideoSinkBase *sink)
-{
-    QWidget *w = GST_QWIDGET_VIDEO_SINK(sink)->proxy->widget();
-    if (w) {
-        w->update();
-    }
-}
-
-//END ******** GstQWidgetVideoSink ********
-
-#include "gstqwidgetvideosink.moc"

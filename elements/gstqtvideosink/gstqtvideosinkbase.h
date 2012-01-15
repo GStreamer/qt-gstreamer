@@ -20,7 +20,6 @@
 
 #include "gstqtvideosinkplugin.h"
 #include <gst/video/gstvideosink.h>
-#include <QtCore/QtGlobal>
 
 #define GST_TYPE_QT_VIDEO_SINK_BASE \
   (GstQtVideoSinkBase::get_type())
@@ -39,8 +38,6 @@ public:
     GstVideoSink parent;
 
     static GType get_type();
-
-    static void emit_update(GstQtVideoSinkBase *sink);
 
 private:
     enum {
@@ -66,7 +63,7 @@ private:
     static GstFlowReturn show_frame(GstVideoSink *sink, GstBuffer *buffer);
 
 public:
-    QtVideoSinkDelegate *surface;
+    QtVideoSinkDelegate *delegate;
 
 private:
     bool formatDirty;
@@ -78,9 +75,6 @@ private:
 struct GstQtVideoSinkBaseClass
 {
     GstVideoSinkClass parent_class;
-
-    /* Notifies the subclass that we have a new frame that needs to be painted */
-    void (*update) (GstQtVideoSinkBase *sink);
 };
 
 #endif

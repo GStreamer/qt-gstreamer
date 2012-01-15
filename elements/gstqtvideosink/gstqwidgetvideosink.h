@@ -28,8 +28,6 @@
 #define GST_QWIDGETVIDEOSINK_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_QWIDGET_VIDEO_SINK, GstQWidgetVideoSinkClass))
 
-class WidgetProxy;
-
 struct GstQWidgetVideoSink
 {
 public:
@@ -46,17 +44,12 @@ private:
     static void base_init(gpointer g_class);
     static void class_init(gpointer g_class, gpointer class_data);
     static void init(GTypeInstance *instance, gpointer g_class);
-    static void finalize(GObject *object);
 
     static void set_property(GObject *object, guint prop_id,
                              const GValue *value, GParamSpec *pspec);
     static void get_property(GObject *object, guint prop_id,
                              GValue *value, GParamSpec *pspec);
 
-    static void update(GstQtVideoSinkBase *sink);
-
-
-    WidgetProxy *proxy;
     static GstQtVideoSinkBaseClass *s_parent_class;
 };
 

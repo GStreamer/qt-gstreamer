@@ -8,11 +8,15 @@ glib2_genmarshal(gstqtvideosinkmarshal
 set(GstQtVideoSink_SRCS
     bufferformat.cpp
     genericsurfacepainter.cpp
+
+    qtvideosinkdelegate.cpp
+    qwidgetvideosinkdelegate.cpp
+
+    gstqtvideosinkplugin.cpp
     gstqtvideosinkbase.cpp
     gstqtvideosink.cpp
     gstqwidgetvideosink.cpp
-    gstqtvideosinkplugin.cpp
-    qtvideosinkdelegate.cpp
+
     ${CMAKE_CURRENT_BINARY_DIR}/gstqtvideosinkmarshal.c
 )
 

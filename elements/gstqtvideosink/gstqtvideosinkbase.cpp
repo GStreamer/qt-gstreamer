@@ -17,7 +17,6 @@
 
 #include "gstqtvideosinkbase.h"
 #include "qtvideosinkdelegate.h"
-
 #include <QtCore/QCoreApplication>
 
 
@@ -50,16 +49,6 @@ GType GstQtVideoSinkBase::get_type()
         g_once_init_leave(&gonce_data, (gsize) type);
     }
     return (GType) gonce_data;
-}
-
-//------------------------------
-
-void GstQtVideoSinkBase::emit_update(GstQtVideoSinkBase* sink)
-{
-    GstQtVideoSinkBaseClass *klass = GST_QT_VIDEO_SINK_BASE_GET_CLASS(sink);
-    if (klass->update) {
-        klass->update(sink);
-    }
 }
 
 //------------------------------
@@ -109,10 +98,6 @@ void GstQtVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
     GstVideoSinkClass *video_sink_class = GST_VIDEO_SINK_CLASS(g_class);
     video_sink_class->show_frame = GstQtVideoSinkBase::show_frame;
 
-    GstQtVideoSinkBaseClass *qt_video_sink_base_class = GST_QT_VIDEO_SINK_BASE_CLASS(g_class);
-    qt_video_sink_base_class->update = NULL;
-
-
     /**
      * GstQtVideoSinkBase::force-aspect-ratio
      *
@@ -132,16 +117,16 @@ void GstQtVideoSinkBase::init(GTypeInstance *instance, gpointer g_class)
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(instance);
     Q_UNUSED(g_class);
 
-    sink->surface = new QtVideoSinkDelegate(sink);
     sink->formatDirty = true;
+    /* sink->delegate is initialized in the subclasses */
 }
 
 void GstQtVideoSinkBase::finalize(GObject *object)
 {
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
-    delete sink->surface;
-    sink->surface = 0;
+    delete sink->delegate;
+    sink->delegate = 0;
 }
 
 void GstQtVideoSinkBase::set_property(GObject *object, guint prop_id,
@@ -151,7 +136,7 @@ void GstQtVideoSinkBase::set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FORCE_ASPECT_RATIO:
-        sink->surface->setForceAspectRatio(g_value_get_boolean(value));
+        sink->delegate->setForceAspectRatio(g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -166,7 +151,7 @@ void GstQtVideoSinkBase::get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FORCE_ASPECT_RATIO:
-        g_value_set_boolean(value, sink->surface->forceAspectRatio());
+        g_value_set_boolean(value, sink->delegate->forceAspectRatio());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -180,10 +165,10 @@ GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstSt
 
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
-        sink->surface->setActive(true);
+        sink->delegate->setActive(true);
         break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
-        sink->surface->setActive(false);
+        sink->delegate->setActive(false);
         break;
     default:
         break;
@@ -197,7 +182,7 @@ GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base)
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
     GstCaps *caps = gst_caps_new_empty();
 
-    Q_FOREACH(GstVideoFormat format, sink->surface->supportedPixelFormats()) {
+    Q_FOREACH(GstVideoFormat format, sink->delegate->supportedPixelFormats()) {
         gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
     }
 
@@ -220,7 +205,7 @@ GstFlowReturn GstQtVideoSinkBase::show_frame(GstVideoSink *video_sink, GstBuffer
     GST_TRACE_OBJECT(sink, "Posting new buffer (%"GST_PTR_FORMAT") for rendering. "
                            "Format dirty: %d", buffer, (int)sink->formatDirty);
 
-    QCoreApplication::postEvent(sink->surface,
+    QCoreApplication::postEvent(sink->delegate,
             new QtVideoSinkDelegate::BufferEvent(buffer, sink->formatDirty));
 
     sink->formatDirty = false;
