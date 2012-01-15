@@ -34,9 +34,9 @@
 QtVideoSinkDelegate::QtVideoSinkDelegate(GstQtVideoSinkBase *sink, QObject *parent)
     : QObject(parent)
     , m_painter(0)
+    , m_supportedPainters(Generic)
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     , m_glContext(0)
-    , m_supportedShaderTypes(NoShaders)
 #endif
     , m_colorsDirty(true)
     , m_brightness(0)
@@ -64,7 +64,7 @@ QSet<GstVideoFormat> QtVideoSinkDelegate::supportedPixelFormats() const
 {
     QSet<GstVideoFormat> result;
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    if (m_glContext)
+    if (m_supportedPainters & Glsl || m_supportedPainters & ArbFp)
         result = OpenGLSurfacePainter::supportedPixelFormats();
     else
 #endif
@@ -313,8 +313,7 @@ void QtVideoSinkDelegate::setGLContext(QGLContext *context)
         return;
 
     m_glContext = context;
-
-    m_supportedShaderTypes = NoShaders;
+    m_supportedPainters = Generic;
 
     if (m_glContext) {
         m_glContext->makeCurrent();
@@ -324,23 +323,21 @@ void QtVideoSinkDelegate::setGLContext(QGLContext *context)
 
 #ifndef QT_OPENGL_ES
         if (extensions.contains("ARB_fragment_program"))
-            m_supportedShaderTypes |= FragmentProgramShader;
+            m_supportedPainters |= ArbFp;
 #endif
 
 #ifndef QT_OPENGL_ES_2
         if (QGLShaderProgram::hasOpenGLShaderPrograms(m_glContext)
                 && extensions.contains("ARB_shader_objects"))
 #endif
-            m_supportedShaderTypes |= GlslShader;
+            m_supportedPainters |= Glsl;
 
     }
 
-    GST_LOG_OBJECT(m_sink, "Done setting GL context. m_shaderTypes=%x", (int) m_supportedShaderTypes);
+    GST_LOG_OBJECT(m_sink, "Done setting GL context. m_supportedPainters=%x", (int) m_supportedPainters);
 }
 
 #endif
-
-enum PainterType { Glsl, ArbFp, Generic };
 
 void QtVideoSinkDelegate::changePainter(const BufferFormat & format)
 {
@@ -358,16 +355,14 @@ void QtVideoSinkDelegate::changePainter(const BufferFormat & format)
     }
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-# ifndef QT_OPENGL_ES
-    if (m_supportedShaderTypes & QtVideoSinkDelegate::FragmentProgramShader
-        && ArbFpSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
-        possiblePainters.push(ArbFp);
-    }
-# endif
+    if (OpenGLSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
+        if (m_supportedPainters & ArbFp) {
+            possiblePainters.push(ArbFp);
+        }
 
-    if (m_supportedShaderTypes & QtVideoSinkDelegate::GlslShader
-        && GlslSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
-        possiblePainters.push(Glsl);
+        if (m_supportedPainters & Glsl) {
+            possiblePainters.push(Glsl);
+        }
     }
 #endif
 

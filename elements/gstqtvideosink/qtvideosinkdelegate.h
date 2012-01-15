@@ -97,20 +97,10 @@ public:
     bool forceAspectRatio() const;
     void setForceAspectRatio(bool force);
 
-    // glcontext property
-
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    // glcontext property
     QGLContext *glContext() const;
     void setGLContext(QGLContext *context);
-
-    enum ShaderType
-    {
-        NoShaders = 0x00,
-        FragmentProgramShader = 0x01,
-        GlslShader = 0x02
-    };
-
-    Q_DECLARE_FLAGS(ShaderTypes, ShaderType)
 #endif
 
     // paint action signal
@@ -124,13 +114,18 @@ private:
     void changePainter(const BufferFormat & format);
     void destroyPainter();
 
+    enum PainterType {
+        Generic = 0x00,
+        ArbFp = 0x01,
+        Glsl = 0x02
+    };
+    Q_DECLARE_FLAGS(PainterTypes, PainterType);
 
     AbstractSurfacePainter *m_painter;
+    PainterTypes m_supportedPainters;
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     QGLContext *m_glContext;
-    ShaderTypes m_supportedShaderTypes;
-    ShaderType m_shaderType;
 #endif
 
     // colorbalance interface properties
@@ -162,8 +157,6 @@ private:
     GstQtVideoSinkBase *m_sink;
 };
 
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-Q_DECLARE_OPERATORS_FOR_FLAGS(QtVideoSinkDelegate::ShaderTypes)
-#endif
+Q_DECLARE_OPERATORS_FOR_FLAGS(QtVideoSinkDelegate::PainterTypes)
 
 #endif // QT_VIDEO_SINK_DELEGATE_H
