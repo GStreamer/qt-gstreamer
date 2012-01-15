@@ -50,6 +50,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 add_subdirectory(QGlib)
 add_subdirectory(QGst)
 
+# Build the qml plugin
+if (QT_QTDECLARATIVE_FOUND)
+    add_subdirectory(qml)
+endif()
+
 # Install the cmake scripts that are used to find the installed library from external projects
 install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
 install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGStreamer.cmake

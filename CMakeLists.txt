@@ -9,7 +9,8 @@ option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
 option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
 option(QTGSTREAMER_CODEGEN "Build and use QtGStreamer's codegen" OFF)
-option(USE_GST_PLUGIN_DIR "Install plugins together with the other gstreamer plugins" ON)
+option(USE_GST_PLUGIN_DIR "Install gstreamer plugins at the system location" ON)
+option(USE_QT_PLUGIN_DIR "Install qt plugins at the system location" ON)
 
 include(MacroLogFeature)
 
@@ -96,6 +97,12 @@ if (USE_GST_PLUGIN_DIR)
     set(PLUGINS_INSTALL_DIR ${GSTREAMER_PLUGIN_DIR})
 else()
     set(PLUGINS_INSTALL_DIR ${LIB_INSTALL_DIR}/gstreamer-0.10)
+endif()
+
+if (USE_QT_PLUGIN_DIR)
+    set(IMPORTS_INSTALL_DIR ${QT_IMPORTS_DIR})
+else()
+    set(IMPORTS_INSTALL_DIR ${LIB_INSTALL_DIR}/qt4/imports)
 endif()
 
 if (QTGSTREAMER_CODEGEN AND FLEX_FOUND AND BISON_FOUND)
