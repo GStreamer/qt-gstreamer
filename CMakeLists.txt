@@ -13,10 +13,21 @@ option(USE_GST_PLUGIN_DIR "Install plugins together with the other gstreamer plu
 
 include(MacroLogFeature)
 
-find_package(Qt4 COMPONENTS QtCore QtGui QtTest)
-macro_log_feature(QT4_FOUND "Qt 4" "Required for building everything" "http://qt.nokia.com/" TRUE "4.5")
-macro_log_feature(QT_QTOPENGL_FOUND "QtOpenGL" "Required for OpenGL rendering support in qtvideosink"
-                                    "http://qt.nokia.com/" FALSE "4.5")
+find_package(Qt4 COMPONENTS QtCore QtGui)
+macro_log_feature(QT4_FOUND "Qt 4" "Required for building everything" "http://qt.nokia.com/" TRUE "4.7")
+macro_log_feature(QT_QTOPENGL_FOUND "QtOpenGL"
+                                    "Required for OpenGL acceleration in qtvideosink and QtGStreamerUi"
+                                    "http://qt.nokia.com/" FALSE "4.7")
+macro_log_feature(QT_QTDECLARATIVE_FOUND "QtDeclarative" "Required for building QML support"
+                                         "http://qt.nokia.com/" FALSE "4.7")
+
+if (QTGSTREAMER_TESTS)
+    macro_log_feature(QT_QTTEST_FOUND "QtTest" "Required for building unit tests"
+                                      "http://qt.nokia.com/" FALSE "4.7")
+    if (NOT QT_QTTEST_FOUND)
+        set(QTGSTREAMER_TESTS OFF)
+    endif()
+endif()
 
 find_package(Boost 1.39)
 macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.39")
@@ -29,23 +40,23 @@ find_package(Automoc4)
 macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"
                                  "https://projects.kde.org/projects/kdesupport/automoc" TRUE "0.9.88")
 
-find_package(GStreamer 0.10.31 COMPONENTS base)
+find_package(GStreamer 0.10.33 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
-                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
+                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
 macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
                                                "Used for building the qwidgetvideosink element"
-                                               "http://gstreamer.freedesktop.org/" FALSE "0.10.31")
+                                               "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
 
-find_package(GStreamerPluginsBase 0.10.31 COMPONENTS app interfaces video)
+find_package(GStreamerPluginsBase 0.10.33 COMPONENTS app interfaces video)
 macro_log_feature(GSTREAMER_APP_LIBRARY_FOUND "GStreamer app library"
                                               "Required to build QtGStreamerUtils"
-                                              "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
+                                              "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
 macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
                                                 "Required to build QtGStreamer"
-                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.31")
+                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
                                                 "Used for building the qwidgetvideosink element"
-                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.31")
+                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
 
 find_package(GLIB2)
 macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
@@ -54,7 +65,9 @@ find_package(GObject)
 macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
 
 find_package(OpenGL)
-macro_log_feature(OPENGL_FOUND "OpenGL" "Required for OpenGL rendering support in qtvideosink" FALSE)
+macro_log_feature(OPENGL_FOUND "OpenGL"
+                               "Required for OpenGL rendering support in qtvideosink"
+                               "http://www.opengl.org" FALSE)
 
 if (QTGSTREAMER_CODEGEN AND CMAKE_CROSSCOMPILING)
     message(WARNING "Codegen use requested, but we are crosscompiling. Disabling...")
