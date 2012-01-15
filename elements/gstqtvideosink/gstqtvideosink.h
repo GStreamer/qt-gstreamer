@@ -40,9 +40,7 @@ public:
 private:
     enum {
         PROP_0,
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
         PROP_GLCONTEXT
-#endif
     };
 
     enum {
@@ -57,8 +55,6 @@ private:
 
     static void set_property(GObject *object, guint prop_id,
                              const GValue *value, GParamSpec *pspec);
-    static void get_property(GObject *object, guint prop_id,
-                             GValue *value, GParamSpec *pspec);
 
     static void paint(GstQtVideoSink *sink, gpointer painter,
                       qreal x, qreal y, qreal width, qreal height);

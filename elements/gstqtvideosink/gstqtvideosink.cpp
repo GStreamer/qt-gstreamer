@@ -90,12 +90,11 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
 
     GObjectClass *object_class = G_OBJECT_CLASS(g_class);
     object_class->set_property = GstQtVideoSink::set_property;
-    object_class->get_property = GstQtVideoSink::get_property;
 
     GstQtVideoSinkClass *qt_video_sink_class = GST_QT_VIDEO_SINK_CLASS(g_class);
     qt_video_sink_class->paint = GstQtVideoSink::paint;
 
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+
     /**
      * GstQtVideoSink::glcontext
      *
@@ -106,8 +105,7 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
     g_object_class_install_property(object_class, PROP_GLCONTEXT,
         g_param_spec_pointer("glcontext", "GL context",
                              "The QGLContext that will be used to do OpenGL-accelerated rendering",
-                             static_cast<GParamFlags>(G_PARAM_READWRITE)));
-#endif
+                             static_cast<GParamFlags>(G_PARAM_WRITABLE)));
 
     /**
      * GstQtVideoSink::paint
@@ -162,28 +160,14 @@ void GstQtVideoSink::set_property(GObject *object, guint prop_id,
     GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     case PROP_GLCONTEXT:
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
         sinkBase->delegate->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
-        break;
+#else
+        GST_WARNING_OBJECT(sinkBase, "Attempted to write on the glcontext property, "
+                                     "but qtvideosink has been compiled without OpenGL support");
 #endif
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
-    }
-}
-
-void GstQtVideoSink::get_property(GObject *object, guint prop_id,
-                                  GValue *value, GParamSpec *pspec)
-{
-    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
-
-    switch (prop_id) {
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    case PROP_GLCONTEXT:
-        g_value_set_pointer(value, sinkBase->delegate->glContext());
-        break;
-#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
