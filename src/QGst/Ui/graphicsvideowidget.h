@@ -24,6 +24,16 @@
 namespace QGst {
 namespace Ui {
 
+/*! \headerfile graphicsvideowidget.h <QGst/Ui/GraphicsVideoWidget>
+ * \brief A QGraphicsWidget for displaying video on a QGraphicsScene
+ *
+ * This is a QGraphicsWidget subclass that can display video. To use it,
+ * you have to create a GraphicsVideoSurface and connect it with this
+ * widget using the setSurface() method or the surface property.
+ * See the GraphicsVideoSurface documentation for details and examples.
+ *
+ * \sa GraphicsVideoSurface
+ */
 class QTGSTREAMERUI_EXPORT GraphicsVideoWidget : public QGraphicsWidget
 {
     Q_OBJECT
@@ -33,7 +43,7 @@ public:
     explicit GraphicsVideoWidget(QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~GraphicsVideoWidget();
 
-    /*! \reimpl */
+    /*! Reimplemented from QGraphicsWidget. Do not call directly. */
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     GraphicsVideoSurface *surface() const;

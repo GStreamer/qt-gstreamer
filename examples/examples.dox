@@ -79,3 +79,23 @@
  * you need to configure the destination ports of the one side to be the source
  * ports of the other and vice versa.
  */
+
+/*! \example examples/qmlplayer/main.cpp
+ * This example demonstrates how to paint video on QML.
+ *
+ * Much of the code here is borrowed from the player example and it is not generally
+ * a good example on how to write QML and connect it with C++. The intention is just
+ * to demonstrate the use of QGst::Ui::GraphicsVideoSurface, which is bound on the
+ * QML context and then used by the VideoItem.
+ *
+ * qmlplayer.qml:
+ * \include examples/qmlplayer/qmlplayer.qml
+ *
+ * player.h:
+ * \include examples/qmlplayer/player.h
+ *
+ * player.cpp:
+ * \include examples/qmlplayer/player.cpp
+ *
+ * main.cpp:
+ */

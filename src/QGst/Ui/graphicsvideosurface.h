@@ -31,6 +31,12 @@ class GraphicsVideoSurfacePrivate;
 /*! \headerfile graphicsvideosurface.h <QGst/Ui/GraphicsVideoSurface>
  * \brief Helper class for painting video on a QGraphicsView
  *
+ * This is a helper class that represents a video surface on a QGraphicsView.
+ * This is not a QGraphicsItem, though, it is just a helper class to bind
+ * the video sink to a specific view. To use it, create a GraphicsVideoWidget,
+ * add it to your scene and connect it with this surface.
+ *
+ * Example
  * \code
  * QGraphicsView *view = new QGraphicsView;
  * view->setViewport(new QGLWidget); //recommended
@@ -40,6 +46,39 @@ class GraphicsVideoSurfacePrivate;
  * widget->setSurface(surface);
  * view->addItem(widget);
  * \endcode
+ *
+ * This class internally creates and uses a "qtvideosink" element. This element
+ * is created the first time it is requested and a reference is kept internally.
+ *
+ * To make use of OpenGL hardware acceleration in qtvideosink, it is recommended
+ * that you set a QGLWidget as the viewport of the QGraphicsView. Note that you must
+ * do this before the qtvideosink element is requested for the first time using the
+ * videoSink() method, as it needs to find a GL context at construction time to
+ * query the hardware about supported features. If you don't use OpenGL acceleration,
+ * painting will be done in software with QImage and QPainter.
+ *
+ * This class can also be used to paint video on QML.
+ *
+ * Example:
+ * \code
+ * // in your C++ code
+ * QDeclarativeView *view = new QDeclarativeView;
+ * view->setViewport(new QGLWidget); //recommended
+ * QGst::Ui::GraphicsVideoSurface *surface = new QGst::Ui::GraphicsVideoSurface(view);
+ * view->rootContext()->setContextProperty(QLatin1String("videoSurface"), surface);
+ * ...
+ * // and in your qml file:
+ * import QtGStreamer 0.10
+ * ...
+ * VideoItem {
+ *      id: video
+ *      width: 320
+ *      height: 240
+ *      surface: videoSurface
+ * }
+ * \endcode
+ *
+ * \sa GraphicsVideoWidget
  */
 class QTGSTREAMERUI_EXPORT GraphicsVideoSurface : public QObject
 {
