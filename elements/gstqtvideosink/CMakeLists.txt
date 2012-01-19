@@ -6,6 +6,7 @@ glib2_genmarshal(gstqtvideosinkmarshal
 )
 
 set(GstQtVideoSink_SRCS
+    utils.cpp
     bufferformat.cpp
     genericsurfacepainter.cpp
 
@@ -44,6 +45,7 @@ install(TARGETS gstqtvideosink DESTINATION ${PLUGINS_INSTALL_DIR})
 if (QTGSTREAMER_TESTS)
     automoc4_add_executable(qtvideosink_autotest
         autotest.cpp
+        utils.cpp
         bufferformat.cpp
         genericsurfacepainter.cpp
         ${GstQtVideoSink_GL_SRCS}

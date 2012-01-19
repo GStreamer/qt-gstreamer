@@ -22,20 +22,6 @@
 
 class QPainter;
 
-struct PaintAreas
-{
-    // the area that we paint on
-    QRectF targetArea;
-
-    // the area where the video should be painted on (subrect of or equal to targetArea)
-    QRectF videoArea;
-
-    // these are small subrects of targetArea that are not
-    // covered by videoArea to keep the video's aspect ratio
-    QRectF blackArea1;
-    QRectF blackArea2;
-};
-
 /** Common interface for all the painters */
 class AbstractSurfacePainter
 {

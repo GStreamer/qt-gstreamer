@@ -17,9 +17,8 @@
 #ifndef BUFFERFORMAT_H
 #define BUFFERFORMAT_H
 
+#include "utils.h"
 #include <QtCore/QSharedData>
-#include <QtCore/QSize>
-#include <QtCore/QMetaType>
 #include <gst/video/video.h>
 
 //0.11 stuff
@@ -31,21 +30,6 @@ typedef enum {
   GST_VIDEO_COLOR_MATRIX_BT601,
   GST_VIDEO_COLOR_MATRIX_SMPTE240M
 } GstVideoColorMatrix;
-
-struct Fraction
-{
-    inline Fraction() {}
-    inline Fraction(int numerator, int denominator)
-        : numerator(numerator), denominator(denominator) {}
-
-    inline bool operator==(const Fraction & other) const
-    { return numerator == other.numerator && denominator == other.denominator; }
-    inline bool operator!=(const Fraction & other) const
-    { return !operator==(other); }
-
-    int numerator;
-    int denominator;
-};
 
 
 /**
@@ -87,7 +71,6 @@ private:
 
 Q_DECLARE_METATYPE(GstVideoFormat)
 Q_DECLARE_METATYPE(GstVideoColorMatrix)
-Q_DECLARE_METATYPE(Fraction)
 Q_DECLARE_METATYPE(BufferFormat)
 
 #endif // BUFFERFORMAT_H

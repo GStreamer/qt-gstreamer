@@ -121,6 +121,9 @@ private Q_SLOTS:
     void bufferFormatTest_data();
     void bufferFormatTest();
 
+    void paintAreasTest_data();
+    void paintAreasTest();
+
     void genericSurfacePainterFormatsTest_data();
     void genericSurfacePainterFormatsTest();
 
@@ -210,6 +213,88 @@ void QtVideoSinkTest::bufferFormatTest()
     QCOMPARE(bufferFormat.colorMatrix(), colorMatrix);
     QCOMPARE(bufferFormat.frameSize(), QSize(100, 200));
     QCOMPARE(bufferFormat.pixelAspectRatio(), Fraction(5, 6));
+}
+
+//------------------------------------
+
+void QtVideoSinkTest::paintAreasTest_data()
+{
+    QTest::addColumn<QRectF>("targetArea");
+    QTest::addColumn<QSize>("frameSize");
+    QTest::addColumn<Fraction>("pixelAspectRatio");
+    QTest::addColumn<Fraction>("displayAspectRatio");
+    QTest::addColumn<QRectF>("blackArea1");
+    QTest::addColumn<QRectF>("videoArea");
+    QTest::addColumn<QRectF>("blackArea2");
+
+    QTest::newRow("targetArea == videoArea")
+        << QRectF(0.0, 0.0, 320.0, 240.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
+        << QRectF(0.0, 0.0, 0.0, 0.0)
+        << QRectF(0.0, 0.0, 320.0, 240.0)
+        << QRectF(0.0, 0.0, 0.0, 0.0);
+
+    QTest::newRow("targetArea wide")
+        << QRectF(0.0, 0.0, 400.0, 240.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
+        << QRectF(0.0, 0.0, 40.0, 240.0)
+        << QRectF(40.0, 0.0, 320.0, 240.0)
+        << QRectF(360.0, 0.0, 40.0, 240.0);
+
+    QTest::newRow("targetArea tall")
+        << QRectF(0.0, 0.0, 320.0, 300.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
+        << QRectF(0.0, 0.0, 320.0, 30.0)
+        << QRectF(0.0, 30.0, 320.0, 240.0)
+        << QRectF(0.0, 270.0, 320.0, 30.0);
+
+
+    QTest::newRow("targetArea == videoArea @ (2, 3)")
+        << QRectF(2.0, 3.0, 320.0, 240.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
+        << QRectF(0.0, 0.0, 0.0, 0.0)
+        << QRectF(2.0, 3.0, 320.0, 240.0)
+        << QRectF(0.0, 0.0, 0.0, 0.0);
+
+    QTest::newRow("targetArea wide @ (2, 3)")
+        << QRectF(2.0, 3.0, 400.0, 240.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
+        << QRectF(2.0, 3.0, 40.0, 240.0)
+        << QRectF(42.0, 3.0, 320.0, 240.0)
+        << QRectF(362.0, 3.0, 40.0, 240.0);
+
+    QTest::newRow("targetArea tall @ (2, 3)")
+        << QRectF(2.0, 3.0, 320.0, 300.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
+        << QRectF(2.0, 3.0, 320.0, 30.0)
+        << QRectF(2.0, 33.0, 320.0, 240.0)
+        << QRectF(2.0, 273.0, 320.0, 30.0);
+
+
+    QTest::newRow("targetArea.size() == videoSize w/ par 2/1")
+        << QRectF(0.0, 0.0, 160.0, 240.0)
+        << QSize(160, 240) << Fraction(2, 1) << Fraction(1, 1)
+        << QRectF(0.0, 0.0, 160.0, 60.0)
+        << QRectF(0.0, 60.0, 160.0, 120.0)
+        << QRectF(0.0, 180.0, 160.0, 60.0);
+}
+
+void QtVideoSinkTest::paintAreasTest()
+{
+    QFETCH(QRectF, targetArea);
+    QFETCH(QSize, frameSize);
+    QFETCH(Fraction, pixelAspectRatio);
+    QFETCH(Fraction, displayAspectRatio);
+    QFETCH(QRectF, blackArea1);
+    QFETCH(QRectF, videoArea);
+    QFETCH(QRectF, blackArea2);
+
+    PaintAreas areas;
+    areas.calculate(targetArea, frameSize, pixelAspectRatio, displayAspectRatio);
+    QCOMPARE(areas.targetArea, targetArea);
+    QCOMPARE(areas.videoArea, videoArea);
+    QCOMPARE(areas.blackArea1, blackArea1);
+    QCOMPARE(areas.blackArea2, blackArea2);
 }
 
 //------------------------------------
@@ -669,27 +754,6 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     return GST_PIPELINE(g_object_ref(pipeline.data()));
 }
 
-static QRectF centerRect(const QRectF & src, const QRectF & dst)
-{
-    QRectF result;
-    qreal srcRatio = src.width() / src.height();
-    qreal dstRatio = dst.width() / dst.height();
-
-    if (srcRatio > dstRatio) {
-        result.setWidth(dst.width());
-        result.setHeight(dst.width() / srcRatio);
-        result.moveTop((dst.height() - result.height()) / 2);
-    } else if (srcRatio < dstRatio) {
-        result.setWidth(dst.height() * srcRatio);
-        result.setHeight(dst.height());
-        result.moveLeft((dst.width() - result.width()) / 2);
-    } else {
-        result = dst;
-    }
-
-    return result;
-}
-
 void QtVideoSinkTest::imageCompare(const QImage & image1, const QImage & image2, const QSize & sourceSize)
 {
     QVERIFY(image1.size() == image2.size());
@@ -699,7 +763,9 @@ void QtVideoSinkTest::imageCompare(const QImage & image1, const QImage & image2,
 
     QRect barsArea;
     if (sourceSize.isValid() && sourceSize != image1.size()) {
-        barsArea = centerRect(QRect(QPoint(0, 0), sourceSize), image1.rect()).toRect();
+        PaintAreas areas;
+        areas.calculate(image1.rect(), sourceSize, Fraction(1,1), Fraction(1,1));
+        barsArea = areas.videoArea.toRect();
     } else {
         barsArea = image1.rect();
     }

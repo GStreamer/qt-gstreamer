@@ -164,28 +164,6 @@ void QtVideoSinkDelegate::setForceAspectRatio(bool force)
 
 //-------------------------------------
 
-/* Modified version of gst_video_sink_center_rect */
-static QRectF centerRect(const QRectF & src, const QRectF & dst)
-{
-    QRectF result;
-    qreal srcRatio = src.width() / src.height();
-    qreal dstRatio = dst.width() / dst.height();
-
-    if (srcRatio > dstRatio) {
-        result.setWidth(dst.width());
-        result.setHeight(dst.width() / srcRatio);
-        result.moveTop((dst.height() - result.height()) / 2);
-    } else if (srcRatio < dstRatio) {
-        result.setWidth(dst.height() * srcRatio);
-        result.setHeight(dst.height());
-        result.moveLeft((dst.width() - result.width()) / 2);
-    } else {
-        result = dst;
-    }
-
-    return result;
-}
-
 void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
 {
     GST_TRACE_OBJECT(m_sink, "paint called");
@@ -213,44 +191,13 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
                                || format.pixelAspectRatio() != m_bufferFormat.pixelAspectRatio()))
              || m_forceAspectRatioDirty)
         {
-            m_areas.targetArea = targetArea;
             m_forceAspectRatioDirty = false;
 
             if (m_forceAspectRatio) {
-                qreal aspectRatio = (qreal) format.pixelAspectRatio().numerator / format.pixelAspectRatio().denominator;
-                qreal aspectRatioInv = (qreal) format.pixelAspectRatio().denominator / format.pixelAspectRatio().numerator;
-
-                QRectF srcRect(QPointF(0,0), QSizeF(format.frameSize().width() * aspectRatio,
-                                                    format.frameSize().height() * aspectRatioInv));
-                QRectF destRect(QPointF(0,0), m_areas.targetArea.size());
-
-                m_areas.videoArea = centerRect(srcRect, destRect);
-
-                if (m_areas.videoArea == m_areas.targetArea) {
-                    m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
-                } else {
-                    m_areas.blackArea1 = QRectF(
-                        m_areas.targetArea.left(),
-                        m_areas.targetArea.top(),
-                        m_areas.videoArea.left() == m_areas.targetArea.left() ?
-                            m_areas.targetArea.width() : m_areas.videoArea.left() - m_areas.targetArea.left(),
-                        m_areas.videoArea.top() == m_areas.targetArea.top() ?
-                            m_areas.targetArea.height() : m_areas.videoArea.top() - m_areas.targetArea.top()
-                    );
-
-                    m_areas.blackArea2 = QRectF(
-                        m_areas.videoArea.right() == m_areas.targetArea.right() ?
-                            m_areas.targetArea.left() : m_areas.videoArea.right() + 1,
-                        m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
-                            m_areas.targetArea.top() : m_areas.videoArea.bottom() + 1,
-                        m_areas.videoArea.right() == m_areas.targetArea.right() ?
-                            m_areas.targetArea.width() : m_areas.targetArea.right() - m_areas.videoArea.right(),
-                        m_areas.videoArea.bottom() == m_areas.targetArea.bottom() ?
-                            m_areas.targetArea.height() : m_areas.targetArea.bottom() - m_areas.videoArea.bottom()
-                    );
-                }
+                m_areas.calculate(targetArea, format.frameSize(), format.pixelAspectRatio(), Fraction(1,1));
             } else {
-                m_areas.videoArea = m_areas.targetArea;
+                m_areas.targetArea = targetArea;
+                m_areas.videoArea = targetArea;
                 m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
             }
 
