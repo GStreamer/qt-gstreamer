@@ -368,6 +368,16 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(0, 0, 255));
+
+
+    QBENCHMARK {
+        genericSurfacePainter.paint(
+            GST_BUFFER_DATA(buffer.data()),
+            bufferFormat,
+            areas.targetArea,
+            &painter,
+            areas);
+    }
 }
 
 //------------------------------------
@@ -484,6 +494,16 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
         qWarning("Found difference (%d, %d, %d) vs (%d, %d, %d)",
                 qRed(pixel1), qGreen(pixel1), qBlue(pixel1),
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
+    }
+
+
+    QBENCHMARK {
+        glSurfacePainter->paint(
+            GST_BUFFER_DATA(buffer.data()),
+            bufferFormat,
+            areas.targetArea,
+            &painter,
+            areas);
     }
 }
 
@@ -615,6 +635,8 @@ void QtVideoSinkTest::qtVideoSinkTest()
                 QImage::Format_ARGB32);
         QImage actualImage = QPixmap::grabWindow(widget->winId()).toImage();
 
+#if 0
+        // visual debugging
         QScopedPointer<QWidget> referenceWidget(new QWidget);
         referenceWidget->setWindowTitle("Results");
 
@@ -640,6 +662,7 @@ void QtVideoSinkTest::qtVideoSinkTest()
 
         QTest::qWaitForWindowShown(referenceWidget.data());
         QTest::qWait(1000); //just for visual feedback
+#endif
 
         imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
     }
