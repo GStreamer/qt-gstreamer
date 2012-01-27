@@ -15,23 +15,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GST_QT_VIDEO_SINK_H
-#define GST_QT_VIDEO_SINK_H
+#ifndef GST_QT_GL_VIDEO_SINK_H
+#define GST_QT_GL_VIDEO_SINK_H
 
-#include "gstqtvideosinkbase.h"
+#include "gstqtglvideosinkbase.h"
 
-#define GST_TYPE_QT_VIDEO_SINK \
-  (GstQtVideoSink::get_type())
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 
-struct GstQtVideoSink
+#define GST_TYPE_QT_GL_VIDEO_SINK \
+  (GstQtGLVideoSink::get_type())
+
+struct GstQtGLVideoSink
 {
 public:
-    GstQtVideoSinkBase parent;
+    GstQtGLVideoSinkBase parent;
 
     static GType get_type();
     static void emit_update(gpointer sink);
 
 private:
+    enum {
+        PROP_0,
+        PROP_GLCONTEXT
+    };
+
     enum {
         PAINT_SIGNAL,
         UPDATE_SIGNAL,
@@ -42,20 +49,24 @@ private:
     static void class_init(gpointer g_class, gpointer class_data);
     static void init(GTypeInstance *instance, gpointer g_class);
 
-    static void paint(GstQtVideoSink *sink, gpointer painter,
+    static void set_property(GObject *object, guint prop_id,
+                             const GValue *value, GParamSpec *pspec);
+
+    static void paint(GstQtGLVideoSink *sink, gpointer painter,
                       qreal x, qreal y, qreal width, qreal height);
 
     static guint s_signals[LAST_SIGNAL];
 };
 
 
-struct GstQtVideoSinkClass
+struct GstQtGLVideoSinkClass
 {
-    GstQtVideoSinkBaseClass parent_class;
+    GstQtGLVideoSinkBaseClass parent_class;
 
     /* paint action signal */
-    void (*paint) (GstQtVideoSink *sink, gpointer painter,
+    void (*paint) (GstQtGLVideoSink *sink, gpointer painter,
                    qreal x, qreal y, qreal width, qreal height);
 };
 
-#endif
+#endif // GST_QT_VIDEO_SINK_NO_OPENGL
+#endif // GST_QT_GL_VIDEO_SINK_H

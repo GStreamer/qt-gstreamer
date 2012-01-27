@@ -18,8 +18,44 @@
 #define GST_QT_VIDEO_SINK_PLUGIN_H
 
 #include <gst/gst.h>
+#include <QtCore/QtGlobal>
 
 GST_DEBUG_CATEGORY_EXTERN(gst_qt_video_sink_debug);
 #define GST_CAT_DEFAULT gst_qt_video_sink_debug
+
+
+#define DEFINE_TYPE_FULL(cpp_type, parent_type, additional_initializations) \
+    GType cpp_type::get_type() \
+    { \
+        static volatile gsize gonce_data = 0; \
+        if (g_once_init_enter(&gonce_data)) { \
+            GType type; \
+            type = gst_type_register_static_full( \
+                parent_type, \
+                g_intern_static_string(#cpp_type), \
+                sizeof(cpp_type##Class), \
+                &cpp_type::base_init, \
+                NULL,   /* base_finalize */ \
+                &cpp_type::class_init, \
+                NULL,   /* class_finalize */ \
+                NULL,   /* class_data */ \
+                sizeof(cpp_type), \
+                0,      /* n_preallocs */ \
+                &cpp_type::init, \
+                NULL, \
+                (GTypeFlags) 0); \
+            additional_initializations(type); \
+            g_once_init_leave(&gonce_data, (gsize) type); \
+        } \
+        return (GType) gonce_data; \
+    }
+
+#define DEFINE_TYPE(cpp_type, parent_type) \
+    DEFINE_TYPE_FULL(cpp_type, parent_type, Q_UNUSED)
+
+
+inline bool qRealIsDouble() { return sizeof(qreal) == sizeof(double); }
+#define G_TYPE_QREAL qRealIsDouble() ? G_TYPE_DOUBLE : G_TYPE_FLOAT
+
 
 #endif

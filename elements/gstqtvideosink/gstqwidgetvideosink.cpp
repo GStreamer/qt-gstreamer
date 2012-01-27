@@ -25,10 +25,10 @@
  *
  * This is useful for cases where you cannot or you do not want to use one of the
  * sinks that implement the GstXOverlay interface, for example for rendering video
- * inside a QGraphicsView or for rendering video on the QWS (Qt/Embedded) platform.
- * This sink is guaranteed to work on all platforms supported by Qt, however it
- * is not recommended to use it if you have another choice. For example, on X11 it
- * is recommended to use "xvimagesink" instead, which uses hardware acceleration.
+ * on the QWS (Qt/Embedded) platform. This sink is guaranteed to work on all platforms
+ * supported by Qt, however it is not recommended to use it if you have another choice.
+ * For example, on X11 it is recommended to use "xvimagesink" instead, which uses
+ * hardware acceleration.
  *
  * There are certain rules for using qwidgetvideosink with threads. It must be
  * created in the main thread, it must be destructed in the main thread and the
@@ -39,34 +39,7 @@
 #include "gstqwidgetvideosink.h"
 #include "qwidgetvideosinkdelegate.h"
 
-GstQtVideoSinkBaseClass *GstQWidgetVideoSink::s_parent_class = NULL;
-
-GType GstQWidgetVideoSink::get_type()
-{
-  /* The typedef for GType may be gulong or gsize, depending on the
-   * system and whether the compiler is c++ or not. The g_once_init_*
-   * functions always take a gsize * though ... */
-    static volatile gsize gonce_data = 0;
-    if (g_once_init_enter(&gonce_data)) {
-        GType type;
-        type = gst_type_register_static_full(
-            GST_TYPE_QT_VIDEO_SINK_BASE,
-            g_intern_static_string("GstQWidgetVideoSink"),
-            sizeof(GstQWidgetVideoSinkClass),
-            &GstQWidgetVideoSink::base_init,
-            NULL,   /* base_finalize */
-            &GstQWidgetVideoSink::class_init,
-            NULL,   /* class_finalize */
-            NULL,   /* class_data */
-            sizeof(GstQWidgetVideoSink),
-            0,      /* n_preallocs */
-            &GstQWidgetVideoSink::init,
-            NULL,
-            (GTypeFlags) 0);
-        g_once_init_leave(&gonce_data, (gsize) type);
-    }
-    return (GType) gonce_data;
-}
+DEFINE_TYPE(GstQWidgetVideoSink, GST_TYPE_QT_VIDEO_SINK_BASE)
 
 //------------------------------
 
@@ -82,8 +55,6 @@ void GstQWidgetVideoSink::base_init(gpointer gclass)
 void GstQWidgetVideoSink::class_init(gpointer g_class, gpointer class_data)
 {
     Q_UNUSED(class_data);
-
-    s_parent_class = GST_QT_VIDEO_SINK_BASE_CLASS(g_type_class_peek_parent(g_class));
 
     GObjectClass *gobject_class = G_OBJECT_CLASS(g_class);
     gobject_class->set_property = GstQWidgetVideoSink::set_property;

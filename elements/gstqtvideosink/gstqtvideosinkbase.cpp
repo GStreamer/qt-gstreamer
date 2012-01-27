@@ -17,39 +17,13 @@
 
 #include "gstqtvideosinkbase.h"
 #include "qtvideosinkdelegate.h"
+#include "genericsurfacepainter.h"
 #include <QtCore/QCoreApplication>
 
 
 GstVideoSinkClass *GstQtVideoSinkBase::s_parent_class = NULL;
 
-//------------------------------
-
-GType GstQtVideoSinkBase::get_type()
-{
-  /* The typedef for GType may be gulong or gsize, depending on the
-   * system and whether the compiler is c++ or not. The g_once_init_*
-   * functions always take a gsize * though ... */
-    static volatile gsize gonce_data = 0;
-    if (g_once_init_enter(&gonce_data)) {
-        GType type;
-        type = gst_type_register_static_full(
-            GST_TYPE_VIDEO_SINK,
-            g_intern_static_string("GstQtVideoSinkBase"),
-            sizeof(GstQtVideoSinkBaseClass),
-            &GstQtVideoSinkBase::base_init,
-            NULL,   /* base_finalize */
-            &GstQtVideoSinkBase::class_init,
-            NULL,   /* class_finalize */
-            NULL,   /* class_data */
-            sizeof(GstQtVideoSinkBase),
-            0,      /* n_preallocs */
-            &GstQtVideoSinkBase::init,
-            NULL,
-            (GTypeFlags) 0);
-        g_once_init_leave(&gonce_data, (gsize) type);
-    }
-    return (GType) gonce_data;
-}
+DEFINE_TYPE(GstQtVideoSinkBase, GST_TYPE_VIDEO_SINK)
 
 //------------------------------
 
@@ -61,11 +35,6 @@ void GstQtVideoSinkBase::base_init(gpointer g_class)
         GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
             GST_STATIC_CAPS(
                 "video/x-raw-rgb, "
-                "framerate = (fraction) [ 0, MAX ], "
-                "width = (int) [ 1, MAX ], "
-                "height = (int) [ 1, MAX ]"
-                "; "
-                "video/x-raw-yuv, "
                 "framerate = (fraction) [ 0, MAX ], "
                 "width = (int) [ 1, MAX ], "
                 "height = (int) [ 1, MAX ]"
@@ -129,8 +98,10 @@ void GstQtVideoSinkBase::finalize(GObject *object)
     sink->delegate = 0;
 }
 
+//------------------------------
+
 void GstQtVideoSinkBase::set_property(GObject *object, guint prop_id,
-                                  const GValue *value, GParamSpec *pspec)
+                                      const GValue *value, GParamSpec *pspec)
 {
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
@@ -145,7 +116,7 @@ void GstQtVideoSinkBase::set_property(GObject *object, guint prop_id,
 }
 
 void GstQtVideoSinkBase::get_property(GObject *object, guint prop_id,
-                                  GValue *value, GParamSpec *pspec)
+                                      GValue *value, GParamSpec *pspec)
 {
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
@@ -158,6 +129,8 @@ void GstQtVideoSinkBase::get_property(GObject *object, guint prop_id,
         break;
     }
 }
+
+//------------------------------
 
 GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstStateChange transition)
 {
@@ -177,12 +150,14 @@ GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstSt
     return GST_ELEMENT_CLASS(s_parent_class)->change_state(element, transition);
 }
 
+//------------------------------
+
 GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base)
 {
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
     GstCaps *caps = gst_caps_new_empty();
 
-    Q_FOREACH(GstVideoFormat format, sink->delegate->supportedPixelFormats()) {
+    Q_FOREACH(GstVideoFormat format, GenericSurfacePainter::supportedPixelFormats()) {
         gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
     }
 
@@ -197,6 +172,8 @@ gboolean GstQtVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
     sink->formatDirty = true;
     return TRUE;
 }
+
+//------------------------------
 
 GstFlowReturn GstQtVideoSinkBase::show_frame(GstVideoSink *video_sink, GstBuffer *buffer)
 {

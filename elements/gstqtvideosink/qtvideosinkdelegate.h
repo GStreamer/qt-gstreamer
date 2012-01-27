@@ -78,10 +78,10 @@ public:
 
     // API for GstQtVideoSinkBase
 
-    QSet<GstVideoFormat> supportedPixelFormats() const;
-
     bool isActive() const;
     void setActive(bool playing);
+
+    PainterTypes supportedPainterTypes() const { return m_supportedPainters; }
 
     // GstColorBalance interface
 

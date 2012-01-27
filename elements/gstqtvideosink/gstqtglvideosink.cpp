@@ -15,50 +15,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * SECTION:element-qtvideosink
- *
- * qtvideosink is a video sink element that can draw directly on a Qt
- * surface, such as QWidget or QGraphicsItem, using either the QPainter API
- * or the OpenGL/OpenGLES API.
- */
-
-#include "gstqtvideosink.h"
+#include "gstqtglvideosink.h"
 #include "gstqtvideosinkmarshal.h"
 #include "qtvideosinkdelegate.h"
 
 
-guint GstQtVideoSink::s_signals[];
+guint GstQtGLVideoSink::s_signals[];
 
-DEFINE_TYPE(GstQtVideoSink, GST_TYPE_QT_VIDEO_SINK_BASE)
+DEFINE_TYPE(GstQtGLVideoSink, GST_TYPE_QT_GL_VIDEO_SINK_BASE)
 
 //------------------------------
 
-void GstQtVideoSink::emit_update(gpointer sink)
+void GstQtGLVideoSink::emit_update(gpointer sink)
 {
-    g_signal_emit(sink, GstQtVideoSink::s_signals[UPDATE_SIGNAL], 0);
+    g_signal_emit(sink, GstQtGLVideoSink::s_signals[UPDATE_SIGNAL], 0);
 }
 
 //------------------------------
 
-void GstQtVideoSink::base_init(gpointer g_class)
+void GstQtGLVideoSink::base_init(gpointer g_class)
 {
     GstElementClass *element_class = GST_ELEMENT_CLASS(g_class);
 
-    gst_element_class_set_details_simple(element_class, "Qt video sink", "Sink/Video",
-        "A video sink that can draw on any Qt surface",
+    gst_element_class_set_details_simple(element_class, "Qt GL video sink", "Sink/Video",
+        "A video sink that can draw on any Qt GL surface",
         "George Kiagiadakis <george.kiagiadakis@collabora.com>");
 }
 
-void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
+void GstQtGLVideoSink::class_init(gpointer g_class, gpointer class_data)
 {
     Q_UNUSED(class_data);
 
-    GstQtVideoSinkClass *qt_video_sink_class = reinterpret_cast<GstQtVideoSinkClass*>(g_class);
-    qt_video_sink_class->paint = GstQtVideoSink::paint;
+    GObjectClass *object_class = G_OBJECT_CLASS(g_class);
+    object_class->set_property = GstQtGLVideoSink::set_property;
+
+    GstQtGLVideoSinkClass *qt_video_sink_class = reinterpret_cast<GstQtGLVideoSinkClass*>(g_class);
+    qt_video_sink_class->paint = GstQtGLVideoSink::paint;
 
     /**
-     * GstQtVideoSink::paint
+     * GstQtGLVideoSink::paint
      * @painter: A valid QPainter pointer that will be used to paint the video
      * @x: The x coordinate of the target area rectangle
      * @y: The y coordinate of the target area rectangle
@@ -77,7 +72,7 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
     s_signals[PAINT_SIGNAL] =
         g_signal_new("paint", G_TYPE_FROM_CLASS(g_class),
                      static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-                     G_STRUCT_OFFSET(GstQtVideoSinkClass, paint),
+                     G_STRUCT_OFFSET(GstQtGLVideoSinkClass, paint),
                      NULL, NULL,
                      qRealIsDouble() ?
                         g_cclosure_user_marshal_VOID__POINTER_DOUBLE_DOUBLE_DOUBLE_DOUBLE :
@@ -86,7 +81,7 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
                      G_TYPE_POINTER, G_TYPE_QREAL, G_TYPE_QREAL, G_TYPE_QREAL, G_TYPE_QREAL);
 
     /**
-     * GstQtVideoSink::update
+     * GstQtGLVideoSink::update
      *
      * This signal is emited when the surface should be repainted. It should
      * be connected to QWidget::update() or QGraphicsItem::update() or any
@@ -98,9 +93,22 @@ void GstQtVideoSink::class_init(gpointer g_class, gpointer class_data)
                      0, NULL, NULL,
                      g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
+
+
+    /**
+     * GstQtGLVideoSink::glcontext
+     *
+     * This property holds a pointer to the QGLContext that will be used to render
+     * the video using OpenGL acceleration. You must set this to a valid QGLContext
+     * pointer before the element changes state to READY, or else the state change will fail.
+     **/
+    g_object_class_install_property(object_class, PROP_GLCONTEXT,
+        g_param_spec_pointer("glcontext", "GL context",
+                             "The QGLContext that will be used to do OpenGL-accelerated rendering",
+                             static_cast<GParamFlags>(G_PARAM_WRITABLE)));
 }
 
-void GstQtVideoSink::init(GTypeInstance *instance, gpointer g_class)
+void GstQtGLVideoSink::init(GTypeInstance *instance, gpointer g_class)
 {
     Q_UNUSED(g_class);
 
@@ -110,7 +118,24 @@ void GstQtVideoSink::init(GTypeInstance *instance, gpointer g_class)
 
 //------------------------------
 
-void GstQtVideoSink::paint(GstQtVideoSink *sink, gpointer painter,
+void GstQtGLVideoSink::set_property(GObject *object, guint prop_id,
+                                     const GValue *value, GParamSpec *pspec)
+{
+    GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(object);
+
+    switch (prop_id) {
+    case PROP_GLCONTEXT:
+        sinkBase->delegate->setGLContext(static_cast<QGLContext*>(g_value_get_pointer(value)));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+//------------------------------
+
+void GstQtGLVideoSink::paint(GstQtGLVideoSink *sink, gpointer painter,
                            qreal x, qreal y, qreal width, qreal height)
 {
     GST_QT_VIDEO_SINK_BASE(sink)->delegate->paint(static_cast<QPainter*>(painter),

@@ -23,10 +23,6 @@
 
 #define GST_TYPE_QWIDGET_VIDEO_SINK \
   (GstQWidgetVideoSink::get_type())
-#define GST_QWIDGET_VIDEO_SINK(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GST_TYPE_QWIDGET_VIDEO_SINK, GstQWidgetVideoSink))
-#define GST_QWIDGETVIDEOSINK_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_QWIDGET_VIDEO_SINK, GstQWidgetVideoSinkClass))
 
 struct GstQWidgetVideoSink
 {
@@ -49,8 +45,6 @@ private:
                              const GValue *value, GParamSpec *pspec);
     static void get_property(GObject *object, guint prop_id,
                              GValue *value, GParamSpec *pspec);
-
-    static GstQtVideoSinkBaseClass *s_parent_class;
 };
 
 struct GstQWidgetVideoSinkClass

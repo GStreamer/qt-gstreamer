@@ -15,47 +15,48 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GST_QT_VIDEO_SINK_H
-#define GST_QT_VIDEO_SINK_H
+#ifndef GST_QT_GL_VIDEO_SINK_BASE_H
+#define GST_QT_GL_VIDEO_SINK_BASE_H
 
 #include "gstqtvideosinkbase.h"
 
-#define GST_TYPE_QT_VIDEO_SINK \
-  (GstQtVideoSink::get_type())
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 
-struct GstQtVideoSink
+#define GST_TYPE_QT_GL_VIDEO_SINK_BASE \
+  (GstQtGLVideoSinkBase::get_type())
+
+struct GstQtGLVideoSinkBase
 {
 public:
     GstQtVideoSinkBase parent;
 
     static GType get_type();
-    static void emit_update(gpointer sink);
 
 private:
     enum {
-        PAINT_SIGNAL,
-        UPDATE_SIGNAL,
-        LAST_SIGNAL
+        PROP_0,
     };
 
     static void base_init(gpointer g_class);
     static void class_init(gpointer g_class, gpointer class_data);
+
     static void init(GTypeInstance *instance, gpointer g_class);
+    static void init_interfaces(GType type);
 
-    static void paint(GstQtVideoSink *sink, gpointer painter,
-                      qreal x, qreal y, qreal width, qreal height);
+    static void set_property(GObject *object, guint prop_id,
+                             const GValue *value, GParamSpec *pspec);
+    static void get_property(GObject *object, guint prop_id,
+                             GValue *value, GParamSpec *pspec);
 
-    static guint s_signals[LAST_SIGNAL];
+    static gboolean start(GstBaseSink *sink);
+    static GstCaps *get_caps(GstBaseSink *sink);
 };
 
 
-struct GstQtVideoSinkClass
+struct GstQtGLVideoSinkBaseClass
 {
     GstQtVideoSinkBaseClass parent_class;
-
-    /* paint action signal */
-    void (*paint) (GstQtVideoSink *sink, gpointer painter,
-                   qreal x, qreal y, qreal width, qreal height);
 };
 
-#endif
+#endif // GST_QT_VIDEO_SINK_NO_OPENGL
+#endif // GST_QT_GL_VIDEO_SINK_BASE_H

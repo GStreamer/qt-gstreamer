@@ -22,7 +22,14 @@ set(GstQtVideoSink_SRCS
 )
 
 if (QT_QTOPENGL_FOUND AND OPENGL_FOUND)
-    set(GstQtVideoSink_GL_SRCS openglsurfacepainter.cpp)
+    set(GstQtVideoSink_GL_SRCS
+        openglsurfacepainter.cpp
+        gstqtglvideosinkbase.cpp
+        gstqtglvideosink.cpp
+    )
+    set(GstQtVideoSink_test_GL_SRCS
+        openglsurfacepainter.cpp
+    )
     set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY} ${QT_QTOPENGL_LIBRARY})
     include_directories(${OPENGL_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
 else()
@@ -48,7 +55,7 @@ if (QTGSTREAMER_TESTS)
         utils.cpp
         bufferformat.cpp
         genericsurfacepainter.cpp
-        ${GstQtVideoSink_GL_SRCS}
+        ${GstQtVideoSink_test_GL_SRCS}
     )
     target_link_libraries(qtvideosink_autotest
         ${QT_QTTEST_LIBRARY}

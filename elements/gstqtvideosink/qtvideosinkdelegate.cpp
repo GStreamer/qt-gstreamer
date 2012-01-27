@@ -19,6 +19,7 @@
 #include "genericsurfacepainter.h"
 #include "openglsurfacepainter.h"
 #include "gstqtvideosink.h"
+#include "gstqtglvideosink.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStack>
@@ -60,19 +61,6 @@ QtVideoSinkDelegate::~QtVideoSinkDelegate()
 }
 
 //-------------------------------------
-
-QSet<GstVideoFormat> QtVideoSinkDelegate::supportedPixelFormats() const
-{
-    QSet<GstVideoFormat> result;
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    if (m_supportedPainters & Glsl || m_supportedPainters & ArbFp)
-        result = OpenGLSurfacePainter::supportedPixelFormats();
-    else
-#endif
-        result = GenericSurfacePainter::supportedPixelFormats();
-
-    return result;
-}
 
 bool QtVideoSinkDelegate::isActive() const
 {
@@ -260,9 +248,6 @@ QGLContext *QtVideoSinkDelegate::glContext() const
 
 void QtVideoSinkDelegate::setGLContext(QGLContext *context)
 {
-    GST_LOG_OBJECT(m_sink, "Setting GL context. context=%p m_glContext=%p m_painter=%p",
-                   context, m_glContext, m_painter);
-
     if (m_glContext == context)
         return;
 
@@ -285,7 +270,6 @@ void QtVideoSinkDelegate::setGLContext(QGLContext *context)
                 && extensions.contains("ARB_shader_objects"))
 #endif
             m_supportedPainters |= Glsl;
-
     }
 
     GST_LOG_OBJECT(m_sink, "Done setting GL context. m_supportedPainters=%x", (int) m_supportedPainters);
@@ -422,5 +406,10 @@ bool QtVideoSinkDelegate::event(QEvent *event)
 
 void QtVideoSinkDelegate::update()
 {
-    GstQtVideoSink::emit_update(GST_QT_VIDEO_SINK(m_sink));
+#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
+    if (G_TYPE_CHECK_INSTANCE_TYPE(m_sink, GST_TYPE_QT_GL_VIDEO_SINK)) {
+        GstQtGLVideoSink::emit_update(m_sink);
+    } else
+#endif
+        GstQtVideoSink::emit_update(m_sink);
 }

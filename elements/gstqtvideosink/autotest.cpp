@@ -738,7 +738,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     MAKE_ELEMENT(tee, "tee");
 
     MAKE_ELEMENT(queue, "queue");
-    MAKE_ELEMENT(qtvideosink, "qtvideosink");
+    MAKE_ELEMENT(qtvideosink, context ? "qtglvideosink" : "qtvideosink");
 
     MAKE_ELEMENT(queue2, "queue");
     MAKE_ELEMENT(colorspace, "ffmpegcolorspace");
@@ -751,7 +751,9 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     g_object_set(capsfilter2, "caps", fakesinkCaps, NULL);
     g_object_set(fakesink, "enable-last-buffer", TRUE, NULL);
 
-    g_object_set(qtvideosink, "glcontext", context, NULL);
+    if (context) {
+        g_object_set(qtvideosink, "glcontext", context, NULL);
+    }
 
     g_object_set(qtvideosink, "force-aspect-ratio", (gboolean) forceAspectRatio, NULL);
     g_object_set(videoscale, "add-borders", (gboolean) forceAspectRatio, NULL);
