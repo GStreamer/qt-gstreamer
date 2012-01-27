@@ -277,6 +277,13 @@ void QtVideoSinkTest::paintAreasTest_data()
         << QRectF(0.0, 0.0, 160.0, 60.0)
         << QRectF(0.0, 60.0, 160.0, 120.0)
         << QRectF(0.0, 180.0, 160.0, 60.0);
+
+    QTest::newRow("dar 2/1")
+        << QRectF(0.0, 0.0, 160.0, 240.0)
+        << QSize(320, 240) << Fraction(1, 1) << Fraction(2, 1)
+        << QRectF(0.0, 0.0, 0.0, 0.0)
+        << QRectF(0.0, 0.0, 160.0, 240.0)
+        << QRectF(0.0, 0.0, 0.0, 0.0);
 }
 
 void QtVideoSinkTest::paintAreasTest()

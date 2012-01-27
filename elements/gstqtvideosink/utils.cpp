@@ -45,7 +45,7 @@ void PaintAreas::calculate(const QRectF & _targetArea,
 {
     targetArea = _targetArea;
 
-    qreal aspectRatio = pixelAspectRatio.ratio() * displayAspectRatio.ratio();
+    qreal aspectRatio = pixelAspectRatio.ratio() * displayAspectRatio.invRatio();
     QRectF srcRect(QPointF(0,0), QSizeF(frameSize.width() * aspectRatio, frameSize.height()));
 
     videoArea = centerRect(srcRect, targetArea);

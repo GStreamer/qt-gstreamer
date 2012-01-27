@@ -33,6 +33,8 @@ struct Fraction
 
     inline qreal ratio() const
     { return (qreal) numerator / (qreal) denominator; }
+    inline qreal invRatio() const
+    { return (qreal) denominator / (qreal) numerator; }
 
     int numerator;
     int denominator;
