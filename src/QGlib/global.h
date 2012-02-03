@@ -17,6 +17,11 @@
 #ifndef QGLIB_GLOBAL_H
 #define QGLIB_GLOBAL_H
 
+// workaround for https://bugreports.qt-project.org/browse/QTBUG-22829
+#if defined(Q_MOC_RUN) && !defined(BOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
+#define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+#endif
+
 #include <QtCore/QtGlobal>
 #include <boost/config.hpp>
 
