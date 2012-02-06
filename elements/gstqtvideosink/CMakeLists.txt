@@ -66,6 +66,7 @@ if (QTGSTREAMER_TESTS)
         ${GSTREAMER_LIBRARY}
         ${GSTREAMER_BASE_LIBRARY}
         ${GSTREAMER_VIDEO_LIBRARY}
+        ${GSTREAMER_INTERFACES_LIBRARY}
         ${GstQtVideoSink_GL_LIBS}
     )
     #add_test(NAME qtvideosink_autotest COMMAND qtvideosink_autotest)

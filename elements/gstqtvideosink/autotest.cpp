@@ -19,6 +19,7 @@
 
 #include <gst/gst.h>
 #include <gst/video/video.h>
+#include <gst/interfaces/colorbalance.h>
 #include <QtTest/QTest>
 #include <QtGui/QWidget>
 #include <QtGui/QPainter>
@@ -46,6 +47,18 @@ struct PipelineDeleter
 };
 
 typedef QScopedPointer<GstPipeline, PipelineDeleter> GstPipelinePtr;
+
+
+struct ElementDeleter
+{
+    static inline void cleanup(GstElement *ptr) {
+        if (ptr) {
+            g_object_unref(ptr);
+        }
+    }
+};
+
+typedef QScopedPointer<GstElement, ElementDeleter> GstElementPtr;
 
 
 struct BufferDeleter
@@ -518,6 +531,24 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
 
 //------------------------------------
 
+struct ColorsTuple
+{
+    ColorsTuple()
+        : contrast(0), brightness(0), hue(0), saturation(0) {}
+
+    void randomize() {
+        contrast = rand() % 200 - 100;
+        brightness = rand() % 200 -100;
+        hue = rand() % 200 -100;
+        saturation = rand() % 200 -100;
+    }
+
+    int contrast;
+    int brightness;
+    int hue;
+    int saturation;
+};
+
 void QtVideoSinkTest::qtVideoSinkTest_data()
 {
     QTest::addColumn<GstVideoFormat>("format");
@@ -597,17 +628,126 @@ void QtVideoSinkTest::qtVideoSinkTest()
 
     QVERIFY(!pipeline.isNull());
 
+    GstElementPtr qtvideosink(gst_bin_get_by_name(GST_BIN(pipeline.data()), "qtvideosink"));
+    QVERIFY(G_TYPE_CHECK_INSTANCE(qtvideosink.data()));
+
+    //colorbalance test
+    if (useGL) {
+        GstColorBalance *balance = GST_COLOR_BALANCE(qtvideosink.data());
+        QVERIFY(balance != NULL);
+
+        //set colors using the interface
+        GList *channels = (GList*) gst_color_balance_list_channels(balance);
+        QVERIFY(channels != NULL);
+
+        int successFlags = 0;
+        ColorsTuple colors;
+        colors.randomize();
+
+        while (channels) {
+            GstColorBalanceChannel *channel = GST_COLOR_BALANCE_CHANNEL(channels->data);
+            QVERIFY(channel != NULL);
+            int value;
+
+            if (qstrcmp(channel->label, "contrast") == 0) {
+                value = colors.contrast;
+                successFlags |= 0x1;
+            } else if (qstrcmp(channel->label, "brightness") == 0) {
+                value = colors.brightness;
+                successFlags |= 0x2;
+            } else if (qstrcmp(channel->label, "hue") == 0) {
+                value =  colors.hue;
+                successFlags |= 0x4;
+            } else if (qstrcmp(channel->label, "saturation") == 0) {
+                value = colors.saturation;
+                successFlags |= 0x8;
+            } else {
+                QFAIL("Invalid colorbalance label");
+            }
+
+            QCOMPARE(channel->min_value, -100);
+            QCOMPARE(channel->max_value, 100);
+            QVERIFY(value <= 100 && value >= -100);
+
+            gst_color_balance_set_value(balance, channel, value);
+            channels = g_list_next(channels);
+        }
+
+        //verify that we have set all the channels
+        QCOMPARE(successFlags, 0xF);
+
+        //verify that everything is set correctly using the properties
+        ColorsTuple receivedColors;
+        g_object_get(balance,
+                "contrast", &receivedColors.contrast,
+                "brightness", &receivedColors.brightness,
+                "hue", &receivedColors.hue,
+                "saturation", &receivedColors.saturation,
+                NULL);
+        QCOMPARE(receivedColors.contrast, colors.contrast);
+        QCOMPARE(receivedColors.brightness, colors.brightness);
+        QCOMPARE(receivedColors.hue, colors.hue);
+        QCOMPARE(receivedColors.saturation, colors.saturation);
+
+        //set everything again to new values using the properties
+        colors.randomize();
+
+        g_object_set(balance,
+                "contrast", colors.contrast,
+                "brightness", colors.brightness,
+                "hue", colors.hue,
+                "saturation", colors.saturation,
+                NULL);
+
+        //verify again that everything is set correctly using the interface
+        channels = (GList*) gst_color_balance_list_channels(balance);
+        successFlags = 0;
+
+        while (channels) {
+            GstColorBalanceChannel *channel = GST_COLOR_BALANCE_CHANNEL(channels->data);
+            QVERIFY(channel != NULL);
+
+            if (qstrcmp(channel->label, "contrast") == 0) {
+                receivedColors.contrast = gst_color_balance_get_value(balance, channel);
+                successFlags |= 0x1;
+            } else if (qstrcmp(channel->label, "brightness") == 0) {
+                receivedColors.brightness = gst_color_balance_get_value(balance, channel);
+                successFlags |= 0x2;
+            } else if (qstrcmp(channel->label, "hue") == 0) {
+                receivedColors.hue = gst_color_balance_get_value(balance, channel);
+                successFlags |= 0x4;
+            } else if (qstrcmp(channel->label, "saturation") == 0) {
+                receivedColors.saturation = gst_color_balance_get_value(balance, channel);
+                successFlags |= 0x8;
+            } else {
+                QFAIL("Invalid colorbalance label");
+            }
+            channels = g_list_next(channels);
+        }
+
+        QCOMPARE(successFlags, 0xF);
+
+        //reset back to zero
+        colors = ColorsTuple();
+        g_object_set(balance,
+                "contrast", colors.contrast,
+                "brightness", colors.brightness,
+                "hue", colors.hue,
+                "saturation", colors.saturation,
+                NULL);
+    }
+
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     if (useGL) {
         VideoGLWidget *glw = dynamic_cast<VideoGLWidget*>(widget.data());
         QVERIFY(glw);
-        glw->setVideoSink(gst_bin_get_by_name(GST_BIN(pipeline.data()), "qtvideosink"));
+        glw->setVideoSink(GST_ELEMENT(g_object_ref(qtvideosink.data())));
     } else
 #endif
     {
         VideoWidget *w = dynamic_cast<VideoWidget*>(widget.data());
         QVERIFY(w);
-        w->setVideoSink(gst_bin_get_by_name(GST_BIN(pipeline.data()), "qtvideosink"));
+        w->setVideoSink(GST_ELEMENT(g_object_ref(qtvideosink.data())));
     }
     widget->setWindowTitle("qtvideosink");
     widget->resize(widgetSize);
