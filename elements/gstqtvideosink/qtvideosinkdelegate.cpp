@@ -369,14 +369,11 @@ bool QtVideoSinkDelegate::event(QEvent *event)
 
         if (isActive()) {
             //schedule this frame for rendering
-            m_buffer = bufEvent->buffer;
+            m_buffer = gst_buffer_ref(bufEvent->buffer);
             if (bufEvent->formatDirty) {
                 m_formatDirty = true;
             }
             update();
-        } else {
-            //not active, drop the frame
-            gst_buffer_unref(bufEvent->buffer);
         }
 
         return true;

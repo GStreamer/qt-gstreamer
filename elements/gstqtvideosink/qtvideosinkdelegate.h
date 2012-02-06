@@ -55,7 +55,10 @@ public:
             : QEvent(static_cast<QEvent::Type>(BufferEventType)),
               buffer(gst_buffer_ref(buf)),
               formatDirty(formatDirty)
-        {
+        {}
+
+        virtual ~BufferEvent() {
+            gst_buffer_unref(buffer);
         }
 
         GstBuffer *buffer;
