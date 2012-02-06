@@ -36,7 +36,7 @@ DEFINE_TYPE(GstQtVideoSink, GST_TYPE_QT_VIDEO_SINK_BASE)
 
 void GstQtVideoSink::emit_update(gpointer sink)
 {
-    g_signal_emit(sink, GstQtVideoSink::s_signals[UPDATE_SIGNAL], 0);
+    g_signal_emit(sink, GstQtVideoSink::s_signals[UPDATE_SIGNAL], 0, NULL);
 }
 
 //------------------------------

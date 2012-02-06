@@ -118,7 +118,8 @@ gboolean GstQtGLVideoSinkBase::start(GstBaseSink *base)
 
 GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base)
 {
-    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
+    Q_UNUSED(base);
+
     GstCaps *caps = gst_caps_new_empty();
 
     Q_FOREACH(GstVideoFormat format, OpenGLSurfacePainter::supportedPixelFormats()) {

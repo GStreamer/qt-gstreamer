@@ -411,5 +411,9 @@ void QtVideoSinkDelegate::update()
         GstQtGLVideoSink::emit_update(m_sink);
     } else
 #endif
+    if (G_TYPE_CHECK_INSTANCE_TYPE(m_sink, GST_TYPE_QT_VIDEO_SINK)) {
         GstQtVideoSink::emit_update(m_sink);
+    } else {
+        Q_ASSERT(false);
+    }
 }

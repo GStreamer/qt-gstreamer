@@ -155,7 +155,7 @@ private:
     GstBuffer *m_buffer;
 
 protected:
-    GstQtVideoSinkBase *m_sink;
+    GstQtVideoSinkBase * const m_sink;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QtVideoSinkDelegate::PainterTypes)
