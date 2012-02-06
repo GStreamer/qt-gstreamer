@@ -90,7 +90,7 @@ int QtVideoSinkDelegate::brightness() const
 void QtVideoSinkDelegate::setBrightness(int brightness)
 {
     QWriteLocker l(&m_colorsLock);
-    m_brightness = brightness;
+    m_brightness = qBound(-100, brightness, 100);
     m_colorsDirty = true;
 }
 
@@ -103,7 +103,7 @@ int QtVideoSinkDelegate::contrast() const
 void QtVideoSinkDelegate::setContrast(int contrast)
 {
     QWriteLocker l(&m_colorsLock);
-    m_contrast = contrast;
+    m_contrast = qBound(-100, contrast, 100);
     m_colorsDirty = true;
 }
 
@@ -116,7 +116,7 @@ int QtVideoSinkDelegate::hue() const
 void QtVideoSinkDelegate::setHue(int hue)
 {
     QWriteLocker l(&m_colorsLock);
-    m_hue = hue;
+    m_hue = qBound(-100, hue, 100);
     m_colorsDirty = true;
 }
 
@@ -129,7 +129,7 @@ int QtVideoSinkDelegate::saturation() const
 void QtVideoSinkDelegate::setSaturation(int saturation)
 {
     QWriteLocker l(&m_colorsLock);
-    m_saturation = saturation;
+    m_saturation = qBound(-100, saturation, 100);
     m_colorsDirty = true;
 }
 

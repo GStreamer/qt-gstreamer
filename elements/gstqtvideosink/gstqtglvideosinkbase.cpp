@@ -19,7 +19,28 @@
 #include "openglsurfacepainter.h"
 #include "qtvideosinkdelegate.h"
 
+const char * const GstQtGLVideoSinkBase::s_colorbalance_labels[] = {
+    "contrast", "brightness", "hue", "saturation"
+};
+
+GstQtVideoSinkBaseClass *GstQtGLVideoSinkBase::s_parent_class = 0;
+
+//------------------------------
+
 DEFINE_TYPE_FULL(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE, init_interfaces)
+
+void GstQtGLVideoSinkBase::init_interfaces(GType type)
+{
+    static const GInterfaceInfo implementsiface_info = {
+        (GInterfaceInitFunc) &GstQtGLVideoSinkBase::implementsiface_init, NULL, NULL
+    };
+    static const GInterfaceInfo colorbalance_info = {
+        (GInterfaceInitFunc) &GstQtGLVideoSinkBase::colorbalance_init, NULL, NULL
+    };
+
+    g_type_add_interface_static(type, GST_TYPE_IMPLEMENTS_INTERFACE, &implementsiface_info);
+    g_type_add_interface_static(type, GST_TYPE_COLOR_BALANCE, &colorbalance_info);
+}
 
 //------------------------------
 
@@ -52,7 +73,10 @@ void GstQtGLVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
 {
     Q_UNUSED(class_data);
 
+    s_parent_class = reinterpret_cast<GstQtVideoSinkBaseClass*>(g_type_class_peek_parent(g_class));
+
     GObjectClass *object_class = G_OBJECT_CLASS(g_class);
+    object_class->finalize = GstQtGLVideoSinkBase::finalize;
     object_class->set_property = GstQtGLVideoSinkBase::set_property;
     object_class->get_property = GstQtGLVideoSinkBase::get_property;
 
@@ -60,18 +84,119 @@ void GstQtGLVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
     base_sink_class->start = GstQtGLVideoSinkBase::start;
     base_sink_class->get_caps = GstQtGLVideoSinkBase::get_caps;
 
-    //TODO colorbalance properties
+    g_object_class_install_property(object_class, PROP_CONTRAST,
+        g_param_spec_int("contrast", "Contrast", "The contrast of the video",
+                         -100, 100, 0, static_cast<GParamFlags>(G_PARAM_READWRITE)));
+    g_object_class_install_property(object_class, PROP_BRIGHTNESS,
+        g_param_spec_int("brightness", "Brightness", "The brightness of the video",
+                         -100, 100, 0, static_cast<GParamFlags>(G_PARAM_READWRITE)));
+    g_object_class_install_property(object_class, PROP_HUE,
+        g_param_spec_int("hue", "Hue", "The hue of the video",
+                         -100, 100, 0, static_cast<GParamFlags>(G_PARAM_READWRITE)));
+    g_object_class_install_property(object_class, PROP_SATURATION,
+        g_param_spec_int("saturation", "Saturation", "The saturation of the video",
+                         -100, 100, 0, static_cast<GParamFlags>(G_PARAM_READWRITE)));
 }
 
 void GstQtGLVideoSinkBase::init(GTypeInstance *instance, gpointer g_class)
 {
-    Q_UNUSED(instance);
     Q_UNUSED(g_class);
+    GstQtGLVideoSinkBase *self = GST_QT_GL_VIDEO_SINK_BASE(instance);
+
+    GstColorBalanceChannel *channel;
+    self->m_channels_list = NULL;
+
+    for (int i=0; i < LABEL_LAST; i++) {
+        channel = GST_COLOR_BALANCE_CHANNEL(g_object_new(GST_TYPE_COLOR_BALANCE_CHANNEL, NULL));
+        channel->label = g_strdup(s_colorbalance_labels[i]);
+        channel->min_value = -100;
+        channel->max_value = 100;
+
+        self->m_channels_list = g_list_append(self->m_channels_list, channel);
+    }
 }
 
-void GstQtGLVideoSinkBase::init_interfaces(GType type)
+void GstQtGLVideoSinkBase::finalize(GObject *object)
 {
-    //TODO colorbalance interface
+    GstQtGLVideoSinkBase *self = GST_QT_GL_VIDEO_SINK_BASE(object);
+
+    while (self->m_channels_list) {
+        GstColorBalanceChannel *channel =  GST_COLOR_BALANCE_CHANNEL(self->m_channels_list->data);
+        g_object_unref(channel);
+        self->m_channels_list = g_list_next(self->m_channels_list);
+    }
+
+    g_list_free(self->m_channels_list);
+
+    G_OBJECT_CLASS(s_parent_class)->finalize(object);
+}
+
+//------------------------------
+
+void GstQtGLVideoSinkBase::implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data)
+{
+    Q_UNUSED(data);
+    klass->supported = &GstQtGLVideoSinkBase::interface_supported;
+}
+
+gboolean GstQtGLVideoSinkBase::interface_supported(GstImplementsInterface *iface, GType type)
+{
+    Q_UNUSED(iface);
+    return type == GST_TYPE_COLOR_BALANCE;
+}
+
+//------------------------------
+
+void GstQtGLVideoSinkBase::colorbalance_init(GstColorBalanceClass *klass, gpointer data)
+{
+    Q_UNUSED(data);
+    GST_COLOR_BALANCE_TYPE(klass) = GST_COLOR_BALANCE_HARDWARE;
+    klass->list_channels = GstQtGLVideoSinkBase::colorbalance_list_channels;
+    klass->set_value = GstQtGLVideoSinkBase::colorbalance_set_value;
+    klass->get_value = GstQtGLVideoSinkBase::colorbalance_get_value;
+}
+
+const GList *GstQtGLVideoSinkBase::colorbalance_list_channels(GstColorBalance *balance)
+{
+    return GST_QT_GL_VIDEO_SINK_BASE(balance)->m_channels_list;
+}
+
+void GstQtGLVideoSinkBase::colorbalance_set_value(GstColorBalance *balance,
+                                                  GstColorBalanceChannel *channel, gint value)
+{
+    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(balance);
+
+    if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_CONTRAST])) {
+        sink->delegate->setContrast(value);
+    } else if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_BRIGHTNESS])) {
+        sink->delegate->setBrightness(value);
+    } else if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_HUE])) {
+        sink->delegate->setHue(value);
+    } else if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_SATURATION])) {
+        sink->delegate->setSaturation(value);
+    } else {
+        GST_WARNING_OBJECT(sink, "Unknown colorbalance channel %s", channel->label);
+    }
+}
+
+gint GstQtGLVideoSinkBase::colorbalance_get_value(GstColorBalance *balance,
+                                                  GstColorBalanceChannel *channel)
+{
+    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(balance);
+
+    if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_CONTRAST])) {
+        return sink->delegate->contrast();
+    } else if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_BRIGHTNESS])) {
+        return sink->delegate->brightness();
+    } else if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_HUE])) {
+        return sink->delegate->hue();
+    } else if (!qstrcmp(channel->label, s_colorbalance_labels[LABEL_SATURATION])) {
+        return sink->delegate->saturation();
+    } else {
+        GST_WARNING_OBJECT(sink, "Unknown colorbalance channel %s", channel->label);
+    }
+
+    return 0;
 }
 
 //------------------------------
@@ -82,6 +207,18 @@ void GstQtGLVideoSinkBase::set_property(GObject *object, guint prop_id,
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
+    case PROP_CONTRAST:
+        sink->delegate->setContrast(g_value_get_int(value));
+        break;
+    case PROP_BRIGHTNESS:
+        sink->delegate->setBrightness(g_value_get_int(value));
+        break;
+    case PROP_HUE:
+        sink->delegate->setHue(g_value_get_int(value));
+        break;
+    case PROP_SATURATION:
+        sink->delegate->setSaturation(g_value_get_int(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -94,6 +231,18 @@ void GstQtGLVideoSinkBase::get_property(GObject *object, guint prop_id,
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
+    case PROP_CONTRAST:
+        g_value_set_int(value, sink->delegate->contrast());
+        break;
+    case PROP_BRIGHTNESS:
+        g_value_set_int(value, sink->delegate->brightness());
+        break;
+    case PROP_HUE:
+        g_value_set_int(value, sink->delegate->hue());
+        break;
+    case PROP_SATURATION:
+        g_value_set_int(value, sink->delegate->saturation());
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;

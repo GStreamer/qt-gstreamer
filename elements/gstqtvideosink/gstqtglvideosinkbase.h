@@ -19,11 +19,14 @@
 #define GST_QT_GL_VIDEO_SINK_BASE_H
 
 #include "gstqtvideosinkbase.h"
+#include <gst/interfaces/colorbalance.h>
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 
 #define GST_TYPE_QT_GL_VIDEO_SINK_BASE \
   (GstQtGLVideoSinkBase::get_type())
+#define GST_QT_GL_VIDEO_SINK_BASE(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GST_TYPE_QT_GL_VIDEO_SINK_BASE, GstQtGLVideoSinkBase))
 
 struct GstQtGLVideoSinkBase
 {
@@ -35,13 +38,39 @@ public:
 private:
     enum {
         PROP_0,
+        PROP_CONTRAST,
+        PROP_BRIGHTNESS,
+        PROP_HUE,
+        PROP_SATURATION
     };
+
+    //index for s_colorbalance_labels
+    enum {
+        LABEL_CONTRAST = 0,
+        LABEL_BRIGHTNESS,
+        LABEL_HUE,
+        LABEL_SATURATION,
+        LABEL_LAST
+    };
+
+    static void init_interfaces(GType type);
 
     static void base_init(gpointer g_class);
     static void class_init(gpointer g_class, gpointer class_data);
 
     static void init(GTypeInstance *instance, gpointer g_class);
-    static void init_interfaces(GType type);
+    static void finalize(GObject *object);
+
+    static void implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data);
+    static gboolean interface_supported(GstImplementsInterface *iface, GType type);
+
+    static void colorbalance_init(GstColorBalanceClass *klass, gpointer data);
+    static const GList *colorbalance_list_channels(GstColorBalance *balance);
+    static void colorbalance_set_value(GstColorBalance *balance,
+                                       GstColorBalanceChannel *channel,
+                                       gint value);
+    static gint colorbalance_get_value(GstColorBalance *balance,
+                                       GstColorBalanceChannel *channel);
 
     static void set_property(GObject *object, guint prop_id,
                              const GValue *value, GParamSpec *pspec);
@@ -50,6 +79,11 @@ private:
 
     static gboolean start(GstBaseSink *sink);
     static GstCaps *get_caps(GstBaseSink *sink);
+
+
+    GList *m_channels_list;
+    static const char * const s_colorbalance_labels[];
+    static GstQtVideoSinkBaseClass *s_parent_class;
 };
 
 
