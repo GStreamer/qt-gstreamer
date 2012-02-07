@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "error.h"
-#include <glib/gerror.h>
+#include <glib.h>
 #include <QtCore/QDebug>
 
 namespace QGlib {
