@@ -30,6 +30,11 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QApplication>
+#include <QtGui/QHBoxLayout>
+
+#ifndef QTGSTREAMER_UI_NO_OPENGL
+# include <QtOpenGL/QGLWidget>
+#endif
 
 namespace QGst {
 namespace Ui {
@@ -157,6 +162,44 @@ private:
 };
 
 
+#ifndef QTGSTREAMER_UI_NO_OPENGL
+
+class QtGLVideoSinkRenderer : public AbstractRenderer
+{
+public:
+    QtGLVideoSinkRenderer(const ElementPtr & sink, QWidget *parent)
+    {
+        m_layout = new QHBoxLayout(parent);
+        m_glWidget = new QGLWidget(parent);
+        m_layout->setContentsMargins(0, 0, 0, 0);
+        m_layout->addWidget(m_glWidget);
+        parent->setLayout(m_layout);
+
+        m_renderer = new QtVideoSinkRenderer(sink, m_glWidget);
+
+        m_glWidget->makeCurrent();
+        sink->setProperty("glcontext", (void*) QGLContext::currentContext());
+        m_glWidget->doneCurrent();
+    }
+
+    virtual ~QtGLVideoSinkRenderer()
+    {
+        delete m_renderer;
+        delete m_glWidget;
+        delete m_layout;
+    }
+
+    virtual ElementPtr videoSink() const { return m_renderer->videoSink(); }
+
+private:
+    QtVideoSinkRenderer *m_renderer;
+    QHBoxLayout *m_layout;
+    QGLWidget *m_glWidget;
+};
+
+#endif // QTGSTREAMER_UI_NO_OPENGL
+
+
 class QWidgetVideoSinkRenderer : public AbstractRenderer
 {
 public:
@@ -240,6 +283,12 @@ AbstractRenderer *AbstractRenderer::create(const ElementPtr & sink, QWidget *vid
     if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtVideoSink")) {
         return new QtVideoSinkRenderer(sink, videoWidget);
     }
+
+#ifndef QTGSTREAMER_UI_NO_OPENGL
+    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtGLVideoSink")) {
+        return new QtGLVideoSinkRenderer(sink, videoWidget);
+    }
+#endif
 
     if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQWidgetVideoSink")) {
         return new QWidgetVideoSinkRenderer(sink, videoWidget);
