@@ -103,3 +103,5 @@ void Player::onBusMessage(const QGst::MessagePtr & message)
         break;
     }
 }
+
+#include "moc_player.cpp"

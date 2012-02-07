@@ -287,4 +287,4 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
-#include "voipexample.moc"
+#include "main.moc"
