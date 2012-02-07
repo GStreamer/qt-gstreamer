@@ -45,6 +45,7 @@ QtVideoSinkDelegate::QtVideoSinkDelegate(GstQtVideoSinkBase *sink, QObject *pare
     , m_contrast(0)
     , m_hue(0)
     , m_saturation(0)
+    , m_pixelAspectRatio(1, 1)
     , m_forceAspectRatioDirty(true)
     , m_forceAspectRatio(false)
     , m_formatDirty(true)
@@ -135,6 +136,20 @@ void QtVideoSinkDelegate::setSaturation(int saturation)
 
 //-------------------------------------
 
+Fraction QtVideoSinkDelegate::pixelAspectRatio() const
+{
+    QReadLocker l(&m_pixelAspectRatioLock);
+    return m_pixelAspectRatio;
+}
+
+void QtVideoSinkDelegate::setPixelAspectRatio(const Fraction & f)
+{
+    QWriteLocker l(&m_pixelAspectRatioLock);
+    m_pixelAspectRatio = f;
+}
+
+//-------------------------------------
+
 bool QtVideoSinkDelegate::forceAspectRatio() const
 {
     QReadLocker l(&m_forceAspectRatioLock);
@@ -182,7 +197,9 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
             m_forceAspectRatioDirty = false;
 
             if (m_forceAspectRatio) {
-                m_areas.calculate(targetArea, format.frameSize(), format.pixelAspectRatio(), Fraction(1,1));
+                QReadLocker pixelAspectRatioLocker(&m_pixelAspectRatioLock);
+                m_areas.calculate(targetArea, format.frameSize(),
+                                  format.pixelAspectRatio(), m_pixelAspectRatio);
             } else {
                 m_areas.targetArea = targetArea;
                 m_areas.videoArea = targetArea;

@@ -42,6 +42,7 @@ public:
 private:
     enum {
         PROP_0,
+        PROP_PIXEL_ASPECT_RATIO,
         PROP_FORCE_ASPECT_RATIO,
     };
 

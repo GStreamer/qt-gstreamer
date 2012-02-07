@@ -18,6 +18,7 @@
 #include "gstqtvideosinkbase.h"
 #include "qtvideosinkdelegate.h"
 #include "genericsurfacepainter.h"
+#include <cstring>
 #include <QtCore/QCoreApplication>
 
 
@@ -68,6 +69,16 @@ void GstQtVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
     video_sink_class->show_frame = GstQtVideoSinkBase::show_frame;
 
     /**
+     * GstQtVideoSinkBase::pixel-aspect-ratio
+     *
+     * The pixel aspect ratio of the display device.
+     **/
+    g_object_class_install_property(object_class, PROP_PIXEL_ASPECT_RATIO,
+        g_param_spec_string("pixel-aspect-ratio", "Pixel aspect ratio",
+                            "The pixel aspect ratio of the display device",
+                            "1/1", static_cast<GParamFlags>(G_PARAM_READWRITE)));
+
+    /**
      * GstQtVideoSinkBase::force-aspect-ratio
      *
      * If set to TRUE, the sink will scale the video respecting its original aspect ratio
@@ -106,6 +117,21 @@ void GstQtVideoSinkBase::set_property(GObject *object, guint prop_id,
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
+    case PROP_PIXEL_ASPECT_RATIO:
+      {
+        GValue tmp;
+        std::memset(&tmp, 0, sizeof(GValue));
+        g_value_init(&tmp, GST_TYPE_FRACTION);
+        if (g_value_transform(value, &tmp)) {
+            int n = gst_value_get_fraction_numerator(&tmp);
+            int d = gst_value_get_fraction_denominator(&tmp);
+            sink->delegate->setPixelAspectRatio(Fraction(n, d));
+        } else {
+            GST_WARNING_OBJECT(object, "Could not transform string to aspect ratio");
+        }
+        g_value_unset(&tmp);
+        break;
+      }
     case PROP_FORCE_ASPECT_RATIO:
         sink->delegate->setForceAspectRatio(g_value_get_boolean(value));
         break;
@@ -121,6 +147,17 @@ void GstQtVideoSinkBase::get_property(GObject *object, guint prop_id,
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(object);
 
     switch (prop_id) {
+    case PROP_PIXEL_ASPECT_RATIO:
+      {
+        GValue tmp;
+        Fraction par = sink->delegate->pixelAspectRatio();
+        std::memset(&tmp, 0, sizeof(GValue));
+        g_value_init(&tmp, GST_TYPE_FRACTION);
+        gst_value_set_fraction(&tmp, par.numerator, par.denominator);
+        g_value_transform(&tmp, value);
+        g_value_unset(&tmp);
+        break;
+      }
     case PROP_FORCE_ASPECT_RATIO:
         g_value_set_boolean(value, sink->delegate->forceAspectRatio());
         break;

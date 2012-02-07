@@ -100,6 +100,10 @@ public:
     int saturation() const;
     void setSaturation(int saturation);
 
+    // pixel-aspect-ratio property
+    Fraction pixelAspectRatio() const;
+    void setPixelAspectRatio(const Fraction & f);
+
     // force-aspect-ratio property
     bool forceAspectRatio() const;
     void setForceAspectRatio(bool force);
@@ -138,6 +142,10 @@ private:
     int m_contrast;
     int m_hue;
     int m_saturation;
+
+    // pixel-aspect-ratio property
+    mutable QReadWriteLock m_pixelAspectRatioLock;
+    Fraction m_pixelAspectRatio;
 
     // force-aspect-ratio property
     mutable QReadWriteLock m_forceAspectRatioLock;
