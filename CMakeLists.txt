@@ -37,9 +37,22 @@ macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www
 set(BUILDING_QTGSTREAMER TRUE)
 find_package(QtGStreamer REQUIRED)
 
-find_package(Automoc4)
-macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"
-                                 "https://projects.kde.org/projects/kdesupport/automoc" TRUE "0.9.88")
+if (${CMAKE_VERSION} VERSION_LESS "2.8.6")
+    find_package(Automoc4)
+    macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"
+                                     "https://projects.kde.org/projects/kdesupport/automoc" TRUE "0.9.88")
+else()
+    set(Automoc4_FOUND TRUE)
+    set(CMAKE_AUTOMOC TRUE)
+
+    macro(automoc4_add_executable)
+        add_executable(${ARGV})
+    endmacro()
+
+    macro(automoc4_add_library)
+        add_library(${ARGV})
+    endmacro()
+endif()
 
 find_package(GStreamer 0.10.33 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
