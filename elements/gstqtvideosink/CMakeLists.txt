@@ -21,7 +21,7 @@ set(GstQtVideoSink_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/gstqtvideosinkmarshal.c
 )
 
-if (QT_QTOPENGL_FOUND AND OPENGL_FOUND)
+if (QT_QTOPENGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     set(GstQtVideoSink_GL_SRCS
         openglsurfacepainter.cpp
         gstqtglvideosinkbase.cpp
@@ -30,8 +30,14 @@ if (QT_QTOPENGL_FOUND AND OPENGL_FOUND)
     set(GstQtVideoSink_test_GL_SRCS
         openglsurfacepainter.cpp
     )
-    set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY} ${QT_QTOPENGL_LIBRARY})
-    include_directories(${OPENGL_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
+
+    if (OPENGLES2_FOUND)
+        set(GstQtVideoSink_GL_LIBS ${OPENGLES2_LIBRARY} ${QT_QTOPENGL_LIBRARY})
+        include_directories(${OPENGLES2_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
+    else()
+        set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY} ${QT_QTOPENGL_LIBRARY})
+        include_directories(${OPENGL_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
+    endif()
 else()
     add_definitions(-DGST_QT_VIDEO_SINK_NO_OPENGL)
 endif()

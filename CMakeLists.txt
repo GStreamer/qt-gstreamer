@@ -80,8 +80,13 @@ macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www
 
 find_package(OpenGL)
 macro_log_feature(OPENGL_FOUND "OpenGL"
-                               "Required for OpenGL rendering support in qtvideosink"
+                               "Required for OpenGL rendering support in qtvideosink (desktop only)"
                                "http://www.opengl.org" FALSE)
+
+find_package(OpenGLES2)
+macro_log_feature(OPENGLES2_FOUND "OpenGLES"
+                                  "Required for OpenGLES rendering support in qtvideosink (embedded only)"
+                                  "http://www.opengl.org" FALSE "2.0")
 
 if (QTGSTREAMER_CODEGEN AND CMAKE_CROSSCOMPILING)
     message(WARNING "Codegen use requested, but we are crosscompiling. Disabling...")
