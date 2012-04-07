@@ -124,7 +124,7 @@ include_directories(
 )
 add_definitions(-DGST_DISABLE_XML -DGST_DISABLE_LOADSAVE)
 
-if (QT_QTOPENGL_FOUND)
+if (QT_QTOPENGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     set(QtGStreamerUi_GL_LIBS ${QT_QTOPENGL_LIBRARY})
 else()
     add_definitions(-DQTGSTREAMER_UI_NO_OPENGL)
