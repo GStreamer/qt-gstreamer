@@ -34,6 +34,10 @@ GraphicsVideoSurface::GraphicsVideoSurface(QGraphicsView *parent)
 
 GraphicsVideoSurface::~GraphicsVideoSurface()
 {
+    if (!d->videoSink.isNull()) {
+        d->videoSink->setState(QGst::StateNull);
+    }
+
     delete d;
 }
 
