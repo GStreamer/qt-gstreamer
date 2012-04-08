@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "player.h"
+#include <cstdlib>
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeContext>
@@ -29,12 +30,17 @@
 
 int main(int argc, char **argv)
 {
+#if defined(QTVIDEOSINK_PATH)
+    //this allows the example to run from the QtGStreamer build tree without installing QtGStreamer
+    setenv("GST_PLUGIN_PATH", QTVIDEOSINK_PATH, 0);
+#endif
+
     QApplication app(argc, argv);
     QGst::init(&argc, &argv);
 
     QDeclarativeView view;
 
-#ifndef QMLPLAYER_NO_OPENGL
+#if !defined(QMLPLAYER_NO_OPENGL)
     /*
      * Setting a QGLWidget as the viewport is highly recommended as
      * it enables hardware scaling & color conversion on the video sink
@@ -49,8 +55,12 @@ int main(int argc, char **argv)
     player->setVideoSink(surface->videoSink());
     view.rootContext()->setContextProperty(QLatin1String("player"), player);
 
+#if defined(UNINSTALLED_IMPORTS_DIR)
+    //this allows the example to run from the QtGStreamer build tree without installing QtGStreamer
     view.engine()->addImportPath(QLatin1String(UNINSTALLED_IMPORTS_DIR));
-    view.setSource(QUrl::fromLocalFile(QLatin1String(CMAKE_CURRENT_SOURCE_DIR "/qmlplayer.qml")));
+#endif
+
+    view.setSource(QUrl(QLatin1String("qrc:///qmlplayer.qml")));
     view.show();
 
     return app.exec();
