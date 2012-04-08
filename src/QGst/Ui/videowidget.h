@@ -36,7 +36,8 @@ class AbstractRenderer;
  * There are two ways of using this widget:
  * \li Create a video sink yourself and set it with the setVideoSink() method.
  * This will work for all sinks that implement the XOverlay interface, plus
- * the "qwidgetvideosink", which paints directly on the widget.
+ * "qtvideosink", "qtglvideosink" and "qwidgetvideosink", which paint directly
+ * on the widget.
  * \li Create a pipeline and let the widget watch the pipeline using the
  * watchPipeline() method. This will cause the widget to watch the bus for
  * the "prepare-xwindow-id" that all XOverlay sinks send right before
@@ -73,7 +74,8 @@ public:
     ElementPtr videoSink() const;
 
     /*! Sets the video sink element that is going to be embedded.
-     * Any sink that implements the XOverlay interface will work, as well as "qwidgetvideosink".
+     * Any sink that implements the XOverlay interface will work, as well as
+     * "qtvideosink", "qtglvideosink" and "qwidgetvideosink".
      * \note
      * \li This method \em must be called from Qt's GUI thread.
      * \li Passing a null ElementPtr has the same effect as calling releaseVideoSink().

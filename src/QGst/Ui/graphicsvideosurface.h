@@ -47,15 +47,17 @@ class GraphicsVideoSurfacePrivate;
  * view->addItem(widget);
  * \endcode
  *
- * This class internally creates and uses a "qtvideosink" element. This element
- * is created the first time it is requested and a reference is kept internally.
+ * This class internally creates and uses either a "qtglvideosink" or a "qtvideosink"
+ * element. This element is created the first time it is requested and a reference is
+ * kept internally.
  *
- * To make use of OpenGL hardware acceleration in qtvideosink, it is recommended
- * that you set a QGLWidget as the viewport of the QGraphicsView. Note that you must
- * do this before the qtvideosink element is requested for the first time using the
- * videoSink() method, as it needs to find a GL context at construction time to
- * query the hardware about supported features. If you don't use OpenGL acceleration,
- * painting will be done in software with QImage and QPainter.
+ * To make use of OpenGL hardware acceleration (using qtglvideosink), you need to set
+ * a QGLWidget as the viewport of the QGraphicsView. Note that you must do this before
+ * the video sink element is requested for the first time using the videoSink() method,
+ * as this method needs to find a GL context to be able to construct qtglvideosink and
+ * query the hardware about supported features. Using OpenGL acceleration is recommended.
+ * If you don't use it, painting will be done in software with QImage and QPainter
+ * (using qtvideosink).
  *
  * This class can also be used to paint video on QML.
  *
