@@ -1,0 +1,40 @@
+qt-gstreamer 0.10.2 (UNRELEASED)
+================================
+
+Additions:
+    * Added qHash(const RefPointer<T> &) function.
+    * Added Element::removePad() and Pad::setActive() methods.
+    * Added extra documentation about the design of the wrapping system.
+    * Added new examples: VoIP and QMLPlayer.
+    * Added new elements: qtvideosink and qtglvideosink.
+    * Added helper classes for painting video on QGraphicsView.
+    * Added QML plugin that provides an item for painting video.
+
+Fixes:
+    * Fixed compilation with newer glib versions.
+    * Fixed compilation with boost 1.48 (QTBUG-22829).
+    * Fixed compilation with -DQT_NO_STL.
+    * Fixed Element::unlink() to work correctly.
+    * Fixed Structure::fromString() to actually compile.
+
+Build system fixes and enhancements:
+    * Utils/global.h is now properly installed.
+    * Support lib64.
+    * Support installing gstreamer plugins in the plugin directory indicated by pkg-config.
+    * Support cmake's internal automoc.
+    * Fixed error output when automoc4 is required and not found.
+    * Fixed cross-compilation issues.
+    * Made all examples compilable standalone with both qmake and cmake.
+    * Fixed FindGObject.cmake not to use pkg-config variables directly.
+    * Fixed UseDoxygen.cmake to not output latex docs by default.
+
+Changes in dependencies:
+    * GStreamer 0.10.33 is now required.
+    * Qt 4.7 is now required.
+    * Flex and bison are no longer required.
+    * Automoc is no longer a mandatory dependency, if cmake >= 2.8.6 is present.
+
+qt-gstreamer 0.10.1 (2011-01-23)
+================================
+
+Initial release.
