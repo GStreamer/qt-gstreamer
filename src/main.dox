@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010 George Kiagiadakis <kiagiadakis.george@gmail.com>
+    Copyright (C) 2010-2012 George Kiagiadakis <kiagiadakis.george@gmail.com>
     Copyright (C) 2010-2011 Collabora Ltd.
       @author George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
 
@@ -29,12 +29,11 @@
  * \li QtGLib - Library providing C++/Qt bindings for parts of the GLib
  * and GObject APIs, a base on which QtGStreamer is built.
  * \li QtGStreamer - Library providing C++/Qt bindings for GStreamer
- * \li QtGStreamerUi - Library providing integration with QtGui. Currently,
- * it only provides a video widget that embeds GStreamer's video sinks.
+ * \li QtGStreamerUi - Library providing integration with QtGui.
  * \li QtGStreamerUtils - Library providing some high level utility classes.
  *
- * In addition, it provides a "qwidgetvideosink" GStreamer element, an video
- * sink element that can draw directly on QWidgets using QPainter.
+ * In addition, it provides GStreamer elements for drawing video on widgets,
+ * graphics items and QML items.
  *
  * \section api_reference API Reference
  * \li <a href="classes.html">All Classes</a>
@@ -43,6 +42,9 @@
  * \section using_qtgstreamer Using QtGStreamer
  * \li \subpage build_system_integration
  * \li \subpage coding_conventions
+ *
+ * \section elements Elements provided by QtGStreamer
+ * \li \subpage qtvideosink_overview
  */
 
 /*! \page build_system_integration Build system integration
@@ -123,6 +125,77 @@
  * \code
  * typedef RefPointer<WrapperClass> WrapperClassPtr;
  * \endcode
+ */
+
+/*! \page qtvideosink_overview qtvideosink / qtglvideosink / qwidgetvideosink
+ *
+ * \section overview Overview
+ *
+ * qtvideosink and its variants are elements that provide native video drawing
+ * support for Qt surfaces. qtvideosink and qwidgetvideosink do software painting,
+ * using QImage and QPainter. qtglvideosink uses OpenGL/OpenGLES and supports
+ * hardware colorspace conversion and color balance.
+ *
+ * The API of qtvideosink and qtglvideosink is the same, except that qtglvideosink
+ * has an extra "glcontext" property that must be set with the surface's QGLContext
+ * pointer as early as possible after construction.
+ *
+ * qwidgetvideosink has the same features as qtvideosink, but a different API.
+ * In qwidgetvideosink, you can set a QWidget pointer directly to its "widget"
+ * property and it will paint in this widget, without any further tampering,
+ * while in qtvideosink you need to handle its signals.
+ *
+ * All 3 elements require a running Qt event loop and have the inherited limitation
+ * from Qt that they must be created, destroyed and have their signals and
+ * properties handled from the main (GUI) thread.
+ *
+ * When drawing video on QML or QGraphicsView, it is recommended to use
+ * qtglvideosink, if possible, and fall back to qtvideosink otherwise.
+ *  When drawing on QWidgets, it is recommended to embed the platform's
+ * hardware accelerated sink, such as xvimagesink on X11, and if this is
+ * not possible, use qwidgetvideosink.
+ *
+ * All 3 elements are independent of the QtGStreamer libraries and can be built
+ * and used without them. However, QtGStreamer provides helper integration classes
+ * that you may find useful.
+ *
+ * \section usage_without_qtgstreamer Usage without QtGStreamer
+ *
+ * qtvideosink and qtglvideosink provide two signals, an action signal
+ * (a slot in Qt terminology) called “paint” and a normal signal called “update”.
+ * “update” is emitted every time the sink needs the surface to be repainted.
+ * This is meant to be connected directly to QWidget::update() or QGraphicsItem::update()
+ * or something similar. The “paint” slot takes a QPainter pointer and a rectangle
+ * (x, y, width, height as qreals) as its arguments and paints the video inside the
+ * given rectangle using the given painter. This is meant to be called from the widget’s
+ * paint event or the graphics item’s paint() function. All you need to do is to take
+ * care of those two signals and qtvideosink/qtglvideosink will do everything else.
+ *
+ * qtglvideosink also requires an initialization with the surface's QGLContext pointer.
+ * In addition, it is wise to try to make it READY before using it, to verify that
+ * the required OpenGL features are supported by the hardware. If this fails, it is
+ * sensible to fall back to qtvideosink, which can be used with the same API.
+ * \code
+ * QGst::Element videoSink = QGst::ElementFactory::make("qtglvideosink");
+ * glwidget->makeCurrent();
+ * videoSink->setProperty("glcontext", (void*) QGLContext::currentContext());
+ * glwidget->doneCurrent();
+ *
+ * if (videoSink->setState(QGst::StateReady) != QGst::StateChangeSuccess) {
+ *      // fall back to qtvideosink
+ *      videoSink = QGst::ElementFactory::make("qtvideosink");
+ * }
+ * \endcode
+ *
+ * \section usage_with_qtgstreamer Usage with QtGStreamer
+ *
+ * If you are using the QtGStreamer libraries in your applications, you can directly
+ * use QGst::Ui::VideoWidget to embed any of the 3 variants in a QWidget, or
+ * QGst::Ui::GraphicsVideoWidget with QGst::Ui::GraphicsVideoSurface to paint
+ * on a QGraphicsView.
+ *
+ * If you are using QML, there is also a "VideoItem" element available when you import
+ * "QtGStreamer 0.10". See the qmlplayer example for details.
  */
 
 /*! \namespace QGlib

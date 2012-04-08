@@ -16,26 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * SECTION:element-qwidgetvideosink
- *
- * qwidgetvideosink is a video sink element that can draw directly on a QWidget
- * using the QPainter API. To use it, you only have to set a QWidget pointer as
- * the "widget" property and the video will then be rendered on that QWidget.
- *
- * This is useful for cases where you cannot or you do not want to use one of the
- * sinks that implement the GstXOverlay interface, for example for rendering video
- * on the QWS (Qt/Embedded) platform. This sink is guaranteed to work on all platforms
- * supported by Qt, however it is not recommended to use it if you have another choice.
- * For example, on X11 it is recommended to use "xvimagesink" instead, which uses
- * hardware acceleration.
- *
- * There are certain rules for using qwidgetvideosink with threads. It must be
- * created in the main thread, it must be destructed in the main thread and the
- * "widget" property may only be read or written from the main thread as well.
- * This is a (reasonable) limitation implied by Qt.
- */
-
 #include "gstqwidgetvideosink.h"
 #include "qwidgetvideosinkdelegate.h"
 

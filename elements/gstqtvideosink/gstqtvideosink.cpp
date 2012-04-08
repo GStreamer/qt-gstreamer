@@ -15,14 +15,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * SECTION:element-qtvideosink
- *
- * qtvideosink is a video sink element that can draw directly on a Qt
- * surface, such as QWidget or QGraphicsItem, using either the QPainter API
- * or the OpenGL/OpenGLES API.
- */
-
 #include "gstqtvideosink.h"
 #include "gstqtvideosinkmarshal.h"
 #include "qtvideosinkdelegate.h"
