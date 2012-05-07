@@ -30,6 +30,7 @@ set(QtGStreamer_SRCS
     clocktime.cpp
     taglist.cpp
     bufferlist.cpp
+    discoverer.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -82,6 +83,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     clocktime.h         ClockTime
     taglist.h           TagList
     bufferlist.h        BufferList
+    discoverer.h        Discoverer
 
     Ui/global.h
     Ui/videowidget.h            Ui/VideoWidget
@@ -105,6 +107,7 @@ set(QtGStreamer_CODEGEN_INCLUDES
     -Igst/interfaces/videoorientation.h
     -Igst/interfaces/propertyprobe.h
     -Igst/app/gstappsrc.h
+    -Igst/pbutils/gstdiscoverer.h
     -IQGlib/Quark
 )
 
@@ -120,6 +123,7 @@ include_directories(
     ${GSTREAMER_INTERFACES_INCLUDE_DIR}
     ${GSTREAMER_BASE_INCLUDE_DIR}
     ${GSTREAMER_APP_INCLUDE_DIR}
+    ${GSTREAMER_PBUTILS_INCLUDE_DIR}
     ${GLIB2_INCLUDE_DIR}
 )
 add_definitions(-DGST_DISABLE_XML -DGST_DISABLE_LOADSAVE)
@@ -144,7 +148,8 @@ set_target_properties(QtGStreamer PROPERTIES OUTPUT_NAME QtGStreamer-${QTGSTREAM
                                                SOVERSION ${QTGSTREAMER_SOVERSION}
                                                  VERSION ${QTGSTREAMER_VERSION})
 target_link_libraries(QtGStreamer ${QTGLIB_LIBRARY} ${GOBJECT_LIBRARIES}
-                                  ${GSTREAMER_LIBRARY} ${GSTREAMER_INTERFACES_LIBRARY})
+                                  ${GSTREAMER_LIBRARY} ${GSTREAMER_INTERFACES_LIBRARY}
+                                  ${GSTREAMER_PBUTILS_LIBRARY})
 target_link_libraries(QtGStreamer LINK_INTERFACE_LIBRARIES ${QTGLIB_LIBRARY})
 
 # Build and link QtGStreamerUi
