@@ -61,7 +61,7 @@ macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
                                                "Used for building the qwidgetvideosink element"
                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
 
-find_package(GStreamerPluginsBase 0.10.33 COMPONENTS app interfaces video)
+find_package(GStreamerPluginsBase 0.10.33 COMPONENTS app interfaces video pbutils)
 macro_log_feature(GSTREAMER_APP_LIBRARY_FOUND "GStreamer app library"
                                               "Required to build QtGStreamerUtils"
                                               "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
@@ -70,6 +70,9 @@ macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces libra
                                                 "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
                                                 "Used for building the qwidgetvideosink element"
+                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
+macro_log_feature(GSTREAMER_PBUTILS_LIBRARY_FOUND "GStreamer pbutils library"
+                                                "Used for building the Discoverer API"
                                                 "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
 
 find_package(GLIB2)
