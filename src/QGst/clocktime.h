@@ -55,9 +55,34 @@ public:
     /*! Creates a ClockTime from a QTime */
     static ClockTime fromTime(const QTime & time);
 
+    /*! Creates a ClockTime from seconds */
+    inline static ClockTime fromSeconds(quint64 seconds);
+
+    /*! Creates a ClockTime from milli seconds */
+    inline static ClockTime fromMSecs(quint64 msec);
+
+    /*! Creates a ClockTime from micro seconds */
+    inline static ClockTime fromUSecs(quint64 usec);
+
 private:
     quint64 m_clocktime;
 };
+
+inline ClockTime ClockTime::fromSeconds(quint64 seconds)
+{
+    return ClockTime(seconds * 1000 * 1000 * 1000);
+}
+
+inline ClockTime ClockTime::fromMSecs(quint64 msec)
+{
+    return ClockTime(msec * 1000 * 1000);
+}
+
+inline ClockTime ClockTime::fromUSecs(quint64 usec)
+{
+    return ClockTime(usec * 1000);
+}
+
 
 } //namspace QGst
 
