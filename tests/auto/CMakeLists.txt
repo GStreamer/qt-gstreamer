@@ -1,6 +1,7 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GSTREAMER_INCLUDE_DIR}
                     ${GLIB2_INCLUDE_DIR} ${QTGSTREAMER_INCLUDES})
 add_definitions(${QTGSTREAMER_DEFINITIONS} -DGST_DISABLE_XML -DGST_DISABLE_LOADSAVE)
+add_definitions(-DSRCDIR="${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 
 macro(qgst_test target)
@@ -27,3 +28,4 @@ qgst_test(buffertest)
 qgst_test(eventtest)
 qgst_test(messagetest)
 qgst_test(taglisttest)
+qgst_test(discoverertest)

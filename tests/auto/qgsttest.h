@@ -31,7 +31,7 @@ private Q_SLOTS:
     void cleanupTestCase() { QGst::cleanup(); }
 };
 
-namespace QTest // teach QCOMPARE() printing values of certain GStreamer types
+namespace QTest // teach QCOMPARE() printing of certain GStreamer values
 {
 template<> char *toString(const QGst::ClockTime &t)
 {
