@@ -75,6 +75,11 @@ namespace QGst {
         inline Fraction(int numerator, int denominator)
             : numerator(numerator), denominator(denominator) {}
 
+        inline bool operator==(const Fraction & other) const
+        { return numerator == other.numerator && denominator == other.denominator; }
+        inline bool operator!=(const Fraction & other) const
+        { return !operator==(other); }
+
         int numerator;
         int denominator;
     };
