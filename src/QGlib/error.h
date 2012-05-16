@@ -18,6 +18,7 @@
 #define QGLIB_ERROR_H
 
 #include "global.h"
+#include "type.h"
 #include "quark.h"
 #include <exception>
 
@@ -31,10 +32,12 @@ class QTGLIB_EXPORT Error : public std::exception
 public:
     /*! Wraps an existing GError into an Error.
      * \note the constructed Error takes ownership of \a error */
-    Error(GError *error);
+    Error(GError *error = NULL);
 
     /*! Creates a new Error with the given \a domain, \a code and \a message */
     Error(Quark domain, int code, const QString & message);
+
+    static Error copy(GError *error);
 
     Error(const Error & other);
     Error & operator=(const Error & other);
@@ -70,5 +73,7 @@ private:
 QTGLIB_EXPORT QDebug operator<<(QDebug dbg, const Error & error);
 
 } //namespace QGlib
+
+QGLIB_REGISTER_TYPE(QGlib::Error)
 
 #endif // QGLIB_ERROR_H

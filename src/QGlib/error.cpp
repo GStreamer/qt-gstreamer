@@ -32,42 +32,54 @@ Error::Error(Quark domain, int code, const QString & message)
     m_error = g_error_new_literal(domain, code, message.toUtf8());
 }
 
+Error Error::copy(GError *error)
+{
+    return Error(error ? g_error_copy(error) : NULL);
+}
+
 Error::Error(const Error & other)
     : std::exception()
 {
-    m_error = g_error_copy(other.m_error);
+    m_error = other.m_error ? g_error_copy(other.m_error) : NULL;
 }
 
 Error & Error::operator=(const Error & other)
 {
-    g_error_free(m_error);
-    m_error = g_error_copy(other.m_error);
+    if (m_error != other.m_error) {
+        if(m_error) {
+        	g_error_free(m_error);
+        }
+
+        m_error = other.m_error ? g_error_copy(other.m_error) : NULL;
+    }
     return *this;
 }
 
 Error::~Error() throw()
 {
-    g_error_free(m_error);
+    if (m_error) {
+        g_error_free(m_error);
+    }
 }
 
 const char* Error::what() const throw()
 {
-    return m_error->message;
+    return m_error ? m_error->message : "";
 }
 
 Quark Error::domain() const
 {
-    return m_error->domain;
+    return m_error ? m_error->domain : 0;
 }
 
 int Error::code() const
 {
-    return m_error->code;
+    return m_error ? m_error->code : 0;
 }
 
 QString Error::message() const
 {
-    return QString::fromUtf8(m_error->message);
+    return m_error ? QString::fromUtf8(m_error->message) : QString();
 }
 
 Error::operator GError *()

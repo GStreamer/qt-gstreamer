@@ -22,6 +22,7 @@
 #include "global.h"
 #include "type.h"
 #include "refpointer.h"
+#include "error.h"
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>
 #include <stdexcept>
@@ -222,6 +223,8 @@ public:
     /*! Returns the held value as a QString. Equivalent to get<QString>(ok); \sa get() */
     inline QString toString(bool *ok = NULL) const { return get<QString>(ok); }
 
+    /*! Returns the held value as a QGlib::Error. Equivalent to get<QGlib::Error>(ok); \sa get() */
+    inline Error toError(bool *ok = NULL) const { return get<Error>(ok); }
 
     /*! This is a cast operator that gives access to the underlying GValue instance.
      * It is provided for convenience, to be able to pass this Value as argument to C
@@ -465,6 +468,24 @@ struct ValueImpl<Value>
     static inline void set(Value & value, const Value & data)
     {
         value = data;
+    }
+};
+
+// -- ValueImpl specialization for Error --
+
+template <>
+struct ValueImpl<Error>
+{
+    static inline Error get(const Value & value)
+    {
+        GError *error = 0;
+        value.getData(GetType<Error>(), &error);
+        return Error::copy(error);
+    }
+
+    static inline void set(Value & value, const Error & data)
+    {
+        value.setData(GetType<Error>(), static_cast<const GError *>(data));
     }
 };
 

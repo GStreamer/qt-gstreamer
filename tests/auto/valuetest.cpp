@@ -42,6 +42,7 @@ private Q_SLOTS:
     void castTest();
     void qdebugTest();
     void datetimeTest();
+    void errorTest();
 };
 
 void ValueTest::intTest()
@@ -257,6 +258,20 @@ void ValueTest::datetimeTest()
         QDateTime d = v.get<QDateTime>();
         QCOMPARE(d, QDateTime(QDate(2011, 01, 17), QTime(6, 50, 43, 592), Qt::UTC));
     }
+}
+
+void ValueTest::errorTest()
+{
+    QGlib::Value v;
+    QVERIFY(!v.isValid());
+    v.init<QGlib::Error>();
+    const QGlib::Quark domain = QGlib::Quark::fromString("test-error");
+    g_value_take_boxed(v, g_error_new_literal(domain, 42, "This is a test"));
+    QCOMPARE(v.type(), QGlib::GetType<QGlib::Error>());
+    const QGlib::Error error = v.toError();
+    QCOMPARE(error.domain().toString(), QString::fromUtf8("test-error"));
+    QCOMPARE(error.message(), QString::fromUtf8("This is a test"));
+    QCOMPARE(error.code(), 42);
 }
 
 QTEST_APPLESS_MAIN(ValueTest)
