@@ -158,7 +158,7 @@ struct CppClosure<F, R (Args...)>
 
         virtual void marshaller(Value & result, const QList<Value> & params)
         {
-            if (static_cast<unsigned int>(params.size()) < sizeof...(Args)) {
+            if (static_cast<size_t>(params.size()) < sizeof...(Args)) {
                 throw std::logic_error("The signal provides less arguments than what the closure expects");
             }
 
