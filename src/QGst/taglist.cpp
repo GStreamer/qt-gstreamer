@@ -74,7 +74,7 @@ struct QTGSTREAMER_NO_EXPORT TagList::Data : public QSharedData
 TagList::Data::Data()
     : QSharedData()
 {
-    taglist = gst_tag_list_new();
+    taglist = gst_tag_list_new_empty();
 }
 
 TagList::Data::Data(const GstTagList *tl)
@@ -83,7 +83,7 @@ TagList::Data::Data(const GstTagList *tl)
     if (tl && gst_is_tag_list(tl)) {
         taglist = gst_tag_list_copy(tl);
     } else {
-        taglist = gst_tag_list_new();
+        taglist = gst_tag_list_new_empty();
     }
 }
 
@@ -166,7 +166,7 @@ int TagList::tagValueCount(const char *tag) const
 void TagList::clear()
 {
     gst_tag_list_free(d->taglist);
-    d->taglist = gst_tag_list_new();
+    d->taglist = gst_tag_list_new_empty();
 }
 
 void TagList::removeTag(const char *tag)
@@ -1074,7 +1074,7 @@ void TagList::setDateTime(const QDateTime & value)
 QDebug operator<<(QDebug debug, const TagList & taglist)
 {
     debug.nospace() << "QGst::TagList("
-                    << QGlib::Private::stringFromGCharPtr(gst_structure_to_string(taglist)) << ")";
+                    << QGlib::Private::stringFromGCharPtr(gst_tag_list_to_string(taglist)) << ")";
     return debug.space();
 }
 
