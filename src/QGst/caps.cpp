@@ -58,9 +58,9 @@ void Caps::append(const CapsPtr & caps2)
     gst_caps_append(object<GstCaps>(), gst_caps_copy(caps2));
 }
 
-void Caps::merge(const CapsPtr & caps2)
+CapsPtr Caps::merge(CapsPtr & caps2)
 {
-    gst_caps_merge(object<GstCaps>(), gst_caps_copy(caps2));
+    return CapsPtr::wrap(gst_caps_merge(object<GstCaps>(), caps2), false);
 }
 
 void Caps::setValue(const char *field, const QGlib::Value & value)
@@ -70,12 +70,12 @@ void Caps::setValue(const char *field, const QGlib::Value & value)
 
 bool Caps::simplify()
 {
-    return gst_caps_do_simplify(object<GstCaps>());
+    return gst_caps_simplify(object<GstCaps>());
 }
 
-void Caps::truncate()
+CapsPtr Caps::truncate()
 {
-    gst_caps_truncate(object<GstCaps>());
+    return CapsPtr::wrap(gst_caps_truncate(object<GstCaps>()), false);
 }
 
 StructurePtr Caps::internalStructure(uint index)
@@ -89,9 +89,9 @@ void Caps::appendStructure(const Structure & structure)
     gst_caps_append_structure(object<GstCaps>(), gst_structure_copy(structure));
 }
 
-void Caps::mergeStructure(const Structure & structure)
+CapsPtr Caps::mergeStructure(Structure & structure)
 {
-    gst_caps_merge_structure(object<GstCaps>(), gst_structure_copy(structure));
+    return CapsPtr::wrap(gst_caps_merge_structure(object<GstCaps>(), structure), false);
 }
 
 void Caps::removeStructure(uint index)
@@ -155,12 +155,7 @@ CapsPtr Caps::getIntersection(const CapsPtr & caps2) const
     return CapsPtr::wrap(gst_caps_intersect(object<GstCaps>(), caps2), false);
 }
 
-CapsPtr Caps::getUnion(const CapsPtr & caps2) const
-{
-    return CapsPtr::wrap(gst_caps_union(object<GstCaps>(), caps2), false);
-}
-
-CapsPtr Caps::getNormal() const
+CapsPtr Caps::getNormal()
 {
     return CapsPtr::wrap(gst_caps_normalize(object<GstCaps>()), false);
 }
@@ -218,13 +213,4 @@ QDebug operator<<(QDebug debug, const CapsPtr & caps)
     return debug.space();
 }
 
-
-namespace Private {
-
-QGlib::RefCountedObject *wrapCaps(void *caps)
-{
-    return QGlib::constructWrapper(GST_CAPS(caps)->type, caps);
-}
-
-} //namespace Private
 } //namespace QGst

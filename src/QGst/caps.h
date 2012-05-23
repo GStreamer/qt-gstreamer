@@ -18,6 +18,7 @@
 #define QGST_CAPS_H
 
 #include "global.h"
+#include "miniobject.h"
 #include "../QGlib/value.h"
 #include "../QGlib/refpointer.h"
 #include "../QGlib/type.h"
@@ -27,7 +28,7 @@ namespace QGst {
 /*! \headerfile caps.h <QGst/Caps>
  * \brief Wrapper class for GstCaps
  */
-class QTGSTREAMER_EXPORT Caps : public QGlib::RefCountedObject
+class QTGSTREAMER_EXPORT Caps : public QGst::MiniObject
 {
     QGST_WRAPPER(Caps)
 public:
@@ -40,17 +41,17 @@ public:
     QString toString() const;
 
     void append(const CapsPtr & caps2);
-    void merge(const CapsPtr & caps2);
+    CapsPtr merge(CapsPtr & caps2);
     template <typename T>
     inline void setValue(const char *field, const T & value);
     void setValue(const char *field, const QGlib::Value & value);
     bool simplify();
-    void truncate();
+    CapsPtr truncate();
 
     StructurePtr internalStructure(uint index);
 
     void appendStructure(const Structure & structure);
-    void mergeStructure(const Structure & structure);
+    CapsPtr mergeStructure(Structure & structure);
     void removeStructure(uint index);
 
     uint size() const;
@@ -63,8 +64,7 @@ public:
     bool isSubsetOf(const CapsPtr & superset) const;
     bool canIntersect(const CapsPtr & caps2) const;
     CapsPtr getIntersection(const CapsPtr & caps2) const;
-    CapsPtr getUnion(const CapsPtr & caps2) const;
-    CapsPtr getNormal() const;
+    CapsPtr getNormal();
     CapsPtr subtract(const CapsPtr & subtrahend) const;
 
     CapsPtr copy() const;
@@ -94,14 +94,8 @@ inline CapsPtr Caps::fromString(const QString & string)
 QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const CapsPtr & caps);
 
 
-namespace Private {
-
-QTGSTREAMER_EXPORT QGlib::RefCountedObject *wrapCaps(void *caps);
-
-} //namespace Private
 } //namespace QGst
 
 QGST_REGISTER_TYPE(QGst::Caps)
-QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::Caps, QGst::Private::wrapCaps)
 
 #endif
