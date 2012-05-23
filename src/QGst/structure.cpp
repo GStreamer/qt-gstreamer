@@ -68,7 +68,7 @@ Structure::Structure(Data* data)
 Structure::Structure(const char *name)
     : d(new Data)
 {
-    d->structure = gst_structure_empty_new(name);
+    d->structure = gst_structure_new_empty(name);
 }
 
 Structure::Structure(const GstStructure* structure)
@@ -110,7 +110,7 @@ void Structure::setName(const char *name)
 {
     if (!d->structure) {
         //lazy construction
-        d->structure = gst_structure_empty_new(name);
+        d->structure = gst_structure_new_empty(name);
     } else {
         gst_structure_set_name(d->structure, name);
     }
