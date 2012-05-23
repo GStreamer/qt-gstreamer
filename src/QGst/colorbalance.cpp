@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "colorbalance.h"
-#include <gst/interfaces/colorbalance.h>
+#include <gst/video/colorbalance.h>
 
 namespace QGst {
 

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "videoorientation.h"
-#include <gst/interfaces/videoorientation.h>
+#include <gst/video/videoorientation.h>
 
 namespace QGst {
 
