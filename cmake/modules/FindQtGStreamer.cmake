@@ -71,8 +71,8 @@ else()
         set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
         find_path(QTGSTREAMER_INCLUDE_DIR QGst/Global
                   PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGStreamer"
-                  PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../../include/QtGStreamer"
-                  PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../../../include/QtGStreamer"
+                        "${_QTGSTREAMER_CONFIG_DIR}/../../../include/QtGStreamer"
+                        "${_QTGSTREAMER_CONFIG_DIR}/../../../../include/QtGStreamer"
                   NO_DEFAULT_PATH)
     endif()
 endif()
