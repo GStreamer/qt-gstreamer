@@ -60,14 +60,20 @@ else()
                          QTGSTREAMER_UTILS_LIBRARY QTGSTREAMER_INCLUDE_DIR)
     else()
         # Targets file found. Use imported QtGStreamer target and relative include path.
-        # We assume that this file has been installed in $PREFIX/lib/QtGStreamer/,
+        # We assume that this file has been installed in $PREFIX/lib(64)/QtGStreamer/,
+        # or $PREFIX/lib/<arch_triplet>/QtGStreamer, or $PREFIX/lib(64)/cmake/QtGStreamer/,
+        # or $PREFIX/lib/<arch_triplet>/cmake/QtGStreamer/,
         # so the include path should evaluate to $PREFIX/include/QtGStreamer
         include(${_QTGSTREAMER_TARGETS_FILE})
         set(QTGLIB_LIBRARY QtGLib)
         set(QTGSTREAMER_LIBRARY QtGStreamer)
         set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
         set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
-        get_filename_component(QTGSTREAMER_INCLUDE_DIR "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGStreamer" ABSOLUTE)
+        find_path(QTGSTREAMER_INCLUDE_DIR QGst/Global
+                  PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../include/QtGStreamer"
+                  PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../../include/QtGStreamer"
+                  PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../../../include/QtGStreamer"
+                  NO_DEFAULT_PATH)
     endif()
 endif()
 
