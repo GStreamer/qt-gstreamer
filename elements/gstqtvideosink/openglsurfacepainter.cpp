@@ -726,8 +726,8 @@ void GlslSurfacePainter::paintImpl(const QPainter *painter,
         const GLfloat *vertexCoordArray,
         const GLfloat *textureCoordArray)
 {
-    const int deviceWidth = QGLContext::currentContext()->device()->width();
-    const int deviceHeight = QGLContext::currentContext()->device()->height();
+    const int deviceWidth = painter->device()->width();
+    const int deviceHeight = painter->device()->height();
 
     const QTransform transform = painter->deviceTransform();
 
