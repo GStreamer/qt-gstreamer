@@ -38,13 +38,14 @@ class GraphicsVideoSurfacePrivate;
  *
  * Example
  * \code
- * QGraphicsView *view = new QGraphicsView;
+ * QGraphicsScene *scene = new QGraphicsScene;
+ * QGraphicsView *view = new QGraphicsView (scene);
  * view->setViewport(new QGLWidget); //recommended
  * QGst::Ui::GraphicsVideoSurface *surface = new QGst::Ui::GraphicsVideoSurface(view);
  * ...
  * QGst::Ui::GraphicsVideoWidget *widget = new QGst::Ui::GraphicsVideoWidget;
  * widget->setSurface(surface);
- * view->addItem(widget);
+ * scene->addItem(widget);
  * \endcode
  *
  * This class internally creates and uses either a "qtglvideosink" or a "qtvideosink"
