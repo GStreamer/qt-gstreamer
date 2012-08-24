@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 %{
-#include "yystype.h"
 #include "generator.h"
+#include "yystype.h"
 
 #define YY_DECL int yylex(CodeGen *codegen)
 void yyerror(CodeGen *codegen, const char *msg);
