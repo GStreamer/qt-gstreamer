@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
 #if defined(QTVIDEOSINK_PATH)
     //this allows the example to run from the QtGStreamer build tree without installing QtGStreamer
-    setenv("GST_PLUGIN_PATH", QTVIDEOSINK_PATH, 0);
+    qputenv("GST_PLUGIN_PATH", QTVIDEOSINK_PATH);
 #endif
 
     QApplication app(argc, argv);
