@@ -31,6 +31,10 @@
 #  define GL_UNSIGNED_SHORT_5_6_5 33635
 #endif
 
+#ifndef GL_CLAMP_TO_EDGE
+#  define GL_CLAMP_TO_EDGE 0x812F
+#endif
+
 #define QRECT_TO_GLMATRIX(rect) \
     { \
         GLfloat(rect.left())     , GLfloat(rect.bottom() + 1), \
