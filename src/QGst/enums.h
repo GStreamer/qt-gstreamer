@@ -415,4 +415,17 @@ namespace QGlib {
     };
 }
 
+namespace QGst {
+    enum DiscovererResult {
+        DiscovererOk,
+        DiscovererUriInvalid,
+        DiscovererError,
+        DiscovererTimeout,
+        DiscovererBusy,
+        DiscovererMissingPlugins
+    };
+}
+QGST_REGISTER_TYPE(QGst::DiscovererResult)
+
+
 #endif

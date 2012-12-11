@@ -31,15 +31,6 @@
 
 namespace QGst {
 
-enum DiscovererResult {
-    DiscovererOk,
-    DiscovererUriInvalid,
-    DiscovererError,
-    DiscovererTimeout,
-    DiscovererBusy,
-    DiscovererMissingPlugins
-};
-
 class QTGSTREAMER_EXPORT DiscovererStreamInfo : public QGst::MiniObject
 {
     QGST_WRAPPER(DiscovererStreamInfo)
