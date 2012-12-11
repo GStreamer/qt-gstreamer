@@ -210,7 +210,7 @@ QList<DiscovererStreamInfoPtr> DiscovererInfo::videoStreams() const
     return wrapStreamInfoList(gst_discoverer_info_get_video_streams(object<GstDiscovererInfo>()), false);
 }
 
-QList<DiscovererStreamInfoPtr> DiscovererInfo::subTitleStreams() const
+QList<DiscovererStreamInfoPtr> DiscovererInfo::subtitleStreams() const
 {
     return wrapStreamInfoList(gst_discoverer_info_get_subtitle_streams(object<GstDiscovererInfo>()), false);
 }
@@ -420,7 +420,7 @@ QDebug operator<<(QDebug debug, DiscovererInfoPtr info)
         debug.nospace() << ", streams=" << info->streams();
         debug.nospace() << ", audioStreams=" << info->audioStreams();
         debug.nospace() << ", videoStreams=" << info->videoStreams();
-        debug.nospace() << ", subTitleStreams=" << info->subTitleStreams();
+        debug.nospace() << ", subtitleStreams=" << info->subtitleStreams();
         debug.nospace() << ", containerStreams=" << info->containerStreams();
     } else {
         debug << "<null>";

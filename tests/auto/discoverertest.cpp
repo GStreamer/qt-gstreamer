@@ -469,9 +469,9 @@ void DiscovererTest::verifyStreamInfo(QGst::DiscovererInfoPtr info)
     QCOMPARE(info->streams(GST_TYPE_DISCOVERER_VIDEO_INFO).count(), videoStreams.count());
     QCOMPARE(info->videoStreams().count(), videoStreams.count());
 
-    const StreamInfoList subTitleStreams = filterByStreamType(streams, GST_TYPE_DISCOVERER_SUBTITLE_INFO);
-    QCOMPARE(info->streams(GST_TYPE_DISCOVERER_SUBTITLE_INFO).count(), subTitleStreams.count());
-    QCOMPARE(info->subTitleStreams().count(), subTitleStreams.count());
+    const StreamInfoList subtitleStreams = filterByStreamType(streams, GST_TYPE_DISCOVERER_SUBTITLE_INFO);
+    QCOMPARE(info->streams(GST_TYPE_DISCOVERER_SUBTITLE_INFO).count(), subtitleStreams.count());
+    QCOMPARE(info->subtitleStreams().count(), subtitleStreams.count());
 
     const StreamInfoList containerStreams = filterByStreamType(streams, GST_TYPE_DISCOVERER_CONTAINER_INFO);
     QCOMPARE(info->streams(GST_TYPE_DISCOVERER_CONTAINER_INFO).count(), containerStreams.count());

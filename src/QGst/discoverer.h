@@ -120,7 +120,7 @@ public:
     QList<DiscovererStreamInfoPtr> streams(QGlib::Type streamType) const;
     QList<DiscovererStreamInfoPtr> audioStreams() const;
     QList<DiscovererStreamInfoPtr> videoStreams() const;
-    QList<DiscovererStreamInfoPtr> subTitleStreams() const;
+    QList<DiscovererStreamInfoPtr> subtitleStreams() const;
     QList<DiscovererStreamInfoPtr> containerStreams() const;
 };
 
