@@ -429,14 +429,4 @@ QDebug operator<<(QDebug debug, DiscovererInfoPtr info)
     return (debug << ")").maybeSpace();
 }
 
-
-namespace Private {
-
-QGlib::RefCountedObject *wrapDiscovererInfo(void *info)
-{
-    return QGlib::constructWrapper(G_TYPE_FROM_INSTANCE(info), info);
-}
-
-} //namespace Private
-
 } // namespace QGst
