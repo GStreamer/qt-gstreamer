@@ -29,10 +29,6 @@
 
 #include "global.h"
 
-#if !QGLIB_HAVE_CXX0X
-# include <boost/preprocessor.hpp>
-#endif
-
 namespace QGst {
 
 enum DiscovererResult {
