@@ -18,6 +18,7 @@
 #define QGST_STRUCTS_H
 
 #include "global.h"
+#include <QtCore/QDebug>
 
 namespace QGst {
 
@@ -83,6 +84,11 @@ namespace QGst {
         int numerator;
         int denominator;
     };
+
+    inline QDebug operator<<(QDebug debug, const Fraction &f)
+    {
+        return (debug.nospace() << f.numerator << "/" << f.denominator).maybeSpace();
+    }
 }
 QGST_REGISTER_TYPE(QGst::Fraction)
 

@@ -278,12 +278,6 @@ QDebug operator<<(QDebug debug, DiscovererResult result)
     return (debug.nospace() << "QGst::DiscovererResult(" << uint(result) << ")").maybeSpace();
 }
 
-// FIXME: move to fraction.h
-static QDebug operator<<(QDebug debug, const Fraction &f)
-{
-    return (debug.nospace() << f.numerator << "/" << f.denominator).maybeSpace();
-}
-
 template <typename T>
 static const char *typeName();
 
