@@ -121,8 +121,10 @@ public:
      */
     static DiscovererPtr create(ClockTime timeout);
 
-    /*! Allow asynchronous discovering of URIs to take place. An event loop must be
-     * available for QGst::Discoverer to properly work in asynchronous mode.
+    /*! Allow asynchronous discovering of URIs to take place.
+     * \note A GLib event loop must be available for QGst::Discoverer to work
+     * properly in asynchronous mode. This feature might not be available on all
+     * platforms supported by Qt.
      * \ingroup async
      */
     void start();
