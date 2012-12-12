@@ -381,7 +381,7 @@ static QDebug printStreamInfo(QDebug debug, const T &info)
     return (debug << ")").maybeSpace();
 }
 
-QDebug operator<<(QDebug debug, DiscovererStreamInfoPtr info)
+QDebug operator<<(QDebug debug, const DiscovererStreamInfoPtr &info)
 {
     if (const DiscovererContainerInfoPtr containerInfo = info.dynamicCast<DiscovererContainerInfo>()) {
         return printStreamInfo(debug, containerInfo);
@@ -399,7 +399,7 @@ QDebug operator<<(QDebug debug, DiscovererStreamInfoPtr info)
     return printStreamInfo(debug, info);
 }
 
-QDebug operator<<(QDebug debug, DiscovererInfoPtr info)
+QDebug operator<<(QDebug debug, const DiscovererInfoPtr &info)
 {
     debug.nospace() << "QGst::DiscovererInfoPtr(";
 

@@ -162,8 +162,8 @@ inline DiscovererInfoPtr Discoverer::discoverUri(const QUrl &uri)
 }
 
 QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, DiscovererResult result);
-QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, DiscovererStreamInfoPtr info);
-QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, DiscovererInfoPtr info);
+QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const DiscovererStreamInfoPtr &info);
+QTGSTREAMER_EXPORT QDebug operator<<(QDebug debug, const DiscovererInfoPtr &info);
 
 } // namespace QGst
 
