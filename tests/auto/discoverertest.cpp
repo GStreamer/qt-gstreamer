@@ -35,18 +35,22 @@ static Tag makeTag(const char *name, const QGlib::Value &value)
     return qMakePair(name, value);
 }
 
+namespace QGlib {
+
 // Declare a simple compare operator for QGlib::Value.
 // Comparing by string value isn't accurate at all, but good enough for our testing purposes.
-static bool operator ==(const QGlib::Value &a, const QGlib::Value &b)
+static bool operator ==(const Value &a, const Value &b)
 {
     bool okA = false, okB = false;
     return a.type() == b.type() && a.toString(&okA) == b.toString(&okB) && okA && okB;
 }
 
-static bool operator !=(const QGlib::Value &a, const QGlib::Value &b)
+static bool operator !=(const Value &a, const Value &b)
 {
     return !(a == b);
 }
+
+} //namespace QGlib
 
 // This classes describes what kind of streams we expect.
 class StreamInfo : public QSharedData
