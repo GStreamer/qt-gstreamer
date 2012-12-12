@@ -108,6 +108,7 @@ set(QtGStreamer_CODEGEN_INCLUDES
     -Igst/interfaces/propertyprobe.h
     -Igst/app/gstappsrc.h
     -Igst/pbutils/gstdiscoverer.h
+    -Igst/pbutils/pbutils-enumtypes.h
     -IQGlib/Quark
 )
 
