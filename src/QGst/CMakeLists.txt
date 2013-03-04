@@ -22,7 +22,6 @@ set(QtGStreamer_SRCS
     xoverlay.cpp
     streamvolume.cpp
     colorbalance.cpp
-    propertyprobe.cpp
     query.cpp
     clock.cpp
     buffer.cpp
@@ -80,7 +79,6 @@ set(QtGStreamer_INSTALLED_HEADERS
     xoverlay.h          XOverlay
     streamvolume.h      StreamVolume
     colorbalance.h      ColorBalance
-    propertyprobe.h     PropertyProbe
     query.h             Query
     clock.h             Clock
     buffer.h            Buffer
