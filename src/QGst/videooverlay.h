@@ -37,6 +37,8 @@ public:
     void enableEventHandling(bool enabled);
     bool setRenderRectangle(int x, int y, int width, int height);
     bool setRenderRectangle(const QRect & rect);
+
+    static bool isPrepareWindowHandleMessage(const MessagePtr & msg);
 };
 
 } //namespace QGst

@@ -52,4 +52,9 @@ bool VideoOverlay::setRenderRectangle(const QRect& rect)
     return setRenderRectangle(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
+bool VideoOverlay::isPrepareWindowHandleMessage(const MessagePtr & msg)
+{
+    return gst_is_video_overlay_prepare_window_handle_message(msg);
+}
+
 } //namespace QGst

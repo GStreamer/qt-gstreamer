@@ -256,7 +256,7 @@ private:
     {
         switch (msg->type()) {
         case MessageElement:
-            if (msg->internalStructure()->name() == QLatin1String("prepare-window-handle")) {
+            if (VideoOverlay::isPrepareWindowHandleMessage(msg)) {
                 VideoOverlayPtr overlay = msg->source().dynamicCast<VideoOverlay>();
                 m_renderer->setVideoSink(overlay);
             }
