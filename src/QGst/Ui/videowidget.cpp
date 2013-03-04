@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "videowidget.h"
-#include "../xoverlay.h"
+#include "../videooverlay.h"
 #include "../pipeline.h"
 #include "../bus.h"
 #include "../message.h"
@@ -55,10 +55,10 @@ public:
 };
 
 
-class XOverlayRenderer : public QObject, public AbstractRenderer
+class VideoOverlayRenderer : public QObject, public AbstractRenderer
 {
 public:
-    XOverlayRenderer(QWidget *parent)
+    VideoOverlayRenderer(QWidget *parent)
         : QObject(parent)
     {
         m_windowId = widget()->winId(); //create a new X window (if we are on X11 with alien widgets)
@@ -72,7 +72,7 @@ public:
         widget()->update();
     }
 
-    virtual ~XOverlayRenderer()
+    virtual ~VideoOverlayRenderer()
     {
         if (m_sink) {
             m_sink->setWindowHandle(0);
@@ -83,7 +83,7 @@ public:
         widget()->update();
     }
 
-    void setVideoSink(const XOverlayPtr & sink)
+    void setVideoSink(const VideoOverlayPtr & sink)
     {
         QMutexLocker l(&m_sinkMutex);
         if (m_sink) {
@@ -124,7 +124,7 @@ private:
     inline QWidget *widget() { return static_cast<QWidget*>(parent()); }
     WId m_windowId;
     mutable QMutex m_sinkMutex;
-    XOverlayPtr m_sink;
+    VideoOverlayPtr m_sink;
 };
 
 
@@ -234,7 +234,7 @@ class PipelineWatch : public QObject, public AbstractRenderer
 {
 public:
     PipelineWatch(const PipelinePtr & pipeline, QWidget *parent)
-        : QObject(parent), m_renderer(new XOverlayRenderer(parent)), m_pipeline(pipeline)
+        : QObject(parent), m_renderer(new VideoOverlayRenderer(parent)), m_pipeline(pipeline)
     {
         pipeline->bus()->enableSyncMessageEmission();
         QGlib::connect(pipeline->bus(), "sync-message",
@@ -249,15 +249,15 @@ public:
 
     virtual ElementPtr videoSink() const { return m_renderer->videoSink(); }
 
-    void releaseSink() { m_renderer->setVideoSink(XOverlayPtr()); }
+    void releaseSink() { m_renderer->setVideoSink(VideoOverlayPtr()); }
 
 private:
     void onBusSyncMessage(const MessagePtr & msg)
     {
         switch (msg->type()) {
         case MessageElement:
-            if (msg->internalStructure()->name() == QLatin1String("prepare-xwindow-id")) {
-                XOverlayPtr overlay = msg->source().dynamicCast<XOverlay>();
+            if (msg->internalStructure()->name() == QLatin1String("prepare-window-handle")) {
+                VideoOverlayPtr overlay = msg->source().dynamicCast<VideoOverlay>();
                 m_renderer->setVideoSink(overlay);
             }
             break;
@@ -274,16 +274,16 @@ private:
     }
 
 private:
-    XOverlayRenderer *m_renderer;
+    VideoOverlayRenderer *m_renderer;
     PipelinePtr m_pipeline;
 };
 
 
 AbstractRenderer *AbstractRenderer::create(const ElementPtr & sink, QWidget *videoWidget)
 {
-    XOverlayPtr overlay = sink.dynamicCast<XOverlay>();
+    VideoOverlayPtr overlay = sink.dynamicCast<VideoOverlay>();
     if (overlay) {
-        XOverlayRenderer *r = new XOverlayRenderer(videoWidget);
+        VideoOverlayRenderer *r = new VideoOverlayRenderer(videoWidget);
         r->setVideoSink(overlay);
         return r;
     }

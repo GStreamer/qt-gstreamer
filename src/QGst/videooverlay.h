@@ -14,8 +14,8 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef QGST_XOVERLAY_H
-#define QGST_XOVERLAY_H
+#ifndef QGST_VIDEOOVERLAY_H
+#define QGST_VIDEOOVERLAY_H
 
 #include "global.h"
 #include "../QGlib/object.h"
@@ -25,12 +25,12 @@ class QRect;
 
 namespace QGst {
 
-/*! \interface XOverlay xoverlay.h <QGst/XOverlay>
- * \brief Wrapper class for GstXOverlay
+/*! \interface VideoOverlay videooverlay.h <QGst/VideoOverlay>
+ * \brief Wrapper class for GstVideoOverlay
  */
-class QTGSTREAMER_EXPORT XOverlay : public QGlib::Interface
+class QTGSTREAMER_EXPORT VideoOverlay : public QGlib::Interface
 {
-    QGST_WRAPPER(XOverlay)
+    QGST_WRAPPER(VideoOverlay)
 public:
     void expose();
     void setWindowHandle(WId id);
@@ -41,7 +41,7 @@ public:
 
 } //namespace QGst
 
-QGST_REGISTER_TYPE(QGst::XOverlay)
-QGLIB_REGISTER_INTERFACE(QGst::XOverlay)
+QGST_REGISTER_TYPE(QGst::VideoOverlay)
+QGLIB_REGISTER_INTERFACE(QGst::VideoOverlay)
 
-#endif // QGST_XOVERLAY_H
+#endif // QGST_VIDEOOVERLAY_H

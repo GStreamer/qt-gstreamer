@@ -19,7 +19,7 @@ set(QtGStreamer_SRCS
     parse.cpp
     urihandler.cpp
     videoorientation.cpp
-    xoverlay.cpp
+    videooverlay.cpp
     streamvolume.cpp
     colorbalance.cpp
     query.cpp
@@ -76,7 +76,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     parse.h             Parse
     urihandler.h        UriHandler
     videoorientation.h  VideoOrientation
-    xoverlay.h          XOverlay
+    videooverlay.h      VideoOverlay
     streamvolume.h      StreamVolume
     colorbalance.h      ColorBalance
     query.h             Query

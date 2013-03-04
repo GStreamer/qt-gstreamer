@@ -40,13 +40,13 @@ class AbstractRenderer;
  *
  * There are two ways of using this widget:
  * \li Create a video sink yourself and set it with the setVideoSink() method.
- * This will work for all sinks that implement the XOverlay interface, plus
+ * This will work for all sinks that implement the VideoOverlay interface, plus
  * "qtvideosink", "qtglvideosink" and "qwidgetvideosink" (or "qt5videosink",
  * "qt5glvideosink" and "qwidget5videosink" in Qt5), which paint directly
  * on the widget.
  * \li Create a pipeline and let the widget watch the pipeline using the
  * watchPipeline() method. This will cause the widget to watch the bus for
- * the "prepare-xwindow-id" that all XOverlay sinks send right before
+ * the "prepare-window-handle" that all VideoOverlay sinks send right before
  * creating a window and will embed any sink that sends this message.
  * You need to make sure however that there can only be one video sink in
  * this pipeline. If there are more than one, you should handle them yourself
@@ -62,7 +62,7 @@ class AbstractRenderer;
  *
  * \note Autoplug video sinks such as autovideosink are not supported due
  * to the complexity of handling them correctly. If you wish to use autovideosink,
- * you can either set it to READY state and get its child XOverlay element
+ * you can either set it to READY state and get its child VideoOverlay element
  * or just watch the pipeline in which you plug it.
  */
 class QTGSTREAMERUI_EXPORT VideoWidget : public QWidget
@@ -80,7 +80,7 @@ public:
     ElementPtr videoSink() const;
 
     /*! Sets the video sink element that is going to be embedded.
-     * Any sink that implements the XOverlay interface will work, as well as
+     * Any sink that implements the VideoOverlay interface will work, as well as
      * "qtvideosink", "qtglvideosink" and "qwidgetvideosink" (or "qt5videosink",
      * "qt5glvideosink" and "qwidget5videosink" in Qt5)
      * \note
@@ -96,7 +96,7 @@ public:
     void releaseVideoSink();
 
 
-    /*! Starts watching a pipeline for any attached XOverlay sinks. If such
+    /*! Starts watching a pipeline for any attached VideoOverlay sinks. If such
      * a sink is found while the pipeline prepares itself to start playing,
      * it is embedded to the widget.
      * \note

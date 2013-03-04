@@ -152,7 +152,7 @@ public:
     /*! Looks for an element inside the bin that implements the given interface
      * and returns it casted to the interface type. Example:
      * \code
-     * QGst::XOverlayPtr xoverlay = bin->getElementByInterface<QGst::XOverlay>();
+     * QGst::VideoOverlayPtr videooverlay = bin->getElementByInterface<QGst::VideoOverlay>();
      * \endcode
      */
     template <typename T> QGlib::RefPointer<T> getElementByInterface() const;
