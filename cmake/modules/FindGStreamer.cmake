@@ -25,7 +25,7 @@ else()
     set(GStreamer_FIND_QUIETLY FALSE)
 endif()
 
-set(GSTREAMER_ABI_VERSION "0.10")
+set(GSTREAMER_ABI_VERSION "1.0")
 
 
 # Find the main library

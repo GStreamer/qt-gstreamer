@@ -16,7 +16,7 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-set(GSTREAMER_ABI_VERSION "0.10")
+set(GSTREAMER_ABI_VERSION "1.0")
 
 
 # Find the pkg-config file for doing the version check
