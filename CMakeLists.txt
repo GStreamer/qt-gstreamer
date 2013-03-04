@@ -84,16 +84,16 @@ macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
                                                "Used for building the ${QTVIDEOSINK_NAME} element"
                                                "http://gstreamer.freedesktop.org/" FALSE "1.0.0")
 
-find_package(GStreamerPluginsBase 1.0.0 COMPONENTS app interfaces video pbutils)
+find_package(GStreamerPluginsBase 1.0.0 COMPONENTS app audio video pbutils)
 macro_log_feature(GSTREAMER_APP_LIBRARY_FOUND "GStreamer app library"
                                               "Required to build QtGStreamerUtils"
                                               "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
-macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
+macro_log_feature(GSTREAMER_AUDIO_LIBRARY_FOUND "GStreamer audio library"
                                                 "Required to build QtGStreamer"
                                                 "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
-                                                "Used for building the ${QTVIDEOSINK_NAME} element"
-                                                "http://gstreamer.freedesktop.org/" FALSE "1.0.0")
+                                                "Required to build QtGStreamer"
+                                                "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
 macro_log_feature(GSTREAMER_PBUTILS_LIBRARY_FOUND "GStreamer pbutils library"
                                                 "Used for building the Discoverer API"
                                                 "http://gstreamer.freedesktop.org/" TRUE "1.0.0")

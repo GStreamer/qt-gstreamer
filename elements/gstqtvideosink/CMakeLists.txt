@@ -73,7 +73,6 @@ target_link_libraries(gst${QTVIDEOSINK_NAME}
     ${GSTREAMER_LIBRARY}
     ${GSTREAMER_BASE_LIBRARY}
     ${GSTREAMER_VIDEO_LIBRARY}
-    ${GSTREAMER_INTERFACES_LIBRARY}
     ${GstQtVideoSink_GL_LIBS}
 )
 qt4or5_use_modules(gst${QTVIDEOSINK_NAME} Core Gui Widgets)
@@ -98,7 +97,6 @@ if (QTGSTREAMER_TESTS)
         ${GSTREAMER_LIBRARY}
         ${GSTREAMER_BASE_LIBRARY}
         ${GSTREAMER_VIDEO_LIBRARY}
-        ${GSTREAMER_INTERFACES_LIBRARY}
         ${GstQtVideoSink_GL_LIBS}
     )
     qt4or5_use_modules(qtvideosink_autotest Core Gui Widgets Test)

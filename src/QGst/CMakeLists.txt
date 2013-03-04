@@ -114,12 +114,12 @@ list(REMOVE_ITEM QtGStreamer_CODEGEN_HEADERS "global.h")
 
 set(QtGStreamer_CODEGEN_INCLUDES
     -Igst/gst.h
-    -Igst/interfaces/interfaces-enumtypes.h
-    -Igst/interfaces/xoverlay.h
-    -Igst/interfaces/streamvolume.h
-    -Igst/interfaces/colorbalance.h
-    -Igst/interfaces/videoorientation.h
-    -Igst/interfaces/propertyprobe.h
+    -Igst/audio/audio-enumtypes.h
+    -Igst/audio/streamvolume.h
+    -Igst/video/video-enumtypes.h
+    -Igst/video/videooverlay.h
+    -Igst/video/colorbalance.h
+    -Igst/video/videoorientation.h
     -Igst/app/gstappsrc.h
     -Igst/pbutils/gstdiscoverer.h
     -Igst/pbutils/pbutils-enumtypes.h
@@ -135,7 +135,8 @@ set(QTGSTREAMER_UI_SOVERSION 0)
 set(QTGSTREAMER_UTILS_SOVERSION 0)
 include_directories(
     ${GSTREAMER_INCLUDE_DIR}
-    ${GSTREAMER_INTERFACES_INCLUDE_DIR}
+    ${GSTREAMER_AUDIO_INCLUDE_DIR}
+    ${GSTREAMER_VIDEO_INCLUDE_DIR}
     ${GSTREAMER_BASE_INCLUDE_DIR}
     ${GSTREAMER_APP_INCLUDE_DIR}
     ${GSTREAMER_PBUTILS_INCLUDE_DIR}
@@ -163,7 +164,9 @@ set_target_properties(${QTGSTREAMER_LIBRARY} PROPERTIES OUTPUT_NAME ${QTGSTREAME
                                                  VERSION ${QTGSTREAMER_VERSION})
 target_link_libraries(${QTGSTREAMER_LIBRARY} LINK_PUBLIC ${QTGLIB_LIBRARY})
 target_link_libraries(${QTGSTREAMER_LIBRARY} LINK_PRIVATE ${GOBJECT_LIBRARIES}
-                                  ${GSTREAMER_LIBRARY} ${GSTREAMER_INTERFACES_LIBRARY}
+                                  ${GSTREAMER_LIBRARY}
+                                  ${GSTREAMER_AUDIO_LIBRARY}
+                                  ${GSTREAMER_VIDEO_LIBRARY}
                                   ${GSTREAMER_PBUTILS_LIBRARY})
 qt4or5_use_modules(${QTGSTREAMER_LIBRARY} LINK_PUBLIC Core)
 
