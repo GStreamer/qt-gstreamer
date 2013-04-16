@@ -84,7 +84,7 @@ QTime Player::position() const
         m_pipeline->query(query);
         return QGst::ClockTime(query->position()).toTime();
     } else {
-        return QTime();
+        return QTime(0,0);
     }
 }
 
@@ -135,7 +135,7 @@ QTime Player::length() const
         m_pipeline->query(query);
         return QGst::ClockTime(query->duration()).toTime();
     } else {
-        return QTime();
+        return QTime(0,0);
     }
 }
 
