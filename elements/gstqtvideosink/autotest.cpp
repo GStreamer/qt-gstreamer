@@ -767,7 +767,7 @@ void QtVideoSinkTest::qtVideoSinkTest()
     widget->raise();
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    QTest::qWaitForWindowActive(widget.data()->windowHandle());
+    QTest::qWaitForWindowExposed(widget.data()->windowHandle());
 #else
     QTest::qWaitForWindowShown(widget.data());
 #endif
