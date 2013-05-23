@@ -5,7 +5,7 @@ add_definitions(-DSRCDIR="${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 
 macro(qgst_test target)
-    automoc4_add_executable(${target} "${target}.cpp")
+    add_executable(${target} "${target}.cpp")
     target_link_libraries(${target} ${QT_QTTEST_LIBRARY} ${GSTREAMER_LIBRARY}
                                     ${GOBJECT_LIBRARIES} ${QTGSTREAMER_LIBRARIES})
     add_test(NAME ${target} COMMAND ${target})

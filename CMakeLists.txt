@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8.9)
 enable_testing()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_AUTOMOC ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 set(QTGSTREAMER_VERSION 0.10.2.1)
@@ -38,23 +39,6 @@ macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www
 # this just sets the QTGSTREAMER_* cmake variables
 set(BUILDING_QTGSTREAMER TRUE)
 find_package(QtGStreamer REQUIRED)
-
-if (${CMAKE_VERSION} VERSION_LESS "2.8.6")
-    find_package(Automoc4)
-    macro_log_feature(Automoc4_FOUND "Automoc 4" "Required for the build system to generate moc files properly"
-                                     "https://projects.kde.org/projects/kdesupport/automoc" TRUE "0.9.88")
-else()
-    set(Automoc4_FOUND TRUE)
-    set(CMAKE_AUTOMOC TRUE)
-
-    macro(automoc4_add_executable)
-        add_executable(${ARGV})
-    endmacro()
-
-    macro(automoc4_add_library)
-        add_library(${ARGV})
-    endmacro()
-endif()
 
 find_package(GStreamer 0.10.33 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
@@ -132,17 +116,15 @@ if (QTGSTREAMER_CODEGEN AND FLEX_FOUND AND BISON_FOUND)
     add_subdirectory(codegen)
 endif()
 
-if (Automoc4_FOUND) # avoid errors about missing automoc4_add_* macros
-    add_subdirectory(src)
-    add_subdirectory(elements)
+add_subdirectory(src)
+add_subdirectory(elements)
 
-    if (QTGSTREAMER_TESTS)
-        add_subdirectory(tests)
-    endif()
+if (QTGSTREAMER_TESTS)
+    add_subdirectory(tests)
+endif()
 
-    if (QTGSTREAMER_EXAMPLES)
-        add_subdirectory(examples)
-    endif()
+if (QTGSTREAMER_EXAMPLES)
+    add_subdirectory(examples)
 endif()
 
 # Add uninstall target. Taken from the KDE4 scripts

@@ -45,7 +45,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GOBJECT_INCLUDE_DIR} ${GLIB2_I
 run_codegen("QGlib" "${QtGLib_CODEGEN_INCLUDES}" "${QtGLib_CODEGEN_HEADERS}")
 
 # Build and link QtGLib
-automoc4_add_library(QtGLib ${SHARED_OR_STATIC} ${QtGLib_SRCS})
+add_library(QtGLib ${SHARED_OR_STATIC} ${QtGLib_SRCS})
 set_target_properties(QtGLib PROPERTIES OUTPUT_NAME QtGLib-${QTGLIB_API_VERSION}
                                           SOVERSION ${QTGLIB_SOVERSION}
                                             VERSION ${QTGSTREAMER_VERSION})

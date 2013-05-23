@@ -9,15 +9,7 @@ if (NOT BUILDING_QTGSTREAMER)
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules)
     find_package(OpenGLES2)
 
-    if (${CMAKE_VERSION} VERSION_LESS "2.8.6")
-        find_package(Automoc4 REQUIRED)
-    else()
-        set(CMAKE_AUTOMOC TRUE)
-
-        macro(automoc4_add_executable)
-            add_executable(${ARGV})
-        endmacro()
-    endif()
+    set(CMAKE_AUTOMOC ON)
 else()
     # allow the example to run from the build tree without installing QtGStreamer
     add_definitions(
@@ -44,7 +36,7 @@ endif()
 set(qmlplayer_SOURCES main.cpp player.cpp)
 qt4_add_resources(qmlplayer_rcc_SOURCES qmlplayer.qrc)
 
-automoc4_add_executable(qmlplayer
+add_executable(qmlplayer
     ${qmlplayer_SOURCES}
     ${qmlplayer_rcc_SOURCES}
 )

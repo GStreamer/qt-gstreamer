@@ -42,7 +42,7 @@ else()
     add_definitions(-DGST_QT_VIDEO_SINK_NO_OPENGL)
 endif()
 
-automoc4_add_library(gstqtvideosink MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
+add_library(gstqtvideosink MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
 target_link_libraries(gstqtvideosink
     ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
@@ -57,7 +57,7 @@ install(TARGETS gstqtvideosink DESTINATION ${PLUGINS_INSTALL_DIR})
 
 
 if (QTGSTREAMER_TESTS)
-    automoc4_add_executable(qtvideosink_autotest
+    add_executable(qtvideosink_autotest
         autotest.cpp
         utils.cpp
         bufferformat.cpp

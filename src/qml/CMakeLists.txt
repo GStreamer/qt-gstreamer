@@ -4,7 +4,7 @@ set(QtGStreamerQML_SRCS
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-automoc4_add_library(QtGStreamerQML MODULE ${QtGStreamerQML_SRCS})
+add_library(QtGStreamerQML MODULE ${QtGStreamerQML_SRCS})
 target_link_libraries(QtGStreamerQML
     ${QTGSTREAMER_UI_LIBRARIES}
     ${QT_QTDECLARATIVE_LIBRARY}
