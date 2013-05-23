@@ -56,10 +56,22 @@ if (QT_QTDECLARATIVE_FOUND)
 endif()
 
 # Install the cmake scripts that are used to find the installed library from external projects
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${CMAKE_SOURCE_DIR}/cmake/modules/QtGStreamerConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfig.cmake
+    INSTALL_DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer
+    PATH_VARS INCLUDES_INSTALL_DIR
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfigVersion.cmake
+    VERSION ${QTGSTREAMER_VERSION}
+    COMPATIBILITY SameMajorVersion)
 install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
-install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGStreamer.cmake
-        DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer
-        RENAME QtGStreamerConfig.cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfigVersion.cmake
+              ${CMAKE_SOURCE_DIR}/cmake/modules/QtGStreamerConfigCommon.cmake
+        DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
 
 # Install pkgconfig files
 file(GLOB_RECURSE PC_IN_FILES "*.pc.in")

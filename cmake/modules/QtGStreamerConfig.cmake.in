@@ -1,0 +1,32 @@
+set(QTGSTREAMER_VERSION @QTGSTREAMER_VERSION@)
+
+@PACKAGE_INIT@
+
+get_filename_component(_QTGSTREAMER_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# include the generated QtGStreamerTargets.cmake from the same directory
+find_file(_QTGSTREAMER_TARGETS_FILE QtGStreamerTargets.cmake
+          PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
+include(${_QTGSTREAMER_TARGETS_FILE})
+
+set(QTGLIB_LIBRARY @QTGLIB_LIBRARY@)
+set(QTGSTREAMER_LIBRARY @QTGSTREAMER_LIBRARY@)
+set(QTGSTREAMER_UI_LIBRARY @QTGSTREAMER_UI_LIBRARY@)
+set(QTGSTREAMER_UTILS_LIBRARY @QTGSTREAMER_UTILS_LIBRARY@)
+set_and_check(QTGSTREAMER_INCLUDE_DIR @PACKAGE_INCLUDES_INSTALL_DIR@)
+
+# Find dependencies, if not already found
+if (NOT DEFINED QT_INCLUDE_DIR)
+    message(STATUS "Qt hasn't been found yet. Looking...")
+    find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+endif()
+
+if (NOT DEFINED Boost_INCLUDE_DIRS)
+    message(STATUS "Boost hasn't been found yet. Looking...")
+    find_package(Boost REQUIRED)
+endif()
+
+# include QtGStreamerConfigCommon.cmake from the same directory
+find_file(_QTGSTREAMER_CONFIG_COMMON_FILE QtGStreamerConfigCommon.cmake
+          PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
+include(${_QTGSTREAMER_CONFIG_COMMON_FILE})

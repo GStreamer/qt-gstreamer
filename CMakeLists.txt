@@ -37,9 +37,14 @@ endif()
 find_package(Boost 1.39)
 macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www.boost.org/" TRUE "1.39")
 
-# this just sets the QTGSTREAMER_* cmake variables
+# set the QTGSTREAMER_* cmake variables
 set(BUILDING_QTGSTREAMER TRUE)
-find_package(QtGStreamer REQUIRED)
+set(QTGLIB_LIBRARY QtGLib)
+set(QTGSTREAMER_LIBRARY QtGStreamer)
+set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
+set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
+set(QTGSTREAMER_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
+include(QtGStreamerConfigCommon)
 
 find_package(GStreamer 0.10.33 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
