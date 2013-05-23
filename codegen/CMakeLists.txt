@@ -1,4 +1,4 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${QT_INCLUDE_DIR})
+include_directories(${QT_INCLUDE_DIR})
 
 flex_target(analyzer analyzer.l ${CMAKE_CURRENT_BINARY_DIR}/analyzer.cpp)
 bison_target(parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp COMPILE_FLAGS "--defines")

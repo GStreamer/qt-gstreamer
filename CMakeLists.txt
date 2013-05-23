@@ -4,8 +4,9 @@ enable_testing()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_AUTOMOC ON)
-
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
 set(QTGSTREAMER_VERSION 0.10.2.1)
 
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)

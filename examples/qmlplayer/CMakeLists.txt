@@ -10,6 +10,7 @@ if (NOT BUILDING_QTGSTREAMER)
     find_package(OpenGLES2)
 
     set(CMAKE_AUTOMOC ON)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
 else()
     # allow the example to run from the build tree without installing QtGStreamer
     add_definitions(
@@ -18,7 +19,7 @@ else()
     )
 endif()
 
-include_directories(${QTGSTREAMER_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${QTGSTREAMER_INCLUDES})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 add_definitions(${QTGSTREAMER_DEFINITIONS})
 

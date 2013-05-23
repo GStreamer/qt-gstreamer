@@ -3,7 +3,6 @@ set(QtGStreamerQML_SRCS
     videoitem.cpp
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(QtGStreamerQML MODULE ${QtGStreamerQML_SRCS})
 target_link_libraries(QtGStreamerQML
     ${QTGSTREAMER_UI_LIBRARIES}

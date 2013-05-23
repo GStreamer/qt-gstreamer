@@ -39,7 +39,7 @@ set(QtGLib_CODEGEN_INCLUDES
 # Setup the environment
 set(QTGLIB_API_VERSION 2.0)
 set(QTGLIB_SOVERSION 0)
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${GOBJECT_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR})
+include_directories(${GOBJECT_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR})
 
 # Add command to generate gen.cpp using codegen
 run_codegen("QGlib" "${QtGLib_CODEGEN_INCLUDES}" "${QtGLib_CODEGEN_HEADERS}")

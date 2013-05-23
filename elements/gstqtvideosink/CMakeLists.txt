@@ -1,5 +1,3 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 glib2_genmarshal(gstqtvideosinkmarshal
     VOID:POINTER,FLOAT,FLOAT,FLOAT,FLOAT
     VOID:POINTER,DOUBLE,DOUBLE,DOUBLE,DOUBLE
