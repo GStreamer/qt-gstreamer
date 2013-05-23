@@ -41,10 +41,19 @@ macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www
 
 # set the QTGSTREAMER_* cmake variables
 set(BUILDING_QTGSTREAMER TRUE)
-set(QTGLIB_LIBRARY QtGLib)
-set(QTGSTREAMER_LIBRARY QtGStreamer)
-set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
-set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
+if (USE_QT5)
+    set(QTGLIB_LIBRARY Qt5GLib)
+    set(QTGSTREAMER_LIBRARY Qt5GStreamer)
+    set(QTGSTREAMER_UI_LIBRARY Qt5GStreamerUi)
+    set(QTGSTREAMER_UTILS_LIBRARY Qt5GStreamerUtils)
+    set(QTGSTREAMER_PACKAGE_NAME Qt5GStreamer)
+elseif (USE_QT4)
+    set(QTGLIB_LIBRARY QtGLib)
+    set(QTGSTREAMER_LIBRARY QtGStreamer)
+    set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
+    set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
+    set(QTGSTREAMER_PACKAGE_NAME QtGStreamer)
+endif()
 set(QTGSTREAMER_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 include(QtGStreamerConfigCommon)
 
@@ -106,7 +115,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE STRING "Destination directory for libraries")
-set(INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/QtGStreamer)
+set(INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/${QTGSTREAMER_PACKAGE_NAME})
 
 if (USE_GST_PLUGIN_DIR)
     set(PLUGINS_INSTALL_DIR ${GSTREAMER_PLUGIN_DIR})

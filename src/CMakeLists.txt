@@ -1,4 +1,4 @@
-set(EXPORT_TARGET_SET QtGStreamerTargets)
+set(EXPORT_TARGET_SET ${QTGSTREAMER_PACKAGE_NAME}Targets)
 
 if (QTGSTREAMER_STATIC)
     set(SHARED_OR_STATIC "STATIC")
@@ -59,19 +59,19 @@ endif()
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
     ${CMAKE_SOURCE_DIR}/cmake/modules/QtGStreamerConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfig.cmake
-    INSTALL_DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer
+    ${CMAKE_CURRENT_BINARY_DIR}/${QTGSTREAMER_PACKAGE_NAME}Config.cmake
+    INSTALL_DESTINATION ${LIB_INSTALL_DIR}/${QTGSTREAMER_PACKAGE_NAME}
     PATH_VARS INCLUDES_INSTALL_DIR
     NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfigVersion.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${QTGSTREAMER_PACKAGE_NAME}ConfigVersion.cmake
     VERSION ${QTGSTREAMER_VERSION}
     COMPATIBILITY SameMajorVersion)
-install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/QtGStreamerConfigVersion.cmake
+install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/${QTGSTREAMER_PACKAGE_NAME})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QTGSTREAMER_PACKAGE_NAME}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/${QTGSTREAMER_PACKAGE_NAME}ConfigVersion.cmake
               ${CMAKE_SOURCE_DIR}/cmake/modules/QtGStreamerConfigCommon.cmake
-        DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
+        DESTINATION ${LIB_INSTALL_DIR}/${QTGSTREAMER_PACKAGE_NAME})
 
 # Install pkgconfig files
 file(GLOB_RECURSE PC_IN_FILES "*.pc.in")

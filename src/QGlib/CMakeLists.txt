@@ -45,13 +45,13 @@ include_directories(${GOBJECT_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR})
 run_codegen("QGlib" "${QtGLib_CODEGEN_INCLUDES}" "${QtGLib_CODEGEN_HEADERS}")
 
 # Build and link QtGLib
-add_library(QtGLib ${SHARED_OR_STATIC} ${QtGLib_SRCS})
-set_target_properties(QtGLib PROPERTIES OUTPUT_NAME QtGLib-${QTGLIB_API_VERSION}
+add_library(${QTGLIB_LIBRARY} ${SHARED_OR_STATIC} ${QtGLib_SRCS})
+set_target_properties(${QTGLIB_LIBRARY} PROPERTIES OUTPUT_NAME ${QTGLIB_LIBRARY}-${QTGLIB_API_VERSION}
                                           SOVERSION ${QTGLIB_SOVERSION}
                                             VERSION ${QTGSTREAMER_VERSION})
-target_link_libraries(QtGLib ${QT_QTCORE_LIBRARY} ${GOBJECT_LIBRARIES})
-target_link_libraries(QtGLib LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
+target_link_libraries(${QTGLIB_LIBRARY} ${QT_QTCORE_LIBRARY} ${GOBJECT_LIBRARIES})
+target_link_libraries(${QTGLIB_LIBRARY} LINK_INTERFACE_LIBRARIES ${QT_QTCORE_LIBRARY})
 
 # Install
-install(TARGETS QtGLib DESTINATION ${LIB_INSTALL_DIR} EXPORT ${EXPORT_TARGET_SET})
+install(TARGETS ${QTGLIB_LIBRARY} DESTINATION ${LIB_INSTALL_DIR} EXPORT ${EXPORT_TARGET_SET})
 install_headers("QGlib" ${QtGLib_INSTALLED_HEADERS})
