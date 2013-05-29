@@ -2,11 +2,15 @@
 # We misuse cmake here by running tests with the try_compile command and basing
 # the result of the whole test suite on the cmake exit status.
 
-cmake_minimum_required(VERSION 2.8)
-find_package(QtGStreamer REQUIRED)
+cmake_minimum_required(VERSION 2.8.9)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+find_package(Boost 1.39 REQUIRED)
+include(QtHelpers)
+include(QtGStreamerConfigCommon)
 include(MacroCXXCompilationTest)
 
-set(CMAKE_REQUIRED_LIBRARIES ${QTGSTREAMER_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${QTGSTREAMER_LIBRARY} ${QTGLIB_LIBRARY} ${QT_QTCORE_LIBRARY})
 set(CMAKE_REQUIRED_INCLUDES ${QTGSTREAMER_INCLUDES})
 set(CMAKE_REQUIRED_DEFINITIONS ${QTGSTREAMER_DEFINITIONS})
 set(CMAKE_REQUIRED_FLAGS "${QTGSTREAMER_FLAGS}")

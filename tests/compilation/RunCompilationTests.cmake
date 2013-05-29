@@ -12,6 +12,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${SOURCE_DIR}/CompilationTests.
 
 # Run cmake to execute the tests
 execute_process(COMMAND ${CMAKE_COMMAND}
+                    -DQT_VERSION=${QT_VERSION}
                     -DQTGLIB_LIBRARY=${QTGLIB_LIBRARY}
                     -DQTGSTREAMER_LIBRARY=${QTGSTREAMER_LIBRARY}
                     -DQTGSTREAMER_UI_LIBRARY=${QTGSTREAMER_UI_LIBRARY}
