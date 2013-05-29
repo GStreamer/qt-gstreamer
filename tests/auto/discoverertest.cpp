@@ -70,6 +70,8 @@ public:
         ManualCaps
     };
 
+    virtual ~StreamInfo() {}
+
 protected:
     StreamInfo(const QString &caps, CapsMode capsMode)
         : m_isNative(true)
