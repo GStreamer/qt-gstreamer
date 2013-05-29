@@ -17,7 +17,11 @@
 */
 #include "player.h"
 #include <cstdlib>
-#include <QtGui/QApplication>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtWidgets/QApplication>
+#else
+# include <QtGui/QApplication>
+#endif
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeContext>
 #include <QtDeclarative/QDeclarativeEngine>
