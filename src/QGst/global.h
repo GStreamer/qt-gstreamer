@@ -28,7 +28,7 @@
 #include <QtCore/QSharedPointer>
 
 /* defined by cmake when building this library */
-#if defined(QtGStreamer_EXPORTS)
+#if defined(QtGStreamer_EXPORTS) || defined(Qt5GStreamer_EXPORTS)
 # define QTGSTREAMER_EXPORT Q_DECL_EXPORT
 #else
 # define QTGSTREAMER_EXPORT Q_DECL_IMPORT

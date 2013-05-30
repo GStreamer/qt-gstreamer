@@ -26,7 +26,7 @@
 #include <QtCore/QtGlobal>
 
 /* defined by cmake when building this library */
-#if defined(QtGStreamerUtils_EXPORTS)
+#if defined(QtGStreamerUtils_EXPORTS) || defined(Qt5GStreamerUtils_EXPORTS)
 # define QTGSTREAMERUTILS_EXPORT Q_DECL_EXPORT
 #else
 # define QTGSTREAMERUTILS_EXPORT Q_DECL_IMPORT

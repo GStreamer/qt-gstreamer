@@ -26,7 +26,7 @@
 #include <boost/config.hpp>
 
 /* defined by cmake when building this library */
-#if defined(QtGLib_EXPORTS)
+#if defined(QtGLib_EXPORTS) || defined(Qt5GLib_EXPORTS)
 # define QTGLIB_EXPORT Q_DECL_EXPORT
 #else
 # define QTGLIB_EXPORT Q_DECL_IMPORT
