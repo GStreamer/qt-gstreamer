@@ -17,7 +17,7 @@
 */
 #include "graphicsvideowidget.h"
 #include "graphicsvideosurface_p.h"
-#include "../../QGlib/signal.h"
+#include "../../QGlib/Signal"
 
 namespace QGst {
 namespace Ui {

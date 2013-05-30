@@ -22,7 +22,7 @@ set(QtGLib_INSTALLED_HEADERS
     paramspec.h   ParamSpec
     object.h      Object
     value.h       Value
-    signal.h      Signal
+    qglib_signal.h Signal
     emitimpl.h
     connect.h     Connect
     connectimpl.h

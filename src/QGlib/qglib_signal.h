@@ -41,7 +41,7 @@
 
 namespace QGlib {
 
-/*! \headerfile signal.h <QGlib/Signal>
+/*! \headerfile qglib_signal.h <QGlib/Signal>
  * \brief Helper class providing introspection of GObject signals
  *
  * Signals are a generic notification mechanism. Each signal is bound to a

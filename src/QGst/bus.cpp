@@ -16,7 +16,7 @@
 */
 #include "bus.h"
 #include "message.h"
-#include "../QGlib/signal.h"
+#include "../QGlib/Signal"
 #include <gst/gst.h>
 #include <QtCore/QObject>
 #include <QtCore/QTimerEvent>

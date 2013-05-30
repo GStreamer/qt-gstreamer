@@ -29,7 +29,7 @@
 #include <glib-object.h>
 #include "QGlib/string_p.h"
 
-#include "QGlib/signal.h"
+#include "QGlib/qglib_signal.h"
 
 namespace QGlib {
     BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunFirst) == static_cast<int>(G_SIGNAL_RUN_FIRST));

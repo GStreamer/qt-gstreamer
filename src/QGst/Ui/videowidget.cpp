@@ -22,7 +22,7 @@
 #include "../bus.h"
 #include "../message.h"
 #include "../../QGlib/connect.h"
-#include "../../QGlib/signal.h"
+#include "../../QGlib/Signal"
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
 #include <QtCore/QThread>
