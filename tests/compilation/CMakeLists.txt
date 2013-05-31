@@ -8,5 +8,6 @@ add_test(NAME compilation_tests
         -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
         -DBINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/CompilationTests
         -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+        -DGENERATOR=${CMAKE_GENERATOR}
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunCompilationTests.cmake
 )
