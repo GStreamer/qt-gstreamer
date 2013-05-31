@@ -31,6 +31,20 @@ if (USE_QT5)
         set(QT_QTCORE_LIBRARY ${Qt5Core_LIBRARIES})
         set(QT_QTGUI_LIBRARY ${Qt5Widgets_LIBRARIES})
         set(QT_INCLUDE_DIR ${Qt5Widgets_INCLUDE_DIRS})
+
+        function(_QT5_QUERY_QMAKE VAR RESULT)
+          get_target_property(_QMAKE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
+          execute_process(COMMAND "${_QMAKE}" -query ${VAR}
+            RESULT_VARIABLE return_code
+            OUTPUT_VARIABLE output
+            OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_STRIP_TRAILING_WHITESPACE)
+          if(NOT return_code)
+            file(TO_CMAKE_PATH "${output}" output)
+            set(${RESULT} ${output} PARENT_SCOPE)
+          endif()
+        endfunction()
+
+        _qt5_query_qmake(QT_INSTALL_IMPORTS QT_IMPORTS_DIR)
     endif()
     find_package(Qt5Declarative)
     if (Qt5Declarative_FOUND)
