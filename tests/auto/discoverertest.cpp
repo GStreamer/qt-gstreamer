@@ -578,6 +578,11 @@ void DiscovererTest::testAsyncDiscovery_data()
 
 void DiscovererTest::testAsyncDiscovery()
 {
+// glib event loop required - see QCoreApplicationPrivate::createEventDispatcher() for the defines check
+#if defined(Q_OS_WIN) || defined(Q_OS_BLACKBERRY) || defined(QT_NO_GLIB)
+    QSKIP_PORT("Platform does not have a GLib event loop", SkipAll);
+#endif
+
     // setup discovery timeout
     m_eventLoop.reset(new QEventLoop);
     QTimer::singleShot(3000, m_eventLoop.data(), SLOT(quit()));

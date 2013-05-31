@@ -23,6 +23,14 @@
 #include <QGst/Init>
 #include <gst/gst.h>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# define SkipSingle 0
+# define SkipAll 0
+# define QSKIP_PORT(m, a) QSKIP(m)
+#else
+# define QSKIP_PORT(m, a) QSKIP(m, a)
+#endif
+
 class QGstTest : public QObject
 {
     Q_OBJECT
