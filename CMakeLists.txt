@@ -17,8 +17,8 @@ option(USE_GST_PLUGIN_DIR "Install gstreamer plugins at the system location" ON)
 option(USE_QT_PLUGIN_DIR "Install qt plugins at the system location" ON)
 set(QT_VERSION "4" CACHE STRING "Qt version used for the build")
 
+include(GNUInstallDirs)
 include(MacroLogFeature)
-
 include(QtHelpers)
 
 macro_log_feature(QT_FOUND "Qt" "Required for building everything" "http://qt.nokia.com/" TRUE "${QT_MIN_VERSION}")
@@ -114,24 +114,31 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wformat-security -Wundef -Wpointer-arith -fno-common")
 endif ()
 
-set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} CACHE STRING "Destination directory for libraries")
-set(INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/${QTGSTREAMER_PACKAGE_NAME})
+
+set(QTGSTREAMER_INSTALL_TARGET_DEFAULT_ARGS
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+set(QTGSTREAMER_PC_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+set(QTGSTREAMER_CMAKE_CONFIG_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${QTGSTREAMER_PACKAGE_NAME})
+set(QTGSTREAMER_INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/${QTGSTREAMER_PACKAGE_NAME})
 
 if (USE_GST_PLUGIN_DIR)
-    set(PLUGINS_INSTALL_DIR ${GSTREAMER_PLUGIN_DIR})
+    set(QTGSTREAMER_GST_PLUGINS_INSTALL_DIR ${GSTREAMER_PLUGIN_DIR})
 else()
-    set(PLUGINS_INSTALL_DIR ${LIB_INSTALL_DIR}/gstreamer-0.10)
+    set(QTGSTREAMER_GST_PLUGINS_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/gstreamer-0.10)
 endif()
 
 if (USE_QT_PLUGIN_DIR)
-    set(IMPORTS_INSTALL_DIR ${QT_IMPORTS_DIR})
+    set(QTGSTREAMER_QTQUICK1_INSTALL_DIR ${QT_IMPORTS_DIR})
 else()
     if (USE_QT5)
-        set(IMPORTS_INSTALL_DIR ${LIB_INSTALL_DIR}/qt5/imports)
+        set(QTGSTREAMER_QTQUICK1_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/qt5/imports)
     else()
-        set(IMPORTS_INSTALL_DIR ${LIB_INSTALL_DIR}/qt4/imports)
+        set(QTGSTREAMER_QTQUICK1_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/qt4/imports)
     endif()
 endif()
+
 
 if (QTGSTREAMER_CODEGEN AND FLEX_FOUND AND BISON_FOUND)
     add_subdirectory(codegen)

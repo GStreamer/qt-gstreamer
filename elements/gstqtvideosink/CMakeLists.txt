@@ -51,7 +51,7 @@ target_link_libraries(gstqtvideosink
     ${GSTREAMER_INTERFACES_LIBRARY}
     ${GstQtVideoSink_GL_LIBS}
 )
-install(TARGETS gstqtvideosink DESTINATION ${PLUGINS_INSTALL_DIR})
+install(TARGETS gstqtvideosink DESTINATION ${QTGSTREAMER_GST_PLUGINS_INSTALL_DIR})
 
 
 if (QTGSTREAMER_TESTS)

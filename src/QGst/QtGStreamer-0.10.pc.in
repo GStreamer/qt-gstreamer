@@ -1,7 +1,7 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=@LIB_INSTALL_DIR@
-includedir=@INCLUDES_INSTALL_DIR@
+libdir=@CMAKE_INSTALL_LIBDIR@
+includedir=@QTGSTREAMER_INCLUDES_INSTALL_DIR@
 
 Name: QtGStreamer-0.10
 Description: Qt-style C++ bindings library for GStreamer
