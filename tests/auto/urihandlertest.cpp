@@ -38,7 +38,8 @@ void UriHandlerTest::interfaceTest()
 
     QVERIFY(u->setUri(QUrl::fromLocalFile("/bin/sh")));
     QCOMPARE(u->uri(), QUrl::fromLocalFile("/bin/sh"));
-    QCOMPARE(u->property("location").get<QString>(), QString("/bin/sh"));
+    QCOMPARE(u->property("location").get<QString>(),
+             QDir::toNativeSeparators(QLatin1String("/bin/sh")));
 }
 
 void UriHandlerTest::makeTest()
