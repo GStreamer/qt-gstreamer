@@ -99,7 +99,7 @@ protected:
 
         bool operator ==(const T &other) const
         {
-            return not m_assigned || m_value == other;
+            return !m_assigned || m_value == other;
         }
 
         bool operator !=(const T &other) const
@@ -153,7 +153,7 @@ public:
             }
         }
 
-        if (not info->caps()->isAlwaysCompatibleWith(m_caps)) {
+        if (!info->caps()->isAlwaysCompatibleWith(m_caps)) {
             if (debugMode) {
                 qDebug() << "capabilities are incompatible\n"
                          << "  expected caps:" << m_caps->toString() << "\n"
@@ -213,7 +213,7 @@ public:
     {
         QGst::DiscovererAudioInfoPtr audioInfo = info.dynamicCast<QGst::DiscovererAudioInfo>();
 
-        return not audioInfo.isNull()
+        return !audioInfo.isNull()
                 && StreamInfo::acceptStream(info)
                 && m_channels == audioInfo->channels()
                 && m_sampleRate == audioInfo->sampleRate()
@@ -253,7 +253,7 @@ public:
     {
         QGst::DiscovererVideoInfoPtr videoInfo = info.dynamicCast<QGst::DiscovererVideoInfo>();
 
-        return not videoInfo.isNull()
+        return !videoInfo.isNull()
                 && StreamInfo::acceptStream(info)
                 && isImage() == videoInfo->isImage()
                 && m_width == videoInfo->width()
@@ -437,13 +437,13 @@ void DiscovererTest::setupDiscoveryData()
 void DiscovererTest::verifyStreamInfo(QGst::DiscovererInfoPtr info)
 {
     // verify discovery result
-    QVERIFY(not info.isNull());
+    QVERIFY(!info.isNull());
     QTEST(info->uri(), "uri");
     QTEST(QString(), "errorDomain");
     QCOMPARE(info->result(), QGst::DiscovererOk);
     QTEST(info->duration(), "duration");
     QTEST(info->seekable(), "seekable");
-    QVERIFY(not info->misc().isValid());
+    QVERIFY(!info->misc().isValid());
 
     QFETCH(TagList, expectedTags);
     QCOMPARE(info->tags().isEmpty(), expectedTags.isEmpty());
@@ -453,17 +453,17 @@ void DiscovererTest::verifyStreamInfo(QGst::DiscovererInfoPtr info)
     }
 
     QFETCH(StreamInfoList, streams);
-    QVERIFY(not info->streamInfo().isNull());
+    QVERIFY(!info->streamInfo().isNull());
 
-    if (streams.count() != 1 || not (*streams.constBegin())->isImage()) {
+    if (streams.count() != 1 || !(*streams.constBegin())->isImage()) {
         const QGst::DiscovererContainerInfoPtr root = info->streamInfo().dynamicCast<QGst::DiscovererContainerInfo>();
-        QVERIFY(not root.isNull());
+        QVERIFY(!root.isNull());
 
         const StreamInfoList nativeStreams = filter(streams, std::mem_fun(&StreamInfo::isNative));
         QCOMPARE(root->streams().count(), nativeStreams.count());
     } else {
         const QGst::DiscovererVideoInfoPtr root = info->streamInfo().dynamicCast<QGst::DiscovererVideoInfo>();
-        QVERIFY(not root.isNull());
+        QVERIFY(!root.isNull());
         QVERIFY(root->isImage());
     }
 
@@ -500,7 +500,7 @@ void DiscovererTest::verifyStreamInfo(QGst::DiscovererInfoPtr info)
         }
 
         streams.removeAt(it - streams.constBegin());
-        QVERIFY(not info->misc().isValid());
+        QVERIFY(!info->misc().isValid());
     }
 
     QVERIFY(streams.isEmpty());
@@ -556,7 +556,7 @@ void DiscovererTest::testSyncDiscovery()
 {
     // create a discoverer
     QGst::DiscovererPtr discoverer = QGst::Discoverer::create(QGst::ClockTime::fromSeconds(1));
-    QVERIFY(not discoverer.isNull());
+    QVERIFY(!discoverer.isNull());
 
     // test discovery request
     QGst::DiscovererInfoPtr info;
@@ -592,7 +592,7 @@ void DiscovererTest::testAsyncDiscovery()
     // create a discoverer
     m_discoveryState = DiscoveryPending;
     QGst::DiscovererPtr discoverer = QGst::Discoverer::create(QGst::ClockTime::fromSeconds(1));
-    QVERIFY(not discoverer.isNull());
+    QVERIFY(!discoverer.isNull());
 
     QVERIFY(QGlib::connect(discoverer, "starting", this, &DiscovererTest::onStartingDiscovery, 0/*QGlib::PassSender*/));
     QVERIFY(QGlib::connect(discoverer, "discovered", this, &DiscovererTest::onUriDiscovered));
