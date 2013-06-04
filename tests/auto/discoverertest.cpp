@@ -486,21 +486,21 @@ void DiscovererTest::verifyStreamInfo(QGst::DiscovererInfoPtr info)
     QCOMPARE(info->streams(GST_TYPE_DISCOVERER_STREAM_INFO).count(), streams.count());
     QCOMPARE(info->streams().count(), streams.count());
 
-    Q_FOREACH(const QGst::DiscovererStreamInfoPtr &info, info->streams()) {
+    Q_FOREACH(const QGst::DiscovererStreamInfoPtr &streamInfo, info->streams()) {
         const StreamInfoList::ConstIterator it =
                 std::find_if(streams.constBegin(), streams.constEnd(),
-                             std::bind2nd(std::mem_fun(&StreamInfo::acceptStream), info));
+                             std::bind2nd(std::mem_fun(&StreamInfo::acceptStream), streamInfo));
 
         if (it == streams.constEnd()) {
             Q_FOREACH(const StreamInfoPtr expectedInfo, streams) {
-                expectedInfo->acceptStream(info, StreamInfo::Debug);
+                expectedInfo->acceptStream(streamInfo, StreamInfo::Debug);
             }
 
-            QFAIL(qPrintable("Unexpected stream: " + info->caps()->toString()));
+            QFAIL(qPrintable("Unexpected stream: " + streamInfo->caps()->toString()));
         }
 
         streams.removeAt(it - streams.constBegin());
-        QVERIFY(!info->misc().isValid());
+        QVERIFY(!streamInfo->misc().isValid());
     }
 
     QVERIFY(streams.isEmpty());
