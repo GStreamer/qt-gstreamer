@@ -43,11 +43,7 @@ void QWidgetVideoSinkDelegate::setWidget(QWidget *widget)
         m_widget.data()->setAttribute(Qt::WA_OpaquePaintEvent, m_opaquePaintEventAttribute);
         m_widget.data()->update();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         m_widget = NULL;
-#else
-        m_widget = QWeakPointer<QWidget>();
-#endif
     }
 
     if (widget) {
