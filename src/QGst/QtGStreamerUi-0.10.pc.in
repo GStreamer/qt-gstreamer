@@ -4,8 +4,8 @@ libdir=@LIB_INSTALL_DIR@
 includedir=@INCLUDES_INSTALL_DIR@
 
 Name: QtGStreamerUi-0.10
-Description: QtGui GStreamer integration library
-Requires: QtGui QtGStreamer-0.10
+Description: QtGui/QtWidgets GStreamer integration library
+Requires: @PKG_CONFIG_QTGUI_DEP@ QtGStreamer-0.10
 Version: @QTGSTREAMER_VERSION@
 Cflags: -I${includedir}
 Libs: -L${libdir} -lQtGStreamerUi-0.10
