@@ -19,7 +19,12 @@
 #include <QGst/Init>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
-#include <QtGui/QApplication>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtWidgets/QApplication>
+#else
+# include <QtGui/QApplication>
+#endif
 
 class VideoWidgetPipelineTest : public QWidget
 {

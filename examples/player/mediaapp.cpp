@@ -18,12 +18,21 @@
  */
 #include "mediaapp.h"
 #include "player.h"
-#include <QtGui/QBoxLayout>
-#include <QtGui/QFileDialog>
-#include <QtGui/QToolButton>
-#include <QtGui/QLabel>
-#include <QtGui/QSlider>
-#include <QtGui/QMouseEvent>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtWidgets/QBoxLayout>
+# include <QtWidgets/QFileDialog>
+# include <QtWidgets/QToolButton>
+# include <QtWidgets/QLabel>
+# include <QtWidgets/QSlider>
+#else
+# include <QtGui/QBoxLayout>
+# include <QtGui/QFileDialog>
+# include <QtGui/QToolButton>
+# include <QtGui/QLabel>
+# include <QtGui/QSlider>
+# include <QtGui/QMouseEvent>
+#endif
 
 MediaApp::MediaApp(QWidget *parent)
     : QWidget(parent)

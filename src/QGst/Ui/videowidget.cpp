@@ -29,8 +29,14 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
-#include <QtGui/QApplication>
-#include <QtGui/QHBoxLayout>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtWidgets/QApplication>
+# include <QtWidgets/QHBoxLayout>
+#else
+# include <QtGui/QApplication>
+# include <QtGui/QHBoxLayout>
+#endif
 
 #ifndef QTGSTREAMER_UI_NO_OPENGL
 # include <QtOpenGL/QGLWidget>
@@ -56,7 +62,9 @@ public:
         : QObject(parent)
     {
         m_windowId = widget()->winId(); //create a new X window (if we are on X11 with alien widgets)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
         QApplication::syncX(); //inform other applications about the new window (on X11)
+#endif
 
         widget()->installEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, true);

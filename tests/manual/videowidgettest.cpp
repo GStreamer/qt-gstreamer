@@ -18,9 +18,16 @@
 #include <QGst/Init>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
-#include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
-#include <QtGui/QButtonGroup>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtWidgets/QApplication>
+# include <QtWidgets/QMessageBox>
+# include <QtWidgets/QButtonGroup>
+#else
+# include <QtGui/QApplication>
+# include <QtGui/QMessageBox>
+# include <QtGui/QButtonGroup>
+#endif
 
 class VideoWidgetTest : public QWidget
 {

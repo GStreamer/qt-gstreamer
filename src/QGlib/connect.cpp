@@ -91,7 +91,7 @@ static void c_marshaller(GClosure *closure, GValue *returnValue, uint paramValue
                                         "This is most likely a bug in the code that invoked the signal.");
                 }
             } catch (...) {
-                msg = QString::fromAscii(e.what());
+                msg = QString::fromLatin1(e.what());
             }
         }
 

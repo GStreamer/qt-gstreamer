@@ -18,9 +18,14 @@
 #include "videoitem.h"
 #include <QtDeclarative/QDeclarativeExtensionPlugin>
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+# define Q_PLUGIN_METADATA(x)
+#endif
+
 class QtGStreamerPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.Qt5GStreamerDeclarative-0.10")
 public:
     void registerTypes(const char *uri);
 };
@@ -32,6 +37,8 @@ void QtGStreamerPlugin::registerTypes(const char *uri)
         QLatin1String("Creating a QGst::Ui::GraphicsVideoSurface from QML is not supported"));
 }
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
 Q_EXPORT_PLUGIN2(qtgstPlugin, QtGStreamerPlugin)
+#endif
 
 #include "plugin.moc"

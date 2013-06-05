@@ -19,9 +19,14 @@
 #define QWIDGET_VIDEO_SINK_DELEGATE_H
 
 #include "qtvideosinkdelegate.h"
-#include <QtCore/QWeakPointer>
 #include <QtCore/QEvent>
-#include <QtGui/QWidget>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# include <QtCore/QPointer>
+# include <QtWidgets/QWidget>
+#else
+# include <QtGui/QWidget>
+#endif
 
 class QWidgetVideoSinkDelegate : public QtVideoSinkDelegate
 {
@@ -40,7 +45,11 @@ protected:
 
 private:
     // "widget" property
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    QPointer<QWidget> m_widget;
+#else
     QWeakPointer<QWidget> m_widget;
+#endif
 
     // original value of the Qt::WA_OpaquePaintEvent attribute
     bool m_opaquePaintEventAttribute;
