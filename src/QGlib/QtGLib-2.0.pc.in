@@ -5,7 +5,7 @@ includedir=${prefix}/@QTGSTREAMER_INCLUDES_INSTALL_DIR@
 
 Name: @QTGLIB_LIBRARY@-2.0
 Description: Qt-style C++ bindings library for GLib & GObject
-Requires: @PKG_CONFIG_QTCORE_DEP@
+Requires: @Qt4or5_Core_PKGCONFIG_DEP@
 Requires.private: gobject-2.0
 Version: @QTGSTREAMER_VERSION@
 Cflags: -I${includedir}

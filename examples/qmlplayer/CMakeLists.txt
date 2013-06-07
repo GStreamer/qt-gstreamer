@@ -1,12 +1,15 @@
 project(qtgst-example-qmlplayer)
 
 if (NOT BUILDING_QTGSTREAMER)
-    find_package(Qt4 COMPONENTS QtCore QtGui QtDeclarative REQUIRED)
-    find_package(QtGStreamer REQUIRED)
-    find_package(OpenGL)
-
-    # Use a relative module path to avoid copying FindOpenGLES2.cmake here
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules)
+    find_package(Qt4or5 COMPONENTS Core Gui Widgets Quick1 REQUIRED)
+    if (${QT_VERSION} STREQUAL "5")
+        find_package(Qt5GStreamer REQUIRED)
+    else()
+        find_package(QtGStreamer REQUIRED)
+    endif()
+
+    find_package(OpenGL)
     find_package(OpenGLES2)
 
     set(CMAKE_AUTOMOC ON)
@@ -23,8 +26,7 @@ include_directories(${QTGSTREAMER_INCLUDES})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 add_definitions(${QTGSTREAMER_DEFINITIONS})
 
-if (QT_QTOPENGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
-    set(qmlplayer_gl_libs ${QT_QTOPENGL_LIBRARY})
+if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     if (OPENGLES2_FOUND)
         include_directories(${OPENGLES2_INCLUDE_DIR})
     else()
@@ -35,14 +37,14 @@ else()
 endif()
 
 set(qmlplayer_SOURCES main.cpp player.cpp)
-qt_helper_add_resources(qmlplayer_rcc_SOURCES qmlplayer.qrc)
+qt4or5_add_resources(qmlplayer_rcc_SOURCES qmlplayer.qrc)
 
 add_executable(qmlplayer
     ${qmlplayer_SOURCES}
     ${qmlplayer_rcc_SOURCES}
 )
-target_link_libraries(qmlplayer
-    ${QTGSTREAMER_UI_LIBRARIES}
-    ${QT_QTDECLARATIVE_LIBRARY}
-    ${qmlplayer_gl_libs}
-)
+target_link_libraries(qmlplayer ${QTGSTREAMER_UI_LIBRARIES})
+qt4or5_use_modules(qmlplayer Core Gui Widgets Quick1)
+if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
+    qt4or5_use_modules(qmlplayer OpenGL)
+endif()

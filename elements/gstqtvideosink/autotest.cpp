@@ -15,8 +15,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#define QT_GUI_LIB 1 //enable QtGui in QtTest
-
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/interfaces/colorbalance.h>

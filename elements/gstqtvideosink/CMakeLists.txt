@@ -19,7 +19,7 @@ set(GstQtVideoSink_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/gstqtvideosinkmarshal.c
 )
 
-if (QT_QTOPENGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
+if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     set(GstQtVideoSink_GL_SRCS
         openglsurfacepainter.cpp
         gstqtglvideosinkbase.cpp
@@ -30,11 +30,11 @@ if (QT_QTOPENGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     )
 
     if (OPENGLES2_FOUND)
-        set(GstQtVideoSink_GL_LIBS ${OPENGLES2_LIBRARY} ${QT_QTOPENGL_LIBRARY})
-        include_directories(${OPENGLES2_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
+        set(GstQtVideoSink_GL_LIBS ${OPENGLES2_LIBRARY})
+        include_directories(${OPENGLES2_INCLUDE_DIR})
     else()
-        set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY} ${QT_QTOPENGL_LIBRARY})
-        include_directories(${OPENGL_INCLUDE_DIR} ${QT_QTOPENGL_INCLUDE_DIR})
+        set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY})
+        include_directories(${OPENGL_INCLUDE_DIR})
     endif()
 else()
     add_definitions(-DGST_QT_VIDEO_SINK_NO_OPENGL)
@@ -42,8 +42,6 @@ endif()
 
 add_library(gstqtvideosink MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
 target_link_libraries(gstqtvideosink
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTGUI_LIBRARY}
     ${GOBJECT_LIBRARIES}
     ${GSTREAMER_LIBRARY}
     ${GSTREAMER_BASE_LIBRARY}
@@ -51,8 +49,11 @@ target_link_libraries(gstqtvideosink
     ${GSTREAMER_INTERFACES_LIBRARY}
     ${GstQtVideoSink_GL_LIBS}
 )
+qt4or5_use_modules(gstqtvideosink Core Gui Widgets)
+if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
+    qt4or5_use_modules(gstqtvideosink OpenGL)
+endif()
 install(TARGETS gstqtvideosink DESTINATION ${QTGSTREAMER_GST_PLUGINS_INSTALL_DIR})
-
 
 if (QTGSTREAMER_TESTS)
     add_executable(qtvideosink_autotest
@@ -63,9 +64,6 @@ if (QTGSTREAMER_TESTS)
         ${GstQtVideoSink_test_GL_SRCS}
     )
     target_link_libraries(qtvideosink_autotest
-        ${QT_QTTEST_LIBRARY}
-        ${QT_QTCORE_LIBRARY}
-        ${QT_QTGUI_LIBRARY}
         ${GOBJECT_LIBRARIES}
         ${GSTREAMER_LIBRARY}
         ${GSTREAMER_BASE_LIBRARY}
@@ -73,5 +71,8 @@ if (QTGSTREAMER_TESTS)
         ${GSTREAMER_INTERFACES_LIBRARY}
         ${GstQtVideoSink_GL_LIBS}
     )
-    #add_test(NAME qtvideosink_autotest COMMAND qtvideosink_autotest)
+    qt4or5_use_modules(qtvideosink_autotest Core Gui Widgets Test)
+    if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
+        qt4or5_use_modules(qtvideosink_autotest OpenGL)
+    endif()
 endif()

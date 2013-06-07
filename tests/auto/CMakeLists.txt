@@ -1,14 +1,14 @@
-include_directories(${GSTREAMER_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR}
-                    ${QTGSTREAMER_INCLUDES} ${QT_QTTEST_INCLUDE_DIR})
+include_directories(${GSTREAMER_INCLUDE_DIR} ${GLIB2_INCLUDE_DIR} ${QTGSTREAMER_INCLUDES})
 add_definitions(${QTGSTREAMER_DEFINITIONS} -DGST_DISABLE_XML -DGST_DISABLE_LOADSAVE)
 add_definitions(-DSRCDIR="${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 
 macro(qgst_test target)
     add_executable(${target} "${target}.cpp")
-    target_link_libraries(${target} ${QT_QTTEST_LIBRARY} ${GSTREAMER_LIBRARY}
-                                    ${GOBJECT_LIBRARIES} ${QTGSTREAMER_LIBRARIES}
+    target_link_libraries(${target} ${GSTREAMER_LIBRARY} ${GOBJECT_LIBRARIES}
+                                    ${QTGSTREAMER_LIBRARIES}
                                     ${GSTREAMER_PBUTILS_LIBRARY})
+    qt4or5_use_modules(${target} Test)
     add_test(NAME ${target} COMMAND ${target})
 endmacro(qgst_test)
 

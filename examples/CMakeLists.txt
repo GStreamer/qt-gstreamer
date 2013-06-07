@@ -29,7 +29,7 @@ example_distcheck(recorder)
 add_subdirectory(voip)
 example_distcheck(voip)
 
-if (QT_QTDECLARATIVE_FOUND)
+if (Qt4or5_Quick1_FOUND)
     add_subdirectory(qmlplayer)
 endif()
 example_distcheck(qmlplayer)

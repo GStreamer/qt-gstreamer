@@ -4,10 +4,8 @@ set(QtGStreamerQML_SRCS
 )
 
 add_library(QtGStreamerQML MODULE ${QtGStreamerQML_SRCS})
-target_link_libraries(QtGStreamerQML
-    ${QTGSTREAMER_UI_LIBRARIES}
-    ${QT_QTDECLARATIVE_LIBRARY}
-)
+target_link_libraries(QtGStreamerQML ${QTGSTREAMER_UI_LIBRARIES})
+qt4or5_use_modules(QtGStreamerQML Quick1)
 
 install(TARGETS QtGStreamerQML DESTINATION ${QTGSTREAMER_QTQUICK1_INSTALL_DIR}/QtGStreamer)
 install(FILES qmldir DESTINATION ${QTGSTREAMER_QTQUICK1_INSTALL_DIR}/QtGStreamer)

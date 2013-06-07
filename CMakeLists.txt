@@ -15,23 +15,26 @@ option(QTGSTREAMER_EXAMPLES "Build QtGStreamer's examples" ON)
 option(QTGSTREAMER_CODEGEN "Build and use QtGStreamer's codegen" OFF)
 option(USE_GST_PLUGIN_DIR "Install gstreamer plugins at the system location" ON)
 option(USE_QT_PLUGIN_DIR "Install qt plugins at the system location" ON)
-set(QT_VERSION "4" CACHE STRING "Qt version used for the build")
 
 include(GNUInstallDirs)
 include(MacroLogFeature)
-include(QtHelpers)
 
-macro_log_feature(QT_FOUND "Qt" "Required for building everything" "http://qt.nokia.com/" TRUE "${QT_MIN_VERSION}")
-macro_log_feature(QT_QTOPENGL_FOUND "QtOpenGL"
-                                    "Required for OpenGL acceleration in qtvideosink and QtGStreamerUi"
-                                    "http://qt.nokia.com/" FALSE "${QT_MIN_VERSION}")
-macro_log_feature(QT_QTDECLARATIVE_FOUND "QtDeclarative" "Required for building QML support"
-                                         "http://qt.nokia.com/" FALSE "${QT_MIN_VERSION}")
+set(Qt4_MIN_VERSION 4.7)
+set(Qt5_MIN_VERSION 5.0.0)
+find_package(Qt4or5 COMPONENTS Core Gui Widgets OPTIONAL_COMPONENTS OpenGL Quick1 Test)
+macro_log_feature(Qt4or5_FOUND "Qt" "Required for building everything"
+                               "http://qt-project.org/" TRUE "${Qt4or5_MIN_VERSION}")
+macro_log_feature(Qt4or5_OpenGL_FOUND "QtOpenGL"
+                                "Required for OpenGL acceleration in qtvideosink and QtGStreamerUi"
+                                "http://qt-project.org/" FALSE "${Qt4or5_MIN_VERSION}")
+macro_log_feature(Qt4or5_Quick1_FOUND "QtQuick1 (QtDeclarative)"
+                                "Required for building QtQuick1 support"
+                                "http://qt-project.org/" FALSE "${Qt4or5_MIN_VERSION}")
 
 if (QTGSTREAMER_TESTS)
-    macro_log_feature(QT_QTTEST_FOUND "QtTest" "Required for building unit tests"
-                                      "http://qt.nokia.com/" FALSE "${QT_MIN_VERSION}")
-    if (NOT QT_QTTEST_FOUND)
+    macro_log_feature(Qt4or5_Test_FOUND "QtTest" "Required for building unit tests"
+                                      "http://qt-project.org/" FALSE "${Qt4or5_MIN_VERSION}")
+    if (NOT Qt4or5_Test_FOUND)
         set(QTGSTREAMER_TESTS OFF)
     endif()
 endif()
@@ -41,13 +44,15 @@ macro_log_feature(Boost_FOUND "Boost" "Required for building QtGLib" "http://www
 
 # set the QTGSTREAMER_* cmake variables
 set(BUILDING_QTGSTREAMER TRUE)
-if (USE_QT5)
+if (${QT_VERSION} STREQUAL "5")
+    set(USE_QT5 TRUE)
     set(QTGLIB_LIBRARY Qt5GLib)
     set(QTGSTREAMER_LIBRARY Qt5GStreamer)
     set(QTGSTREAMER_UI_LIBRARY Qt5GStreamerUi)
     set(QTGSTREAMER_UTILS_LIBRARY Qt5GStreamerUtils)
     set(QTGSTREAMER_PACKAGE_NAME Qt5GStreamer)
-elseif (USE_QT4)
+elseif (${QT_VERSION} STREQUAL "4")
+    set(USE_QT4 TRUE)
     set(QTGLIB_LIBRARY QtGLib)
     set(QTGSTREAMER_LIBRARY QtGStreamer)
     set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
