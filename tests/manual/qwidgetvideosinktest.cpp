@@ -57,7 +57,7 @@ QWidgetVideoSinkTest::QWidgetVideoSinkTest(QWidget *parent, Qt::WindowFlags f)
 
     m_pipeline = QGst::Pipeline::create();
     QGst::ElementPtr src = QGst::ElementFactory::make("videotestsrc");
-    m_sink = QGst::ElementFactory::make("qwidgetvideosink");
+    m_sink = QGst::ElementFactory::make(QWIDGETVIDEOSINK_NAME);
 
     if (!src || !m_sink) {
         throw std::runtime_error("Unable to initialize the required elements");

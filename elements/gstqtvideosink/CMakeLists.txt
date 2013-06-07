@@ -40,8 +40,14 @@ else()
     add_definitions(-DGST_QT_VIDEO_SINK_NO_OPENGL)
 endif()
 
-add_library(gstqtvideosink MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
-target_link_libraries(gstqtvideosink
+add_definitions(
+    -DQTVIDEOSINK_NAME="${QTVIDEOSINK_NAME}"
+    -DQTGLVIDEOSINK_NAME="${QTGLVIDEOSINK_NAME}"
+    -DQWIDGETVIDEOSINK_NAME="${QWIDGETVIDEOSINK_NAME}"
+)
+
+add_library(gst${QTVIDEOSINK_NAME} MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
+target_link_libraries(gst${QTVIDEOSINK_NAME}
     ${GOBJECT_LIBRARIES}
     ${GSTREAMER_LIBRARY}
     ${GSTREAMER_BASE_LIBRARY}
@@ -49,11 +55,11 @@ target_link_libraries(gstqtvideosink
     ${GSTREAMER_INTERFACES_LIBRARY}
     ${GstQtVideoSink_GL_LIBS}
 )
-qt4or5_use_modules(gstqtvideosink Core Gui Widgets)
+qt4or5_use_modules(gst${QTVIDEOSINK_NAME} Core Gui Widgets)
 if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
-    qt4or5_use_modules(gstqtvideosink OpenGL)
+    qt4or5_use_modules(gst${QTVIDEOSINK_NAME} OpenGL)
 endif()
-install(TARGETS gstqtvideosink DESTINATION ${QTGSTREAMER_GST_PLUGINS_INSTALL_DIR})
+install(TARGETS gst${QTVIDEOSINK_NAME} DESTINATION ${QTGSTREAMER_GST_PLUGINS_INSTALL_DIR})
 
 if (QTGSTREAMER_TESTS)
     add_executable(qtvideosink_autotest

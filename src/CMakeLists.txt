@@ -46,6 +46,12 @@ include_directories(${QTGSTREAMER_INCLUDES})
 add_definitions(${QTGSTREAMER_DEFINITIONS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${QTGSTREAMER_FLAGS}")
 
+add_definitions(
+    -DQTVIDEOSINK_NAME="${QTVIDEOSINK_NAME}"
+    -DQTGLVIDEOSINK_NAME="${QTGLVIDEOSINK_NAME}"
+    -DQWIDGETVIDEOSINK_NAME="${QWIDGETVIDEOSINK_NAME}"
+)
+
 # Build the libraries
 add_subdirectory(QGlib)
 add_subdirectory(QGst)

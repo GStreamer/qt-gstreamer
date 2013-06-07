@@ -51,6 +51,9 @@ if (${QT_VERSION} STREQUAL "5")
     set(QTGSTREAMER_UI_LIBRARY Qt5GStreamerUi)
     set(QTGSTREAMER_UTILS_LIBRARY Qt5GStreamerUtils)
     set(QTGSTREAMER_PACKAGE_NAME Qt5GStreamer)
+    set(QTVIDEOSINK_NAME qt5videosink)
+    set(QTGLVIDEOSINK_NAME qt5glvideosink)
+    set(QWIDGETVIDEOSINK_NAME qwidget5videosink)
 elseif (${QT_VERSION} STREQUAL "4")
     set(USE_QT4 TRUE)
     set(QTGLIB_LIBRARY QtGLib)
@@ -58,6 +61,9 @@ elseif (${QT_VERSION} STREQUAL "4")
     set(QTGSTREAMER_UI_LIBRARY QtGStreamerUi)
     set(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils)
     set(QTGSTREAMER_PACKAGE_NAME QtGStreamer)
+    set(QTVIDEOSINK_NAME qtvideosink)
+    set(QTGLVIDEOSINK_NAME qtglvideosink)
+    set(QWIDGETVIDEOSINK_NAME qwidgetvideosink)
 endif()
 set(QTGSTREAMER_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src)
 include(QtGStreamerConfigCommon)
@@ -66,7 +72,7 @@ find_package(GStreamer 0.10.33 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
                                   "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
 macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
-                                               "Used for building the qwidgetvideosink element"
+                                               "Used for building the ${QTVIDEOSINK_NAME} element"
                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
 
 find_package(GStreamerPluginsBase 0.10.36 COMPONENTS app interfaces video pbutils)
@@ -77,7 +83,7 @@ macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces libra
                                                 "Required to build QtGStreamer"
                                                 "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
-                                                "Used for building the qwidgetvideosink element"
+                                                "Used for building the ${QTVIDEOSINK_NAME} element"
                                                 "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
 macro_log_feature(GSTREAMER_PBUTILS_LIBRARY_FOUND "GStreamer pbutils library"
                                                 "Used for building the Discoverer API"
@@ -91,12 +97,12 @@ macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www
 
 find_package(OpenGL)
 macro_log_feature(OPENGL_FOUND "OpenGL"
-                               "Required for OpenGL rendering support in qtvideosink (desktop only)"
+                               "Required for OpenGL rendering support in ${QTVIDEOSINK_NAME} (desktop only)"
                                "http://www.opengl.org" FALSE)
 
 find_package(OpenGLES2)
 macro_log_feature(OPENGLES2_FOUND "OpenGLES"
-                                  "Required for OpenGLES rendering support in qtvideosink (embedded only)"
+                                  "Required for OpenGLES rendering support in ${QTVIDEOSINK_NAME} (embedded only)"
                                   "http://www.opengl.org" FALSE "2.0")
 
 if (QTGSTREAMER_CODEGEN AND CMAKE_CROSSCOMPILING)

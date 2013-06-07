@@ -54,8 +54,8 @@ class GraphicsVideoSurfacePrivate;
  * \endcode
  *
  * This class internally creates and uses either a "qtglvideosink" or a "qtvideosink"
- * element. This element is created the first time it is requested and a reference is
- * kept internally.
+ * element ("qt5glvideosink" / "qt5videosink" in Qt5). This element is created the
+ * first time it is requested and a reference is kept internally.
  *
  * To make use of OpenGL hardware acceleration (using qtglvideosink), you need to set
  * a QGLWidget as the viewport of the QGraphicsView. Note that you must do this before

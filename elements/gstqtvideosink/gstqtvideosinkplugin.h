@@ -24,7 +24,7 @@ GST_DEBUG_CATEGORY_EXTERN(gst_qt_video_sink_debug);
 #define GST_CAT_DEFAULT gst_qt_video_sink_debug
 
 
-#define DEFINE_TYPE_FULL(cpp_type, parent_type, additional_initializations) \
+#define DEFINE_TYPE_FULL(cpp_type, type_name, parent_type, additional_initializations) \
     GType cpp_type::get_type() \
     { \
         static volatile gsize gonce_data = 0; \
@@ -32,7 +32,7 @@ GST_DEBUG_CATEGORY_EXTERN(gst_qt_video_sink_debug);
             GType type; \
             type = gst_type_register_static_full( \
                 parent_type, \
-                g_intern_static_string(#cpp_type), \
+                g_intern_static_string(type_name), \
                 sizeof(cpp_type##Class), \
                 &cpp_type::base_init, \
                 NULL,   /* base_finalize */ \
@@ -50,9 +50,20 @@ GST_DEBUG_CATEGORY_EXTERN(gst_qt_video_sink_debug);
         return (GType) gonce_data; \
     }
 
-#define DEFINE_TYPE(cpp_type, parent_type) \
-    DEFINE_TYPE_FULL(cpp_type, parent_type, Q_UNUSED)
-
+// To allow qt4 and qt5 versions of the plugin to be installed at the same time,
+// use a different name for their GType, so that the glib type system can handle
+// both plugins being loaded by the gstreamer registry
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+# define DEFINE_TYPE(cpp_type, parent_type) \
+    DEFINE_TYPE_FULL(cpp_type, #cpp_type "_qt5", parent_type, Q_UNUSED)
+# define DEFINE_TYPE_WITH_CODE(cpp_type, parent_type, additional_initializations) \
+    DEFINE_TYPE_FULL(cpp_type, #cpp_type "_qt5", parent_type, additional_initializations)
+#else
+# define DEFINE_TYPE(cpp_type, parent_type) \
+    DEFINE_TYPE_FULL(cpp_type, #cpp_type, parent_type, Q_UNUSED)
+# define DEFINE_TYPE_WITH_CODE(cpp_type, parent_type, additional_initializations) \
+    DEFINE_TYPE_FULL(cpp_type, #cpp_type, parent_type, additional_initializations)
+#endif
 
 inline bool qRealIsDouble() { return sizeof(qreal) == sizeof(double); }
 #define G_TYPE_QREAL qRealIsDouble() ? G_TYPE_DOUBLE : G_TYPE_FLOAT

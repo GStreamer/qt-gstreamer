@@ -27,7 +27,7 @@ GstQtVideoSinkBaseClass *GstQtGLVideoSinkBase::s_parent_class = 0;
 
 //------------------------------
 
-DEFINE_TYPE_FULL(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE, init_interfaces)
+DEFINE_TYPE_WITH_CODE(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE, init_interfaces)
 
 void GstQtGLVideoSinkBase::init_interfaces(GType type)
 {

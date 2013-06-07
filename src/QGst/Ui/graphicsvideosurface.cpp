@@ -48,7 +48,7 @@ ElementPtr GraphicsVideoSurface::videoSink() const
         //if the viewport is a QGLWidget, profit from it
         QGLWidget *glw = qobject_cast<QGLWidget*>(d->view->viewport());
         if (glw) {
-            d->videoSink = QGst::ElementFactory::make("qtglvideosink");
+            d->videoSink = QGst::ElementFactory::make(QTGLVIDEOSINK_NAME);
 
             if (!d->videoSink.isNull()) {
                 glw->makeCurrent();
@@ -63,7 +63,7 @@ ElementPtr GraphicsVideoSurface::videoSink() const
 #endif
 
         if (d->videoSink.isNull()) {
-            d->videoSink = QGst::ElementFactory::make("qtvideosink");
+            d->videoSink = QGst::ElementFactory::make(QTVIDEOSINK_NAME);
 
             if (d->videoSink.isNull()) {
                 qCritical("Failed to create qtvideosink. Make sure it is installed correctly");

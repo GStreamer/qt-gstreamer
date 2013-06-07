@@ -288,17 +288,29 @@ AbstractRenderer *AbstractRenderer::create(const ElementPtr & sink, QWidget *vid
         return r;
     }
 
-    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtVideoSink")) {
+    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtVideoSink"
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+      "_qt5"
+#endif
+    )) {
         return new QtVideoSinkRenderer(sink, videoWidget);
     }
 
 #ifndef QTGSTREAMER_UI_NO_OPENGL
-    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtGLVideoSink")) {
+    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQtGLVideoSink"
+# if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+      "_qt5"
+# endif
+    )) {
         return new QtGLVideoSinkRenderer(sink, videoWidget);
     }
 #endif
 
-    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQWidgetVideoSink")) {
+    if (QGlib::Type::fromInstance(sink).name() == QLatin1String("GstQWidgetVideoSink"
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+      "_qt5"
+#endif
+    )) {
         return new QWidgetVideoSinkRenderer(sink, videoWidget);
     }
 
