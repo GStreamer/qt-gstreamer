@@ -10,7 +10,12 @@ CONFIG += silent
 CONFIG += link_pkgconfig
 
 # Now tell qmake to link to QtGStreamer and also use its include path and Cflags.
-PKGCONFIG += QtGStreamer-0.10 QtGStreamerUtils-0.10
+contains(QT_VERSION, ^4\\..*) {
+  PKGCONFIG += QtGStreamer-0.10 QtGStreamerUtils-0.10
+}
+contains(QT_VERSION, ^5\\..*) {
+  PKGCONFIG += Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10
+}
 
 # Recommended if you are using g++ 4.5 or later. Must be removed for other compilers.
 #QMAKE_CXXFLAGS += -std=c++0x

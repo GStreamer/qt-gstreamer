@@ -1,10 +1,14 @@
 
-macro (run_check tool tool_name)
+function (run_check tool tool_name)
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${BINARY_DIR}/build-${EXAMPLE}-${tool_name})
     execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BINARY_DIR}/build-${EXAMPLE}-${tool_name})
 
-    execute_process(COMMAND ${tool} ${SOURCE_DIR}/${EXAMPLE}
+    if (${tool_name} STREQUAL "cmake")
+        set(arguments "-DQT_VERSION=${QT_VERSION}")
+    endif()
+
+    execute_process(COMMAND ${tool} ${SOURCE_DIR}/${EXAMPLE} ${arguments}
                     WORKING_DIRECTORY ${BINARY_DIR}/build-${EXAMPLE}-${tool_name}
                     RESULT_VARIABLE ${tool_name}_RESULT
     )
@@ -26,7 +30,7 @@ macro (run_check tool tool_name)
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${BINARY_DIR}/build-${EXAMPLE}-${tool_name})
 
-endmacro()
+endfunction()
 
 message("##### Running CMAKE on ${EXAMPLE} example #####")
 run_check(${CMAKE_COMMAND} cmake)

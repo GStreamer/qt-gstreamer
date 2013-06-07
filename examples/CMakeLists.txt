@@ -3,6 +3,7 @@ macro(example_distcheck example)
         ${CMAKE_COMMAND}
             -DCMAKE_BUILD_TOOL=${CMAKE_BUILD_TOOL}
             -DQT_QMAKE_EXECUTABLE=${QT_QMAKE_EXECUTABLE}
+            -DQT_VERSION=${QT_VERSION}
             -DBINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}
             -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
             -DEXAMPLE=${example}
@@ -31,5 +32,5 @@ example_distcheck(voip)
 
 if (Qt4or5_Quick1_FOUND)
     add_subdirectory(qmlplayer)
+    example_distcheck(qmlplayer)
 endif()
-example_distcheck(qmlplayer)
