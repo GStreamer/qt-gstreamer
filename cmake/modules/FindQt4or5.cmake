@@ -113,7 +113,7 @@ elseif (${QT_VERSION} STREQUAL "4")
   set(QT_USE_IMPORTED_TARGETS TRUE)
   find_package(Qt4 ${Qt4_MIN_VERSION} ${_Qt4or5_FIND_PACKAGE_ARGS})
 
-  set(_Qt4or5_FOUND ${Qt4_FOUND})
+  set(_Qt4or5_FOUND ${QT4_FOUND})
 
   # set Qt4or5_Foo_FOUND
   foreach (qt_component ${_Qt4or5_FIND_COMPONENTS})
@@ -174,7 +174,8 @@ else()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Qt4or5 FOUND_VAR Qt4or5_FOUND REQUIRED_VARS _Qt4or5_FOUND HANDLE_COMPONENTS)
+find_package_handle_standard_args(Qt4or5 REQUIRED_VARS _Qt4or5_FOUND HANDLE_COMPONENTS)
+set(Qt4or5_FOUND ${QT4OR5_FOUND})
 
 # qt4or5_use_modules(target [ LINK_PUBLIC | LINK_PRIVATE ] <modules>)
 # Supported modules: Core, Gui, Widgets, Quick1, Quick2, Test, OpenGL
