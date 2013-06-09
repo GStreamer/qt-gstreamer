@@ -1,3 +1,40 @@
+qt-gstreamer 0.10.2.2 (2013-06-09)
+==================================
+
+Additions:
+    * Added Qt5 support.
+    * Added GstDiscoverer bindings.
+    * QGlib::Error can now be used in QGlib::Value
+    * Added convenience constructors for QGst::ClockTime
+
+Fixes:
+    * Fixed qtglvideosink painting on QGLFrameBufferObject
+    * Fixed codegen compilation with bison 2.6
+    * Fixed example code in the QGst::Ui::GraphicsVideoSurface apidocs
+    * Many fixes for windows support
+
+Build system fixes and enhancements:
+    * Use recent cmake goodies:
+      * CMakePackageConfigHelpers, which simplifies QtGStreamerConfig.cmake
+        and adds version checking in find_package(QtGStreamer)
+      * CMAKE_POSITION_INDEPENDENT_CODE, which eliminates issues with
+        missing -fPIC / -fPIE
+      * GNUInstallDirs, which adds automagic support for debian multiarch
+        and also takes away the need for LIB_SUFFIX
+    * .dll's are now installed in the correct place ($prefix/bin) on windows
+    * cmake config files are now installed in $libdir/cmake/$package
+      instead of $libdir/$package
+    * Renamed signal.h to qglib_signal.h to avoid problems where the compiler
+      mixes it up with the C <signal.h>
+    * Determine whether to use OpenGLES or desktop OpenGL by looking at
+      what Qt is using on the target system instead of guessing.
+
+Changes in dependencies:
+    * CMake 2.8.9 is now required
+    * Drop completely automoc dependency in favor of cmake's internal automoc
+    * Qt5 can be used instead of Qt4. The resulting qt-gstreamer files
+        will be co-installable with the ones built using Qt4.
+
 qt-gstreamer 0.10.2 (2012-04-15)
 ================================
 
