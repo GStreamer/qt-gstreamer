@@ -19,7 +19,7 @@
 #include "qtvideosinkdelegate.h"
 #include "genericsurfacepainter.h"
 #include <cstring>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 
 GstVideoSinkClass *GstQtVideoSinkBase::s_parent_class = NULL;

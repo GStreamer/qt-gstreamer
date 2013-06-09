@@ -18,29 +18,27 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/interfaces/colorbalance.h>
-#include <QtTest/QTest>
-#include <QtGui/QPainter>
-#include <QtCore/QDebug>
+
+#include <QTest>
+#include <QPainter>
+#include <QDebug>
+#include <QWidget>
+#include <QLabel>
+#include <QGridLayout>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QWidget>
-# include <QtWidgets/QLabel>
-# include <QtWidgets/QGridLayout>
 # define SkipSingle 0
 # define SkipAll 0
 # define QSKIP_PORT(m, a) QSKIP(m)
 #else
-# include <QtGui/QWidget>
-# include <QtGui/QLabel>
-# include <QtGui/QGridLayout>
 # define QSKIP_PORT(m, a) QSKIP(m, a)
 #endif
 
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 # include "openglsurfacepainter.h"
-# include <QtOpenGL/QGLWidget>
-# include <QtOpenGL/QGLPixelBuffer>
+# include <QGLWidget>
+# include <QGLPixelBuffer>
 #endif
 
 #include "genericsurfacepainter.h"

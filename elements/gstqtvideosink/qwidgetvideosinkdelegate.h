@@ -19,14 +19,9 @@
 #define QWIDGET_VIDEO_SINK_DELEGATE_H
 
 #include "qtvideosinkdelegate.h"
-#include <QtCore/QEvent>
-#include <QtCore/QPointer>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QWidget>
-#else
-# include <QtGui/QWidget>
-#endif
+#include <QEvent>
+#include <QPointer>
+#include <QWidget>
 
 class QWidgetVideoSinkDelegate : public QtVideoSinkDelegate
 {

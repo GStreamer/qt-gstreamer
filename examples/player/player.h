@@ -19,8 +19,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <QtCore/QTimer>
-#include <QtCore/QTime>
+#include <QTimer>
+#include <QTime>
 #include <QGst/Pipeline>
 #include <QGst/Ui/VideoWidget>
 

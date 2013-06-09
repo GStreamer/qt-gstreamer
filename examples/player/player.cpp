@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "player.h"
-#include <QtCore/QDir>
-#include <QtCore/QUrl>
+#include <QDir>
+#include <QUrl>
 #include <QGlib/Connect>
 #include <QGlib/Error>
 #include <QGst/Pipeline>

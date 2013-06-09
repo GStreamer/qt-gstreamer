@@ -18,7 +18,7 @@
 #define ABSTRACTSURFACEPAINTER_H
 
 #include "bufferformat.h"
-#include <QtCore/QRectF>
+#include <QRectF>
 
 class QPainter;
 

@@ -21,9 +21,9 @@
 #include "gstqtvideosink.h"
 #include "gstqtglvideosink.h"
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QStack>
-#include <QtGui/QPainter>
+#include <QCoreApplication>
+#include <QStack>
+#include <QPainter>
 
 #define QSIZE_FORMAT "(%d x %d)"
 #define QSIZE_FORMAT_ARGS(size) \

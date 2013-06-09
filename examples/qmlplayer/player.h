@@ -19,7 +19,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QGst/Pipeline>
 #include <QGst/Message>
 

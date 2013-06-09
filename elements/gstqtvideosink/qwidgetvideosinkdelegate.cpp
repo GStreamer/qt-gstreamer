@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "qwidgetvideosinkdelegate.h"
-#include <QtGui/QPainter>
+#include <QPainter>
 
 QWidgetVideoSinkDelegate::QWidgetVideoSinkDelegate(GstQtVideoSinkBase* sink, QObject* parent)
     : QtVideoSinkDelegate(sink, parent)

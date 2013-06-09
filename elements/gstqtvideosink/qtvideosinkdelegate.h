@@ -22,10 +22,10 @@
 #include "bufferformat.h"
 #include "abstractsurfacepainter.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QEvent>
-#include <QtCore/QSet>
-#include <QtCore/QReadWriteLock>
+#include <QObject>
+#include <QEvent>
+#include <QSet>
+#include <QReadWriteLock>
 
 class QGLContext;
 

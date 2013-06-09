@@ -18,13 +18,8 @@
 #include <QGst/Init>
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QWidget>
-#else
-#include <QtGui/QApplication>
-#include <QtGui/QWidget>
-#endif
+#include <QApplication>
+#include <QWidget>
 
 
 class QWidgetVideoSinkTest : public QWidget

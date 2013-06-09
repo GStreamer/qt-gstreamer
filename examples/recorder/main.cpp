@@ -17,17 +17,10 @@
 */
 #include "ui_recorder.h"
 
-#include <QtCore/QDir>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QApplication>
-# include <QtWidgets/QDialog>
-# include <QtWidgets/QMessageBox>
-#else
-# include <QtGui/QApplication>
-# include <QtGui/QDialog>
-# include <QtGui/QMessageBox>
-#endif
+#include <QDir>
+#include <QApplication>
+#include <QDialog>
+#include <QMessageBox>
 
 #include <QGlib/Error>
 #include <QGlib/Connect>
@@ -42,7 +35,7 @@
 #include <QGst/Bus>
 
 #ifdef Q_WS_X11
-# include <QtGui/QX11Info>
+# include <QX11Info>
 #endif
 
 

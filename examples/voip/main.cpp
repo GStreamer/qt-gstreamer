@@ -49,13 +49,8 @@
 
 #include "ui_voip.h"
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QApplication>
-# include <QtWidgets/QDialog>
-#else
-# include <QtGui/QApplication>
-# include <QtGui/QDialog>
-#endif
+#include <QApplication>
+#include <QDialog>
 
 #include <QGlib/Connect>
 #include <QGlib/Error>

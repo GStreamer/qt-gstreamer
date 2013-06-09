@@ -16,9 +16,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <QtCore/QRectF>
-#include <QtCore/QSize>
-#include <QtCore/QMetaType>
+#include <QRectF>
+#include <QSize>
+#include <QMetaType>
 
 struct Fraction
 {

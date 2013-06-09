@@ -17,12 +17,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "player.h"
-#include <QtCore/QUrl>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QFileDialog>
-#else
-# include <QtGui/QFileDialog>
-#endif
+#include <QUrl>
+#include <QFileDialog>
 #include <QGlib/Connect>
 #include <QGlib/Error>
 #include <QGst/ElementFactory>

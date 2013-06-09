@@ -18,7 +18,7 @@
 #define GST_QT_VIDEO_SINK_PLUGIN_H
 
 #include <gst/gst.h>
-#include <QtCore/QtGlobal>
+#include <QtGlobal>
 
 GST_DEBUG_CATEGORY_EXTERN(gst_qt_video_sink_debug);
 #define GST_CAT_DEFAULT gst_qt_video_sink_debug

@@ -17,19 +17,15 @@
 */
 #include "player.h"
 #include <cstdlib>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QApplication>
-#else
-# include <QtGui/QApplication>
-#endif
-#include <QtDeclarative/QDeclarativeView>
-#include <QtDeclarative/QDeclarativeContext>
-#include <QtDeclarative/QDeclarativeEngine>
+#include <QApplication>
+#include <QDeclarativeView>
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
 #include <QGst/Ui/GraphicsVideoSurface>
 #include <QGst/Init>
 
 #ifndef QMLPLAYER_NO_OPENGL
-# include <QtOpenGL/QGLWidget>
+# include <QGLWidget>
 #endif
 
 int main(int argc, char **argv)

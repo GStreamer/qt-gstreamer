@@ -20,16 +20,9 @@
 #include <QGst/Pipeline>
 #include <QGst/ElementFactory>
 #include <QGst/VideoOrientation>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets/QApplication>
-# include <QtWidgets/QMessageBox>
-# include <QtWidgets/QCheckBox>
-#else
-# include <QtGui/QApplication>
-# include <QtGui/QMessageBox>
-# include <QtGui/QCheckBox>
-#endif
+#include <QApplication>
+#include <QMessageBox>
+#include <QCheckBox>
 
 class VideoOrientationTest : public QWidget
 {

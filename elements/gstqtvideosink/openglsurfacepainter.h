@@ -20,7 +20,7 @@
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 
 #include "abstractsurfacepainter.h"
-#include <QtOpenGL/QGLShaderProgram>
+#include <QGLShaderProgram>
 
 #ifndef Q_WS_MAC
 # ifndef APIENTRYP

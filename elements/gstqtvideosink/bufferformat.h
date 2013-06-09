@@ -18,7 +18,7 @@
 #define BUFFERFORMAT_H
 
 #include "utils.h"
-#include <QtCore/QSharedData>
+#include <QSharedData>
 #include <gst/video/video.h>
 
 //0.11 stuff

@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "genericsurfacepainter.h"
-#include <QtGui/QPainter>
+#include <QPainter>
 
 GenericSurfacePainter::GenericSurfacePainter()
     : m_imageFormat(QImage::Format_Invalid)

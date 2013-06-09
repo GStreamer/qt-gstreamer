@@ -18,8 +18,8 @@
 #define GENERICSURFACEPAINTER_H
 
 #include "abstractsurfacepainter.h"
-#include <QtCore/QSet>
-#include <QtGui/QImage>
+#include <QSet>
+#include <QImage>
 
 /**
  * Generic painter that paints using the QPainter API.
