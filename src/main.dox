@@ -33,7 +33,7 @@
  * \li QtGStreamerUtils - Library providing some high level utility classes.
  *
  * In addition, it provides GStreamer elements for drawing video on widgets,
- * graphics items and QML items.
+ * graphics items and QtQuick items.
  *
  * \section api_reference API Reference
  * \li <a href="classes.html">All Classes</a>
@@ -55,7 +55,9 @@
  * You can just do:
  *
  * \code
- * find_package(QtGStreamer)
+ * find_package(QtGStreamer) # for Qt4 QtGStreamer
+ * # ..... OR .....
+ * find_package(Qt5GStreamer) # for Qt5 QtGStreamer
  * \endcode
  *
  * which will find QtGStreamer and define the following variables:
@@ -92,6 +94,13 @@
  * \li QtGStreamer-0.10 - the libraries needed to use QtGStreamer
  * \li QtGStreamerUi-0.10 - the libraries needed to use QtGStreamerUi
  * \li QtGStreamerUtils-0.10 - the libraries needed to use QtGStreamerUtils
+ *
+ * When QtGStreamer is built using Qt5, those packages are called differently:
+ *
+ * \li Qt5GLib-2.0
+ * \li Qt5GStreamer-0.10
+ * \li Qt5GStreamerUi-0.10
+ * \li Qt5GStreamerUtils-0.10
  *
  * \section other_build_systems Other build systems
  *
@@ -149,9 +158,9 @@
  * from Qt that they must be created, destroyed and have their signals and
  * properties handled from the main (GUI) thread.
  *
- * When drawing video on QML or QGraphicsView, it is recommended to use
+ * When drawing video on QtQuick1 (QML) or QGraphicsView, it is recommended to use
  * qtglvideosink, if possible, and fall back to qtvideosink otherwise.
- *  When drawing on QWidgets, it is recommended to embed the platform's
+ * When drawing on QWidgets, it is recommended to embed the platform's
  * hardware accelerated sink, such as xvimagesink on X11, and if this is
  * not possible, use qwidgetvideosink.
  *
@@ -194,8 +203,23 @@
  * QGst::Ui::GraphicsVideoWidget with QGst::Ui::GraphicsVideoSurface to paint
  * on a QGraphicsView.
  *
- * If you are using QML, there is also a "VideoItem" element available when you import
+ * If you are using QtQuick1, there is also a "VideoItem" element available when you import
  * "QtGStreamer 0.10". See the qmlplayer example for details.
+ *
+ * \section qt5_support Qt5 support
+ *
+ * When QtGStreamer is compiled with Qt5, those 3 elements are named:
+ *
+ * \li qt5videosink
+ * \li qt5glvideosink
+ * \li qwidget5videosink
+ *
+ * This is done to allow them to be parallel installable to their Qt4 counterparts
+ * and to avoid Qt version mixing through gstreamer's plugin loading.
+ *
+ * All 3 elements are based on Qt4 concepts (QtWidgets, QtQuick1) and do not support
+ * Qt5's new QtQuick2 scene-graph architecture. Support for that may be added in
+ * a future version of QtGStreamer.
  */
 
 /*! \namespace QGlib

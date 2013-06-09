@@ -18,7 +18,7 @@ In addition, it provides a "qwidgetvideosink" GStreamer element, an video
 sink element that can draw directly on QWidgets using QPainter.
 
 [1]. http://gstreamer.freedesktop.org/
-[2]. http://qt.nokia.com/
+[2]. http://qt-project.org/
 
 2. Building
 -----------
@@ -27,12 +27,12 @@ sink element that can draw directly on QWidgets using QPainter.
 ----------------
 
 QtGStreamer requires the following software to be installed in order to build:
- * CMake 2.8 or later <http://www.cmake.org/>
- * GStreamer 0.10.33 or later <http://gstreamer.freedesktop.org/>
+ * CMake 2.8.9 or later <http://www.cmake.org/>
+ * GStreamer 0.10.36 or later from the 0.10 series <http://gstreamer.freedesktop.org/>
    With its dependencies:
    - Glib / GObject <http://www.gtk.org/>
-   and including gstreamer-plugins-base (0.10.33 or later)
- * Qt 4.7 or later <http://qt.nokia.com/>
+   and including gstreamer-plugins-base (0.10.36 or later)
+ * Qt4 or Qt5 (4.7 or later / 5.0 or later) <http://qt-project.org/>
  * Boost 1.39 or later <http://www.boost.org/>
  * Flex (only if QTGSTREAMER_CODEGEN=ON, see below) <http://flex.sourceforge.net/>
  * Bison (only if QTGSTREAMER_CODEGEN=ON, see below) <http://www.gnu.org/software/bison/>
@@ -77,6 +77,10 @@ Other options that can be passed to cmake include:
   Allows you to specify the type of the build. This is a standard
   cmake option, see the cmake man page for details.
 
+* -DQT_VERSION=[4|5]
+  Allows you to specify the Qt version that you want to build against.
+  The default is 4.
+
 * -DQTGSTREAMER_STATIC=[ON|OFF]
   Allows you to choose whether to build static or dynamic libraries.
   ON means static, OFF means dynamic.
@@ -115,9 +119,6 @@ Other options that can be passed to cmake include:
   Allows you to specify the url that gst-inspect will show as the "Origin URL"
   for all the element plugins that are build from this source package.
 
-* -DLIB_SUFFIX=64
-  Set this to install in $prefix/lib64 instead of $prefix/lib.
-
 2.4 Generating documentation
 ----------------------------
 
@@ -144,7 +145,7 @@ Web:
     http://gstreamer.freedesktop.org/wiki/QtGStreamer
 
 Mailing list:
-    mailto:gstreamer-devel@lists.sourceforge.net
+    mailto:gstreamer-devel@lists.freedesktop.org
 
 Irc channels:
     irc://irc.freenode.net/gstreamer
@@ -157,5 +158,5 @@ Bugs, feature requests & patches should be sent at:
     https://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer&component=qt-gstreamer
 
 --
-George Kiagiadakis <george.kiagiadakis@collabora.co.uk>
-Last updated: Feb 7, 2012
+George Kiagiadakis <george.kiagiadakis@collabora.com>
+Last updated: Jun 9, 2013
