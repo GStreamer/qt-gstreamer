@@ -95,15 +95,27 @@ macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.
 find_package(GObject)
 macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
 
-find_package(OpenGL)
-macro_log_feature(OPENGL_FOUND "OpenGL"
-                               "Required for OpenGL rendering support in ${QTVIDEOSINK_NAME} (desktop only)"
-                               "http://www.opengl.org" FALSE)
+set(CMAKE_REQUIRED_INCLUDES ${QTGSTREAMER_INCLUDES})
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("
+#include <QtCore/QtGlobal>
+#if !defined(QT_OPENGL_ES)
+#error \"No OpenGLES\"
+#endif
+int main() {}
+" USE_OPENGLES)
 
-find_package(OpenGLES2)
-macro_log_feature(OPENGLES2_FOUND "OpenGLES"
-                                  "Required for OpenGLES rendering support in ${QTVIDEOSINK_NAME} (embedded only)"
-                                  "http://www.opengl.org" FALSE "2.0")
+if (USE_OPENGLES)
+    find_package(OpenGLES2)
+    macro_log_feature(OPENGLES2_FOUND "OpenGLES"
+                          "Required for OpenGLES rendering support in ${QTVIDEOSINK_NAME}"
+                          "http://www.opengl.org" FALSE "2.0")
+else()
+    find_package(OpenGL)
+    macro_log_feature(OPENGL_FOUND "OpenGL"
+                          "Required for OpenGL rendering support in ${QTVIDEOSINK_NAME}"
+                          "http://www.opengl.org" FALSE)
+endif()
 
 if (QTGSTREAMER_CODEGEN AND CMAKE_CROSSCOMPILING)
     message(WARNING "Codegen use requested, but we are crosscompiling. Disabling...")
