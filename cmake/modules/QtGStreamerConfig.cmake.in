@@ -8,6 +8,7 @@ get_filename_component(_QTGSTREAMER_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH
 find_file(_QTGSTREAMER_TARGETS_FILE @QTGSTREAMER_PACKAGE_NAME@Targets.cmake
           PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
 include(${_QTGSTREAMER_TARGETS_FILE})
+unset(_QTGSTREAMER_TARGETS_FILE)
 
 set(QTGLIB_LIBRARY @QTGLIB_LIBRARY@)
 set(QTGSTREAMER_LIBRARY @QTGSTREAMER_LIBRARY@)
@@ -15,25 +16,57 @@ set(QTGSTREAMER_UI_LIBRARY @QTGSTREAMER_UI_LIBRARY@)
 set(QTGSTREAMER_UTILS_LIBRARY @QTGSTREAMER_UTILS_LIBRARY@)
 set_and_check(QTGSTREAMER_INCLUDE_DIR @PACKAGE_QTGSTREAMER_INCLUDES_INSTALL_DIR@)
 
+if (@QTGSTREAMER_PACKAGE_NAME@_FIND_QUIET)
+    set(_QTGSTREAMER_FIND_DEPS_ARGS QUIET)
+endif()
+
 # Find dependencies, if not already found
 if ("@QTGSTREAMER_PACKAGE_NAME@" STREQUAL "Qt5GStreamer")
-    if (NOT DEFINED Qt5Widgets_INCLUDE_DIRS)
-        message(STATUS "Qt5 hasn't been found yet. Looking...")
-        find_package(Qt5Widgets)
+    if (NOT DEFINED Qt5Core_INCLUDE_DIRS)
+        if (NOT @QTGSTREAMER_PACKAGE_NAME@_FIND_QUIET)
+            message(STATUS "Qt5 hasn't been found yet. Looking...")
+        endif()
+
+        find_package(Qt5Core ${_QTGSTREAMER_FIND_DEPS_ARGS})
+
+        # import targets for linking to QtGStreamerUi, but don't fail
+        # if they are not found. One may only want QtGStreamer (no Ui).
+        find_package(Qt5Widgets QUIET)
+
+        if (NOT Qt5Core_FOUND)
+            set (@QTGSTREAMER_PACKAGE_NAME@_FOUND FALSE)
+        endif()
     endif()
 else()
     if (NOT DEFINED QT_INCLUDE_DIR)
-        message(STATUS "Qt4 hasn't been found yet. Looking...")
-        find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
+        if (NOT @QTGSTREAMER_PACKAGE_NAME@_FIND_QUIET)
+            message(STATUS "Qt4 hasn't been found yet. Looking...")
+        endif()
+
+        find_package(Qt4 COMPONENTS QtCore ${_QTGSTREAMER_FIND_DEPS_ARGS})
+
+        if (NOT Qt4_FOUND)
+            set (@QTGSTREAMER_PACKAGE_NAME@_FOUND FALSE)
+        endif()
     endif()
 endif()
 
 if (NOT DEFINED Boost_INCLUDE_DIRS)
-    message(STATUS "Boost hasn't been found yet. Looking...")
-    find_package(Boost REQUIRED)
+    if (NOT @QTGSTREAMER_PACKAGE_NAME@_FIND_QUIET)
+        message(STATUS "Boost hasn't been found yet. Looking...")
+    endif()
+
+    find_package(Boost ${_QTGSTREAMER_FIND_DEPS_ARGS})
+
+    if (NOT Boost_FOUND)
+        set (@QTGSTREAMER_PACKAGE_NAME@_FOUND FALSE)
+    endif()
 endif()
+
+unset(_QTGSTREAMER_FIND_DEPS_ARGS)
 
 # include QtGStreamerConfigCommon.cmake from the same directory
 find_file(_QTGSTREAMER_CONFIG_COMMON_FILE QtGStreamerConfigCommon.cmake
           PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
 include(${_QTGSTREAMER_CONFIG_COMMON_FILE})
+unset(_QTGSTREAMER_CONFIG_COMMON_FILE)
