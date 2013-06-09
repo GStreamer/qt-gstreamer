@@ -25,7 +25,7 @@
 class QtGStreamerPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.Qt5GStreamerDeclarative-0.10")
+    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.Qt5GStreamerQuick1-0.10")
 public:
     void registerTypes(const char *uri);
 };
