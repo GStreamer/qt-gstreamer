@@ -177,6 +177,13 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Qt4or5 REQUIRED_VARS _Qt4or5_FOUND HANDLE_COMPONENTS)
 set(Qt4or5_FOUND ${QT4OR5_FOUND})
 
+# Core library needed for compilation tests
+if (${QT_VERSION} STREQUAL "4")
+  set (Qt4or5_Core_LIBRARIES ${QT_QTCORE_LIBRARY})
+else()
+  set (Qt4or5_Core_LIBRARIES ${Qt5Core_LIBRARIES})
+endif()
+
 # qt4or5_use_modules(target [ LINK_PUBLIC | LINK_PRIVATE ] <modules>)
 # Supported modules: Core, Gui, Widgets, Quick1, Quick2, Test, OpenGL
 function(qt4or5_use_modules _target _link_type)

@@ -11,7 +11,7 @@ find_package(Qt4or5 COMPONENTS Core REQUIRED)
 include(QtGStreamerConfigCommon)
 include(MacroCXXCompilationTest)
 
-set(CMAKE_REQUIRED_LIBRARIES ${QTGSTREAMER_LIBRARY} ${QTGLIB_LIBRARY})
+set(CMAKE_REQUIRED_LIBRARIES ${QTGSTREAMER_LIBRARY} ${QTGLIB_LIBRARY} ${Qt4or5_Core_LIBRARIES})
 set(CMAKE_REQUIRED_INCLUDES ${QTGSTREAMER_INCLUDES})
 set(CMAKE_REQUIRED_DEFINITIONS ${QTGSTREAMER_DEFINITIONS})
 set(CMAKE_REQUIRED_FLAGS "${QTGSTREAMER_FLAGS}")
@@ -23,6 +23,9 @@ if (QTGSTREAMER_STATIC)
                                  ${GSTREAMER_LIBRARY}
                                  ${GSTREAMER_INTERFACES_LIBRARY})
 endif()
+
+include(HandleImportedTargetsInCMakeRequiredLibraries)
+handle_imported_targets_in_cmake_required_libraries(CMAKE_REQUIRED_LIBRARIES)
 
 message("********* Begin running compilation tests *********")
 include(CompilationTests.cmake)
