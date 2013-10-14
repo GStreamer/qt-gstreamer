@@ -17,7 +17,7 @@
 */
 
 #include "gstqwidgetvideosink.h"
-#include "qwidgetvideosinkdelegate.h"
+#include "delegates/qwidgetvideosinkdelegate.h"
 
 DEFINE_TYPE(GstQWidgetVideoSink, GST_TYPE_QT_VIDEO_SINK_BASE)
 

@@ -4,12 +4,13 @@ glib2_genmarshal(gstqtvideosinkmarshal
 )
 
 set(GstQtVideoSink_SRCS
-    utils.cpp
-    bufferformat.cpp
-    genericsurfacepainter.cpp
+    utils/utils.cpp
+    utils/bufferformat.cpp
 
-    qtvideosinkdelegate.cpp
-    qwidgetvideosinkdelegate.cpp
+    painters/genericsurfacepainter.cpp
+
+    delegates/qtvideosinkdelegate.cpp
+    delegates/qwidgetvideosinkdelegate.cpp
 
     gstqtvideosinkplugin.cpp
     gstqtvideosinkbase.cpp
@@ -21,12 +22,12 @@ set(GstQtVideoSink_SRCS
 
 if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     set(GstQtVideoSink_GL_SRCS
-        openglsurfacepainter.cpp
+        painters/openglsurfacepainter.cpp
         gstqtglvideosinkbase.cpp
         gstqtglvideosink.cpp
     )
     set(GstQtVideoSink_test_GL_SRCS
-        openglsurfacepainter.cpp
+        painters/openglsurfacepainter.cpp
     )
 
     if (OPENGLES2_FOUND)
@@ -64,9 +65,9 @@ install(TARGETS gst${QTVIDEOSINK_NAME} DESTINATION ${QTGSTREAMER_GST_PLUGINS_INS
 if (QTGSTREAMER_TESTS)
     add_executable(qtvideosink_autotest
         autotest.cpp
-        utils.cpp
-        bufferformat.cpp
-        genericsurfacepainter.cpp
+        utils/utils.cpp
+        utils/bufferformat.cpp
+        painters/genericsurfacepainter.cpp
         ${GstQtVideoSink_test_GL_SRCS}
     )
     target_link_libraries(qtvideosink_autotest

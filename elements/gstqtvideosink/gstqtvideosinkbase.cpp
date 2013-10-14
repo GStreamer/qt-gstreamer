@@ -16,8 +16,8 @@
 */
 
 #include "gstqtvideosinkbase.h"
-#include "qtvideosinkdelegate.h"
-#include "genericsurfacepainter.h"
+#include "delegates/qtvideosinkdelegate.h"
+#include "painters/genericsurfacepainter.h"
 #include <cstring>
 #include <QCoreApplication>
 

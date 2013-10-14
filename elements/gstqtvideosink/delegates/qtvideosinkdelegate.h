@@ -19,8 +19,8 @@
 #define QT_VIDEO_SINK_DELEGATE_H
 
 #include "gstqtvideosinkbase.h"
-#include "bufferformat.h"
-#include "abstractsurfacepainter.h"
+#include "../utils/bufferformat.h"
+#include "../painters/abstractsurfacepainter.h"
 
 #include <QObject>
 #include <QEvent>

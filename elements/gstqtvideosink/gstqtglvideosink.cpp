@@ -17,7 +17,7 @@
 
 #include "gstqtglvideosink.h"
 #include "gstqtvideosinkmarshal.h"
-#include "qtvideosinkdelegate.h"
+#include "delegates/qtvideosinkdelegate.h"
 
 
 guint GstQtGLVideoSink::s_signals[];

@@ -16,8 +16,8 @@
 */
 
 #include "gstqtglvideosinkbase.h"
-#include "openglsurfacepainter.h"
-#include "qtvideosinkdelegate.h"
+#include "painters/openglsurfacepainter.h"
+#include "delegates/qtvideosinkdelegate.h"
 
 const char * const GstQtGLVideoSinkBase::s_colorbalance_labels[] = {
     "contrast", "brightness", "hue", "saturation"

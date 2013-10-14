@@ -16,8 +16,8 @@
 */
 
 #include "qtvideosinkdelegate.h"
-#include "genericsurfacepainter.h"
-#include "openglsurfacepainter.h"
+#include "../painters/genericsurfacepainter.h"
+#include "../painters/openglsurfacepainter.h"
 #include "gstqtvideosink.h"
 #include "gstqtglvideosink.h"
 

@@ -36,12 +36,12 @@
 
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-# include "openglsurfacepainter.h"
+# include "painters/openglsurfacepainter.h"
 # include <QGLWidget>
 # include <QGLPixelBuffer>
 #endif
 
-#include "genericsurfacepainter.h"
+#include "painters/genericsurfacepainter.h"
 
 
 struct PipelineDeleter
