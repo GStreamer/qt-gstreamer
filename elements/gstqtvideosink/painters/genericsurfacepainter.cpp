@@ -78,7 +78,6 @@ void GenericSurfacePainter::cleanup()
 
 void GenericSurfacePainter::paint(quint8 *data,
         const BufferFormat & frameFormat,
-        const QRectF & clipRect,
         QPainter *painter,
         const PaintAreas & areas)
 {
@@ -91,8 +90,14 @@ void GenericSurfacePainter::paint(quint8 *data,
         frameFormat.bytesPerLine(),
         m_imageFormat);
 
+    QRectF sourceRect = areas.sourceRect;
+    sourceRect.setX(sourceRect.x() * frameFormat.frameSize().width());
+    sourceRect.setY(sourceRect.y() * frameFormat.frameSize().height());
+    sourceRect.setWidth(sourceRect.width() * frameFormat.frameSize().width());
+    sourceRect.setHeight(sourceRect.height() * frameFormat.frameSize().height());
+
     painter->fillRect(areas.blackArea1, Qt::black);
-    painter->drawImage(areas.videoArea, image, clipRect);
+    painter->drawImage(areas.videoArea, image, sourceRect);
     painter->fillRect(areas.blackArea2, Qt::black);
 }
 

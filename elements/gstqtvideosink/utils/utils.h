@@ -42,14 +42,21 @@ struct Fraction
 
 struct PaintAreas
 {
-    void calculate(const QRectF & targetArea, const QSize & frameSize,
-                   const Fraction & pixelAspectRatio, const Fraction & displayAspectRatio);
+    void calculate(const QRectF & targetArea,
+                   const QSize & videoSize,
+                   const Fraction & pixelAspectRatio,
+                   const Fraction & displayAspectRatio,
+                   Qt::AspectRatioMode aspectRatioMode);
 
     // the area that we paint on
     QRectF targetArea;
-
-    // the area where the video should be painted on (subrect of or equal to targetArea)
+    // the area where the video should be painted on
+    // (subrect of or equal to targetArea)
     QRectF videoArea;
+
+    // the part of the video rectangle that we are going to blit on the videoArea
+    // in the normalized (0,1] range (texture coordinates)
+    QRectF sourceRect;
 
     // these are small subrects of targetArea that are not
     // covered by videoArea to keep the video's aspect ratio

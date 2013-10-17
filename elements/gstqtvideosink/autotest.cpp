@@ -43,6 +43,7 @@
 
 #include "painters/genericsurfacepainter.h"
 
+Q_DECLARE_METATYPE(Qt::AspectRatioMode)
 
 struct PipelineDeleter
 {
@@ -247,27 +248,31 @@ void QtVideoSinkTest::paintAreasTest_data()
     QTest::addColumn<QRectF>("blackArea1");
     QTest::addColumn<QRectF>("videoArea");
     QTest::addColumn<QRectF>("blackArea2");
+    QTest::addColumn<Qt::AspectRatioMode>("mode");
 
     QTest::newRow("targetArea == videoArea")
         << QRectF(0.0, 0.0, 320.0, 240.0)
         << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
         << QRectF(0.0, 0.0, 0.0, 0.0)
         << QRectF(0.0, 0.0, 320.0, 240.0)
-        << QRectF(0.0, 0.0, 0.0, 0.0);
+        << QRectF(0.0, 0.0, 0.0, 0.0)
+        << Qt::KeepAspectRatio;
 
     QTest::newRow("targetArea wide")
         << QRectF(0.0, 0.0, 400.0, 240.0)
         << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
         << QRectF(0.0, 0.0, 40.0, 240.0)
         << QRectF(40.0, 0.0, 320.0, 240.0)
-        << QRectF(360.0, 0.0, 40.0, 240.0);
+        << QRectF(360.0, 0.0, 40.0, 240.0)
+        << Qt::KeepAspectRatio;
 
     QTest::newRow("targetArea tall")
         << QRectF(0.0, 0.0, 320.0, 300.0)
         << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
         << QRectF(0.0, 0.0, 320.0, 30.0)
         << QRectF(0.0, 30.0, 320.0, 240.0)
-        << QRectF(0.0, 270.0, 320.0, 30.0);
+        << QRectF(0.0, 270.0, 320.0, 30.0)
+        << Qt::KeepAspectRatio;
 
 
     QTest::newRow("targetArea == videoArea @ (2, 3)")
@@ -275,21 +280,24 @@ void QtVideoSinkTest::paintAreasTest_data()
         << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
         << QRectF(0.0, 0.0, 0.0, 0.0)
         << QRectF(2.0, 3.0, 320.0, 240.0)
-        << QRectF(0.0, 0.0, 0.0, 0.0);
+        << QRectF(0.0, 0.0, 0.0, 0.0)
+        << Qt::KeepAspectRatio;
 
     QTest::newRow("targetArea wide @ (2, 3)")
         << QRectF(2.0, 3.0, 400.0, 240.0)
         << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
         << QRectF(2.0, 3.0, 40.0, 240.0)
         << QRectF(42.0, 3.0, 320.0, 240.0)
-        << QRectF(362.0, 3.0, 40.0, 240.0);
+        << QRectF(362.0, 3.0, 40.0, 240.0)
+        << Qt::KeepAspectRatio;
 
     QTest::newRow("targetArea tall @ (2, 3)")
         << QRectF(2.0, 3.0, 320.0, 300.0)
         << QSize(320, 240) << Fraction(1, 1) << Fraction(1, 1)
         << QRectF(2.0, 3.0, 320.0, 30.0)
         << QRectF(2.0, 33.0, 320.0, 240.0)
-        << QRectF(2.0, 273.0, 320.0, 30.0);
+        << QRectF(2.0, 273.0, 320.0, 30.0)
+        << Qt::KeepAspectRatio;
 
 
     QTest::newRow("targetArea.size() == videoSize w/ par 2/1")
@@ -297,14 +305,16 @@ void QtVideoSinkTest::paintAreasTest_data()
         << QSize(160, 240) << Fraction(2, 1) << Fraction(1, 1)
         << QRectF(0.0, 0.0, 160.0, 60.0)
         << QRectF(0.0, 60.0, 160.0, 120.0)
-        << QRectF(0.0, 180.0, 160.0, 60.0);
+        << QRectF(0.0, 180.0, 160.0, 60.0)
+        << Qt::KeepAspectRatio;
 
     QTest::newRow("dar 2/1")
         << QRectF(0.0, 0.0, 160.0, 240.0)
         << QSize(320, 240) << Fraction(1, 1) << Fraction(2, 1)
         << QRectF(0.0, 0.0, 0.0, 0.0)
         << QRectF(0.0, 0.0, 160.0, 240.0)
-        << QRectF(0.0, 0.0, 0.0, 0.0);
+        << QRectF(0.0, 0.0, 0.0, 0.0)
+        << Qt::KeepAspectRatio;
 }
 
 void QtVideoSinkTest::paintAreasTest()
@@ -316,9 +326,10 @@ void QtVideoSinkTest::paintAreasTest()
     QFETCH(QRectF, blackArea1);
     QFETCH(QRectF, videoArea);
     QFETCH(QRectF, blackArea2);
+    QFETCH(Qt::AspectRatioMode, mode);
 
     PaintAreas areas;
-    areas.calculate(targetArea, frameSize, pixelAspectRatio, displayAspectRatio);
+    areas.calculate(targetArea, frameSize, pixelAspectRatio, displayAspectRatio, mode);
     QCOMPARE(areas.targetArea, targetArea);
     QCOMPARE(areas.videoArea, videoArea);
     QCOMPARE(areas.blackArea1, blackArea1);
@@ -354,6 +365,7 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     PaintAreas areas;
     areas.targetArea = QRectF(QPointF(0,0), bufferFormat.frameSize());
     areas.videoArea = areas.targetArea;
+    areas.sourceRect = QRectF(0, 0, 1, 1);
 
     GenericSurfacePainter genericSurfacePainter;
     QVERIFY(genericSurfacePainter.supportsFormat(format));
@@ -372,7 +384,6 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     genericSurfacePainter.paint(
         GST_BUFFER_DATA(buffer.data()),
         bufferFormat,
-        areas.targetArea,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(255, 0, 0));
@@ -382,7 +393,6 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     genericSurfacePainter.paint(
         GST_BUFFER_DATA(buffer.data()),
         bufferFormat,
-        areas.targetArea,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(0, 255, 0));
@@ -392,7 +402,6 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     genericSurfacePainter.paint(
         GST_BUFFER_DATA(buffer.data()),
         bufferFormat,
-        areas.targetArea,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(0, 0, 255));
@@ -402,7 +411,6 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
         genericSurfacePainter.paint(
             GST_BUFFER_DATA(buffer.data()),
             bufferFormat,
-            areas.targetArea,
             &painter,
             areas);
     }
@@ -451,6 +459,7 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     PaintAreas areas;
     areas.targetArea = QRectF(QPointF(0,0), bufferFormat.frameSize());
     areas.videoArea = areas.targetArea;
+    areas.sourceRect = QRectF(0, 0, 1, 1);
 
     QGLPixelBuffer pixelBuffer(100, 100);
     pixelBuffer.makeCurrent();
@@ -480,7 +489,6 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     glSurfacePainter->paint(
         GST_BUFFER_DATA(buffer.data()),
         bufferFormat,
-        areas.targetArea,
         &painter,
         areas);
     QRgb pixel1 = pixelBuffer.toImage().pixel(50, 50);
@@ -497,7 +505,6 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     glSurfacePainter->paint(
         GST_BUFFER_DATA(buffer.data()),
         bufferFormat,
-        areas.targetArea,
         &painter,
         areas);
     pixel1 = pixelBuffer.toImage().pixel(50, 50);
@@ -513,7 +520,6 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     glSurfacePainter->paint(
         GST_BUFFER_DATA(buffer.data()),
         bufferFormat,
-        areas.targetArea,
         &painter,
         areas);
     pixel1 = pixelBuffer.toImage().pixel(50, 50);
@@ -529,7 +535,6 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
         glSurfacePainter->paint(
             GST_BUFFER_DATA(buffer.data()),
             bufferFormat,
-            areas.targetArea,
             &painter,
             areas);
     }
@@ -948,7 +953,7 @@ void QtVideoSinkTest::imageCompare(const QImage & image1, const QImage & image2,
     QRect barsArea;
     if (sourceSize.isValid() && sourceSize != image1.size()) {
         PaintAreas areas;
-        areas.calculate(image1.rect(), sourceSize, Fraction(1,1), Fraction(1,1));
+        areas.calculate(image1.rect(), sourceSize, Fraction(1,1), Fraction(1,1), Qt::KeepAspectRatio);
         barsArea = areas.videoArea.toRect();
     } else {
         barsArea = image1.rect();

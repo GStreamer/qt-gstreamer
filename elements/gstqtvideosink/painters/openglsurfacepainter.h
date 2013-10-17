@@ -48,7 +48,7 @@ public:
     }
 
     virtual void updateColors(int brightness, int contrast, int hue, int saturation);
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat,
                        QPainter *painter, const PaintAreas & areas);
 
 protected:

@@ -165,7 +165,6 @@ void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, i
 
 void OpenGLSurfacePainter::paint(quint8 *data,
         const BufferFormat & frameFormat,
-        const QRectF & clipRect,
         QPainter *painter,
         const PaintAreas & areas)
 {
@@ -183,10 +182,10 @@ void OpenGLSurfacePainter::paint(quint8 *data,
 
     const GLfloat vertexCoordArray[] = QRECT_TO_GLMATRIX(areas.videoArea);
 
-    const GLfloat txLeft = clipRect.left() / frameFormat.frameSize().width();
-    const GLfloat txRight = (clipRect.right() + 1) / frameFormat.frameSize().width();
-    const GLfloat txTop = clipRect.top() / frameFormat.frameSize().height();
-    const GLfloat txBottom = (clipRect.bottom() + 1) / frameFormat.frameSize().height();
+    const GLfloat txLeft = areas.sourceRect.left();
+    const GLfloat txRight = areas.sourceRect.right();
+    const GLfloat txTop = areas.sourceRect.top();
+    const GLfloat txBottom = areas.sourceRect.bottom();
 
     const GLfloat textureCoordArray[] =
     {

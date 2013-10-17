@@ -156,7 +156,6 @@ private:
     bool m_formatDirty;
     BufferFormat m_bufferFormat;
     PaintAreas m_areas;
-    QRectF m_clipRect;
 
     // whether the sink is active (PAUSED or PLAYING)
     mutable QReadWriteLock m_isActiveLock;

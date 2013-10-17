@@ -33,7 +33,7 @@ public:
     virtual void init(const BufferFormat & format) = 0;
     virtual void cleanup() = 0;
 
-    virtual void paint(quint8 *data, const BufferFormat & frameFormat, const QRectF & clipRect,
+    virtual void paint(quint8 *data, const BufferFormat & frameFormat,
                        QPainter *painter, const PaintAreas & areas) = 0;
 
     virtual void updateColors(int brightness, int contrast, int hue, int saturation) = 0;

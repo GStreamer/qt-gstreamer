@@ -196,15 +196,14 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
         {
             m_forceAspectRatioDirty = false;
 
-            if (m_forceAspectRatio) {
-                QReadLocker pixelAspectRatioLocker(&m_pixelAspectRatioLock);
-                m_areas.calculate(targetArea, format.frameSize(),
-                                  format.pixelAspectRatio(), m_pixelAspectRatio);
-            } else {
-                m_areas.targetArea = targetArea;
-                m_areas.videoArea = targetArea;
-                m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
-            }
+
+            QReadLocker pixelAspectRatioLocker(&m_pixelAspectRatioLock);
+            Qt::AspectRatioMode aspectRatioMode = m_forceAspectRatio ?
+                    Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
+            m_areas.calculate(targetArea, format.frameSize(),
+                    format.pixelAspectRatio(), m_pixelAspectRatio,
+                    aspectRatioMode);
+            pixelAspectRatioLocker.unlock();
 
             GST_LOG_OBJECT(m_sink,
                 "Recalculated paint areas: "
@@ -221,11 +220,6 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
             );
         }
         forceAspectRatioLocker.unlock();
-
-        if (m_formatDirty /* || m_clipRectDirty */) {
-            //TODO add properties for modifying clipRect
-            m_clipRect = QRectF(QPointF(0,0), format.frameSize());
-        }
 
         //if either pixelFormat or frameSize have changed, we need to reset the painter
         //and/or change painter, in case the current one does not handle the requested format
@@ -251,7 +245,7 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
             }
             colorsLocker.unlock();
 
-            m_painter->paint(m_buffer->data, m_bufferFormat, m_clipRect, painter, m_areas);
+            m_painter->paint(m_buffer->data, m_bufferFormat, painter, m_areas);
         }
     }
 }

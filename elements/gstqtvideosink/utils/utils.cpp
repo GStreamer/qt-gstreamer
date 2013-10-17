@@ -1,5 +1,7 @@
 /*
-    Copyright (C) 2011-2012 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2011-2013 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+    Copyright (C) 2013 basysKom GmbH <info@basyskom.com>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License version 2.1
@@ -15,42 +17,49 @@
 */
 #include "utils.h"
 
-/*
- * Modified version of gst_video_sink_center_rect
- * Copyright (C) Julien Moutte <julien@moutte.net>
- */
-static QRectF centerRect(const QRectF & src, const QRectF & dst)
+void PaintAreas::calculate(const QRectF & targetArea,
+        const QSize & videoSize,
+        const Fraction & pixelAspectRatio,
+        const Fraction & displayAspectRatio,
+        Qt::AspectRatioMode aspectRatioMode)
 {
-    QRectF result = dst;
-    qreal srcRatio = src.width() / src.height();
-    qreal dstRatio = dst.width() / dst.height();
+    this->targetArea = targetArea;
 
-    if (srcRatio > dstRatio) {
-        result.setWidth(dst.width());
-        result.setHeight(dst.width() / srcRatio);
-        result.moveTop(result.top() + ((dst.height() - result.height()) / 2));
-    } else if (srcRatio < dstRatio) {
-        result.setWidth(dst.height() * srcRatio);
-        result.setHeight(dst.height());
-        result.moveLeft(result.left() + ((dst.width() - result.width()) / 2));
+    switch (aspectRatioMode) {
+    case Qt::IgnoreAspectRatio:
+        videoArea = targetArea;
+        sourceRect = QRectF(0, 0, 1, 1);
+        blackArea1 = blackArea2 = QRectF();
+        break;
+    default:
+      {
+        qreal aspectRatio = pixelAspectRatio.ratio() * displayAspectRatio.invRatio();
+
+        QSizeF videoSizeAdjusted = QSizeF(videoSize.width() * aspectRatio, videoSize.height());
+        videoSizeAdjusted.scale(targetArea.size(), aspectRatioMode);
+
+        // the area that the original video occupies, scaled
+        QRectF videoRect = QRectF(QPointF(), videoSizeAdjusted);
+        videoRect.moveCenter(targetArea.center());
+
+        if (aspectRatioMode == Qt::KeepAspectRatio) {
+          videoArea = videoRect;
+          sourceRect = QRectF(0, 0, 1, 1);
+        } else { // Qt::KeepAspectRatioByExpanding
+          videoArea = targetArea;
+          sourceRect = QRectF(
+              (videoArea.left() - videoRect.left()) / videoRect.width(),
+              (videoArea.top() - videoRect.top()) / videoRect.height(),
+              videoArea.width() / videoRect.width(),
+              videoArea.height() / videoRect.height());
+        }
+        break;
+      }
     }
 
-    return result;
-}
-
-void PaintAreas::calculate(const QRectF & _targetArea,
-        const QSize & frameSize,
-        const Fraction & pixelAspectRatio,
-        const Fraction & displayAspectRatio)
-{
-    targetArea = _targetArea;
-
-    qreal aspectRatio = pixelAspectRatio.ratio() * displayAspectRatio.invRatio();
-    QRectF srcRect(QPointF(0,0), QSizeF(frameSize.width() * aspectRatio, frameSize.height()));
-
-    videoArea = centerRect(srcRect, targetArea);
-
-    if (videoArea == targetArea) {
+    if (aspectRatioMode == Qt::IgnoreAspectRatio
+        || aspectRatioMode == Qt::KeepAspectRatioByExpanding
+        || videoArea == targetArea) {
         blackArea1 = blackArea2 = QRectF();
     } else {
         blackArea1 = QRectF(
