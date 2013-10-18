@@ -9,6 +9,7 @@ set(GstQtVideoSink_SRCS
 
     painters/genericsurfacepainter.cpp
 
+    delegates/basedelegate.cpp
     delegates/qtvideosinkdelegate.cpp
     delegates/qwidgetvideosinkdelegate.cpp
 

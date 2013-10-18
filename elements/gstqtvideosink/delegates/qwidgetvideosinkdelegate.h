@@ -27,7 +27,7 @@ class QWidgetVideoSinkDelegate : public QtVideoSinkDelegate
 {
     Q_OBJECT
 public:
-    explicit QWidgetVideoSinkDelegate(GstQtVideoSinkBase* sink, QObject* parent = 0);
+    explicit QWidgetVideoSinkDelegate(GstElement * sink, QObject * parent = 0);
     virtual ~QWidgetVideoSinkDelegate();
 
     // "widget" property

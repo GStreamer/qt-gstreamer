@@ -18,7 +18,7 @@
 #include "qwidgetvideosinkdelegate.h"
 #include <QPainter>
 
-QWidgetVideoSinkDelegate::QWidgetVideoSinkDelegate(GstQtVideoSinkBase* sink, QObject* parent)
+QWidgetVideoSinkDelegate::QWidgetVideoSinkDelegate(GstElement * sink, QObject * parent)
     : QtVideoSinkDelegate(sink, parent)
 {
 

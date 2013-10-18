@@ -18,10 +18,7 @@
 #include "qtvideosinkdelegate.h"
 #include "../painters/genericsurfacepainter.h"
 #include "../painters/openglsurfacepainter.h"
-#include "gstqtvideosink.h"
-#include "gstqtglvideosink.h"
 
-#include <QCoreApplication>
 #include <QStack>
 #include <QPainter>
 
@@ -33,139 +30,20 @@
     (float) rect.x(), (float) rect.y(), (float) rect.width(), (float) rect.height()
 
 
-QtVideoSinkDelegate::QtVideoSinkDelegate(GstQtVideoSinkBase *sink, QObject *parent)
-    : QObject(parent)
+QtVideoSinkDelegate::QtVideoSinkDelegate(GstElement *sink, QObject *parent)
+    : BaseDelegate(sink, parent)
     , m_painter(0)
     , m_supportedPainters(Generic)
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     , m_glContext(0)
 #endif
-    , m_colorsDirty(true)
-    , m_brightness(0)
-    , m_contrast(0)
-    , m_hue(0)
-    , m_saturation(0)
-    , m_pixelAspectRatio(1, 1)
-    , m_forceAspectRatioDirty(true)
-    , m_forceAspectRatio(false)
-    , m_formatDirty(true)
-    , m_isActive(false)
-    , m_buffer(NULL)
-    , m_sink(sink)
 {
 }
 
 QtVideoSinkDelegate::~QtVideoSinkDelegate()
 {
-    Q_ASSERT(!isActive());
     destroyPainter();
 }
-
-//-------------------------------------
-
-bool QtVideoSinkDelegate::isActive() const
-{
-    QReadLocker l(&m_isActiveLock);
-    return m_isActive;
-}
-
-void QtVideoSinkDelegate::setActive(bool active)
-{
-    GST_INFO_OBJECT(m_sink, active ? "Activating" : "Deactivating");
-
-    QWriteLocker l(&m_isActiveLock);
-    m_isActive = active;
-    if (!active) {
-        QCoreApplication::postEvent(this, new DeactivateEvent());
-    }
-}
-
-//-------------------------------------
-
-int QtVideoSinkDelegate::brightness() const
-{
-    QReadLocker l(&m_colorsLock);
-    return m_brightness;
-}
-
-void QtVideoSinkDelegate::setBrightness(int brightness)
-{
-    QWriteLocker l(&m_colorsLock);
-    m_brightness = qBound(-100, brightness, 100);
-    m_colorsDirty = true;
-}
-
-int QtVideoSinkDelegate::contrast() const
-{
-    QReadLocker l(&m_colorsLock);
-    return m_contrast;
-}
-
-void QtVideoSinkDelegate::setContrast(int contrast)
-{
-    QWriteLocker l(&m_colorsLock);
-    m_contrast = qBound(-100, contrast, 100);
-    m_colorsDirty = true;
-}
-
-int QtVideoSinkDelegate::hue() const
-{
-    QReadLocker l(&m_colorsLock);
-    return m_hue;
-}
-
-void QtVideoSinkDelegate::setHue(int hue)
-{
-    QWriteLocker l(&m_colorsLock);
-    m_hue = qBound(-100, hue, 100);
-    m_colorsDirty = true;
-}
-
-int QtVideoSinkDelegate::saturation() const
-{
-    QReadLocker l(&m_colorsLock);
-    return m_saturation;
-}
-
-void QtVideoSinkDelegate::setSaturation(int saturation)
-{
-    QWriteLocker l(&m_colorsLock);
-    m_saturation = qBound(-100, saturation, 100);
-    m_colorsDirty = true;
-}
-
-//-------------------------------------
-
-Fraction QtVideoSinkDelegate::pixelAspectRatio() const
-{
-    QReadLocker l(&m_pixelAspectRatioLock);
-    return m_pixelAspectRatio;
-}
-
-void QtVideoSinkDelegate::setPixelAspectRatio(const Fraction & f)
-{
-    QWriteLocker l(&m_pixelAspectRatioLock);
-    m_pixelAspectRatio = f;
-}
-
-//-------------------------------------
-
-bool QtVideoSinkDelegate::forceAspectRatio() const
-{
-    QReadLocker l(&m_forceAspectRatioLock);
-    return m_forceAspectRatio;
-}
-
-void QtVideoSinkDelegate::setForceAspectRatio(bool force)
-{
-    QWriteLocker l(&m_forceAspectRatioLock);
-    if (m_forceAspectRatio != force) {
-        m_forceAspectRatio = force;
-        m_forceAspectRatioDirty = true;
-    }
-}
-
-//-------------------------------------
 
 void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
 {
@@ -364,64 +242,12 @@ void QtVideoSinkDelegate::destroyPainter()
 
 bool QtVideoSinkDelegate::event(QEvent *event)
 {
-    switch((int) event->type()) {
-    case BufferEventType:
-    {
-        BufferEvent *bufEvent = dynamic_cast<BufferEvent*>(event);
-        Q_ASSERT(bufEvent);
-
-        GST_TRACE_OBJECT(m_sink, "Received buffer %"GST_PTR_FORMAT, bufEvent->buffer);
-
-        if (m_buffer) {
-            //free the previous buffer
-            gst_buffer_unref(m_buffer);
-            m_buffer = NULL;
-        }
-
-        if (isActive()) {
-            //schedule this frame for rendering
-            m_buffer = gst_buffer_ref(bufEvent->buffer);
-            if (bufEvent->formatDirty) {
-                m_formatDirty = true;
-            }
-            update();
-        }
-
-        return true;
-    }
-    case DeactivateEventType:
-    {
-        GST_LOG_OBJECT(m_sink, "Received deactivate event");
-
-        if (m_buffer) {
-            gst_buffer_unref(m_buffer);
-            m_buffer = NULL;
-        }
-
+    if (event->type() == DeactivateEventType) {
         if (m_painter) {
             m_painter->cleanup();
             destroyPainter();
         }
-
-        update();
-
-        return true;
     }
-    default:
-        return QObject::event(event);
-    }
-}
 
-void QtVideoSinkDelegate::update()
-{
-#ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    if (G_TYPE_CHECK_INSTANCE_TYPE(m_sink, GST_TYPE_QT_GL_VIDEO_SINK)) {
-        GstQtGLVideoSink::emit_update(m_sink);
-    } else
-#endif
-    if (G_TYPE_CHECK_INSTANCE_TYPE(m_sink, GST_TYPE_QT_VIDEO_SINK)) {
-        GstQtVideoSink::emit_update(m_sink);
-    } else {
-        Q_ASSERT(false);
-    }
+    return BaseDelegate::event(event);
 }

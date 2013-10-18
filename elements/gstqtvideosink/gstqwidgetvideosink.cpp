@@ -62,7 +62,7 @@ void GstQWidgetVideoSink::init(GTypeInstance *instance, gpointer g_class)
     Q_UNUSED(g_class);
 
     GstQtVideoSinkBase *sinkBase = GST_QT_VIDEO_SINK_BASE(instance);
-    sinkBase->delegate = new QWidgetVideoSinkDelegate(sinkBase);
+    sinkBase->delegate = new QWidgetVideoSinkDelegate(GST_ELEMENT(sinkBase));
 }
 
 void GstQWidgetVideoSink::set_property(GObject *object, guint prop_id,
