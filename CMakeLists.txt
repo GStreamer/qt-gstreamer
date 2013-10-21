@@ -21,7 +21,7 @@ include(MacroLogFeature)
 
 set(Qt4_MIN_VERSION 4.7)
 set(Qt5_MIN_VERSION 5.0.0)
-find_package(Qt4or5 COMPONENTS Core Gui Widgets OPTIONAL_COMPONENTS OpenGL Quick1 Quick2 Test)
+find_package(Qt4or5 COMPONENTS Core Gui Widgets OPTIONAL_COMPONENTS OpenGL Quick1 Quick2 Qml Test)
 macro_log_feature(Qt4or5_FOUND "Qt" "Required for building everything"
                                "http://qt-project.org/" TRUE "${Qt4or5_MIN_VERSION}")
 macro_log_feature(Qt4or5_OpenGL_FOUND "QtOpenGL"
@@ -30,9 +30,14 @@ macro_log_feature(Qt4or5_OpenGL_FOUND "QtOpenGL"
 macro_log_feature(Qt4or5_Quick1_FOUND "QtQuick1 (QtDeclarative)"
                                 "Required for building QtQuick1 support"
                                 "http://qt-project.org/" FALSE "${Qt4or5_MIN_VERSION}")
-macro_log_feature(Qt4or5_Quick2_FOUND "QtQuick2 (QtQuick)"
+if (${QT_VERSION} STREQUAL "5")
+    macro_log_feature(Qt4or5_Quick2_FOUND "QtQuick2 (QtQuick)"
                                 "Required for building QtQuick2 support"
-                                "http://qt-project.org/" FALSE "${Qt4or5_MIN_VERSION}")
+                                "http://qt-project.org/" TRUE "${Qt4or5_MIN_VERSION}")
+    macro_log_feature(Qt4or5_Qml_FOUND "QtQml"
+                                "Required for building QtQuick2 support"
+                                "http://qt-project.org/" TRUE "${Qt4or5_MIN_VERSION}")
+endif()
 
 if (QTGSTREAMER_TESTS)
     macro_log_feature(Qt4or5_Test_FOUND "QtTest" "Required for building unit tests"
@@ -51,6 +56,7 @@ if (${QT_VERSION} STREQUAL "5")
     set(USE_QT5 TRUE)
     set(QTGLIB_LIBRARY Qt5GLib)
     set(QTGSTREAMER_LIBRARY Qt5GStreamer)
+    set(QTGSTREAMER_QUICK_LIBRARY Qt5GStreamerQuick)
     set(QTGSTREAMER_UI_LIBRARY Qt5GStreamerUi)
     set(QTGSTREAMER_UTILS_LIBRARY Qt5GStreamerUtils)
     set(QTGSTREAMER_PACKAGE_NAME Qt5GStreamer)

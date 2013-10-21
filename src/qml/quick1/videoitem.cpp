@@ -15,28 +15,31 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef VIDEOITEM_H
-#define VIDEOITEM_H
+#include "videoitem.h"
+#include "../../QGst/Ui/graphicsvideowidget.h"
 
-#include "../QGst/Ui/graphicsvideosurface.h"
-#include <QtDeclarative/QDeclarativeItem>
-
-class VideoItem : public QDeclarativeItem
+VideoItem::VideoItem(QDeclarativeItem *parent)
+    : QDeclarativeItem(parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(QGst::Ui::GraphicsVideoSurface* surface READ surface WRITE setSurface)
-public:
-    explicit VideoItem(QDeclarativeItem *parent = 0);
-    virtual ~VideoItem();
+    m_widget = new QGst::Ui::GraphicsVideoWidget(this);
+}
 
-    QGst::Ui::GraphicsVideoSurface *surface() const;
-    void setSurface(QGst::Ui::GraphicsVideoSurface *surface);
+VideoItem::~VideoItem()
+{
+}
 
-protected:
-    virtual void geometryChanged(const QRectF & newGeometry, const QRectF & oldGeometry);
+QGst::Ui::GraphicsVideoSurface *VideoItem::surface() const
+{
+    return m_widget->surface();
+}
 
-private:
-    QGst::Ui::GraphicsVideoWidget *m_widget;
-};
+void VideoItem::setSurface(QGst::Ui::GraphicsVideoSurface *surface)
+{
+    m_widget->setSurface(surface);
+}
 
-#endif // VIDEOITEM_H
+void VideoItem::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
+{
+    m_widget->setGeometry(newGeometry);
+    QDeclarativeItem::geometryChanged(newGeometry, oldGeometry);
+}

@@ -56,10 +56,8 @@ add_definitions(
 add_subdirectory(QGlib)
 add_subdirectory(QGst)
 
-# Build the QtQuick1 plugin
-if (Qt4or5_Quick1_FOUND)
-    add_subdirectory(qml)
-endif()
+# Build the qml plugins
+add_subdirectory(qml)
 
 # Install the cmake scripts that are used to find the installed library from external projects
 include(CMakePackageConfigHelpers)

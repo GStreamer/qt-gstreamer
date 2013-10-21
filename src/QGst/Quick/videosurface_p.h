@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Collabora Ltd. <info@collabora.com>
+    Copyright (C) 2012-2013 Collabora Ltd. <info@collabora.com>
       @author George Kiagiadakis <george.kiagiadakis@collabora.com>
 
     This library is free software; you can redistribute it and/or modify
@@ -15,31 +15,23 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef QGST_QUICK_VIDEOSURFACE_P_H
+#define QGST_QUICK_VIDEOSURFACE_P_H
+
+#include "videosurface.h"
 #include "videoitem.h"
-#include "../QGst/Ui/graphicsvideowidget.h"
 
-VideoItem::VideoItem(QDeclarativeItem *parent)
-    : QDeclarativeItem(parent)
-{
-    m_widget = new QGst::Ui::GraphicsVideoWidget(this);
-}
+namespace QGst {
+namespace Quick {
 
-VideoItem::~VideoItem()
+class QTGSTREAMERQUICK_NO_EXPORT VideoSurfacePrivate
 {
-}
+public:
+    QSet<VideoItem*> items;
+    ElementPtr videoSink;
+};
 
-QGst::Ui::GraphicsVideoSurface *VideoItem::surface() const
-{
-    return m_widget->surface();
-}
+} // namespace Quick
+} // namespace QGst
 
-void VideoItem::setSurface(QGst::Ui::GraphicsVideoSurface *surface)
-{
-    m_widget->setSurface(surface);
-}
-
-void VideoItem::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
-{
-    m_widget->setGeometry(newGeometry);
-    QDeclarativeItem::geometryChanged(newGeometry, oldGeometry);
-}
+#endif // QGST_QUICK_VIDEOSURFACE_P_H

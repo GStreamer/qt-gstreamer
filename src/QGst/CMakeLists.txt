@@ -34,6 +34,11 @@ set(QtGStreamer_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
+set(QtGStreamerQuick_SRCS
+    Quick/videosurface.cpp
+    Quick/videoitem.cpp
+)
+
 set(QtGStreamerUi_SRCS
     Ui/videowidget.cpp
     Ui/graphicsvideosurface.cpp
@@ -95,6 +100,15 @@ set(QtGStreamer_INSTALLED_HEADERS
     Utils/applicationsource.h   Utils/ApplicationSource
 )
 
+if (Qt4or5_Quick2_FOUND)
+    set(QtGStreamer_INSTALLED_HEADERS
+        ${QtGStreamer_INSTALLED_HEADERS}
+        Quick/global.h
+        Quick/videosurface.h    Quick/VideoSurface
+        Quick/videoitem.h       Quick/VideoItem
+    )
+endif()
+
 file(GLOB QtGStreamer_CODEGEN_HEADERS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.h")
 list(REMOVE_ITEM QtGStreamer_CODEGEN_HEADERS "global.h")
 
@@ -116,6 +130,7 @@ set(QtGStreamer_CODEGEN_INCLUDES
 # Setup the environment
 set(QTGSTREAMER_API_VERSION 0.10)
 set(QTGSTREAMER_SOVERSION 0)
+set(QTGSTREAMER_QUICK_SOVERSION 0)
 set(QTGSTREAMER_UI_SOVERSION 0)
 set(QTGSTREAMER_UTILS_SOVERSION 0)
 include_directories(
@@ -152,6 +167,17 @@ target_link_libraries(${QTGSTREAMER_LIBRARY} LINK_PRIVATE ${GOBJECT_LIBRARIES}
                                   ${GSTREAMER_PBUTILS_LIBRARY})
 qt4or5_use_modules(${QTGSTREAMER_LIBRARY} LINK_PUBLIC Core)
 
+# Build and link QtGStreamerQuick
+if (Qt4or5_Quick2_FOUND)
+    add_library(${QTGSTREAMER_QUICK_LIBRARY} ${SHARED_OR_STATIC} ${QtGStreamerQuick_SRCS})
+    set_target_properties(${QTGSTREAMER_QUICK_LIBRARY} PROPERTIES OUTPUT_NAME ${QTGSTREAMER_QUICK_LIBRARY}-${QTGSTREAMER_API_VERSION}
+                                                    SOVERSION ${QTGSTREAMER_QUICK_SOVERSION}
+                                                      VERSION ${QTGSTREAMER_VERSION})
+    target_link_libraries(${QTGSTREAMER_QUICK_LIBRARY} LINK_PUBLIC ${QTGSTREAMER_LIBRARY})
+    qt4or5_use_modules(${QTGSTREAMER_QUICK_LIBRARY} LINK_PUBLIC Quick2)
+    qt4or5_use_modules(${QTGSTREAMER_QUICK_LIBRARY} LINK_PRIVATE Core)
+endif()
+
 # Build and link QtGStreamerUi
 add_library(${QTGSTREAMER_UI_LIBRARY} ${SHARED_OR_STATIC} ${QtGStreamerUi_SRCS})
 set_target_properties(${QTGSTREAMER_UI_LIBRARY} PROPERTIES OUTPUT_NAME ${QTGSTREAMER_UI_LIBRARY}-${QTGSTREAMER_API_VERSION}
@@ -175,6 +201,9 @@ qt4or5_use_modules(${QTGSTREAMER_UTILS_LIBRARY} LINK_PRIVATE Core)
 
 # Install
 install(TARGETS ${QTGSTREAMER_LIBRARY} EXPORT ${EXPORT_TARGET_SET} ${QTGSTREAMER_INSTALL_TARGET_DEFAULT_ARGS})
+if (Qt4or5_Quick2_FOUND)
+    install(TARGETS ${QTGSTREAMER_QUICK_LIBRARY} EXPORT ${EXPORT_TARGET_SET} ${QTGSTREAMER_INSTALL_TARGET_DEFAULT_ARGS})
+endif()
 install(TARGETS ${QTGSTREAMER_UI_LIBRARY} EXPORT ${EXPORT_TARGET_SET} ${QTGSTREAMER_INSTALL_TARGET_DEFAULT_ARGS})
 install(TARGETS ${QTGSTREAMER_UTILS_LIBRARY} EXPORT ${EXPORT_TARGET_SET} ${QTGSTREAMER_INSTALL_TARGET_DEFAULT_ARGS})
 install_headers("QGst" ${QtGStreamer_INSTALLED_HEADERS})
