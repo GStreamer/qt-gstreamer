@@ -18,7 +18,7 @@ else()
     # allow the example to run from the build tree without installing QtGStreamer
     add_definitions(
         -DQTVIDEOSINK_PATH="${QtGStreamer_BINARY_DIR}/elements/gstqtvideosink"
-        -DUNINSTALLED_IMPORTS_DIR="${QtGStreamer_BINARY_DIR}/src/qml"
+        -DUNINSTALLED_IMPORTS_DIR="${QtGStreamer_BINARY_DIR}/src/qml/quick1"
     )
 endif()
 

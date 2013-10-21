@@ -34,3 +34,8 @@ if (Qt4or5_Quick1_FOUND)
     add_subdirectory(qmlplayer)
     example_distcheck(qmlplayer)
 endif()
+
+if (Qt4or5_Quick2_FOUND)
+    add_subdirectory(qmlplayer2)
+    example_distcheck(qmlplayer2)
+endif()
