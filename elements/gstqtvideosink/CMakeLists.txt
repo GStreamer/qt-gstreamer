@@ -1,6 +1,8 @@
 glib2_genmarshal(gstqtvideosinkmarshal
     VOID:POINTER,FLOAT,FLOAT,FLOAT,FLOAT
     VOID:POINTER,DOUBLE,DOUBLE,DOUBLE,DOUBLE
+    POINTER:POINTER,FLOAT,FLOAT,FLOAT,FLOAT
+    POINTER:POINTER,DOUBLE,DOUBLE,DOUBLE,DOUBLE
 )
 
 set(GstQtVideoSink_SRCS
@@ -21,8 +23,22 @@ set(GstQtVideoSink_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/gstqtvideosinkmarshal.c
 )
 
+if (Qt4or5_Quick2_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
+    set(GstQtVideoSink_SRCS
+        ${GstQtVideoSink_SRCS}
+        painters/videomaterial.cpp
+        painters/videonode.cpp
+
+        delegates/qtquick2videosinkdelegate.cpp
+
+        gstqtquick2videosink.cpp
+    )
+    set(GstQtVideoSink_LINK_OPENGL TRUE)
+endif()
+
 if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
-    set(GstQtVideoSink_GL_SRCS
+    set(GstQtVideoSink_SRCS
+        ${GstQtVideoSink_SRCS}
         painters/openglsurfacepainter.cpp
         gstqtglvideosinkbase.cpp
         gstqtglvideosink.cpp
@@ -30,14 +46,7 @@ if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     set(GstQtVideoSink_test_GL_SRCS
         painters/openglsurfacepainter.cpp
     )
-
-    if (OPENGLES2_FOUND)
-        set(GstQtVideoSink_GL_LIBS ${OPENGLES2_LIBRARY})
-        include_directories(${OPENGLES2_INCLUDE_DIR})
-    else()
-        set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY})
-        include_directories(${OPENGL_INCLUDE_DIR})
-    endif()
+    set(GstQtVideoSink_LINK_OPENGL TRUE)
 else()
     add_definitions(-DGST_QT_VIDEO_SINK_NO_OPENGL)
 endif()
@@ -48,7 +57,17 @@ add_definitions(
     -DQWIDGETVIDEOSINK_NAME="${QWIDGETVIDEOSINK_NAME}"
 )
 
-add_library(gst${QTVIDEOSINK_NAME} MODULE ${GstQtVideoSink_SRCS} ${GstQtVideoSink_GL_SRCS})
+if (GstQtVideoSink_LINK_OPENGL)
+    if (OPENGLES2_FOUND)
+        set(GstQtVideoSink_GL_LIBS ${OPENGLES2_LIBRARY})
+        include_directories(${OPENGLES2_INCLUDE_DIR})
+    else()
+        set(GstQtVideoSink_GL_LIBS ${OPENGL_gl_LIBRARY})
+        include_directories(${OPENGL_INCLUDE_DIR})
+    endif()
+endif()
+
+add_library(gst${QTVIDEOSINK_NAME} MODULE ${GstQtVideoSink_SRCS})
 target_link_libraries(gst${QTVIDEOSINK_NAME}
     ${GOBJECT_LIBRARIES}
     ${GSTREAMER_LIBRARY}
@@ -58,6 +77,9 @@ target_link_libraries(gst${QTVIDEOSINK_NAME}
     ${GstQtVideoSink_GL_LIBS}
 )
 qt4or5_use_modules(gst${QTVIDEOSINK_NAME} Core Gui Widgets)
+if (Qt4or5_Quick2_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
+    qt4or5_use_modules(gst${QTVIDEOSINK_NAME} Quick2)
+endif()
 if (Qt4or5_OpenGL_FOUND AND (OPENGL_FOUND OR OPENGLES2_FOUND))
     qt4or5_use_modules(gst${QTVIDEOSINK_NAME} OpenGL)
 endif()

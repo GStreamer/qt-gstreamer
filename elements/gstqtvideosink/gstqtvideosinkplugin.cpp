@@ -20,6 +20,10 @@
 #include "gstqtglvideosink.h"
 #include "gstqwidgetvideosink.h"
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+# include "gstqtquick2videosink.h"
+#endif
+
 GST_DEBUG_CATEGORY(gst_qt_video_sink_debug);
 
 /* entry point to initialize the plug-in */
@@ -36,6 +40,11 @@ static gboolean plugin_init(GstPlugin *plugin)
 #endif
     gst_element_register(plugin, QWIDGETVIDEOSINK_NAME,
             GST_RANK_NONE, GST_TYPE_QWIDGET_VIDEO_SINK);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    gst_element_register(plugin, "qtquick2videosink",
+            GST_RANK_NONE, GST_TYPE_QT_QUICK2_VIDEO_SINK);
+#endif
 
     return TRUE;
 }

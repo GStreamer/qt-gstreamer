@@ -20,6 +20,7 @@
 
 #include <gst/gst.h>
 
+#include "../gstqtvideosinkplugin.h" //for debug category
 #include "../utils/bufferformat.h"
 #include "../utils/utils.h"
 

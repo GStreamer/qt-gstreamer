@@ -20,6 +20,14 @@
 #include <QSize>
 #include <QMetaType>
 
+// utilities for GST_DEBUG
+#define QSIZE_FORMAT "(%d x %d)"
+#define QSIZE_FORMAT_ARGS(size) \
+    size.width(), size.height()
+#define QRECTF_FORMAT "(x: %f, y: %f, w: %f, h: %f)"
+#define QRECTF_FORMAT_ARGS(rect) \
+    (float) rect.x(), (float) rect.y(), (float) rect.width(), (float) rect.height()
+
 struct Fraction
 {
     inline Fraction() {}
