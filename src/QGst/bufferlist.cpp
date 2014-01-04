@@ -30,9 +30,9 @@ uint BufferList::groupsCount() const
     return gst_buffer_list_n_groups(object<GstBufferList>());
 }
 
-BufferPtr BufferList::bufferAt(uint group, uint index) const
+BufferPtr BufferList::bufferAt(uint index) const
 {
-    return BufferPtr::wrap(gst_buffer_list_get(object<GstBufferList>(), group, index));
+    return BufferPtr::wrap(gst_buffer_list_get(object<GstBufferList>(), index));
 }
 
 } //namespace QGst

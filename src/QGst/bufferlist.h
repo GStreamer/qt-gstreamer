@@ -36,7 +36,7 @@ public:
     static BufferListPtr create();
 
     uint groupsCount() const;
-    BufferPtr bufferAt(uint group, uint index) const;
+    BufferPtr bufferAt(uint index) const;
 
     inline BufferListPtr copy() const;
     inline BufferListPtr makeWritable() const;
