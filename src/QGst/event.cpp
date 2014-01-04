@@ -43,9 +43,10 @@ QString Event::typeName() const
     return QString::fromUtf8(GST_EVENT_TYPE_NAME(object<GstQuery>()));
 }
 
-StructurePtr Event::internalStructure()
+const StructurePtr Event::internalStructure()
 {
-    return SharedStructure::fromMiniObject(object<GstEvent>()->structure, MiniObjectPtr(this));
+    const GstStructure *structure = gst_event_get_structure(object<GstEvent>());
+    return SharedStructure::fromMiniObject(const_cast<GstStructure *>(structure), MiniObjectPtr(this));
 }
 
 quint32 Event::sequenceNumber() const
