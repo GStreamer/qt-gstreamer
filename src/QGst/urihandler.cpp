@@ -16,6 +16,7 @@
 */
 #include "urihandler.h"
 #include "element.h"
+#include <gst/gstelementfactory.h>
 #include <gst/gsturi.h>
 #include <QtCore/QUrl>
 #include <QtCore/QStringList>
