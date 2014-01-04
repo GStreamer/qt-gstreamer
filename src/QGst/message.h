@@ -240,10 +240,8 @@ class QTGSTREAMER_EXPORT DurationMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Duration, Message)
 public:
-    static DurationMessagePtr create(const ObjectPtr & source, Format format, qint64 duration);
+    static DurationMessagePtr create(const ObjectPtr & source);
 
-    Format format() const;
-    qint64 duration() const;
 };
 
 /*! \headerfile message.h <QGst/Message>
