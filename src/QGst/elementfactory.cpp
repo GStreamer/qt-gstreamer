@@ -43,34 +43,9 @@ QGlib::Type ElementFactory::elementType() const
     return gst_element_factory_get_element_type(object<GstElementFactory>());
 }
 
-QString ElementFactory::longName() const
+QString ElementFactory::metadata(const QByteArray &key) const
 {
-    return QString::fromUtf8(gst_element_factory_get_longname(object<GstElementFactory>()));
-}
-
-QString ElementFactory::klass() const
-{
-    return QString::fromUtf8(gst_element_factory_get_klass(object<GstElementFactory>()));
-}
-
-QString ElementFactory::description() const
-{
-    return QString::fromUtf8(gst_element_factory_get_description(object<GstElementFactory>()));
-}
-
-QString ElementFactory::author() const
-{
-    return QString::fromUtf8(gst_element_factory_get_author(object<GstElementFactory>()));
-}
-
-QString ElementFactory::documentationUri() const
-{
-    return QString::fromUtf8(gst_element_factory_get_documentation_uri(object<GstElementFactory>()));
-}
-
-QString ElementFactory::iconName() const
-{
-    return QString::fromUtf8(gst_element_factory_get_icon_name(object<GstElementFactory>()));
+    return QString::fromUtf8(gst_element_factory_get_metadata(object<GstElementFactory>(), key));
 }
 
 uint ElementFactory::padTemplatesCount() const

@@ -36,12 +36,7 @@ public:
     static inline ElementPtr make(const QString & factoryName, const char *elementName = NULL);
 
     QGlib::Type elementType() const;
-    QString longName() const;
-    QString klass() const;
-    QString description() const;
-    QString author() const;
-    QString documentationUri() const;
-    QString iconName() const;
+    QString metadata(const QByteArray &) const;
 
     uint padTemplatesCount() const;
     int uriType() const;
