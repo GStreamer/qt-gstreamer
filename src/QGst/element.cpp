@@ -155,11 +155,7 @@ bool Element::query(const QueryPtr & query)
 
 ClockPtr Element::clock() const
 {
-    if (gst_element_provides_clock(object<GstElement>())) {
-        return ClockPtr::wrap(gst_element_get_clock(object<GstElement>()), false);
-    } else {
-        return ClockPtr();
-    }
+    return ClockPtr::wrap(gst_element_get_clock(object<GstElement>()), false);
 }
 
 bool Element::setClock(const ClockPtr & clock)
