@@ -29,8 +29,8 @@ class QTGSTREAMER_EXPORT ChildProxy : public QGlib::Interface
     QGST_WRAPPER(ChildProxy)
 public:
     uint childrenCount() const;
-    ObjectPtr childByName(const char *name) const;
-    ObjectPtr childByIndex(uint index) const;
+    QGlib::ObjectPtr childByName(const char *name) const;
+    QGlib::ObjectPtr childByIndex(uint index) const;
 
     bool findChildProperty(const char *name, ObjectPtr *object, QGlib::ParamSpecPtr *paramSpec) const;
     QGlib::Value childProperty(const char *name) const;
