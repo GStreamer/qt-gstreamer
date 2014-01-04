@@ -35,7 +35,7 @@ class QTGSTREAMER_EXPORT BufferList : public MiniObject
 public:
     static BufferListPtr create();
 
-    uint groupsCount() const;
+    uint length() const;
     BufferPtr bufferAt(uint index) const;
 
     inline BufferListPtr copy() const;

@@ -25,9 +25,9 @@ BufferListPtr BufferList::create()
     return BufferListPtr::wrap(gst_buffer_list_new(), false);
 }
 
-uint BufferList::groupsCount() const
+uint BufferList::length() const
 {
-    return gst_buffer_list_n_groups(object<GstBufferList>());
+    return gst_buffer_list_length(object<GstBufferList>());
 }
 
 BufferPtr BufferList::bufferAt(uint index) const
