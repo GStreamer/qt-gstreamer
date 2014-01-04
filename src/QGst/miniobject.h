@@ -47,7 +47,7 @@ QTGSTREAMER_EXPORT QGlib::RefCountedObject *wrapMiniObject(void *miniObject);
 } //namespace Private
 } //namespace QGst
 
-QGST_REGISTER_TYPE(QGst::MiniObject)
+QGST_REGISTER_TYPE(QGst::MiniObject) //codegen: GType=G_TYPE_BOXED
 QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::MiniObject, QGst::Private::wrapMiniObject)
 
 #endif

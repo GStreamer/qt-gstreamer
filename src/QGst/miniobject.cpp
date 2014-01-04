@@ -67,7 +67,7 @@ namespace Private {
 
 QGlib::RefCountedObject *wrapMiniObject(void *miniObject)
 {
-    return QGlib::constructWrapper(QGlib::Type::fromInstance(miniObject), miniObject);
+    return QGlib::constructWrapper(GST_MINI_OBJECT_TYPE(miniObject), miniObject);
 }
 
 } //namespace Private
