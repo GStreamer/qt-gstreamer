@@ -53,7 +53,7 @@ public:
     QString typeName() const;
     MessageType type() const;
 
-    StructurePtr internalStructure();
+    const StructurePtr internalStructure();
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);

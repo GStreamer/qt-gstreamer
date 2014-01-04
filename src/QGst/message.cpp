@@ -43,9 +43,10 @@ MessageType Message::type() const
     return static_cast<MessageType>(GST_MESSAGE_TYPE(object<GstMessage>()));
 }
 
-StructurePtr Message::internalStructure()
+const StructurePtr Message::internalStructure()
 {
-    return SharedStructure::fromMiniObject(object<GstMessage>()->structure, MiniObjectPtr(this));
+    const GstStructure *structure = gst_message_get_structure(object<GstMessage>());
+    return SharedStructure::fromMiniObject(const_cast<GstStructure *>(structure), MiniObjectPtr(this));
 }
 
 quint32 Message::sequenceNumber() const
