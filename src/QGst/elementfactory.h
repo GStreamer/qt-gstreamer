@@ -41,8 +41,10 @@ public:
     uint padTemplatesCount() const;
     int uriType() const;
     bool hasInterface(const char *interfaceName) const;
-    bool canSinkCaps(const CapsPtr & caps) const;
-    bool canSrcCaps(const CapsPtr & caps) const;
+    bool canSinkAllCaps(const CapsPtr & caps) const;
+    bool canSrcAllCaps(const CapsPtr & caps) const;
+    bool canSinkAnyCaps(const CapsPtr & caps) const;
+    bool canSrcAnyCaps(const CapsPtr & caps) const;
 
     ElementPtr create(const char *elementName = NULL) const;
 };
