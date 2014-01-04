@@ -51,9 +51,9 @@ UriType UriHandler::uriType() const
 QStringList UriHandler::supportedProtocols() const
 {
     QStringList result;
-    char **protocols = gst_uri_handler_get_protocols(object<GstURIHandler>());
+    const char * const *protocols = gst_uri_handler_get_protocols(object<GstURIHandler>());
     if (protocols) {
-        for (char **p = protocols; p && *p; ++p) {
+        for (const char * const *p = protocols; p && *p; ++p) {
             result.append(QString::fromUtf8(*p));
         }
     }
