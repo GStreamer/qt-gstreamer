@@ -27,7 +27,7 @@ namespace QGst {
 //static
 CapsPtr Caps::createSimple(const char *mediaType)
 {
-    return CapsPtr::wrap(gst_caps_new_simple(mediaType, NULL), false);
+    return CapsPtr::wrap(gst_caps_new_empty_simple(mediaType), false);
 }
 
 //static
