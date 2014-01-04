@@ -16,6 +16,7 @@
 */
 
 #include "videooverlay.h"
+#include "message.h"
 #include <gst/video/videooverlay.h>
 #include <QtCore/QRect>
 
