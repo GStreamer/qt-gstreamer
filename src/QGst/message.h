@@ -17,6 +17,7 @@
 #ifndef QGST_MESSAGE_H
 #define QGST_MESSAGE_H
 
+#include "clocktime.h"
 #include "miniobject.h"
 #include "structure.h"
 #include "taglist.h"
@@ -263,7 +264,9 @@ class QTGSTREAMER_EXPORT AsyncDoneMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(AsyncDone, Message)
 public:
-    static AsyncDoneMessagePtr create(const ObjectPtr & source);
+    static AsyncDoneMessagePtr create(const ObjectPtr & source, ClockTime running_time);
+
+    ClockTime running_time() const;
 };
 
 /*! \headerfile message.h <QGst/Message>
