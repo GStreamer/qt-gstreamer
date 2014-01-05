@@ -64,7 +64,7 @@ namespace QGst {
         } value;
     };
 }
-QGST_REGISTER_TYPE(QGst::Fourcc)
+QGST_REGISTER_TYPE(QGst::Fourcc) //codegen: GType=G_TYPE_UINT
 
 namespace QGst {
     /*! \headerfile structs.h <QGst/Fraction>
