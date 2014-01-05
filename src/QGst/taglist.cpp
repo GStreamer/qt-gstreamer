@@ -95,7 +95,7 @@ TagList::Data::Data(const TagList::Data & other)
 
 TagList::Data::~Data()
 {
-    gst_tag_list_free(taglist);
+    gst_tag_list_unref(taglist);
 }
 
 #endif //DOXYGEN_RUN
@@ -143,7 +143,7 @@ TagList TagList::merge(const TagList & firstList, const TagList & secondList, Ta
 
     //avoid copying the merged taglist by freeing the new one and assigning this one to d->taglist
     TagList tl;
-    gst_tag_list_free(tl.d->taglist);
+    gst_tag_list_unref(tl.d->taglist);
     tl.d->taglist = taglist;
     return tl;
 }
@@ -165,7 +165,7 @@ int TagList::tagValueCount(const char *tag) const
 
 void TagList::clear()
 {
-    gst_tag_list_free(d->taglist);
+    gst_tag_list_unref(d->taglist);
     d->taglist = gst_tag_list_new_empty();
 }
 
