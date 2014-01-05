@@ -87,7 +87,11 @@ CapsPtr Pad::negotiatedCaps() const
 
 bool Pad::setCaps(const CapsPtr & caps)
 {
-    return gst_pad_set_caps(object<GstPad>(), caps);
+    if (caps.isNull() || !caps->isFixed()) {
+        return false;
+    }
+    CapsEventPtr event = CapsEvent::create(caps);
+    return sendEvent(event);
 }
 
 bool Pad::isActive() const
