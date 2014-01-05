@@ -347,26 +347,43 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::EventTypeFlags)
 
 namespace QGst {
+    static const int GstEventNumShift = 8;
     enum EventType {
-        //codegen: EventNewSegment=EVENT_NEWSEGMENT, EventBufferSize=EVENT_BUFFERSIZE
-        EventUnknown = (0 << 4),
-        EventFlushStart = (1 << 4) | EventTypeBoth,
-        EventFlushStop = (2 << 4) | EventTypeBoth | EventTypeSerialized,
-        EventEos = (5 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventNewSegment = (6 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventTag = (7 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventBufferSize = (8 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventSinkMessage = (9 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventQos = (15 << 4) | EventTypeUpstream,
-        EventSeek = (16 << 4) | EventTypeUpstream,
-        EventNavigation = (17 << 4) | EventTypeUpstream,
-        EventLatency = (18 << 4) | EventTypeUpstream,
-        EventStep = (19 << 4) | EventTypeUpstream,
-        EventCustomUpstream = (32 << 4) | EventTypeUpstream,
-        EventCustomDownstream = (32 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventCustomDownstreamOob = (32 << 4) | EventTypeDownstream,
-        EventCustomBoth = (32 << 4) | EventTypeBoth | EventTypeSerialized,
-        EventCustomBothOob = (32 << 4) | EventTypeBoth
+        //codegen: EventBufferSize=EVENT_BUFFERSIZE, EventNewSegment=EVENT_SEGMENT
+        EventUnknown = (0 << GstEventNumShift),
+        EventFlushStart = (10 << GstEventNumShift) | EventTypeBoth,
+        EventFlushStop = (20 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
+
+        /* downstream */
+        EventStreamStart = (40 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventCaps = (50 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventNewSegment = (70 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventTag = (80 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventBufferSize = (90 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventSinkMessage = (100 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventEos = (110 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventToc = (120 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+
+        /* non sticky downstream */
+        EventSegmentDone = (150 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+        EventGap = (160 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+
+        /* upstream events */
+        EventQos = (190 << GstEventNumShift) | EventTypeUpstream,
+        EventSeek = (200 << GstEventNumShift) | EventTypeUpstream,
+        EventNavigation = (210 << GstEventNumShift) | EventTypeUpstream,
+        EventLatency = (220 << GstEventNumShift) | EventTypeUpstream,
+        EventStep = (230 << GstEventNumShift) | EventTypeUpstream,
+        EventReconfigure = (240 << GstEventNumShift ) | EventTypeUpstream,
+        EventTocSelect = (250 << GstEventNumShift) | EventTypeUpstream,
+
+        /* custom events */
+        EventCustomUpstream = (270 << GstEventNumShift) | EventTypeUpstream,
+        EventCustomDownstream = (280 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+        EventCustomDownstreamOob = (290 << GstEventNumShift) | EventTypeDownstream,
+        EventCustomDownstreamSticky = (300 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventCustomBoth = (310 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
+        EventCustomBothOob = (320 << GstEventNumShift) | EventTypeBoth
     };
 }
 QGST_REGISTER_TYPE(QGst::EventType)
