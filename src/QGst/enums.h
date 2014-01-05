@@ -145,13 +145,13 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::FlowReturn)
 
 namespace QGst {
-    enum ActivateMode {
-        ActivateNone,
-        ActivatePush,
-        ActivatePull
+    enum PadMode {
+        PadModeNone,
+        PadModePush,
+        PadModePull
     };
 }
-QGST_REGISTER_TYPE(QGst::ActivateMode)
+QGST_REGISTER_TYPE(QGst::PadMode)
 
 
 namespace QGst {
