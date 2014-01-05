@@ -425,6 +425,16 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::SegmentFlags);
 
 namespace QGst {
+    enum QOSType {
+        //codegen: QosOverflow=QOS_TYPE_OVERFLOW, QosUnderflow=QOS_TYPE_UNDERFLOW, QosThrottle=QOS_TYPE_THROTTLE
+        QosOverflow = 0,
+        QosUnderflow = 1,
+        QosThrottle = 2
+    };
+}
+QGST_REGISTER_TYPE(QGst::QOSType); //codegen: GType=GST_TYPE_QOS_TYPE
+
+namespace QGst {
     enum TagMergeMode {
         TagMergeUndefined,
         TagMergeReplaceAll,
