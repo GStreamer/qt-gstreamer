@@ -27,11 +27,6 @@ BufferPtr Buffer::create(uint size)
     return BufferPtr::wrap(gst_buffer_new_allocate(NULL, size, NULL), false);
 }
 
-quint8 * Buffer::data() const
-{
-    return GST_BUFFER_DATA(object<GstBuffer>());
-}
-
 quint32 Buffer::size() const
 {
     return gst_buffer_get_size(object<GstBuffer>());
