@@ -427,5 +427,14 @@ namespace QGst {
 }
 QGST_REGISTER_TYPE(QGst::DiscovererResult)
 
-
+namespace QGst {
+    enum MapFlag {
+        MapRead = (1 << 0),
+        MapWrite = (1 << 1),
+        MapFlagLast = (1 << 16)
+    };
+    Q_DECLARE_FLAGS(MapFlags, MapFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::MapFlags)
+QGST_REGISTER_TYPE(QGst::MapFlags)
 #endif
