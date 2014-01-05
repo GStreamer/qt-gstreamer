@@ -51,12 +51,12 @@ double getDoubleTag(GstTagList * list, const gchar * tag, int index)
     return value;
 }
 
-QGst::BufferPtr getBufferTag(GstTagList * list, const gchar * tag, int index)
+SamplePtr getSampleTag(GstTagList * list, const gchar * tag, int index)
 {
-    GstBuffer * value = 0;
-    gst_tag_list_get_buffer_index(list, tag, index, &value);
+    GstSample *s = NULL;
+    gst_tag_list_get_sample_index(list, tag, index, &s);
     //Buffer is already refd()
-    return QGst::BufferPtr::wrap(value, false);
+    return SamplePtr::wrap(s, false);
 }
 
 #ifndef DOXYGEN_RUN
@@ -720,12 +720,12 @@ void TagList::setLanguageCode(const QString & value)
                            GST_TAG_LANGUAGE_CODE, QGlib::Value::create(value));
 }
 
-BufferPtr TagList::image(int index) const
+SamplePtr TagList::image(int index) const
 {
-    return getBufferTag(d->taglist, GST_TAG_IMAGE, index);
+    return getSampleTag(d->taglist, GST_TAG_IMAGE, index);
 }
 
-void TagList::setImage(const BufferPtr & value, TagMergeMode mode)
+void TagList::setImage(const SamplePtr & value, TagMergeMode mode)
 {
     gst_tag_list_add_value(d->taglist, static_cast<GstTagMergeMode>(mode),
                            GST_TAG_IMAGE, QGlib::Value::create(value));
@@ -736,23 +736,23 @@ int TagList::imageCount() const
     return gst_tag_list_get_tag_size(d->taglist, GST_TAG_IMAGE);
 }
 
-BufferPtr TagList::previewImage() const
+SamplePtr TagList::previewImage() const
 {
-    return getBufferTag(d->taglist, GST_TAG_PREVIEW_IMAGE, 0);
+    return getSampleTag(d->taglist, GST_TAG_PREVIEW_IMAGE, 0);
 }
 
-void TagList::setPreviewImage(const BufferPtr & value)
+void TagList::setPreviewImage(const SamplePtr & value)
 {
     gst_tag_list_add_value(d->taglist, GST_TAG_MERGE_REPLACE_ALL,
                            GST_TAG_PREVIEW_IMAGE, QGlib::Value::create(value));
 }
 
-BufferPtr TagList::attachment(int index) const
+SamplePtr TagList::attachment(int index) const
 {
-    return getBufferTag(d->taglist, GST_TAG_ATTACHMENT, index);
+    return getSampleTag(d->taglist, GST_TAG_ATTACHMENT, index);
 }
 
-void TagList::setAttachment(const BufferPtr & value, TagMergeMode mode)
+void TagList::setAttachment(const SamplePtr & value, TagMergeMode mode)
 {
     gst_tag_list_add_value(d->taglist, static_cast<GstTagMergeMode>(mode),
                            GST_TAG_ATTACHMENT, QGlib::Value::create(value));
@@ -1048,12 +1048,12 @@ void TagList::setApplicationName(const QString & value)
                            GST_TAG_APPLICATION_NAME, QGlib::Value::create(value));
 }
 
-BufferPtr TagList::applicationData() const
+SamplePtr TagList::applicationData() const
 {
-    return getBufferTag(d->taglist, GST_TAG_APPLICATION_DATA, 0);
+    return getSampleTag(d->taglist, GST_TAG_APPLICATION_DATA, 0);
 }
 
-void TagList::setApplicationData(const BufferPtr & value)
+void TagList::setApplicationData(const SamplePtr & value)
 {
     gst_tag_list_add_value(d->taglist, GST_TAG_MERGE_REPLACE_ALL,
                            GST_TAG_APPLICATION_DATA, QGlib::Value::create(value));

@@ -19,6 +19,7 @@
 #define QGST_TAGLIST_H
 
 #include "global.h"
+#include "sample.h"
 #include "../QGlib/type.h"
 #include "../QGlib/value.h"
 #include <QtCore/QString>
@@ -240,15 +241,15 @@ public:
     QString languageCode() const;
     void setLanguageCode(const QString & value);
 
-    BufferPtr image(int index = 0) const;
-    void setImage(const BufferPtr & value, TagMergeMode mode = TagMergeReplaceAll);
+    SamplePtr image(int index = 0) const;
+    void setImage(const SamplePtr & value, TagMergeMode mode = TagMergeReplaceAll);
     int imageCount() const;
 
-    BufferPtr previewImage() const;
-    void setPreviewImage(const BufferPtr & value);
+    SamplePtr previewImage() const;
+    void setPreviewImage(const SamplePtr & value);
 
-    BufferPtr attachment(int index = 0) const;
-    void setAttachment(const BufferPtr & value, TagMergeMode mode = TagMergeReplaceAll);
+    SamplePtr attachment(int index = 0) const;
+    void setAttachment(const SamplePtr & value, TagMergeMode mode = TagMergeReplaceAll);
     int attachmentCount() const;
 
     double beatsPerMinute() const;
@@ -326,8 +327,8 @@ public:
     QString applicationName() const;
     void setApplicationName(const QString & value);
 
-    BufferPtr applicationData() const;
-    void setApplicationData(const BufferPtr & value);
+    SamplePtr applicationData() const;
+    void setApplicationData(const SamplePtr & value);
 
     QDateTime dateTime() const;
     void setDateTime(const QDateTime & value);
