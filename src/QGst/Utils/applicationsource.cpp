@@ -256,7 +256,7 @@ FlowReturn ApplicationSource::pushBuffer(const BufferPtr & buffer)
     if (d->appSrc()) {
         return static_cast<FlowReturn>(gst_app_src_push_buffer(d->appSrc(), gst_buffer_ref(buffer)));
     } else {
-        return FlowWrongState;
+        return FlowFlushing;
     }
 }
 
@@ -265,7 +265,7 @@ FlowReturn ApplicationSource::endOfStream()
     if (d->appSrc()) {
         return static_cast<FlowReturn>(gst_app_src_end_of_stream(d->appSrc()));
     } else {
-        return FlowWrongState;
+        return FlowFlushing;
     }
 }
 
