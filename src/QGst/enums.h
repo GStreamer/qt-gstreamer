@@ -275,6 +275,18 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::ColorBalanceType)
 
 namespace QGst {
+    enum QueryTypeFlag {
+        QueryTypeUpstream = 1 << 0,
+        QueryTypeDownstream = 1 << 1,
+        QueryTypeSerialized = 1 << 2,
+        QueryTypeBoth = (QueryTypeUpstream | QueryTypeDownstream)
+    };
+    Q_DECLARE_FLAGS(QueryTypeFlags, QueryTypeFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(QueryTypeFlags)
+}
+QGST_REGISTER_TYPE(QGst::QueryTypeFlags)
+
+namespace QGst {
     enum QueryType {
         QueryNone = 0,
         QueryPosition,
