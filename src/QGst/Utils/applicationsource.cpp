@@ -62,10 +62,10 @@ void ApplicationSource::Priv::setCallbacks(ApplicationSource *self)
 {
     if (m_appsrc) {
         if (self) {
-            static GstAppSrcCallbacks callbacks = { &need_data, &enough_data, &seek_data };
+            static GstAppSrcCallbacks callbacks = { &need_data, &enough_data, &seek_data, NULL };
             gst_app_src_set_callbacks(appSrc(), &callbacks, self, NULL);
         } else {
-            static GstAppSrcCallbacks callbacks = { &need_data_noop, &enough_data_noop, &seek_data_noop };
+            static GstAppSrcCallbacks callbacks = { &need_data_noop, &enough_data_noop, &seek_data_noop, NULL };
             gst_app_src_set_callbacks(appSrc(), &callbacks, NULL, NULL);
         }
     }
