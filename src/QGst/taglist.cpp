@@ -80,7 +80,7 @@ TagList::Data::Data()
 TagList::Data::Data(const GstTagList *tl)
     : QSharedData()
 {
-    if (tl && gst_is_tag_list(tl)) {
+    if (tl && GST_IS_TAG_LIST(tl)) {
         taglist = gst_tag_list_copy(tl);
     } else {
         taglist = gst_tag_list_new_empty();
