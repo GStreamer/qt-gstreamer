@@ -34,7 +34,7 @@ quint8 * Buffer::data() const
 
 quint32 Buffer::size() const
 {
-    return GST_BUFFER_SIZE(object<GstBuffer>());
+    return gst_buffer_get_size(object<GstBuffer>());
 }
 
 ClockTime Buffer::timeStamp() const
