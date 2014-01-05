@@ -23,11 +23,6 @@
 
 namespace QGst {
 
-ObjectPtr Event::source() const
-{
-    return ObjectPtr::wrap(GST_EVENT_SRC(object<GstEvent>()));
-}
-
 quint64 Event::timestamp() const
 {
     return object<GstEvent>()->timestamp;

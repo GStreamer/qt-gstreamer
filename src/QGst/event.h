@@ -56,7 +56,6 @@ class QTGSTREAMER_EXPORT Event : public MiniObject
 {
     QGST_WRAPPER(Event)
 public:
-    ObjectPtr source() const;
     quint64 timestamp() const;
     EventType type() const;
     QString typeName() const;
