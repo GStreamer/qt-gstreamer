@@ -40,12 +40,12 @@ void registerValueVTables()
     {
         static void get(const QGlib::Value & value, void *data)
         {
-            *reinterpret_cast<GstMiniObject**>(data) = gst_value_get_mini_object(value);
+	    *reinterpret_cast<GstMiniObject **>(data) = static_cast<GstMiniObject *>(g_value_get_boxed(value));
         };
 
         static void set(QGlib::Value & value, const void *data)
         {
-            gst_value_set_mini_object(value, *reinterpret_cast<GstMiniObject* const *>(data));
+            g_value_set_boxed(value, *reinterpret_cast<GstMiniObject * const *>(data));
         };
     };
     QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
