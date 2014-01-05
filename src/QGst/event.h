@@ -100,6 +100,16 @@ public:
 };
 
 /*! \headerfile event.h <QGst/Event>
+ * \brief Wrapper class for events of type QGst::Caps
+ */
+ class QTGSTREAMER_EXPORT CapsEvent : public Event
+ {
+     QGST_WRAPPER_FAKE_SUBCLASS(Caps, Event)
+public:
+     static CapsEventPtr create(const CapsPtr & caps);
+ };
+
+/*! \headerfile event.h <QGst/Event>
  * \brief Wrapper class for events of type QGst::NewSegmentEvent
  */
 class QTGSTREAMER_EXPORT NewSegmentEvent : public Event
@@ -235,6 +245,7 @@ QGST_REGISTER_TYPE(QGst::Event)
 QGST_REGISTER_SUBCLASS(Event, FlushStart)
 QGST_REGISTER_SUBCLASS(Event, FlushStop)
 QGST_REGISTER_SUBCLASS(Event, Eos)
+QGST_REGISTER_SUBCLASS(Event, Caps)
 QGST_REGISTER_SUBCLASS(Event, NewSegment)
 QGST_REGISTER_SUBCLASS(Event, Tag)
 QGST_REGISTER_SUBCLASS(Event, BufferSize)

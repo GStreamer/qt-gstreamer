@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "caps.h"
 #include "event.h"
 #include "message.h"
 #include "object.h"
@@ -81,6 +82,10 @@ EosEventPtr EosEvent::create()
 }
 
 //********************************************************
+CapsEventPtr CapsEvent::create(const CapsPtr &caps)
+{
+    return CapsEventPtr::wrap(gst_event_new_caps(caps), false);
+}
 
 NewSegmentEventPtr NewSegmentEvent::create(bool update, double rate, double appliedRate,
                                           Format format, qint64 start, qint64 stop, qint64 position)
