@@ -412,6 +412,19 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::SeekType)
 
 namespace QGst {
+    enum SegmentFlag {
+        //codegen: None=SEGMENT_FLAG_NONE, Reset=SEGMENT_FLAG_RESET, Skip=SEGMENT_FLAG_SKIP, Segment=SEGMENT_FLAG_SEGMENT
+        None = SeekFlagNone,
+        Reset = SeekFlagFlush,
+        Skip = SeekFlagSkip,
+        Segment = SeekFlagSegment
+    };
+    Q_DECLARE_FLAGS(SegmentFlags, SegmentFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(SegmentFlags);
+}
+QGST_REGISTER_TYPE(QGst::SegmentFlags);
+
+namespace QGst {
     enum TagMergeMode {
         TagMergeUndefined,
         TagMergeReplaceAll,
