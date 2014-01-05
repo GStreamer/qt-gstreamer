@@ -37,9 +37,14 @@ quint32 Buffer::size() const
     return gst_buffer_get_size(object<GstBuffer>());
 }
 
-ClockTime Buffer::timeStamp() const
+ClockTime Buffer::decodingTimeStamp() const
 {
-    return GST_BUFFER_TIMESTAMP(object<GstBuffer>());
+    return GST_BUFFER_DTS(object<GstBuffer>());
+}
+
+ClockTime Buffer::presentationTimeStamp() const
+{
+    return GST_BUFFER_PTS(object<GstBuffer>());
 }
 
 ClockTime Buffer::duration() const

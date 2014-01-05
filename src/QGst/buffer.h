@@ -40,7 +40,8 @@ public:
     quint8 * data() const;
     quint32 size() const;
 
-    ClockTime timeStamp() const;
+    ClockTime decodingTimeStamp() const;
+    ClockTime presentationTimeStamp() const;
     ClockTime duration() const;
 
     quint64 offset() const;
