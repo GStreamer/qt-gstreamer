@@ -264,7 +264,7 @@ namespace QGst {
         StreamVolumeFormatDb
     };
 }
-QGST_REGISTER_TYPE(QGst::StreamVolumeFormat)
+QGST_REGISTER_TYPE(QGst::StreamVolumeFormat) //codegen: GType=G_TYPE_ENUM
 
 namespace QGst {
     enum ColorBalanceType {
