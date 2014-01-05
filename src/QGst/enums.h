@@ -337,6 +337,8 @@ namespace QGst {
         EventTypeUpstream = 1 << 0,
         EventTypeDownstream = 1 << 1,
         EventTypeSerialized = 1 << 2,
+        EventTypeSticky = 1 << 3,
+        EventTypeStickyMulti = 1 << 4,
         EventTypeBoth = (EventTypeUpstream | EventTypeDownstream)
     };
     Q_DECLARE_FLAGS(EventTypeFlags, EventTypeFlag);
