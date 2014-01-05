@@ -62,12 +62,11 @@ void ApplicationSink::Priv::setCallbacks(ApplicationSink *self)
 {
     if (m_appsink) {
         if (self) {
-            static GstAppSinkCallbacks callbacks = { &eos, &new_preroll,
-                                                     &new_buffer, &new_buffer_list };
+            static GstAppSinkCallbacks callbacks = { &eos, &new_preroll, &new_sample };
             gst_app_sink_set_callbacks(appSink(), &callbacks, self, NULL);
         } else {
             static GstAppSinkCallbacks callbacks = { &eos_noop, &new_preroll_noop,
-                                                     &new_buffer_noop, &new_buffer_list_noop };
+                                                     &new_sample_noop };
             gst_app_sink_set_callbacks(appSink(), &callbacks, NULL, NULL);
         }
     }
