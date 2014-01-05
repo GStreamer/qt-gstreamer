@@ -86,7 +86,7 @@ class QTGSTREAMER_EXPORT FlushStopEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(FlushStop, Event)
 public:
-    static FlushStopEventPtr create();
+    static FlushStopEventPtr create(bool reset_time=true);
 };
 
 /*! \headerfile event.h <QGst/Event>

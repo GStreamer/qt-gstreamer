@@ -68,9 +68,9 @@ FlushStartEventPtr FlushStartEvent::create()
 
 //********************************************************
 
-FlushStopEventPtr FlushStopEvent::create()
+FlushStopEventPtr FlushStopEvent::create(bool reset_time)
 {
-    return FlushStopEventPtr::wrap(gst_event_new_flush_stop(), false);
+    return FlushStopEventPtr::wrap(gst_event_new_flush_stop(reset_time), false);
 }
 
 //********************************************************
