@@ -82,7 +82,7 @@ CapsPtr Pad::allowedCaps() const
 
 CapsPtr Pad::negotiatedCaps() const
 {
-    return CapsPtr::wrap(gst_pad_get_negotiated_caps(object<GstPad>()), false);
+    return CapsPtr::wrap(gst_pad_get_current_caps(object<GstPad>()), false);
 }
 
 bool Pad::setCaps(const CapsPtr & caps)
