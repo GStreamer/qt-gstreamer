@@ -40,13 +40,11 @@ public:
 private:
     static void eos(GstAppSink *sink, gpointer user_data);
     static GstFlowReturn new_preroll(GstAppSink *sink, gpointer user_data);
-    static GstFlowReturn new_buffer(GstAppSink *sink, gpointer user_data);
-    static GstFlowReturn new_buffer_list(GstAppSink *sink, gpointer user_data);
+    static GstFlowReturn new_sample(GstAppSink *sink, gpointer user_data);
 
     static void eos_noop(GstAppSink*, gpointer) {}
     static GstFlowReturn new_preroll_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
-    static GstFlowReturn new_buffer_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
-    static GstFlowReturn new_buffer_list_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
+    static GstFlowReturn new_sample_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
 };
 
 void ApplicationSink::Priv::lazyConstruct(ApplicationSink *self)
