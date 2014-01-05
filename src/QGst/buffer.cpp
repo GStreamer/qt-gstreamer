@@ -77,4 +77,9 @@ void Buffer::setSize(uint size)
     gst_buffer_set_size(object<GstBuffer>(), size);
 }
 
+uint Buffer::extract(uint offset, void *dest, uint size)
+{
+    return gst_buffer_extract(object<GstBuffer>(), offset, dest, size);
+}
+
 } //namespace QGst
