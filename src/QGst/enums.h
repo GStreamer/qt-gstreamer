@@ -37,8 +37,6 @@ QGST_REGISTER_TYPE(QGst::MiniObjectFlags);
 
 namespace QGst {
     enum ObjectFlag {
-        ObjectDisposing = (1<<0),
-        ObjectFloating = (1<<1),
         /*padding*/
         ObjectFlagLast = (1<<4)
     };
