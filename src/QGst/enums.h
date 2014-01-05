@@ -91,14 +91,19 @@ QGST_REGISTER_TYPE(QGst::PadDirection)
 
 namespace QGst {
     enum PadFlag {
-        //codegen: PadInGetCaps=PAD_IN_GETCAPS, PadInSetCaps=PAD_IN_SETCAPS
-        PadBlocked = (ObjectFlagLast << 0),
-        PadFlushing = (ObjectFlagLast << 1),
-        PadInGetCaps = (ObjectFlagLast << 2),
-        PadInSetCaps = (ObjectFlagLast << 3),
-        PadBlocking = (ObjectFlagLast << 4),
+        PadFlagBlocked = (ObjectFlagLast << 0),
+        PadFlagFlushing = (ObjectFlagLast << 1),
+        PadFlagEos = (ObjectFlagLast << 2),
+        PadFlagBlocking = (ObjectFlagLast << 3),
+        PadFlagNeedParent = (ObjectFlagLast << 4),
+        PadFlagNeedReconfigure = (ObjectFlagLast << 5),
+        PadFlagPendingEvents = (ObjectFlagLast << 6),
+        PadFlagFixedCaps = (ObjectFlagLast << 7),
+        PadFlagProxyCaps = (ObjectFlagLast << 8),
+        PadFlagProxyAllocation = (ObjectFlagLast << 9),
+        PadFlagProxyScheduling = (ObjectFlagLast << 10),
         /*padding*/
-        PadFlagLast = (ObjectFlagLast << 8)
+        PadFlagLast = (ObjectFlagLast << 16)
     };
     Q_DECLARE_FLAGS(PadFlags, PadFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(PadFlags);
