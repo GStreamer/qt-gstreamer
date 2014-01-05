@@ -26,7 +26,7 @@
 
 namespace QGlib {
 
-GetTypeImpl<QDate>::operator Type() { return GST_TYPE_DATE; }
+GetTypeImpl<QDate>::operator Type() { return G_TYPE_DATE; }
 GetTypeImpl<QDateTime>::operator Type() { return GST_TYPE_DATE_TIME; }
 
 } //namespace QGlib
@@ -168,7 +168,7 @@ void registerValueVTables()
     {
         static void get(const QGlib::Value & value, void *data)
         {
-            const GDate *gdate = gst_value_get_date(value);
+            const GDate *gdate = static_cast<const GDate *>(g_value_get_boxed(value));
             *reinterpret_cast<QDate*>(data) = QDate(g_date_get_year(gdate),
                                                     g_date_get_month(gdate),
                                                     g_date_get_day(gdate));
@@ -180,7 +180,7 @@ void registerValueVTables()
             GDate *gdate = g_date_new_dmy(qdate->day(),
                                           static_cast<GDateMonth>(qdate->month()),
                                           qdate->year());
-            gst_value_set_date(value, gdate);
+            g_value_set_boxed(value, gdate);
             g_date_free(gdate);
         }
     };
