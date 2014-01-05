@@ -47,17 +47,6 @@ ClockTime Buffer::duration() const
     return GST_BUFFER_DURATION(object<GstBuffer>());
 }
 
-CapsPtr Buffer::caps() const
-{
-    //wrap increasing the refcount
-    return QGst::CapsPtr::wrap(GST_BUFFER_CAPS(object<GstBuffer>()));
-}
-
-void Buffer::setCaps(const CapsPtr & caps)
-{
-    gst_buffer_set_caps(object<GstBuffer>(), caps);
-}
-
 quint64 Buffer::offset() const
 {
     return GST_BUFFER_OFFSET(object<GstBuffer>());
