@@ -287,20 +287,27 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::QueryTypeFlags)
 
 namespace QGst {
+    static const int GstQueryNumShift = 8;
     enum QueryType {
-        QueryNone = 0,
-        QueryPosition,
-        QueryDuration,
-        QueryLatency,
-        QueryJitter,
-        QueryRate,
-        QuerySeeking,
-        QuerySegment,
-        QueryConvert,
-        QueryFormats,
-        QueryBuffering,
-        QueryCustom,
-        QueryUri
+        QueryUnknown = 0,
+        QueryPosition = (10 << GstQueryNumShift) | QueryTypeBoth,
+        QueryDuration = (20 << GstQueryNumShift) | QueryTypeBoth,
+        QueryLatency = (30 << GstQueryNumShift) | QueryTypeBoth,
+        QueryJitter = (40 << GstQueryNumShift) | QueryTypeBoth,
+        QueryRate = (50 << GstQueryNumShift) | QueryTypeBoth,
+        QuerySeeking = (60 << GstQueryNumShift) | QueryTypeBoth,
+        QuerySegment = (70 << GstQueryNumShift) | QueryTypeBoth,
+        QueryConvert = (80 << GstQueryNumShift) | QueryTypeBoth,
+        QueryFormats = (90 << GstQueryNumShift) | QueryTypeBoth,
+        QueryBuffering = (110 << GstQueryNumShift) | QueryTypeBoth,
+        QueryCustom = (120 << GstQueryNumShift) | QueryTypeBoth,
+        QueryUri = (130 << GstQueryNumShift) | QueryTypeBoth,
+        QueryAllocation = (140 << GstQueryNumShift) | QueryTypeDownstream | QueryTypeSerialized,
+        QueryScheduling = (150 << GstQueryNumShift) | QueryTypeUpstream,
+        QueryAcceptCaps = (160 << GstQueryNumShift) | QueryTypeBoth,
+        QueryCaps = (170 << GstQueryNumShift) | QueryTypeBoth,
+        QueryDrain = (180 << GstQueryNumShift) | QueryTypeDownstream | QueryTypeSerialized,
+        QueryContext = (190 << GstQueryNumShift) | QueryTypeBoth
     };
 }
 QGST_REGISTER_TYPE(QGst::QueryType)
