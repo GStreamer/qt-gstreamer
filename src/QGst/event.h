@@ -180,8 +180,9 @@ class QTGSTREAMER_EXPORT QosEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Qos, Event)
 public:
-    static QosEventPtr create(double proportion, ClockTimeDiff diff, ClockTime timestamp);
+    static QosEventPtr create(QOSType qos, double proportion, ClockTimeDiff diff, ClockTime timestamp);
 
+    QOSType type() const;
     double proportion() const;
     ClockTimeDiff diff() const;
     ClockTime timestamp() const;

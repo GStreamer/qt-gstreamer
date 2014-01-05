@@ -261,30 +261,37 @@ MessagePtr SinkMessageEvent::message() const
 
 //********************************************************
 
-QosEventPtr QosEvent::create(double proportion, ClockTimeDiff diff, ClockTime timeStamp)
+QosEventPtr QosEvent::create(QOSType qos, double proportion, ClockTimeDiff diff, ClockTime timeStamp)
 {
-    GstEvent * e = gst_event_new_qos(proportion, diff, static_cast<GstClockTime>(timeStamp));
+    GstEvent * e = gst_event_new_qos(static_cast<GstQOSType>(qos), proportion, diff, static_cast<GstClockTime>(timeStamp));
     return QosEventPtr::wrap(e, false);
+}
+
+QOSType QosEvent::type() const
+{
+    GstQOSType t;
+    gst_event_parse_qos(object<GstEvent>(), &t, NULL, NULL, NULL);
+    return static_cast<QOSType>(t);
 }
 
 double QosEvent::proportion() const
 {
     double d;
-    gst_event_parse_qos(object<GstEvent>(), &d, NULL, NULL);
+    gst_event_parse_qos(object<GstEvent>(), NULL, &d, NULL, NULL);
     return d;
 }
 
 ClockTimeDiff QosEvent::diff() const
 {
     GstClockTimeDiff c;
-    gst_event_parse_qos(object<GstEvent>(), NULL, &c, NULL);
+    gst_event_parse_qos(object<GstEvent>(), NULL, NULL, &c, NULL);
     return c;
 }
 
 ClockTime QosEvent::timestamp() const
 {
     GstClockTime c;
-    gst_event_parse_qos(object<GstEvent>(), NULL, NULL, &c);
+    gst_event_parse_qos(object<GstEvent>(), NULL, NULL, NULL, &c);
     return c;
 }
 
