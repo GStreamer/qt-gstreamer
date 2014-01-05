@@ -405,9 +405,8 @@ QGST_REGISTER_TYPE(QGst::SeekFlags)
 namespace QGst {
     enum SeekType {
         SeekTypeNone = 0,
-        SeekTypeCur = 1,
-        SeekTypeSet = 2,
-        SeekTypeEnd = 3
+        SeekTypeSet = 1,
+        SeekTypeEnd = 2
     };
 }
 QGST_REGISTER_TYPE(QGst::SeekType)
