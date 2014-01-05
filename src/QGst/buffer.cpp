@@ -24,7 +24,7 @@ namespace QGst {
 
 BufferPtr Buffer::create(uint size)
 {
-    return BufferPtr::wrap(gst_buffer_try_new_and_alloc(size), false);
+    return BufferPtr::wrap(gst_buffer_new_allocate(NULL, size, NULL), false);
 }
 
 quint8 * Buffer::data() const
