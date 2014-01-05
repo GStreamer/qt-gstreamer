@@ -314,22 +314,22 @@ QGST_REGISTER_TYPE(QGst::QueryType)
 
 namespace QGst {
     enum BufferFlag {
-        //codegen: BufferFlagReadOnly=BUFFER_FLAG_READONLY
-        BufferFlagReadOnly = MiniObjectFlagReadonly,
-        BufferFlagPreroll  = (MiniObjectFlagLast << 0),
-        BufferFlagDiscont = (MiniObjectFlagLast << 1),
-        BufferFlagInCaps = (MiniObjectFlagLast << 2),
-        BufferFlagGap = (MiniObjectFlagLast << 3),
-        BufferFlagDeltaUnit = (MiniObjectFlagLast << 4),
-        BufferFlagMedia1 = (MiniObjectFlagLast << 5),
-        BufferFlagMedia2 = (MiniObjectFlagLast << 6),
-        BufferFlagMedia3 = (MiniObjectFlagLast << 7),
-        BufferFlagLast = (MiniObjectFlagLast << 8)
+        BufferFlagLive = (MiniObjectFlagLast << 0),
+        BufferFlagDecodeOnly  = (MiniObjectFlagLast << 1),
+        BufferFlagDiscont = (MiniObjectFlagLast << 2),
+        BufferFlagResync = (MiniObjectFlagLast << 3),
+        BufferFlagCorrupted = (MiniObjectFlagLast << 4),
+        BufferFlagMarker = (MiniObjectFlagLast << 5),
+        BufferFlagHeader = (MiniObjectFlagLast << 6),
+        BufferFlagGap = (MiniObjectFlagLast << 7),
+        BufferFlagDroppable = (MiniObjectFlagLast << 8),
+        BufferFlagDeltaUnit = (MiniObjectFlagLast << 9),
+        BufferFlagLast = (MiniObjectFlagLast << 16)
     };
     Q_DECLARE_FLAGS(BufferFlags, BufferFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(BufferFlags)
 }
-QGST_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
+QGST_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAGS
 
 
 namespace QGst {
