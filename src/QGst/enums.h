@@ -126,16 +126,20 @@ QGST_REGISTER_TYPE(QGst::PadLinkReturn)
 
 namespace QGst {
     enum FlowReturn {
+        //codegen: FlowCustomSuccess2=FLOW_CUSTOM_SUCCESS_2, FlowCustomSuccess1=FLOW_CUSTOM_SUCCESS_1, FlowCustomError1=FLOW_CUSTOM_ERROR_1, FlowCustomError2=FLOW_CUSTOM_ERROR_2
+        FlowCustomSuccess2 = 102,
+        FlowCustomSuccess1 = 101,
         FlowCustomSuccess = 100,
-        FlowResend = 1,
         FlowOk = 0,
         FlowNotLinked = -1,
-        FlowWrongState = -2,
-        FlowUnexpected = -3,
+        FlowFlushing = -2,
+        FlowEos = -3,
         FlowNotNegotiated = -4,
         FlowError = -5,
         FlowNotSupported = -6,
-        FlowCustomError = -100
+        FlowCustomError = -100,
+        FlowCustomError1 = -101,
+        FlowCustomError2 = -102
     };
 }
 QGST_REGISTER_TYPE(QGst::FlowReturn)
