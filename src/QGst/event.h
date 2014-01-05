@@ -168,7 +168,7 @@ class QTGSTREAMER_EXPORT SinkMessageEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(SinkMessage, Event)
 public:
-    static SinkMessageEventPtr create(const MessagePtr & msg);
+    static SinkMessageEventPtr create(const QString &name, const MessagePtr & msg);
 
     MessagePtr message() const;
 };
