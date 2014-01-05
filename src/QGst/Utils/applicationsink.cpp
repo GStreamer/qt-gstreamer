@@ -84,16 +84,10 @@ GstFlowReturn ApplicationSink::Priv::new_preroll(GstAppSink* sink, gpointer user
     return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newPreroll());
 }
 
-GstFlowReturn ApplicationSink::Priv::new_buffer(GstAppSink* sink, gpointer user_data)
+GstFlowReturn ApplicationSink::Priv::new_sample(GstAppSink* sink, gpointer user_data)
 {
     Q_UNUSED(sink);
-    return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newBuffer());
-}
-
-GstFlowReturn ApplicationSink::Priv::new_buffer_list(GstAppSink* sink, gpointer user_data)
-{
-    Q_UNUSED(sink);
-    return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newBufferList());
+    return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newSample());
 }
 
 #endif //DOXYGEN_RUN
