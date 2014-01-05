@@ -52,6 +52,7 @@ public:
     void setSize(uint size);
 
     uint extract(uint offset, void *dest, uint size);
+    MemoryPtr peekMemory(uint index);
 
     BufferPtr copy() const;
     inline BufferPtr makeWritable() const;
