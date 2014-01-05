@@ -56,6 +56,8 @@ public:
     BufferPtr copy() const;
     inline BufferPtr makeWritable() const;
 
+    bool map(MapInfo &info, MapFlags flags);
+    void unmap(MapInfo &info);
 };
 
 BufferPtr Buffer::makeWritable() const

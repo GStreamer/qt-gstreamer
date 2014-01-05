@@ -16,11 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "buffer.h"
+#include "memory.h"
 #include "caps.h"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
 
 namespace QGst {
+class MapInfo;
 
 BufferPtr Buffer::create(uint size)
 {
@@ -80,6 +82,21 @@ void Buffer::setSize(uint size)
 uint Buffer::extract(uint offset, void *dest, uint size)
 {
     return gst_buffer_extract(object<GstBuffer>(), offset, dest, size);
+}
+
+bool Buffer::map(MapInfo &info, MapFlags flags)
+{
+    BufferPtr bptr(this);
+    if (!gst_buffer_map(bptr, reinterpret_cast<GstMapInfo *>(&info), static_cast<GstMapFlags>(static_cast<int>(flags)))) {
+        return false;
+    }
+    return true;
+}
+
+void Buffer::unmap(MapInfo &info)
+{
+    BufferPtr bptr(this);
+    gst_buffer_unmap(bptr, reinterpret_cast<GstMapInfo *>(&info));
 }
 
 } //namespace QGst
