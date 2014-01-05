@@ -111,13 +111,6 @@ NewSegmentEventPtr NewSegmentEvent::create(SegmentFlags flags, double rate, doub
     return NewSegmentEventPtr::wrap(e, false);
 }
 
-bool NewSegmentEvent::isUpdate() const
-{
-    gboolean u;
-    gst_event_parse_new_segment_full(object<GstEvent>(), &u, NULL, NULL, NULL, NULL, NULL, NULL);
-    return u;
-}
-
 SegmentFlags NewSegmentEvent::flags() const
 {
     const GstSegment *s;

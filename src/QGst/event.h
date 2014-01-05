@@ -121,7 +121,6 @@ public:
                                      quint64 start, quint64 stop, quint64 time,
                                      quint64 position, quint64 duration);
 
-    bool isUpdate() const;
     SegmentFlags flags() const;
     double rate() const;
     double appliedRate() const;
