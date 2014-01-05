@@ -50,8 +50,11 @@ public:
     BufferFlags flags() const;
     void setFlags(const BufferFlags flags);
 
+    void setSize(uint size);
+
     BufferPtr copy() const;
     inline BufferPtr makeWritable() const;
+
 };
 
 BufferPtr Buffer::makeWritable() const

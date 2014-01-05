@@ -77,4 +77,9 @@ BufferPtr Buffer::copy() const
     return BufferPtr::wrap(gst_buffer_copy(object<GstBuffer>()), false);
 }
 
+void Buffer::setSize(uint size)
+{
+    gst_buffer_set_size(object<GstBuffer>(), size);
+}
+
 } //namespace QGst
