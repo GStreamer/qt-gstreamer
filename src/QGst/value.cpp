@@ -52,22 +52,6 @@ void registerValueVTables()
             QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
 
 
-    struct ValueVTable_Fourcc
-    {
-        static void get(const QGlib::Value & value, void *data)
-        {
-            reinterpret_cast<Fourcc*>(data)->value.as_integer = gst_value_get_fourcc(value);
-        };
-
-        static void set(QGlib::Value & value, const void *data)
-        {
-            gst_value_set_fourcc(value, reinterpret_cast<Fourcc const *>(data)->value.as_integer);
-        };
-    };
-    QGlib::Value::registerValueVTable(QGlib::GetType<Fourcc>(),
-            QGlib::ValueVTable(ValueVTable_Fourcc::set, ValueVTable_Fourcc::get));
-
-
     struct ValueVTable_Fraction
     {
         static void get(const QGlib::Value & value, void *data)
