@@ -24,7 +24,8 @@
 
 namespace QGst {
     enum MiniObjectFlag {
-        MiniObjectFlagReadonly = (1<<0),
+        MiniObjectFlagLockable = (1<<0),
+        MiniObjectFlagLockReadonly = (1<<1),
         /*padding*/
         MiniObjectFlagLast = (1<<4)
     };
