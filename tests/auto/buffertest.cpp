@@ -58,7 +58,8 @@ void BufferTest::copyTest()
     QGst::BufferPtr buffer2 = buffer->copy();
 
     QCOMPARE(buffer->size(), buffer2->size());
-    QCOMPARE(buffer->timeStamp(), buffer2->timeStamp());
+    QCOMPARE(buffer->decodingTimeStamp(), buffer2->decodingTimeStamp());
+    QCOMPARE(buffer->presentationTimeStamp(), buffer2->presentationTimeStamp());
     QCOMPARE(buffer->duration(), buffer2->duration());
 
     QGst::BufferFlags flags2(QGst::BufferFlagDiscont);
