@@ -134,7 +134,7 @@ public:
      * If an EOS event was received before any buffers, this function returns a null BufferPtr.
      * Use isEos() to check for the EOS condition.
      */
-    BufferPtr pullBuffer();
+    SamplePtr pullSample();
 
     /*! This function blocks until a buffer list or EOS becomes available or the appsink
      * element is set to the READY/NULL state.
