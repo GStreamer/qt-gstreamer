@@ -50,7 +50,7 @@ void RefPointerTest::refTest1()
 
 void RefPointerTest::refTest2()
 {
-    GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
+    GstObject *bin = GST_OBJECT(gst_object_ref_sink(GST_OBJECT(gst_bin_new(NULL))));
 
     {
         QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin);
