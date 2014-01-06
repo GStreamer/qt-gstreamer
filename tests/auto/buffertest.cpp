@@ -24,7 +24,6 @@ class BufferTest : public QGstTest
     Q_OBJECT
 private Q_SLOTS:
     void simpleTest();
-    void capsTest();
     void flagsTest();
     void copyTest();
 };
@@ -35,20 +34,6 @@ void BufferTest::simpleTest()
 
     QCOMPARE(buffer->size(), (quint32) 10);
     QVERIFY(buffer->data());
-}
-
-void BufferTest::capsTest()
-{
-    QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
-    caps->setValue("width", 320);
-    caps->setValue("height", 240);
-
-    buffer->setCaps(caps);
-
-    QGst::CapsPtr caps2 = buffer->caps();
-
-    QVERIFY(caps->equals(caps2));
 }
 
 void BufferTest::flagsTest()
