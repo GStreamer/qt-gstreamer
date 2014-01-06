@@ -95,20 +95,20 @@ void CapsTest::fullTest()
 void CapsTest::writabilityTest()
 {
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
-    QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
+    QVERIFY(GST_CAPS_REFCOUNT_VALUE(static_cast<GstCaps *>(caps)) == 1);
 
     {
         QGst::CapsPtr caps2 = caps;
-        QCOMPARE(GST_CAPS_REFCOUNT_VALUE(caps), 1);
+        QCOMPARE(GST_CAPS_REFCOUNT_VALUE(static_cast<GstCaps *>(caps)), 1);
         QVERIFY(static_cast<GstCaps*>(caps2) == static_cast<GstCaps*>(caps));
     }
 
     GstCaps *oldPtr = caps;
-    QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 1);
+    QVERIFY(GST_CAPS_REFCOUNT_VALUE(static_cast<GstCaps *>(caps)) == 1);
     //Increase external refcount to lock it
     gst_caps_ref(oldPtr);
     QVERIFY(oldPtr == static_cast<GstCaps*>(caps));
-    QVERIFY(GST_CAPS_REFCOUNT_VALUE(caps) == 2);
+    QVERIFY(GST_CAPS_REFCOUNT_VALUE(static_cast<GstCaps *>(caps)) == 2);
     QVERIFY(!caps->isWritable());
 
     caps = caps->makeWritable(); //creates a copy
