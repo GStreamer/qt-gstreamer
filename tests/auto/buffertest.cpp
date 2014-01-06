@@ -33,7 +33,7 @@ void BufferTest::simpleTest()
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
 
     QCOMPARE(buffer->size(), (quint32) 10);
-    QVERIFY(buffer->data());
+    QVERIFY(buffer->peekMemory(0));
 }
 
 void BufferTest::flagsTest()
