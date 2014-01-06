@@ -193,7 +193,7 @@ FlowReturn ApplicationSink::newPreroll()
     return FlowOk;
 }
 
-FlowReturn ApplicationSink::newBuffer()
+FlowReturn ApplicationSink::newSample()
 {
     return FlowOk;
 }

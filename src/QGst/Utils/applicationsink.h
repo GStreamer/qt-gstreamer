@@ -160,10 +160,10 @@ protected:
      * \note This function is called from the steaming thread. */
     virtual FlowReturn newPreroll();
 
-    /*! Called when a new buffer is available. The new buffer can be retrieved
-     * with pullBuffer() either from this function or from any other thread.
+    /*! Called when a new sample is available. The new sample can be retrieved
+     * with pullSample() either from this function or from any other thread.
      * \note This function is called from the steaming thread. */
-    virtual FlowReturn newBuffer();
+    virtual FlowReturn newSample();
 
     /*! Called when a new buffer list is available. The new buffer list can be retrieved
      * with pullBufferList() either from this function or from any other thread.
