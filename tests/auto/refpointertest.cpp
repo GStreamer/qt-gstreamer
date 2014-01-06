@@ -51,7 +51,7 @@ void RefPointerTest::refTest1()
 void RefPointerTest::refTest2()
 {
     GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
-    gst_object_sink(bin);
+
     {
         QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin);
         QCOMPARE(GST_OBJECT_REFCOUNT_VALUE(bin), 2);
@@ -67,7 +67,6 @@ void RefPointerTest::refTest2()
 void RefPointerTest::dynamicCastTest()
 {
     GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
-    gst_object_sink(bin);
 
     {
         QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin);
@@ -85,7 +84,6 @@ void RefPointerTest::dynamicCastTest()
 void RefPointerTest::dynamicCastDownObjectTest()
 {
     GstObject *bin = GST_OBJECT(gst_object_ref(gst_bin_new(NULL)));
-    gst_object_sink(bin);
 
     {
         QGlib::ObjectPtr object = QGlib::ObjectPtr::wrap(G_OBJECT(bin));
@@ -100,7 +98,6 @@ void RefPointerTest::dynamicCastDownObjectTest()
 void RefPointerTest::dynamicCastUpObjectTest()
 {
     GstBin *bin = GST_BIN(gst_object_ref(gst_bin_new(NULL)));
-    gst_object_sink(bin);
 
     {
         QGst::BinPtr object = QGst::BinPtr::wrap(bin);
