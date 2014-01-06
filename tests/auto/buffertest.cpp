@@ -39,20 +39,20 @@ void BufferTest::simpleTest()
 void BufferTest::flagsTest()
 {
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::BufferFlags flags(QGst::BufferFlagReadOnly & QGst::BufferFlagDiscont);
+    QGst::BufferFlags flags(QGst::BufferFlagLive & QGst::BufferFlagDiscont);
     buffer->setFlags(flags);
 
     QGst::BufferFlags flags2 = buffer->flags();
     QCOMPARE(flags, flags2);
 
-    QGst::BufferFlags flags3(QGst::BufferFlagReadOnly);
+    QGst::BufferFlags flags3(QGst::BufferFlagLive);
     QVERIFY(flags2!=flags3);
 }
 
 void BufferTest::copyTest()
 {
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::BufferFlags flags(QGst::BufferFlagReadOnly & QGst::BufferFlagDiscont);
+    QGst::BufferFlags flags(QGst::BufferFlagLive & QGst::BufferFlagDiscont);
     buffer->setFlags(flags);
 
     QGst::BufferPtr buffer2 = buffer->copy();
