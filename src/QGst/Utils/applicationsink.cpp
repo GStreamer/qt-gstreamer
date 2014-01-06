@@ -198,11 +198,5 @@ FlowReturn ApplicationSink::newSample()
     return FlowOk;
 }
 
-FlowReturn ApplicationSink::newBufferList()
-{
-    return FlowOk;
-}
-
-
 } //namespace Utils
 } //namespace QGst
