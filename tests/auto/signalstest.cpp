@@ -54,8 +54,8 @@ void SignalsTest::closureTest()
     QGst::BinPtr bin = QGst::Bin::create("mybin");
 
     closureCalled = false;
-    QGlib::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure, QGlib::PassSender);
-    bin->setParent(pipeline);
+    QGlib::connect(bin, "element-added", this, &SignalsTest::closureTestClosure, QGlib::PassSender);
+    bin->add(pipeline);
     QCOMPARE(closureCalled, true);
 }
 
