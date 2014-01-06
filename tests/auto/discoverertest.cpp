@@ -407,7 +407,7 @@ void DiscovererTest::setupDiscoveryData()
                 << makeTag("bitrate", 200000U));
     QTest::newRow("numbers07.png")
             << baseUrl.resolved(QUrl::fromEncoded("data/numbers07.png")) << 0 << QString()
-            << QGst::ClockTime(0) << NonSeekable
+            << QGst::ClockTime(0) << Seekable
             << (StreamInfoList()
                 << StreamInfoPtr((new VideoStreamInfo("image/png", VideoStreamInfo::ManualCaps))
                                  ->setWidth(160)->setHeight(120)->setInterlaced(false)))
