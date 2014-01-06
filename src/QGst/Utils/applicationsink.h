@@ -20,7 +20,7 @@
 
 #include "global.h"
 #include "../element.h"
-#include "../bufferlist.h"
+#include "../sample.h"
 
 namespace QGst {
 namespace Utils {
