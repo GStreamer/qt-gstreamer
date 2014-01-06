@@ -155,7 +155,7 @@ protected:
      * \note This function is called from the steaming thread. */
     virtual void eos();
 
-    /*! Called when a new preroll buffer is available. The new preroll buffer can be
+    /*! Called when a new preroll sample is available. The new preroll sample can be
      * retrieved with pullPreroll() either from this function or from any other thread.
      * \note This function is called from the steaming thread. */
     virtual FlowReturn newPreroll();
