@@ -33,25 +33,25 @@ namespace Utils {
  * provides external API functions. This class exports those API functions in the bindings
  * and makes it easy to implement a custom sink.
  *
- * The normal way of retrieving buffers from appsink is by using the pullBuffer() and pullPreroll()
- * methods. These methods block until a buffer becomes available in the sink or when the sink is
+ * The normal way of retrieving sample from appsink is by using the pullSample() and pullPreroll()
+ * methods. These methods block until a sample becomes available in the sink or when the sink is
  * shut down or reaches EOS.
  *
- * Appsink will internally use a queue to collect buffers from the streaming thread. If the
- * application is not pulling buffers fast enough, this queue will consume a lot of memory over
+ * Appsink will internally use a queue to collect samples from the streaming thread. If the
+ * application is not pulling samples fast enough, this queue will consume a lot of memory over
  * time. setMaxBuffers() can be used to limit the queue size. enableDrop() controls whether the
- * streaming thread blocks or if older buffers are dropped when the maximum queue size is reached.
+ * streaming thread blocks or if older samples are dropped when the maximum queue size is reached.
  * Note that blocking the streaming thread can negatively affect real-time performance and
  * should be avoided.
  *
  * If a blocking behaviour is not desirable, you can subclass this class and implement the
- * newPreroll(), newBuffer() and newBufferList() which will be called to notify you when a new
- * buffer is available.
+ * newPreroll(), newSample() and newBufferList() which will be called to notify you when a new
+ * sample is available.
  *
  * setCaps() can be used to control the formats that appsink can receive. This property can contain
- * non-fixed caps. The format of the pulled buffers can be obtained by getting the buffer caps.
+ * non-fixed caps. The format of the pulled samples can be obtained by getting the sample caps.
  *
- * If one of the pullPreroll() or pullBuffer() methods return NULL, the appsink is stopped or in
+ * If one of the pullPreroll() or pullSample() methods return NULL, the appsink is stopped or in
  * the EOS state. You can check for the EOS state with isEos(). The eos() virtual method can also
  * be reimplemented to be informed when the EOS state is reached to avoid polling.
  *
@@ -105,48 +105,48 @@ public:
     /*! Enables dropping old buffers when the maximum amount of queued buffers is reached. */
     void enableDrop(bool enable);
 
-    /*! Get the last preroll buffer in appsink. This was the buffer that caused the appsink
-     * to preroll in the PAUSED state. This buffer can be pulled many times and remains
+    /*! Get the last preroll sample in appsink. This was the sample that caused the appsink
+     * to preroll in the PAUSED state. This sample can be pulled many times and remains
      * available to the application even after EOS.
      *
      * This function is typically used when dealing with a pipeline in the PAUSED state.
-     * Calling this function after doing a seek will give the buffer right after the seek position.
+     * Calling this function after doing a seek will give the sample right after the seek position.
      *
-     * Note that the preroll buffer will also be returned as the first buffer when calling
-     * pullBuffer().
+     * Note that the preroll sample will also be returned as the first sample when calling
+     * pullSample().
      *
-     * If an EOS event was received before any buffers, this function returns a null BufferPtr.
+     * If an EOS event was received before any samples, this function returns a null SamplePtr.
      * Use isEos() to check for the EOS condition.
      *
-     * This function blocks until a preroll buffer or EOS is received or the appsink element
+     * This function blocks until a preroll sample or EOS is received or the appsink element
      * is set to the READY/NULL state.
      */
     SamplePtr pullPreroll();
 
-    /*! This function blocks until a buffer or EOS becomes available or the appsink
+    /*! This function blocks until a sample or EOS becomes available or the appsink
      * element is set to the READY/NULL state.
      *
-     * This function will only return buffers when the appsink is in the PLAYING state.
-     * All rendered buffers will be put in a queue so that the application can pull buffers
-     * at its own rate. Note that when the application does not pull buffers fast enough, the
-     * queued buffers could consume a lot of memory, especially when dealing with raw video frames.
+     * This function will only return samples when the appsink is in the PLAYING state.
+     * All rendered samples will be put in a queue so that the application can pull samples
+     * at its own rate. Note that when the application does not pull samples fast enough, the
+     * queued samples could consume a lot of memory, especially when dealing with raw video frames.
      *
-     * If an EOS event was received before any buffers, this function returns a null BufferPtr.
+     * If an EOS event was received before any samples, this function returns a null SamplePtr.
      * Use isEos() to check for the EOS condition.
      */
     SamplePtr pullSample();
 
-    /*! This function blocks until a buffer list or EOS becomes available or the appsink
+    /*! This function blocks until a sample list or EOS becomes available or the appsink
      * element is set to the READY/NULL state.
      *
-     * This function will only return buffer lists when the appsink is in the PLAYING state.
-     * All rendered buffer lists will be put in a queue so that the application can pull buffer
-     * lists at its own rate. Note that when the application does not pull buffer lists fast
-     * enough, the queued buffer lists could consume a lot of memory, especially when dealing
+     * This function will only return sample lists when the appsink is in the PLAYING state.
+     * All rendered sample lists will be put in a queue so that the application can pull sample
+     * lists at its own rate. Note that when the application does not pull sample lists fast
+     * enough, the queued sample lists could consume a lot of memory, especially when dealing
      * with raw video frames.
      *
-     * If an EOS event was received before any buffer lists, this function returns a null
-     * BufferListPtr. Use isEos() to check for the EOS condition.
+     * If an EOS event was received before any sample lists, this function returns a null
+     * SampleListPtr. Use isEos() to check for the EOS condition.
      */
     BufferListPtr pullBufferList();
 
