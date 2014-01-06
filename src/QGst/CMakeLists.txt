@@ -24,10 +24,12 @@ set(QtGStreamer_SRCS
     colorbalance.cpp
     query.cpp
     clock.cpp
+    memory.cpp
     buffer.cpp
     event.cpp
     clocktime.cpp
     taglist.cpp
+    sample.cpp
     bufferlist.cpp
     discoverer.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
@@ -82,6 +84,8 @@ set(QtGStreamer_INSTALLED_HEADERS
     query.h             Query
     clock.h             Clock
     buffer.h            Buffer
+    sample.h            Sample
+    memory.h            Memory
     event.h             Event
     clocktime.h         ClockTime
     taglist.h           TagList
