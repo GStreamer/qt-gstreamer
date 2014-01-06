@@ -132,7 +132,7 @@ void RefPointerTest::dynamicCastIfaceToObjectTest()
 
 void RefPointerTest::cppWrappersTest()
 {
-    QGst::ElementPtr e = QGst::ElementFactory::make("playbin2");
+    QGst::ElementPtr e = QGst::ElementFactory::make("playbin");
     QVERIFY(!e.isNull());
 
     {
