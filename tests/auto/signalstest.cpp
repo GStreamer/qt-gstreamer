@@ -127,11 +127,11 @@ void SignalsTest::emitTest()
 void SignalsTest::emitTypeTest()
 {
     QGst::BinPtr bin = QGst::Bin::create("mybin");
-    QGlib::connect(bin, "parent-set", this, &SignalsTest::closureTestClosure, QGlib::PassSender);
+    QGlib::connect(bin, "deep-notify", this, &SignalsTest::closureTestClosure, QGlib::PassSender);
 
     closureCalled = false;
     QGst::PipelinePtr pipeline = QGst::Pipeline::create("mypipeline");
-    QGlib::emit<void>(bin, "parent-set", pipeline);
+    QGlib::emit<void>(bin, "deep-notify", pipeline, bin->findProperty("name"));
     QCOMPARE(closureCalled, true);
 }
 
