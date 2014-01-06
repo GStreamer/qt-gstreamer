@@ -166,11 +166,11 @@ void ApplicationSink::enableDrop(bool enable)
     }
 }
 
-BufferPtr ApplicationSink::pullPreroll()
+SamplePtr ApplicationSink::pullPreroll()
 {
-    BufferPtr buf;
+    SamplePtr buf;
     if (d->appSink()) {
-        buf = BufferPtr::wrap(gst_app_sink_pull_preroll(d->appSink()), false);
+        buf = SamplePtr::wrap(gst_app_sink_pull_preroll(d->appSink()), false);
     }
     return buf;
 }

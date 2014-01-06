@@ -121,7 +121,7 @@ public:
      * This function blocks until a preroll buffer or EOS is received or the appsink element
      * is set to the READY/NULL state.
      */
-    BufferPtr pullPreroll();
+    SamplePtr pullPreroll();
 
     /*! This function blocks until a buffer or EOS becomes available or the appsink
      * element is set to the READY/NULL state.
