@@ -42,10 +42,14 @@ private Q_SLOTS:
 
 void RefPointerTest::refTest1()
 {
-    GstObject *bin = GST_OBJECT(gst_object_ref(GST_OBJECT(gst_bin_new(NULL))));
-    gst_object_sink(bin);
-    QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin, false);
-    QCOMPARE(GST_OBJECT_REFCOUNT_VALUE(bin), 1);
+    GstElement *element = gst_bin_new(NULL);
+    GstObject *bin1 = GST_OBJECT(element);
+    QCOMPARE(GST_OBJECT_REFCOUNT_VALUE(element), 1);
+
+    GstObject *bin2 = GST_OBJECT(gst_object_ref_sink(bin1));
+    QCOMPARE(GST_OBJECT_REFCOUNT_VALUE(bin2), 1);
+    QGst::ObjectPtr object = QGst::ObjectPtr::wrap(bin2, false);
+    QCOMPARE(GST_OBJECT_REFCOUNT_VALUE(bin2), 1);
 }
 
 void RefPointerTest::refTest2()
