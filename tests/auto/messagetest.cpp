@@ -238,14 +238,9 @@ void MessageTest::segmentDoneMessageTest()
 
 void MessageTest::durationMessageTest()
 {
-    QGst::DurationMessagePtr msg = QGst::DurationMessage::create(QGst::ObjectPtr(),
-                                                                       QGst::FormatBytes, 1456788);
-
+    QGst::DurationMessagePtr msg = QGst::DurationMessage::create(QGst::ObjectPtr());
     QVERIFY(msg->type()==QGst::MessageDuration);
-    QCOMPARE(msg->typeName(), QString("duration"));
-
-    QVERIFY(msg->format()==QGst::FormatBytes);
-    QCOMPARE(msg->duration(), static_cast<qint64>(1456788));
+    QCOMPARE(msg->typeName(), QString("duration-changed"));
 }
 
 void MessageTest::latencyMessageTest()
