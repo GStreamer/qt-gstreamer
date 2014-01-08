@@ -83,7 +83,7 @@ Player::Player(int argc, char **argv)
 
     /* source pipeline */
     QString pipe1Descr = QString("filesrc location=\"%1\" ! "
-                                 "decodebin2 ! "
+                                 "decodebin ! "
                                  "audioconvert ! "
                                  "audioresample ! "
                                  "appsink name=\"mysink\" caps=\"%2\"").arg(argv[1], caps);
