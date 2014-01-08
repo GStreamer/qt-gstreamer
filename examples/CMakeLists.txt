@@ -24,8 +24,8 @@ example_distcheck(player)
 add_subdirectory(appsink-src)
 example_distcheck(appsink-src)
 
-add_subdirectory(recorder)
-example_distcheck(recorder)
+#add_subdirectory(recorder)
+#example_distcheck(recorder)
 
 add_subdirectory(voip)
 example_distcheck(voip)
