@@ -92,9 +92,9 @@ void ValueTest::enumTest()
 
 void ValueTest::flagsTest()
 {
-    QGlib::Value v = QGlib::Value::create(QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
+    QGlib::Value v = QGlib::Value::create(QGst::PadFlagBlocked | QGst::PadFlagFlushing | QGst::PadFlagLast);
     QCOMPARE(v.type(), QGlib::GetType<QGst::PadFlags>());
-    QCOMPARE(v.get<QGst::PadFlags>(), QGst::PadBlocked | QGst::PadFlushing | QGst::PadFlagLast);
+    QCOMPARE(v.get<QGst::PadFlags>(), QGst::PadFlagBlocked | QGst::PadFlagFlushing | QGst::PadFlagLast);
 }
 
 void ValueTest::objectTest()
