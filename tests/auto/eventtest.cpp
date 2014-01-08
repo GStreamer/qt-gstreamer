@@ -121,7 +121,7 @@ void EventTest::newSegmentTest()
 void EventTest::sinkMessageTest()
 {
     QGst::MessagePtr msg = QGst::BufferingMessage::create(QGst::ObjectPtr(), 90);
-    QGst::SinkMessageEventPtr evt = QGst::SinkMessageEvent::create(msg);
+    QGst::SinkMessageEventPtr evt = QGst::SinkMessageEvent::create("sink-message", msg);
     QVERIFY(evt->type()==QGst::EventSinkMessage);
     QCOMPARE(evt->typeName(), QString("sink-message"));
 
