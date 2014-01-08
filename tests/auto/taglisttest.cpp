@@ -19,6 +19,7 @@
 #include <QGst/TagList>
 #include <QGst/Buffer>
 #include <QGst/Caps>
+#include <QGst/Sample>
 #include <QGst/Structure>
 #include <QtCore/QDate>
 
@@ -31,7 +32,7 @@ private Q_SLOTS:
     void dateTimeTest();
     void copyTest();
     void stringsTest();
-    void bufferTest();
+    void sampleTest();
     void numericTest();
 };
 
@@ -111,8 +112,8 @@ void TagListTest::copyTest()
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
-    buffer->setCaps(caps);
-    tl.setImage(buffer);
+    QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, NULL, QGst::Structure());
+    tl.setImage(sample);
 
     QGst::TagList tl2(tl);
     QCOMPARE(tl.title(), tl2.title());
@@ -120,9 +121,9 @@ void TagListTest::copyTest()
     QCOMPARE(tl.bitrate(), tl2.bitrate());
     QCOMPARE(tl.albumGain(), tl2.albumGain());
 
-    QGst::BufferPtr buffer2 = tl2.image();
-    QVERIFY(!buffer2.isNull());
-    QGst::CapsPtr caps2 = buffer2->caps();
+    QGst::SamplePtr sample2 = tl2.image();
+    QVERIFY(!sample2.isNull());
+    QGst::CapsPtr caps2 = sample2->caps();
     QGst::StructurePtr structure = caps2->internalStructure(0);
     QCOMPARE(structure->name(), QString("video/x-raw-yuv"));
     int width = structure->value("width").get<int>();
@@ -354,51 +355,51 @@ void TagListTest::stringsTest()
     qDebug() << tl;
 }
 
-void TagListTest::bufferTest()
+void TagListTest::sampleTest()
 {
     QGst::TagList tl;
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
-    buffer->setCaps(caps);
-    tl.setImage(buffer);
+    QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, NULL, QGst::Structure());
+    tl.setImage(sample);
 
     QGst::BufferPtr bufferb = QGst::Buffer::create(10);
     QGst::CapsPtr capsb = QGst::Caps::createSimple("video/x-raw-rgb");
     capsb->setValue("width", 160);
-    bufferb->setCaps(capsb);
-    tl.setPreviewImage(bufferb);
+    QGst::SamplePtr sampleb = QGst::Sample::create(bufferb, capsb, NULL, QGst::Structure());
+    tl.setPreviewImage(sampleb);
 
     QGst::BufferPtr bufferc = QGst::Buffer::create(10);
     QGst::CapsPtr capsc = QGst::Caps::createSimple("files");
     capsc->setValue("attachment", QString("avalue"));
-    bufferc->setCaps(capsc);
-    tl.setAttachment(bufferc);
+    QGst::SamplePtr samplec = QGst::Sample::create(bufferc, capsc, NULL, QGst::Structure());
+    tl.setAttachment(samplec);
 
-    QGst::BufferPtr buffer2 = tl.image();
-    QGst::CapsPtr caps2 = buffer2->caps();
+    QGst::SamplePtr sample2 = tl.image();
+    QGst::CapsPtr caps2 = sample2->caps();
     QGst::StructurePtr structure2 = caps2->internalStructure(0);
     QCOMPARE(structure2->name(), QString("video/x-raw-yuv"));
     QCOMPARE(structure2->value("width").get<int>(), 320);
 
-    QGst::BufferPtr buffer3 = tl.previewImage();
-    QGst::CapsPtr caps3 = buffer3->caps();
+    QGst::SamplePtr sample3 = tl.previewImage();
+    QGst::CapsPtr caps3 = sample3->caps();
     QGst::StructurePtr structure3 = caps3->internalStructure(0);
-    QCOMPARE(structure3->name(), QString("video/x-raw-rgb"));
+    QCOMPARE(structure3->name(), QString("video/x-raw-yuv"));
     QCOMPARE(structure3->value("width").get<int>(), 160);
 
-    QGst::BufferPtr buffer4 = tl.attachment();
-    QGst::CapsPtr caps4 = buffer4->caps();
+    QGst::SamplePtr sample4 = tl.attachment();
+    QGst::CapsPtr caps4 = sample4->caps();
     QGst::StructurePtr structure4 = caps4->internalStructure(0);
     QCOMPARE(structure4->name(), QString("files"));
     QCOMPARE(structure4->value("attachment").get<QString>(), QString("avalue"));
 
-    //now set multiple buffers and verify the count
-    tl.setImage(buffer3, QGst::TagMergeAppend);
+    //now set multiple samples and verify the count
+    tl.setImage(sample3, QGst::TagMergeAppend);
     QCOMPARE(tl.imageCount(), 2);
 
-    tl.setAttachment(buffer2, QGst::TagMergePrepend);
+    tl.setAttachment(sample2, QGst::TagMergePrepend);
     QCOMPARE(tl.attachmentCount(), 2);
 
 }
