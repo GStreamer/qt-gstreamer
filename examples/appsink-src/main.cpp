@@ -40,9 +40,10 @@ protected:
         m_src->endOfStream();
     }
 
-    virtual QGst::FlowReturn newBuffer()
+    virtual QGst::FlowReturn newSample()
     {
-        m_src->pushBuffer(pullBuffer());
+        QGst::SamplePtr sample = pullSample();
+        m_src->pushBuffer(sample->buffer());
         return QGst::FlowOk;
     }
 
