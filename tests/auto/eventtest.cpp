@@ -133,8 +133,8 @@ void EventTest::sinkMessageTest()
 
 void EventTest::qosTest()
 {
-    QGst::QosEventPtr evt = QGst::QosEvent::create(123.4, 23455, 98765432);
-    QVERIFY(evt->type()==QGst::EventQos);
+    QGst::QosEventPtr evt = QGst::QosEvent::create(QGst::QOSType::QosUnderflow, 123.4, 23455, 98765432);
+    QVERIFY(evt->type()==QGst::QOSType::QosUnderflow);
     QCOMPARE(evt->typeName(), QString("qos"));
 
     QCOMPARE(evt->proportion(), 123.4);
