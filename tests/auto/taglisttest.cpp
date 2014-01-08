@@ -109,7 +109,7 @@ void TagListTest::copyTest()
     tl.setBitrate(320);
     tl.setAlbumGain(0.85);
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
     QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, NULL, QGst::Structure());
@@ -125,7 +125,7 @@ void TagListTest::copyTest()
     QVERIFY(!sample2.isNull());
     QGst::CapsPtr caps2 = sample2->caps();
     QGst::StructurePtr structure = caps2->internalStructure(0);
-    QCOMPARE(structure->name(), QString("video/x-raw-yuv"));
+    QCOMPARE(structure->name(), QString("video/x-raw"));
     int width = structure->value("width").get<int>();
     QCOMPARE(width, 320);
 }
@@ -359,14 +359,14 @@ void TagListTest::sampleTest()
 {
     QGst::TagList tl;
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
     QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, NULL, QGst::Structure());
     tl.setImage(sample);
 
     QGst::BufferPtr bufferb = QGst::Buffer::create(10);
-    QGst::CapsPtr capsb = QGst::Caps::createSimple("video/x-raw-rgb");
+    QGst::CapsPtr capsb = QGst::Caps::createSimple("video/x-raw");
     capsb->setValue("width", 160);
     QGst::SamplePtr sampleb = QGst::Sample::create(bufferb, capsb, NULL, QGst::Structure());
     tl.setPreviewImage(sampleb);
@@ -380,13 +380,13 @@ void TagListTest::sampleTest()
     QGst::SamplePtr sample2 = tl.image();
     QGst::CapsPtr caps2 = sample2->caps();
     QGst::StructurePtr structure2 = caps2->internalStructure(0);
-    QCOMPARE(structure2->name(), QString("video/x-raw-yuv"));
+    QCOMPARE(structure2->name(), QString("video/x-raw"));
     QCOMPARE(structure2->value("width").get<int>(), 320);
 
     QGst::SamplePtr sample3 = tl.previewImage();
     QGst::CapsPtr caps3 = sample3->caps();
     QGst::StructurePtr structure3 = caps3->internalStructure(0);
-    QCOMPARE(structure3->name(), QString("video/x-raw-yuv"));
+    QCOMPARE(structure3->name(), QString("video/x-raw"));
     QCOMPARE(structure3->value("width").get<int>(), 160);
 
     QGst::SamplePtr sample4 = tl.attachment();
