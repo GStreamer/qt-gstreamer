@@ -119,6 +119,7 @@ void ValueTest::miniObjectTest()
 void ValueTest::capsTest()
 {
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
+    QVERIFY(caps);
     QGlib::Value v = QGlib::Value::create(caps);
     QCOMPARE(v.type(), QGlib::GetType<QGst::Caps>());
     QCOMPARE(static_cast<GstCaps*>(v.get<QGst::CapsPtr>()), static_cast<GstCaps*>(caps));
