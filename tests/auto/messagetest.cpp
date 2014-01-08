@@ -253,10 +253,12 @@ void MessageTest::latencyMessageTest()
 
 void MessageTest::asyncDoneMessageTest()
 {
-    QGst::AsyncDoneMessagePtr msg = QGst::AsyncDoneMessage::create(QGst::ObjectPtr());
+    QGst::ClockTime time = QGst::ClockTime::fromTime(QTime(17,0));
+    QGst::AsyncDoneMessagePtr msg = QGst::AsyncDoneMessage::create(QGst::ObjectPtr(), time);
 
     QVERIFY(msg->type()==QGst::MessageAsyncDone);
     QCOMPARE(msg->typeName(), QString("async-done"));
+    QCOMPARE(msg->running_time().toTime(), QTime(17,0));
 }
 
 void MessageTest::requestStateMessageTest()
