@@ -100,18 +100,20 @@ void EventTest::eosTest()
 
 void EventTest::newSegmentTest()
 {
-    QGst::NewSegmentEventPtr evt = QGst::NewSegmentEvent::create(true, 1.0, 0.5, QGst::FormatTime, 12345,
-                                                       234567, 12346);
-    QVERIFY(evt->type()==QGst::EventNewSegment);
-    QCOMPARE(evt->typeName(), QString("newsegment"));
+    QGst::NewSegmentEventPtr evt = QGst::NewSegmentEvent::create(QGst::SegmentFlag::Segment, 100002.0, 0.5, QGst::FormatTime, 1, 2, 12345, 234567, 345678, 456789, 56789);
 
-    QVERIFY(evt->isUpdate());
-    QCOMPARE(evt->rate(), 1.0);
+    QVERIFY(evt->type()==QGst::EventNewSegment);
+    QCOMPARE(evt->typeName(), QString("segment"));
+
+    QCOMPARE(evt->flags(), QGst::SegmentFlag::Segment);
+    QCOMPARE(evt->rate(), 100002.0);
     QCOMPARE(evt->appliedRate(), 0.5);
     QVERIFY(evt->format() == QGst::FormatTime);
     QCOMPARE(evt->start(), static_cast<qint64>(12345));
     QCOMPARE(evt->stop(), static_cast<qint64>(234567));
-    QCOMPARE(evt->position(), static_cast<qint64>(12346));
+    QCOMPARE(evt->time(), static_cast<qint64>(345678));
+    QCOMPARE(evt->position(), static_cast<qint64>(456789));
+    QCOMPARE(evt->duration(), static_cast<qint64>(56789));
 };
 
 //TODO GST_EVENT_TAG
