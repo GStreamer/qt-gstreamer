@@ -134,6 +134,8 @@ void StructureTest::sharedStructureTest()
     QCOMPARE(s.name(), QString("video/x-raw"));
     QCOMPARE(s.value("width").toInt(), 320);
     QCOMPARE(s.value("height").toInt(), 240);
+
+    queue->setState(QGst::StateNull);
 }
 
 
