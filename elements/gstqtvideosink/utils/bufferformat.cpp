@@ -49,16 +49,23 @@ GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
         break;
     }
 #endif
-
     return caps;
 }
 
 GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
                                const Fraction & framerate, const Fraction & pixelAspectRatio)
 {
-    GstCaps *caps = gst_video_format_new_caps(format, size.width(), size.height(),
-            framerate.numerator, framerate.denominator,
-            pixelAspectRatio.numerator, pixelAspectRatio.denominator);
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    gst_video_info_set_format(&videoInfo, format, size.width(), size.height());
+
+    videoInfo.fps_n = framerate.numerator;
+    videoInfo.fps_d = framerate.denominator;
+
+    videoInfo.par_n = pixelAspectRatio.numerator;
+    videoInfo.par_d = pixelAspectRatio.denominator;
+
+    GstCaps *caps = gst_video_info_to_caps(&videoInfo);
 
     // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
