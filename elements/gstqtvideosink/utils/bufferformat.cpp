@@ -21,27 +21,8 @@ BufferFormat BufferFormat::fromCaps(GstCaps *caps)
 {
     BufferFormat result;
     if (caps) {
-        GstVideoFormat format;
-        int width;
-        int height;
-        if (gst_video_format_parse_caps(caps, &format, &width, &height)) {
-            result.d->videoFormat = format;
-            result.d->frameSize = QSize(width, height);
-
-            if (!gst_video_parse_caps_pixel_aspect_ratio(caps,
-                    &result.d->pixelAspectRatio.numerator,
-                    &result.d->pixelAspectRatio.denominator)) {
-                result.d->pixelAspectRatio = Fraction(1,1);
-            }
-
-            const char *colorMatrix = gst_video_parse_caps_color_matrix(caps);
-            if (!qstrcmp("hdtv", colorMatrix)) {
-                result.d->colorMatrix = GST_VIDEO_COLOR_MATRIX_BT709;
-            } else if (!qstrcmp("sdtv", colorMatrix)) {
-                result.d->colorMatrix = GST_VIDEO_COLOR_MATRIX_BT601;
-            } else {
-                result.d->colorMatrix = GST_VIDEO_COLOR_MATRIX_RGB;
-            }
+        if (gst_video_info_from_caps(&(result.d->videoInfo), caps)) {
+            // FIXME: Raise some kind of error
         }
     }
     return result;
