@@ -86,7 +86,7 @@ GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
 
 int BufferFormat::bytesPerLine(int component) const
 {
-    return gst_video_format_get_row_stride(videoFormat(), component, frameSize().width());
+    return GST_VIDEO_INFO_PLANE_STRIDE(&(d->videoInfo), component);
 }
 
 bool operator==(BufferFormat a, BufferFormat b)
