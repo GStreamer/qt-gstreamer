@@ -44,20 +44,15 @@ public:
 private:
     struct Data : public QSharedData
     {
-        Data() :
-            videoFormat(GST_VIDEO_FORMAT_UNKNOWN),
-            colorMatrix(GST_VIDEO_COLOR_MATRIX_UNKNOWN)
-        {}
+        Data()
+        { gst_video_info_init(&videoInfo); }
 
-        GstVideoFormat videoFormat;
-        GstVideoColorMatrix colorMatrix;
-        QSize frameSize;
-        Fraction pixelAspectRatio;
+        GstVideoInfo videoInfo;
     };
     QSharedDataPointer<Data> d;
 };
 
-
+Q_DECLARE_METATYPE(GstVideoInfo)
 Q_DECLARE_METATYPE(GstVideoFormat)
 Q_DECLARE_METATYPE(GstVideoColorMatrix)
 Q_DECLARE_METATYPE(BufferFormat)
