@@ -21,17 +21,6 @@
 #include <QSharedData>
 #include <gst/video/video.h>
 
-//0.11 stuff
-typedef enum {
-  GST_VIDEO_COLOR_MATRIX_UNKNOWN = 0,
-  GST_VIDEO_COLOR_MATRIX_RGB,
-  GST_VIDEO_COLOR_MATRIX_FCC,
-  GST_VIDEO_COLOR_MATRIX_BT709,
-  GST_VIDEO_COLOR_MATRIX_BT601,
-  GST_VIDEO_COLOR_MATRIX_SMPTE240M
-} GstVideoColorMatrix;
-
-
 /**
  * This class is a cheap way to represent Caps.
  * Based on QVideoSurfaceFormat.
