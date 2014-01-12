@@ -49,7 +49,11 @@ BufferFormat BufferFormat::fromCaps(GstCaps *caps)
 
 GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
 {
-    GstCaps *caps = gst_video_format_new_template_caps(format);
+    GstCaps *caps = gst_caps_new_simple("video/x-raw",
+					"format", G_TYPE_STRING, gst_video_format_to_string(format),
+					"width", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+					"height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+					"framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
 
     // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
