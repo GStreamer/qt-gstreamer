@@ -42,6 +42,9 @@ public:
     int bytesPerLine(int component = 0) const;
 
 private:
+    friend bool operator==(BufferFormat a, BufferFormat b);
+    friend bool operator!=(BufferFormat a, BufferFormat b);
+
     struct Data : public QSharedData
     {
         Data()

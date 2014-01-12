@@ -96,3 +96,13 @@ int BufferFormat::bytesPerLine(int component) const
 {
     return gst_video_format_get_row_stride(videoFormat(), component, frameSize().width());
 }
+
+bool operator==(BufferFormat a, BufferFormat b)
+{
+    return a.d == b.d;
+}
+
+bool operator!=(BufferFormat a, BufferFormat b)
+{
+    return a.d != b.d;
+}
