@@ -258,5 +258,12 @@ GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
         gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
     }
 
+    if (filter) {
+        GstCaps *intersection;
+        intersection = gst_caps_intersect_full(filter, caps, GST_CAPS_INTERSECT_FIRST);
+        gst_caps_unref(caps);
+        caps = intersection;
+    }
+
     return caps;
 }
