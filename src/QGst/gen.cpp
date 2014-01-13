@@ -27,12 +27,12 @@
     }
 
 #include <gst/gst.h>
-#include <gst/interfaces/interfaces-enumtypes.h>
-#include <gst/interfaces/xoverlay.h>
-#include <gst/interfaces/streamvolume.h>
-#include <gst/interfaces/colorbalance.h>
-#include <gst/interfaces/videoorientation.h>
-#include <gst/interfaces/propertyprobe.h>
+#include <gst/audio/audio-enumtypes.h>
+#include <gst/audio/streamvolume.h>
+#include <gst/video/video-enumtypes.h>
+#include <gst/video/videooverlay.h>
+#include <gst/video/colorbalance.h>
+#include <gst/video/videoorientation.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/pbutils/gstdiscoverer.h>
 #include <gst/pbutils/pbutils-enumtypes.h>
@@ -50,53 +50,27 @@ namespace QGst {
   }
 } //namespace QGst
 
-#include "QGst/ghostpad.h"
+#include "QGst/streamvolume.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::GhostPad,GST_TYPE_GHOST_PAD)
+REGISTER_TYPE_IMPLEMENTATION(QGst::StreamVolume,GST_TYPE_STREAM_VOLUME)
 
 namespace QGst {
-  QGlib::RefCountedObject *GhostPad_new(void *instance)
+  QGlib::RefCountedObject *StreamVolume_new(void *instance)
   {
-    QGst::GhostPad *cppClass = new QGst::GhostPad;
+    QGst::StreamVolume *cppClass = new QGst::StreamVolume;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
-#include "QGst/pad.h"
+#include "QGst/bufferlist.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Pad,GST_TYPE_PAD)
-
-namespace QGst {
-  QGlib::RefCountedObject *Pad_new(void *instance)
-  {
-    QGst::Pad *cppClass = new QGst::Pad;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/urihandler.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::UriHandler,GST_TYPE_URI_HANDLER)
+REGISTER_TYPE_IMPLEMENTATION(QGst::BufferList,GST_TYPE_BUFFER_LIST)
 
 namespace QGst {
-  QGlib::RefCountedObject *UriHandler_new(void *instance)
+  QGlib::RefCountedObject *BufferList_new(void *instance)
   {
-    QGst::UriHandler *cppClass = new QGst::UriHandler;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/miniobject.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::MiniObject,GST_TYPE_MINI_OBJECT)
-
-namespace QGst {
-  QGlib::RefCountedObject *MiniObject_new(void *instance)
-  {
-    QGst::MiniObject *cppClass = new QGst::MiniObject;
+    QGst::BufferList *cppClass = new QGst::BufferList;
     cppClass->m_object = instance;
     return cppClass;
   }
@@ -104,114 +78,116 @@ namespace QGst {
 
 #include "QGst/parse.h"
 
-#include "QGst/element.h"
+#include "QGst/object.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Element,GST_TYPE_ELEMENT)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Object,GST_TYPE_OBJECT)
 
 namespace QGst {
-  QGlib::RefCountedObject *Element_new(void *instance)
+  QGlib::RefCountedObject *Object_new(void *instance)
   {
-    QGst::Element *cppClass = new QGst::Element;
+    QGst::Object *cppClass = new QGst::Object;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
-#include "QGst/discoverer.h"
+#include "QGst/structs.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererStreamInfo,GST_TYPE_DISCOVERER_STREAM_INFO)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Fourcc,G_TYPE_UINT)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererContainerInfo,GST_TYPE_DISCOVERER_CONTAINER_INFO)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Fraction,GST_TYPE_FRACTION)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererAudioInfo,GST_TYPE_DISCOVERER_AUDIO_INFO)
+REGISTER_TYPE_IMPLEMENTATION(QGst::IntRange,GST_TYPE_INT_RANGE)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererVideoInfo,GST_TYPE_DISCOVERER_VIDEO_INFO)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Int64Range,GST_TYPE_INT64_RANGE)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererSubtitleInfo,GST_TYPE_DISCOVERER_SUBTITLE_INFO)
+REGISTER_TYPE_IMPLEMENTATION(QGst::DoubleRange,GST_TYPE_DOUBLE_RANGE)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererInfo,GST_TYPE_DISCOVERER_INFO)
+REGISTER_TYPE_IMPLEMENTATION(QGst::FractionRange,GST_TYPE_FRACTION_RANGE)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Discoverer,GST_TYPE_DISCOVERER)
+#include "QGst/videooverlay.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::VideoOverlay,GST_TYPE_VIDEO_OVERLAY)
 
 namespace QGst {
-  QGlib::RefCountedObject *DiscovererStreamInfo_new(void *instance)
+  QGlib::RefCountedObject *VideoOverlay_new(void *instance)
   {
-    QGst::DiscovererStreamInfo *cppClass = new QGst::DiscovererStreamInfo;
+    QGst::VideoOverlay *cppClass = new QGst::VideoOverlay;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
+#include "QGst/elementfactory.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::ElementFactory,GST_TYPE_ELEMENT_FACTORY)
+
 namespace QGst {
-  QGlib::RefCountedObject *DiscovererContainerInfo_new(void *instance)
+  QGlib::RefCountedObject *ElementFactory_new(void *instance)
   {
-    QGst::DiscovererContainerInfo *cppClass = new QGst::DiscovererContainerInfo;
+    QGst::ElementFactory *cppClass = new QGst::ElementFactory;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
+#include "QGst/query.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Query,GST_TYPE_QUERY)
+
 namespace QGst {
-  QGlib::RefCountedObject *DiscovererAudioInfo_new(void *instance)
+  QGlib::RefCountedObject *Query_new(void *instance)
   {
-    QGst::DiscovererAudioInfo *cppClass = new QGst::DiscovererAudioInfo;
+    QGst::Query *cppClass = NULL;
+    switch(GST_QUERY_TYPE(instance)) {
+    case QGst::QueryPosition:
+      cppClass = new QGst::PositionQuery;
+      break;
+    case QGst::QueryDuration:
+      cppClass = new QGst::DurationQuery;
+      break;
+    case QGst::QueryLatency:
+      cppClass = new QGst::LatencyQuery;
+      break;
+    case QGst::QuerySeeking:
+      cppClass = new QGst::SeekingQuery;
+      break;
+    case QGst::QuerySegment:
+      cppClass = new QGst::SegmentQuery;
+      break;
+    case QGst::QueryConvert:
+      cppClass = new QGst::ConvertQuery;
+      break;
+    case QGst::QueryFormats:
+      cppClass = new QGst::FormatsQuery;
+      break;
+    case QGst::QueryBuffering:
+      cppClass = new QGst::BufferingQuery;
+      break;
+    case QGst::QueryUri:
+      cppClass = new QGst::UriQuery;
+      break;
+    default:
+      cppClass = new QGst::Query;
+      break;
+    }
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
+#include "QGst/pluginfeature.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::PluginFeature,GST_TYPE_PLUGIN_FEATURE)
+
 namespace QGst {
-  QGlib::RefCountedObject *DiscovererVideoInfo_new(void *instance)
+  QGlib::RefCountedObject *PluginFeature_new(void *instance)
   {
-    QGst::DiscovererVideoInfo *cppClass = new QGst::DiscovererVideoInfo;
+    QGst::PluginFeature *cppClass = new QGst::PluginFeature;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
-
-namespace QGst {
-  QGlib::RefCountedObject *DiscovererSubtitleInfo_new(void *instance)
-  {
-    QGst::DiscovererSubtitleInfo *cppClass = new QGst::DiscovererSubtitleInfo;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-namespace QGst {
-  QGlib::RefCountedObject *DiscovererInfo_new(void *instance)
-  {
-    QGst::DiscovererInfo *cppClass = new QGst::DiscovererInfo;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-namespace QGst {
-  QGlib::RefCountedObject *Discoverer_new(void *instance)
-  {
-    QGst::Discoverer *cppClass = new QGst::Discoverer;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/bin.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Bin,GST_TYPE_BIN)
-
-namespace QGst {
-  QGlib::RefCountedObject *Bin_new(void *instance)
-  {
-    QGst::Bin *cppClass = new QGst::Bin;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-
-
-#include "QGst/init.h"
 
 #include "QGst/message.h"
 
@@ -285,60 +261,6 @@ namespace QGst {
   }
 } //namespace QGst
 
-#include "QGst/buffer.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Buffer,GST_TYPE_BUFFER)
-
-namespace QGst {
-  QGlib::RefCountedObject *Buffer_new(void *instance)
-  {
-    QGst::Buffer *cppClass = new QGst::Buffer;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/object.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Object,GST_TYPE_OBJECT)
-
-namespace QGst {
-  QGlib::RefCountedObject *Object_new(void *instance)
-  {
-    QGst::Object *cppClass = new QGst::Object;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/streamvolume.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::StreamVolume,GST_TYPE_STREAM_VOLUME)
-
-namespace QGst {
-  QGlib::RefCountedObject *StreamVolume_new(void *instance)
-  {
-    QGst::StreamVolume *cppClass = new QGst::StreamVolume;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/objectstore_p.h"
-
-#include "QGst/pluginfeature.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::PluginFeature,GST_TYPE_PLUGIN_FEATURE)
-
-namespace QGst {
-  QGlib::RefCountedObject *PluginFeature_new(void *instance)
-  {
-    QGst::PluginFeature *cppClass = new QGst::PluginFeature;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
 #include "QGst/pipeline.h"
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::Pipeline,GST_TYPE_PIPELINE)
@@ -352,68 +274,14 @@ namespace QGst {
   }
 } //namespace QGst
 
-#include "QGst/clock.h"
+#include "QGst/urihandler.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Clock,GST_TYPE_CLOCK)
-
-namespace QGst {
-  QGlib::RefCountedObject *Clock_new(void *instance)
-  {
-    QGst::Clock *cppClass = new QGst::Clock;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/elementfactory.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::ElementFactory,GST_TYPE_ELEMENT_FACTORY)
+REGISTER_TYPE_IMPLEMENTATION(QGst::UriHandler,GST_TYPE_URI_HANDLER)
 
 namespace QGst {
-  QGlib::RefCountedObject *ElementFactory_new(void *instance)
+  QGlib::RefCountedObject *UriHandler_new(void *instance)
   {
-    QGst::ElementFactory *cppClass = new QGst::ElementFactory;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/taglist.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::TagList,GST_TYPE_TAG_LIST)
-
-#include "QGst/colorbalance.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::ColorBalanceChannel,GST_TYPE_COLOR_BALANCE_CHANNEL)
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::ColorBalance,GST_TYPE_COLOR_BALANCE)
-
-namespace QGst {
-  QGlib::RefCountedObject *ColorBalanceChannel_new(void *instance)
-  {
-    QGst::ColorBalanceChannel *cppClass = new QGst::ColorBalanceChannel;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-namespace QGst {
-  QGlib::RefCountedObject *ColorBalance_new(void *instance)
-  {
-    QGst::ColorBalance *cppClass = new QGst::ColorBalance;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
-#include "QGst/xoverlay.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::XOverlay,GST_TYPE_X_OVERLAY)
-
-namespace QGst {
-  QGlib::RefCountedObject *XOverlay_new(void *instance)
-  {
-    QGst::XOverlay *cppClass = new QGst::XOverlay;
+    QGst::UriHandler *cppClass = new QGst::UriHandler;
     cppClass->m_object = instance;
     return cppClass;
   }
@@ -436,6 +304,9 @@ namespace QGst {
       break;
     case QGst::EventEos:
       cppClass = new QGst::EosEvent;
+      break;
+    case QGst::EventCaps:
+      cppClass = new QGst::CapsEvent;
       break;
     case QGst::EventNewSegment:
       cppClass = new QGst::NewSegmentEvent;
@@ -473,31 +344,33 @@ namespace QGst {
   }
 } //namespace QGst
 
-#include "QGst/bufferlist.h"
+#include "QGst/clocktime.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::BufferList,GST_TYPE_BUFFER_LIST)
+REGISTER_TYPE_IMPLEMENTATION(QGst::ClockTime,GST_TYPE_CLOCK_TIME)
+
+#include "QGst/init.h"
+
+#include "QGst/buffer.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Buffer,GST_TYPE_BUFFER)
 
 namespace QGst {
-  QGlib::RefCountedObject *BufferList_new(void *instance)
+  QGlib::RefCountedObject *Buffer_new(void *instance)
   {
-    QGst::BufferList *cppClass = new QGst::BufferList;
+    QGst::Buffer *cppClass = new QGst::Buffer;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
-#include "QGst/structure.h"
+#include "QGst/caps.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Structure,GST_TYPE_STRUCTURE)
-
-#include "QGst/bus.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Bus,GST_TYPE_BUS)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Caps,GST_TYPE_CAPS)
 
 namespace QGst {
-  QGlib::RefCountedObject *Bus_new(void *instance)
+  QGlib::RefCountedObject *Caps_new(void *instance)
   {
-    QGst::Bus *cppClass = new QGst::Bus;
+    QGst::Caps *cppClass = new QGst::Caps;
     cppClass->m_object = instance;
     return cppClass;
   }
@@ -523,7 +396,7 @@ REGISTER_TYPE_IMPLEMENTATION(QGst::PadLinkReturn,GST_TYPE_PAD_LINK_RETURN)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::FlowReturn,GST_TYPE_FLOW_RETURN)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::ActivateMode,GST_TYPE_ACTIVATE_MODE)
+REGISTER_TYPE_IMPLEMENTATION(QGst::PadMode,GST_TYPE_PAD_MODE)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::Rank,GST_TYPE_RANK)
 
@@ -539,13 +412,15 @@ REGISTER_TYPE_IMPLEMENTATION(QGst::Format,GST_TYPE_FORMAT)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::StreamStatusType,GST_TYPE_STREAM_STATUS_TYPE)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::StreamVolumeFormat,GST_TYPE_STREAM_VOLUME_FORMAT)
+REGISTER_TYPE_IMPLEMENTATION(QGst::StreamVolumeFormat,G_TYPE_ENUM)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::ColorBalanceType,GST_TYPE_COLOR_BALANCE_TYPE)
 
+REGISTER_TYPE_IMPLEMENTATION(QGst::QueryTypeFlags,GST_TYPE_QUERY_TYPE_FLAGS)
+
 REGISTER_TYPE_IMPLEMENTATION(QGst::QueryType,GST_TYPE_QUERY_TYPE)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::BufferFlags,GST_TYPE_BUFFER_FLAG)
+REGISTER_TYPE_IMPLEMENTATION(QGst::BufferFlags,GST_TYPE_BUFFER_FLAGS)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::EventTypeFlags,GST_TYPE_EVENT_TYPE_FLAGS)
 
@@ -555,20 +430,27 @@ REGISTER_TYPE_IMPLEMENTATION(QGst::SeekFlags,GST_TYPE_SEEK_FLAGS)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::SeekType,GST_TYPE_SEEK_TYPE)
 
+REGISTER_TYPE_IMPLEMENTATION(QGst::SegmentFlags,GST_TYPE_SEGMENT_FLAGS)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::QOSType,GST_TYPE_QOS_TYPE)
+
 REGISTER_TYPE_IMPLEMENTATION(QGst::TagMergeMode,GST_TYPE_TAG_MERGE_MODE)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::TagFlags,GST_TYPE_TAG_FLAG)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererResult,GST_TYPE_DISCOVERER_RESULT)
 
+REGISTER_TYPE_IMPLEMENTATION(QGst::MapFlags,GST_TYPE_MAP_FLAGS)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::MemoryFlags,GST_TYPE_MEMORY_FLAGS)
+
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(MiniObjectFlagReadonly) == static_cast<int>(GST_MINI_OBJECT_FLAG_READONLY));
+    BOOST_STATIC_ASSERT(static_cast<int>(MiniObjectFlagLockable) == static_cast<int>(GST_MINI_OBJECT_FLAG_LOCKABLE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MiniObjectFlagLockReadonly) == static_cast<int>(GST_MINI_OBJECT_FLAG_LOCK_READONLY));
     BOOST_STATIC_ASSERT(static_cast<int>(MiniObjectFlagLast) == static_cast<int>(GST_MINI_OBJECT_FLAG_LAST));
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(ObjectDisposing) == static_cast<int>(GST_OBJECT_DISPOSING));
-    BOOST_STATIC_ASSERT(static_cast<int>(ObjectFloating) == static_cast<int>(GST_OBJECT_FLOATING));
     BOOST_STATIC_ASSERT(static_cast<int>(ObjectFlagLast) == static_cast<int>(GST_OBJECT_FLAG_LAST));
 }
 
@@ -603,11 +485,17 @@ namespace QGst {
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(PadBlocked) == static_cast<int>(GST_PAD_BLOCKED));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadFlushing) == static_cast<int>(GST_PAD_FLUSHING));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadInGetCaps) == static_cast<int>(GST_PAD_IN_GETCAPS));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadInSetCaps) == static_cast<int>(GST_PAD_IN_SETCAPS));
-    BOOST_STATIC_ASSERT(static_cast<int>(PadBlocking) == static_cast<int>(GST_PAD_BLOCKING));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagBlocked) == static_cast<int>(GST_PAD_FLAG_BLOCKED));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagFlushing) == static_cast<int>(GST_PAD_FLAG_FLUSHING));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagEos) == static_cast<int>(GST_PAD_FLAG_EOS));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagBlocking) == static_cast<int>(GST_PAD_FLAG_BLOCKING));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagNeedParent) == static_cast<int>(GST_PAD_FLAG_NEED_PARENT));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagNeedReconfigure) == static_cast<int>(GST_PAD_FLAG_NEED_RECONFIGURE));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagPendingEvents) == static_cast<int>(GST_PAD_FLAG_PENDING_EVENTS));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagFixedCaps) == static_cast<int>(GST_PAD_FLAG_FIXED_CAPS));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagProxyCaps) == static_cast<int>(GST_PAD_FLAG_PROXY_CAPS));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagProxyAllocation) == static_cast<int>(GST_PAD_FLAG_PROXY_ALLOCATION));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadFlagProxyScheduling) == static_cast<int>(GST_PAD_FLAG_PROXY_SCHEDULING));
     BOOST_STATIC_ASSERT(static_cast<int>(PadFlagLast) == static_cast<int>(GST_PAD_FLAG_LAST));
 }
 
@@ -622,22 +510,25 @@ namespace QGst {
 }
 
 namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(FlowCustomSuccess2) == static_cast<int>(GST_FLOW_CUSTOM_SUCCESS_2));
+    BOOST_STATIC_ASSERT(static_cast<int>(FlowCustomSuccess1) == static_cast<int>(GST_FLOW_CUSTOM_SUCCESS_1));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowCustomSuccess) == static_cast<int>(GST_FLOW_CUSTOM_SUCCESS));
-    BOOST_STATIC_ASSERT(static_cast<int>(FlowResend) == static_cast<int>(GST_FLOW_RESEND));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowOk) == static_cast<int>(GST_FLOW_OK));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowNotLinked) == static_cast<int>(GST_FLOW_NOT_LINKED));
-    BOOST_STATIC_ASSERT(static_cast<int>(FlowWrongState) == static_cast<int>(GST_FLOW_WRONG_STATE));
-    BOOST_STATIC_ASSERT(static_cast<int>(FlowUnexpected) == static_cast<int>(GST_FLOW_UNEXPECTED));
+    BOOST_STATIC_ASSERT(static_cast<int>(FlowFlushing) == static_cast<int>(GST_FLOW_FLUSHING));
+    BOOST_STATIC_ASSERT(static_cast<int>(FlowEos) == static_cast<int>(GST_FLOW_EOS));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowNotNegotiated) == static_cast<int>(GST_FLOW_NOT_NEGOTIATED));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowError) == static_cast<int>(GST_FLOW_ERROR));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowNotSupported) == static_cast<int>(GST_FLOW_NOT_SUPPORTED));
     BOOST_STATIC_ASSERT(static_cast<int>(FlowCustomError) == static_cast<int>(GST_FLOW_CUSTOM_ERROR));
+    BOOST_STATIC_ASSERT(static_cast<int>(FlowCustomError1) == static_cast<int>(GST_FLOW_CUSTOM_ERROR_1));
+    BOOST_STATIC_ASSERT(static_cast<int>(FlowCustomError2) == static_cast<int>(GST_FLOW_CUSTOM_ERROR_2));
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(ActivateNone) == static_cast<int>(GST_ACTIVATE_NONE));
-    BOOST_STATIC_ASSERT(static_cast<int>(ActivatePush) == static_cast<int>(GST_ACTIVATE_PUSH));
-    BOOST_STATIC_ASSERT(static_cast<int>(ActivatePull) == static_cast<int>(GST_ACTIVATE_PULL));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadModeNone) == static_cast<int>(GST_PAD_MODE_NONE));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadModePush) == static_cast<int>(GST_PAD_MODE_PUSH));
+    BOOST_STATIC_ASSERT(static_cast<int>(PadModePull) == static_cast<int>(GST_PAD_MODE_PULL));
 }
 
 namespace QGst {
@@ -731,7 +622,14 @@ namespace QGst {
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(QueryNone) == static_cast<int>(GST_QUERY_NONE));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryTypeUpstream) == static_cast<int>(GST_QUERY_TYPE_UPSTREAM));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryTypeDownstream) == static_cast<int>(GST_QUERY_TYPE_DOWNSTREAM));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryTypeSerialized) == static_cast<int>(GST_QUERY_TYPE_SERIALIZED));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryTypeBoth) == static_cast<int>(GST_QUERY_TYPE_BOTH));
+}
+
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryUnknown) == static_cast<int>(GST_QUERY_UNKNOWN));
     BOOST_STATIC_ASSERT(static_cast<int>(QueryPosition) == static_cast<int>(GST_QUERY_POSITION));
     BOOST_STATIC_ASSERT(static_cast<int>(QueryDuration) == static_cast<int>(GST_QUERY_DURATION));
     BOOST_STATIC_ASSERT(static_cast<int>(QueryLatency) == static_cast<int>(GST_QUERY_LATENCY));
@@ -744,18 +642,25 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(QueryBuffering) == static_cast<int>(GST_QUERY_BUFFERING));
     BOOST_STATIC_ASSERT(static_cast<int>(QueryCustom) == static_cast<int>(GST_QUERY_CUSTOM));
     BOOST_STATIC_ASSERT(static_cast<int>(QueryUri) == static_cast<int>(GST_QUERY_URI));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryAllocation) == static_cast<int>(GST_QUERY_ALLOCATION));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryScheduling) == static_cast<int>(GST_QUERY_SCHEDULING));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryAcceptCaps) == static_cast<int>(GST_QUERY_ACCEPT_CAPS));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryCaps) == static_cast<int>(GST_QUERY_CAPS));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryDrain) == static_cast<int>(GST_QUERY_DRAIN));
+    BOOST_STATIC_ASSERT(static_cast<int>(QueryContext) == static_cast<int>(GST_QUERY_CONTEXT));
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagReadOnly) == static_cast<int>(GST_BUFFER_FLAG_READONLY));
-    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagPreroll) == static_cast<int>(GST_BUFFER_FLAG_PREROLL));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagLive) == static_cast<int>(GST_BUFFER_FLAG_LIVE));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagDecodeOnly) == static_cast<int>(GST_BUFFER_FLAG_DECODE_ONLY));
     BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagDiscont) == static_cast<int>(GST_BUFFER_FLAG_DISCONT));
-    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagInCaps) == static_cast<int>(GST_BUFFER_FLAG_IN_CAPS));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagResync) == static_cast<int>(GST_BUFFER_FLAG_RESYNC));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagCorrupted) == static_cast<int>(GST_BUFFER_FLAG_CORRUPTED));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagMarker) == static_cast<int>(GST_BUFFER_FLAG_MARKER));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagHeader) == static_cast<int>(GST_BUFFER_FLAG_HEADER));
     BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagGap) == static_cast<int>(GST_BUFFER_FLAG_GAP));
+    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagDroppable) == static_cast<int>(GST_BUFFER_FLAG_DROPPABLE));
     BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagDeltaUnit) == static_cast<int>(GST_BUFFER_FLAG_DELTA_UNIT));
-    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagMedia1) == static_cast<int>(GST_BUFFER_FLAG_MEDIA1));
-    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagMedia2) == static_cast<int>(GST_BUFFER_FLAG_MEDIA2));
-    BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagMedia3) == static_cast<int>(GST_BUFFER_FLAG_MEDIA3));
     BOOST_STATIC_ASSERT(static_cast<int>(BufferFlagLast) == static_cast<int>(GST_BUFFER_FLAG_LAST));
 }
 
@@ -763,6 +668,8 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(EventTypeUpstream) == static_cast<int>(GST_EVENT_TYPE_UPSTREAM));
     BOOST_STATIC_ASSERT(static_cast<int>(EventTypeDownstream) == static_cast<int>(GST_EVENT_TYPE_DOWNSTREAM));
     BOOST_STATIC_ASSERT(static_cast<int>(EventTypeSerialized) == static_cast<int>(GST_EVENT_TYPE_SERIALIZED));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventTypeSticky) == static_cast<int>(GST_EVENT_TYPE_STICKY));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventTypeStickyMulti) == static_cast<int>(GST_EVENT_TYPE_STICKY_MULTI));
     BOOST_STATIC_ASSERT(static_cast<int>(EventTypeBoth) == static_cast<int>(GST_EVENT_TYPE_BOTH));
 }
 
@@ -770,19 +677,27 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(EventUnknown) == static_cast<int>(GST_EVENT_UNKNOWN));
     BOOST_STATIC_ASSERT(static_cast<int>(EventFlushStart) == static_cast<int>(GST_EVENT_FLUSH_START));
     BOOST_STATIC_ASSERT(static_cast<int>(EventFlushStop) == static_cast<int>(GST_EVENT_FLUSH_STOP));
-    BOOST_STATIC_ASSERT(static_cast<int>(EventEos) == static_cast<int>(GST_EVENT_EOS));
-    BOOST_STATIC_ASSERT(static_cast<int>(EventNewSegment) == static_cast<int>(GST_EVENT_NEWSEGMENT));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventStreamStart) == static_cast<int>(GST_EVENT_STREAM_START));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventCaps) == static_cast<int>(GST_EVENT_CAPS));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventNewSegment) == static_cast<int>(GST_EVENT_SEGMENT));
     BOOST_STATIC_ASSERT(static_cast<int>(EventTag) == static_cast<int>(GST_EVENT_TAG));
     BOOST_STATIC_ASSERT(static_cast<int>(EventBufferSize) == static_cast<int>(GST_EVENT_BUFFERSIZE));
     BOOST_STATIC_ASSERT(static_cast<int>(EventSinkMessage) == static_cast<int>(GST_EVENT_SINK_MESSAGE));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventEos) == static_cast<int>(GST_EVENT_EOS));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventToc) == static_cast<int>(GST_EVENT_TOC));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventSegmentDone) == static_cast<int>(GST_EVENT_SEGMENT_DONE));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventGap) == static_cast<int>(GST_EVENT_GAP));
     BOOST_STATIC_ASSERT(static_cast<int>(EventQos) == static_cast<int>(GST_EVENT_QOS));
     BOOST_STATIC_ASSERT(static_cast<int>(EventSeek) == static_cast<int>(GST_EVENT_SEEK));
     BOOST_STATIC_ASSERT(static_cast<int>(EventNavigation) == static_cast<int>(GST_EVENT_NAVIGATION));
     BOOST_STATIC_ASSERT(static_cast<int>(EventLatency) == static_cast<int>(GST_EVENT_LATENCY));
     BOOST_STATIC_ASSERT(static_cast<int>(EventStep) == static_cast<int>(GST_EVENT_STEP));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventReconfigure) == static_cast<int>(GST_EVENT_RECONFIGURE));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventTocSelect) == static_cast<int>(GST_EVENT_TOC_SELECT));
     BOOST_STATIC_ASSERT(static_cast<int>(EventCustomUpstream) == static_cast<int>(GST_EVENT_CUSTOM_UPSTREAM));
     BOOST_STATIC_ASSERT(static_cast<int>(EventCustomDownstream) == static_cast<int>(GST_EVENT_CUSTOM_DOWNSTREAM));
     BOOST_STATIC_ASSERT(static_cast<int>(EventCustomDownstreamOob) == static_cast<int>(GST_EVENT_CUSTOM_DOWNSTREAM_OOB));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventCustomDownstreamSticky) == static_cast<int>(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY));
     BOOST_STATIC_ASSERT(static_cast<int>(EventCustomBoth) == static_cast<int>(GST_EVENT_CUSTOM_BOTH));
     BOOST_STATIC_ASSERT(static_cast<int>(EventCustomBothOob) == static_cast<int>(GST_EVENT_CUSTOM_BOTH_OOB));
 }
@@ -798,9 +713,21 @@ namespace QGst {
 
 namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(SeekTypeNone) == static_cast<int>(GST_SEEK_TYPE_NONE));
-    BOOST_STATIC_ASSERT(static_cast<int>(SeekTypeCur) == static_cast<int>(GST_SEEK_TYPE_CUR));
     BOOST_STATIC_ASSERT(static_cast<int>(SeekTypeSet) == static_cast<int>(GST_SEEK_TYPE_SET));
     BOOST_STATIC_ASSERT(static_cast<int>(SeekTypeEnd) == static_cast<int>(GST_SEEK_TYPE_END));
+}
+
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(None) == static_cast<int>(GST_SEGMENT_FLAG_NONE));
+    BOOST_STATIC_ASSERT(static_cast<int>(Reset) == static_cast<int>(GST_SEGMENT_FLAG_RESET));
+    BOOST_STATIC_ASSERT(static_cast<int>(Skip) == static_cast<int>(GST_SEGMENT_FLAG_SKIP));
+    BOOST_STATIC_ASSERT(static_cast<int>(Segment) == static_cast<int>(GST_SEGMENT_FLAG_SEGMENT));
+}
+
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(QosOverflow) == static_cast<int>(GST_QOS_TYPE_OVERFLOW));
+    BOOST_STATIC_ASSERT(static_cast<int>(QosUnderflow) == static_cast<int>(GST_QOS_TYPE_UNDERFLOW));
+    BOOST_STATIC_ASSERT(static_cast<int>(QosThrottle) == static_cast<int>(GST_QOS_TYPE_THROTTLE));
 }
 
 namespace QGst {
@@ -837,41 +764,234 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(DiscovererMissingPlugins) == static_cast<int>(GST_DISCOVERER_MISSING_PLUGINS));
 }
 
-#include "QGst/caps.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Caps,GST_TYPE_CAPS)
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(MapRead) == static_cast<int>(GST_MAP_READ));
+    BOOST_STATIC_ASSERT(static_cast<int>(MapWrite) == static_cast<int>(GST_MAP_WRITE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MapFlagLast) == static_cast<int>(GST_MAP_FLAG_LAST));
+}
 
 namespace QGst {
-  QGlib::RefCountedObject *Caps_new(void *instance)
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagReadonly) == static_cast<int>(GST_MEMORY_FLAG_READONLY));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagNoShare) == static_cast<int>(GST_MEMORY_FLAG_NO_SHARE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagZeroPrefixed) == static_cast<int>(GST_MEMORY_FLAG_ZERO_PREFIXED));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagZeroPadded) == static_cast<int>(GST_MEMORY_FLAG_ZERO_PADDED));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagPhysicallyContiguous) == static_cast<int>(GST_MEMORY_FLAG_PHYSICALLY_CONTIGUOUS));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagNotMappable) == static_cast<int>(GST_MEMORY_FLAG_NOT_MAPPABLE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagLast) == static_cast<int>(GST_MEMORY_FLAG_LAST));
+}
+
+#include "QGst/colorbalance.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::ColorBalanceChannel,GST_TYPE_COLOR_BALANCE_CHANNEL)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::ColorBalance,GST_TYPE_COLOR_BALANCE)
+
+namespace QGst {
+  QGlib::RefCountedObject *ColorBalanceChannel_new(void *instance)
   {
-    QGst::Caps *cppClass = new QGst::Caps;
+    QGst::ColorBalanceChannel *cppClass = new QGst::ColorBalanceChannel;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
 
-#include "QGst/structs.h"
+namespace QGst {
+  QGlib::RefCountedObject *ColorBalance_new(void *instance)
+  {
+    QGst::ColorBalance *cppClass = new QGst::ColorBalance;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Fourcc,GST_TYPE_FOURCC)
+#include "QGst/clock.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::Fraction,GST_TYPE_FRACTION)
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::IntRange,GST_TYPE_INT_RANGE)
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Int64Range,GST_TYPE_INT64_RANGE)
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::DoubleRange,GST_TYPE_DOUBLE_RANGE)
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::FractionRange,GST_TYPE_FRACTION_RANGE)
-
-#include "QGst/propertyprobe.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::PropertyProbe,GST_TYPE_PROPERTY_PROBE)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Clock,GST_TYPE_CLOCK)
 
 namespace QGst {
-  QGlib::RefCountedObject *PropertyProbe_new(void *instance)
+  QGlib::RefCountedObject *Clock_new(void *instance)
   {
-    QGst::PropertyProbe *cppClass = new QGst::PropertyProbe;
+    QGst::Clock *cppClass = new QGst::Clock;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/objectstore_p.h"
+
+#include "QGst/miniobject.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::MiniObject,G_TYPE_BOXED)
+
+namespace QGst {
+  QGlib::RefCountedObject *MiniObject_new(void *instance)
+  {
+    QGst::MiniObject *cppClass = new QGst::MiniObject;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/memory.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Memory,GST_TYPE_MEMORY)
+
+namespace QGst {
+  QGlib::RefCountedObject *Memory_new(void *instance)
+  {
+    QGst::Memory *cppClass = new QGst::Memory;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/structure.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Structure,GST_TYPE_STRUCTURE)
+
+#include "QGst/sample.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Sample,GST_TYPE_SAMPLE)
+
+namespace QGst {
+  QGlib::RefCountedObject *Sample_new(void *instance)
+  {
+    QGst::Sample *cppClass = new QGst::Sample;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/discoverer.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererStreamInfo,GST_TYPE_DISCOVERER_STREAM_INFO)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererContainerInfo,GST_TYPE_DISCOVERER_CONTAINER_INFO)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererAudioInfo,GST_TYPE_DISCOVERER_AUDIO_INFO)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererVideoInfo,GST_TYPE_DISCOVERER_VIDEO_INFO)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererSubtitleInfo,GST_TYPE_DISCOVERER_SUBTITLE_INFO)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererInfo,GST_TYPE_DISCOVERER_INFO)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Discoverer,GST_TYPE_DISCOVERER)
+
+namespace QGst {
+  QGlib::RefCountedObject *DiscovererStreamInfo_new(void *instance)
+  {
+    QGst::DiscovererStreamInfo *cppClass = new QGst::DiscovererStreamInfo;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+namespace QGst {
+  QGlib::RefCountedObject *DiscovererContainerInfo_new(void *instance)
+  {
+    QGst::DiscovererContainerInfo *cppClass = new QGst::DiscovererContainerInfo;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+namespace QGst {
+  QGlib::RefCountedObject *DiscovererAudioInfo_new(void *instance)
+  {
+    QGst::DiscovererAudioInfo *cppClass = new QGst::DiscovererAudioInfo;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+namespace QGst {
+  QGlib::RefCountedObject *DiscovererVideoInfo_new(void *instance)
+  {
+    QGst::DiscovererVideoInfo *cppClass = new QGst::DiscovererVideoInfo;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+namespace QGst {
+  QGlib::RefCountedObject *DiscovererSubtitleInfo_new(void *instance)
+  {
+    QGst::DiscovererSubtitleInfo *cppClass = new QGst::DiscovererSubtitleInfo;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+namespace QGst {
+  QGlib::RefCountedObject *DiscovererInfo_new(void *instance)
+  {
+    QGst::DiscovererInfo *cppClass = new QGst::DiscovererInfo;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+namespace QGst {
+  QGlib::RefCountedObject *Discoverer_new(void *instance)
+  {
+    QGst::Discoverer *cppClass = new QGst::Discoverer;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/taglist.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::TagList,GST_TYPE_TAG_LIST)
+
+#include "QGst/ghostpad.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::GhostPad,GST_TYPE_GHOST_PAD)
+
+namespace QGst {
+  QGlib::RefCountedObject *GhostPad_new(void *instance)
+  {
+    QGst::GhostPad *cppClass = new QGst::GhostPad;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/bus.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Bus,GST_TYPE_BUS)
+
+namespace QGst {
+  QGlib::RefCountedObject *Bus_new(void *instance)
+  {
+    QGst::Bus *cppClass = new QGst::Bus;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/element.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Element,GST_TYPE_ELEMENT)
+
+namespace QGst {
+  QGlib::RefCountedObject *Element_new(void *instance)
+  {
+    QGst::Element *cppClass = new QGst::Element;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/pad.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Pad,GST_TYPE_PAD)
+
+namespace QGst {
+  QGlib::RefCountedObject *Pad_new(void *instance)
+  {
+    QGst::Pad *cppClass = new QGst::Pad;
     cppClass->m_object = instance;
     return cppClass;
   }
@@ -890,54 +1010,20 @@ namespace QGst {
   }
 } //namespace QGst
 
-#include "QGst/clocktime.h"
+#include "QGst/bin.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::ClockTime,GST_TYPE_CLOCK_TIME)
-
-#include "QGst/query.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGst::Query,GST_TYPE_QUERY)
+REGISTER_TYPE_IMPLEMENTATION(QGst::Bin,GST_TYPE_BIN)
 
 namespace QGst {
-  QGlib::RefCountedObject *Query_new(void *instance)
+  QGlib::RefCountedObject *Bin_new(void *instance)
   {
-    QGst::Query *cppClass = NULL;
-    switch(GST_QUERY_TYPE(instance)) {
-    case QGst::QueryPosition:
-      cppClass = new QGst::PositionQuery;
-      break;
-    case QGst::QueryDuration:
-      cppClass = new QGst::DurationQuery;
-      break;
-    case QGst::QueryLatency:
-      cppClass = new QGst::LatencyQuery;
-      break;
-    case QGst::QuerySeeking:
-      cppClass = new QGst::SeekingQuery;
-      break;
-    case QGst::QuerySegment:
-      cppClass = new QGst::SegmentQuery;
-      break;
-    case QGst::QueryConvert:
-      cppClass = new QGst::ConvertQuery;
-      break;
-    case QGst::QueryFormats:
-      cppClass = new QGst::FormatsQuery;
-      break;
-    case QGst::QueryBuffering:
-      cppClass = new QGst::BufferingQuery;
-      break;
-    case QGst::QueryUri:
-      cppClass = new QGst::UriQuery;
-      break;
-    default:
-      cppClass = new QGst::Query;
-      break;
-    }
+    QGst::Bin *cppClass = new QGst::Bin;
     cppClass->m_object = instance;
     return cppClass;
   }
 } //namespace QGst
+
+
 
 namespace QGst {
 namespace Private {
@@ -945,11 +1031,25 @@ namespace Private {
   {
     QGlib::Quark q = g_quark_from_static_string("QGlib__wrapper_constructor");
     QGlib::GetType<ChildProxy>().setQuarkData(q, reinterpret_cast<void*>(&ChildProxy_new));
-    QGlib::GetType<GhostPad>().setQuarkData(q, reinterpret_cast<void*>(&GhostPad_new));
-    QGlib::GetType<Pad>().setQuarkData(q, reinterpret_cast<void*>(&Pad_new));
+    QGlib::GetType<StreamVolume>().setQuarkData(q, reinterpret_cast<void*>(&StreamVolume_new));
+    QGlib::GetType<BufferList>().setQuarkData(q, reinterpret_cast<void*>(&BufferList_new));
+    QGlib::GetType<Object>().setQuarkData(q, reinterpret_cast<void*>(&Object_new));
+    QGlib::GetType<VideoOverlay>().setQuarkData(q, reinterpret_cast<void*>(&VideoOverlay_new));
+    QGlib::GetType<ElementFactory>().setQuarkData(q, reinterpret_cast<void*>(&ElementFactory_new));
+    QGlib::GetType<Query>().setQuarkData(q, reinterpret_cast<void*>(&Query_new));
+    QGlib::GetType<PluginFeature>().setQuarkData(q, reinterpret_cast<void*>(&PluginFeature_new));
+    QGlib::GetType<Message>().setQuarkData(q, reinterpret_cast<void*>(&Message_new));
+    QGlib::GetType<Pipeline>().setQuarkData(q, reinterpret_cast<void*>(&Pipeline_new));
     QGlib::GetType<UriHandler>().setQuarkData(q, reinterpret_cast<void*>(&UriHandler_new));
+    QGlib::GetType<Event>().setQuarkData(q, reinterpret_cast<void*>(&Event_new));
+    QGlib::GetType<Buffer>().setQuarkData(q, reinterpret_cast<void*>(&Buffer_new));
+    QGlib::GetType<Caps>().setQuarkData(q, reinterpret_cast<void*>(&Caps_new));
+    QGlib::GetType<ColorBalanceChannel>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalanceChannel_new));
+    QGlib::GetType<ColorBalance>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalance_new));
+    QGlib::GetType<Clock>().setQuarkData(q, reinterpret_cast<void*>(&Clock_new));
     QGlib::GetType<MiniObject>().setQuarkData(q, reinterpret_cast<void*>(&MiniObject_new));
-    QGlib::GetType<Element>().setQuarkData(q, reinterpret_cast<void*>(&Element_new));
+    QGlib::GetType<Memory>().setQuarkData(q, reinterpret_cast<void*>(&Memory_new));
+    QGlib::GetType<Sample>().setQuarkData(q, reinterpret_cast<void*>(&Sample_new));
     QGlib::GetType<DiscovererStreamInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererStreamInfo_new));
     QGlib::GetType<DiscovererContainerInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererContainerInfo_new));
     QGlib::GetType<DiscovererAudioInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererAudioInfo_new));
@@ -957,25 +1057,12 @@ namespace Private {
     QGlib::GetType<DiscovererSubtitleInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererSubtitleInfo_new));
     QGlib::GetType<DiscovererInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererInfo_new));
     QGlib::GetType<Discoverer>().setQuarkData(q, reinterpret_cast<void*>(&Discoverer_new));
-    QGlib::GetType<Bin>().setQuarkData(q, reinterpret_cast<void*>(&Bin_new));
-    QGlib::GetType<Message>().setQuarkData(q, reinterpret_cast<void*>(&Message_new));
-    QGlib::GetType<Buffer>().setQuarkData(q, reinterpret_cast<void*>(&Buffer_new));
-    QGlib::GetType<Object>().setQuarkData(q, reinterpret_cast<void*>(&Object_new));
-    QGlib::GetType<StreamVolume>().setQuarkData(q, reinterpret_cast<void*>(&StreamVolume_new));
-    QGlib::GetType<PluginFeature>().setQuarkData(q, reinterpret_cast<void*>(&PluginFeature_new));
-    QGlib::GetType<Pipeline>().setQuarkData(q, reinterpret_cast<void*>(&Pipeline_new));
-    QGlib::GetType<Clock>().setQuarkData(q, reinterpret_cast<void*>(&Clock_new));
-    QGlib::GetType<ElementFactory>().setQuarkData(q, reinterpret_cast<void*>(&ElementFactory_new));
-    QGlib::GetType<ColorBalanceChannel>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalanceChannel_new));
-    QGlib::GetType<ColorBalance>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalance_new));
-    QGlib::GetType<XOverlay>().setQuarkData(q, reinterpret_cast<void*>(&XOverlay_new));
-    QGlib::GetType<Event>().setQuarkData(q, reinterpret_cast<void*>(&Event_new));
-    QGlib::GetType<BufferList>().setQuarkData(q, reinterpret_cast<void*>(&BufferList_new));
+    QGlib::GetType<GhostPad>().setQuarkData(q, reinterpret_cast<void*>(&GhostPad_new));
     QGlib::GetType<Bus>().setQuarkData(q, reinterpret_cast<void*>(&Bus_new));
-    QGlib::GetType<Caps>().setQuarkData(q, reinterpret_cast<void*>(&Caps_new));
-    QGlib::GetType<PropertyProbe>().setQuarkData(q, reinterpret_cast<void*>(&PropertyProbe_new));
+    QGlib::GetType<Element>().setQuarkData(q, reinterpret_cast<void*>(&Element_new));
+    QGlib::GetType<Pad>().setQuarkData(q, reinterpret_cast<void*>(&Pad_new));
     QGlib::GetType<VideoOrientation>().setQuarkData(q, reinterpret_cast<void*>(&VideoOrientation_new));
-    QGlib::GetType<Query>().setQuarkData(q, reinterpret_cast<void*>(&Query_new));
+    QGlib::GetType<Bin>().setQuarkData(q, reinterpret_cast<void*>(&Bin_new));
   }
 } //namespace Private
 } //namespace QGst
