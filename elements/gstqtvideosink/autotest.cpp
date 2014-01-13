@@ -377,28 +377,40 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     targetImage.fill(Qt::black);
     QPainter painter(&targetImage);
 
-    GstBufferPtr buffer(generateTestBuffer(format, 4)); //pattern = red
-    QVERIFY(!buffer.isNull());
+    GstSamplePtr sample(generateTestSample(format, 4)); //pattern = red
+    QVERIFY(!sample.isNull());
+    GstBuffer *buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    GstMapInfo info;
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     genericSurfacePainter.paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(255, 0, 0));
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 5)); //pattern = green
-    QVERIFY(!buffer.isNull());
+    sample.reset(generateTestSample(format, 5)); //pattern = green
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     genericSurfacePainter.paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(0, 255, 0));
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 6)); //pattern = blue
-    QVERIFY(!buffer.isNull());
+    sample.reset(generateTestSample(format, 6)); //pattern = blue
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     genericSurfacePainter.paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         &painter,
         areas);
@@ -407,11 +419,12 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
 
     QBENCHMARK {
         genericSurfacePainter.paint(
-            GST_BUFFER_DATA(buffer.data()),
+            info.data,
             bufferFormat,
             &painter,
             areas);
     }
+    gst_buffer_unmap(buffer, &info);
 }
 
 //------------------------------------
@@ -482,10 +495,15 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     glSurfacePainter->updateColors(0, 0, 0, 0);
     QPainter painter(&pixelBuffer);
 
-    GstBufferPtr buffer(generateTestBuffer(format, 4)); //pattern = red
-    QVERIFY(!buffer.isNull());
+    GstSamplePtr sample(generateTestSample(format, 4)); //pattern = red
+    QVERIFY(!sample.isNull());
+    GstMapInfo info;
+    GstBuffer *buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     glSurfacePainter->paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         &painter,
         areas);
@@ -497,11 +515,15 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
         QFAIL("Failing due to differences in the compared images");
     }
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 5)); //pattern = green
-    QVERIFY(!buffer.isNull());
+    sample.reset(generateTestSample(format, 5)); //pattern = green
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     glSurfacePainter->paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         &painter,
         areas);
@@ -512,11 +534,15 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
                 qRed(pixel1), qGreen(pixel1), qBlue(pixel1),
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
     }
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 6)); //pattern = blue
-    QVERIFY(!buffer.isNull());
+    sample.reset(generateTestSample(format, 6)); //pattern = blue
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     glSurfacePainter->paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         &painter,
         areas);
@@ -531,11 +557,13 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
 
     QBENCHMARK {
         glSurfacePainter->paint(
-            GST_BUFFER_DATA(buffer.data()),
+            info.data,
             bufferFormat,
             &painter,
             areas);
     }
+    gst_buffer_unmap(buffer, &info);
+
 }
 
 #endif
@@ -784,16 +812,24 @@ void QtVideoSinkTest::qtVideoSinkTest()
     //and wait a bit for X/window manager/GPU/whatever to actually render the window
     QTest::qWait(1000);
 
-    GstBuffer *bufferPtr = NULL;
-    gst_child_proxy_get(GST_OBJECT(pipeline.data()), "fakesink::last-buffer", &bufferPtr, NULL);
+    GstSample *samplePtr = NULL;
+    gst_child_proxy_get(GST_CHILD_PROXY(pipeline.data()), "fakesink::last-sample", &samplePtr, NULL);
 
-    GstBufferPtr buffer(bufferPtr);
+    GstSamplePtr sample(samplePtr);
+    GstMapInfo info;
+    QVERIFY(!sample.isNull());
+    GstBuffer *buffer = gst_sample_get_buffer(sample.data());
     QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
 
-    { //increased scope so that expectedImage gets deleted before the buffer
-        QImage expectedImage(GST_BUFFER_DATA(buffer.data()),
+    { //increased scope so that expectedImage gets deleted before the sample
+        // replacing gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width())
+        const GstVideoFormatInfo *video_info = gst_video_format_get_info(imageFormat);
+        QVERIFY(video_info);
+
+        QImage expectedImage(info.data,
                 widgetSize.width(), widgetSize.height(),
-                gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width()),
+                GST_VIDEO_FORMAT_INFO_PSTRIDE(video_info, 0) * widgetSize.width(),
                 QImage::Format_ARGB32);
         QImage actualImage = QPixmap::grabWindow(widget->winId()).toImage();
 
@@ -827,6 +863,7 @@ void QtVideoSinkTest::qtVideoSinkTest()
 #endif
 
         imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
+        gst_buffer_unmap(buffer, &info);
     }
 }
 
