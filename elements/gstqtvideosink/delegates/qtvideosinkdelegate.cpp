@@ -115,7 +115,11 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
             }
             colorsLocker.unlock();
 
-            m_painter->paint(m_buffer->data, m_bufferFormat, painter, m_areas);
+            GstMapInfo mem_info;
+            if (gst_buffer_map(m_buffer, &mem_info, GST_MAP_READ)) {
+                m_painter->paint(mem_info.data, m_bufferFormat, painter, m_areas);
+                gst_buffer_unmap(m_buffer, &mem_info);
+            }
         }
     }
 }
