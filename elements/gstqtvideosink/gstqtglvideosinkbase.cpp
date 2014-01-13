@@ -248,6 +248,16 @@ gboolean GstQtGLVideoSinkBase::start(GstBaseSink *base)
     }
 }
 
+gboolean GstQtGLVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
+{
+    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
+
+    GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
+    BufferFormat format = BufferFormat::fromCaps(caps);
+    sink->delegate->setBufferFormat(format);
+    return TRUE;
+}
+
 GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
     Q_UNUSED(base);

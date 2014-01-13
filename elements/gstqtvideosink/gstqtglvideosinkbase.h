@@ -75,6 +75,7 @@ private:
                              GValue *value, GParamSpec *pspec);
 
     static gboolean start(GstBaseSink *sink);
+    static gboolean set_caps(GstBaseSink *sink, GstCaps *caps);
     static GstCaps *get_caps(GstBaseSink *sink, GstCaps *filter);
 
 
