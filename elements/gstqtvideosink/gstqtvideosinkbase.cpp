@@ -189,7 +189,7 @@ GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstSt
 
 //------------------------------
 
-GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base)
+GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
     Q_UNUSED(base);
 
