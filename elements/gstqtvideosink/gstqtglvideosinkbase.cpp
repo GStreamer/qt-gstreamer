@@ -31,14 +31,10 @@ DEFINE_TYPE_WITH_CODE(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE, init_in
 
 void GstQtGLVideoSinkBase::init_interfaces(GType type)
 {
-    static const GInterfaceInfo implementsiface_info = {
-        (GInterfaceInitFunc) &GstQtGLVideoSinkBase::implementsiface_init, NULL, NULL
-    };
     static const GInterfaceInfo colorbalance_info = {
         (GInterfaceInitFunc) &GstQtGLVideoSinkBase::colorbalance_init, NULL, NULL
     };
 
-    g_type_add_interface_static(type, GST_TYPE_IMPLEMENTS_INTERFACE, &implementsiface_info);
     g_type_add_interface_static(type, GST_TYPE_COLOR_BALANCE, &colorbalance_info);
 }
 
@@ -133,19 +129,6 @@ void GstQtGLVideoSinkBase::finalize(GObject *object)
 
 //------------------------------
 
-void GstQtGLVideoSinkBase::implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data)
-{
-    Q_UNUSED(data);
-    klass->supported = &GstQtGLVideoSinkBase::interface_supported;
-}
-
-gboolean GstQtGLVideoSinkBase::interface_supported(GstImplementsInterface *iface, GType type)
-{
-    Q_UNUSED(iface);
-    return type == GST_TYPE_COLOR_BALANCE;
-}
-
-//------------------------------
 
 void GstQtGLVideoSinkBase::colorbalance_init(GstColorBalanceClass *klass, gpointer data)
 {
