@@ -48,12 +48,12 @@ void GstQtGLVideoSinkBase::base_init(gpointer g_class)
     static GstStaticPadTemplate sink_pad_template =
         GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
             GST_STATIC_CAPS(
-                "video/x-raw-rgb, "
+                "video/x-raw, "
                 "framerate = (fraction) [ 0, MAX ], "
                 "width = (int) [ 1, MAX ], "
                 "height = (int) [ 1, MAX ]"
                 "; "
-                "video/x-raw-yuv, "
+                "video/x-raw, "
                 "framerate = (fraction) [ 0, MAX ], "
                 "width = (int) [ 1, MAX ], "
                 "height = (int) [ 1, MAX ]"
