@@ -248,7 +248,7 @@ gboolean GstQtGLVideoSinkBase::start(GstBaseSink *base)
     }
 }
 
-GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base)
+GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
     Q_UNUSED(base);
 

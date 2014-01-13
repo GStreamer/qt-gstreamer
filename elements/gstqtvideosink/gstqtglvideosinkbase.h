@@ -75,7 +75,7 @@ private:
                              GValue *value, GParamSpec *pspec);
 
     static gboolean start(GstBaseSink *sink);
-    static GstCaps *get_caps(GstBaseSink *sink);
+    static GstCaps *get_caps(GstBaseSink *sink, GstCaps *filter);
 
 
     GList *m_channels_list;
