@@ -897,7 +897,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
         G_STRINGIFY(QTGLVIDEOSINK_NAME) : G_STRINGIFY(QTVIDEOSINK_NAME));
 
     MAKE_ELEMENT(queue2, "queue");
-    MAKE_ELEMENT(colorspace, "ffmpegcolorspace");
+    MAKE_ELEMENT(colorspace, "videoconvert");
     MAKE_ELEMENT(videoscale, "videoscale");
     MAKE_ELEMENT(capsfilter2, "capsfilter");
     MAKE_ELEMENT(fakesink, "fakesink");
@@ -905,7 +905,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     g_object_set(videotestsrc, "pattern", 19, NULL); //color bars
     g_object_set(capsfilter, "caps", caps, NULL);
     g_object_set(capsfilter2, "caps", fakesinkCaps, NULL);
-    g_object_set(fakesink, "enable-last-buffer", TRUE, NULL);
+    g_object_set(fakesink, "enable-last-sample", TRUE, NULL);
 
     if (context) {
         g_object_set(qtvideosink, "glcontext", context, NULL);
@@ -924,7 +924,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
         return NULL;
     }
 
-    if (!gst_element_link_pads(tee, "src%d", queue, "sink")) {
+    if (!gst_element_link_pads(tee, "src_%u", queue, "sink")) {
         QWARN("Failed to link tee to qtvideosink");
         return NULL;
     }
@@ -934,7 +934,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
         return NULL;
     }
 
-    if (!gst_element_link_pads(tee, "src%d", queue2, "sink")) {
+    if (!gst_element_link_pads(tee, "src_%u", queue2, "sink")) {
         QWARN("Failed to link tee to fakesink branch");
         return NULL;
     }
