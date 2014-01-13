@@ -17,7 +17,6 @@
 */
 #include <gst/gst.h>
 #include <gst/video/video.h>
-#include <gst/interfaces/colorbalance.h>
 
 #include <QTest>
 #include <QPainter>
@@ -33,7 +32,6 @@
 #else
 # define QSKIP_PORT(m, a) QSKIP(m, a)
 #endif
-
 
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
 # include "painters/openglsurfacepainter.h"
