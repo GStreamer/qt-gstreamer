@@ -158,7 +158,7 @@ private Q_SLOTS:
     void cleanupTestCase();
 
 private:
-    GstBuffer *generateTestBuffer(GstVideoFormat format, int pattern);
+    GstSample *generateTestSample(GstVideoFormat format, int pattern);
     GstPipeline *constructPipeline(GstCaps *caps, GstCaps *fakesinkCaps,
                                    bool forceAspectRatio, void *context);
     void imageCompare(const QImage & image1, const QImage & image2, const QSize & sourceSize);
@@ -841,15 +841,15 @@ void QtVideoSinkTest::qtVideoSinkTest()
         gst_bin_add(GST_BIN(pipeline.data()), variable); \
     }
 
-GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int pattern)
+GstSample* QtVideoSinkTest::generateTestSample(GstVideoFormat format, int pattern)
 {
-    GstPipelinePtr pipeline(GST_PIPELINE(gst_pipeline_new("generate-test-buffer-pipeline")));
+    GstPipelinePtr pipeline(GST_PIPELINE(gst_pipeline_new("generate-test-sample-pipeline")));
     if (!pipeline) {
         return NULL;
     }
 
     MAKE_ELEMENT(videotestsrc, "videotestsrc");
-    MAKE_ELEMENT(ffmpegcolorspace, "ffmpegcolorspace");
+    MAKE_ELEMENT(videoconvert, "videoconvert");
     MAKE_ELEMENT(capsfilter, "capsfilter");
     MAKE_ELEMENT(fakesink, "fakesink");
 
@@ -858,10 +858,10 @@ GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int patter
     gst_caps_unref(caps);
 
     g_object_set(videotestsrc, "pattern", pattern, NULL);
-    g_object_set(fakesink, "enable-last-buffer", TRUE, NULL);
+    g_object_set(fakesink, "enable-last-sample", TRUE, NULL);
 
-    if (!gst_element_link_many(videotestsrc, ffmpegcolorspace, capsfilter, fakesink, NULL)) {
-        QWARN("Failed to link generate-test-buffer-pipeline");
+    if (!gst_element_link_many(videotestsrc, videoconvert, capsfilter, fakesink, NULL)) {
+        QWARN("Failed to link generate-test-sample-pipeline");
         return NULL;
     }
 
@@ -871,13 +871,13 @@ GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int patter
     GstStateChangeReturn stateReturn = gst_element_get_state(GST_ELEMENT(pipeline.data()),
                                                              &state, NULL, 10 * GST_SECOND);
     if (stateReturn != GST_STATE_CHANGE_SUCCESS || state != GST_STATE_PAUSED) {
-        QWARN("Failed to set generate-test-buffer-pipeline to PAUSED");
+        QWARN("Failed to set generate-test-sample-pipeline to PAUSED");
         return NULL;
     }
 
-    GstBuffer *bufferPtr = NULL;
-    g_object_get(fakesink, "last-buffer", &bufferPtr, NULL);
-    return bufferPtr;
+    GstSample *samplePtr = NULL;
+    g_object_get(fakesink, "last-sample", &samplePtr, NULL);
+    return samplePtr;
 }
 
 GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
