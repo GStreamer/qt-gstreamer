@@ -44,12 +44,9 @@ QSGNode* QtQuick2VideoSinkDelegate::updateNode(QSGNode *node, const QRectF & tar
             vnode->updateGeometry(m_areas);
         }
     } else {
-        BufferFormat format = m_formatDirty ?
-                BufferFormat::fromCaps(GST_BUFFER_CAPS(m_buffer)) : m_bufferFormat;
-
         //change format before geometry, so that we change QSGGeometry as well
         if (m_formatDirty) {
-            vnode->changeFormat(format);
+            vnode->changeFormat(m_bufferFormat);
             sgnodeFormatChanged = true;
         }
 
@@ -61,8 +58,8 @@ QSGNode* QtQuick2VideoSinkDelegate::updateNode(QSGNode *node, const QRectF & tar
             QReadLocker pixelAspectRatioLocker(&m_pixelAspectRatioLock);
             Qt::AspectRatioMode aspectRatioMode = m_forceAspectRatio ?
                     Qt::KeepAspectRatio : Qt::IgnoreAspectRatio;
-            m_areas.calculate(targetArea, format.frameSize(),
-                    format.pixelAspectRatio(), m_pixelAspectRatio,
+            m_areas.calculate(targetArea, m_bufferFormat.frameSize(),
+                    m_bufferFormat.pixelAspectRatio(), m_pixelAspectRatio,
                     aspectRatioMode);
             pixelAspectRatioLocker.unlock();
 
@@ -73,7 +70,7 @@ QSGNode* QtQuick2VideoSinkDelegate::updateNode(QSGNode *node, const QRectF & tar
                 "video area: " QRECTF_FORMAT ", "
                 "black1: " QRECTF_FORMAT ", "
                 "black2: " QRECTF_FORMAT,
-                QSIZE_FORMAT_ARGS(format.frameSize()),
+                QSIZE_FORMAT_ARGS(m_bufferFormat.frameSize()),
                 QRECTF_FORMAT_ARGS(m_areas.targetArea),
                 QRECTF_FORMAT_ARGS(m_areas.videoArea),
                 QRECTF_FORMAT_ARGS(m_areas.blackArea1),
@@ -85,7 +82,6 @@ QSGNode* QtQuick2VideoSinkDelegate::updateNode(QSGNode *node, const QRectF & tar
         forceAspectRatioLocker.unlock();
 
         if (m_formatDirty) {
-            m_bufferFormat = format;
             m_formatDirty = false;
 
             //make sure to update the colors after changing material
