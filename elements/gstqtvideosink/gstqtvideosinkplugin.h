@@ -29,21 +29,19 @@ GST_DEBUG_CATEGORY_EXTERN(gst_qt_video_sink_debug);
     { \
         static volatile gsize gonce_data = 0; \
         if (g_once_init_enter(&gonce_data)) { \
-            GType type; \
-            type = gst_type_register_static_full( \
-                parent_type, \
-                g_intern_static_string(type_name), \
-                sizeof(cpp_type##Class), \
-                &cpp_type::base_init, \
-                NULL,   /* base_finalize */ \
-                &cpp_type::class_init, \
-                NULL,   /* class_finalize */ \
-                NULL,   /* class_data */ \
-                sizeof(cpp_type), \
-                0,      /* n_preallocs */ \
-                &cpp_type::init, \
-                NULL, \
-                (GTypeFlags) 0); \
+            GType type = 0; \
+            GTypeInfo info; \
+            info.class_size = sizeof(cpp_type##Class); \
+            info.base_init = &cpp_type::base_init; \
+            info.base_finalize = NULL; \
+            info.class_init = &cpp_type::class_init; \
+            info.class_finalize = NULL; \
+            info.class_data = NULL; \
+            info.instance_size = sizeof(cpp_type); \
+            info.n_preallocs = 0; \
+            info.instance_init = &cpp_type::init; \
+            info.value_table = 0; \
+            type = g_type_register_static(parent_type, g_intern_static_string(type_name), &info, (GTypeFlags)0); \
             additional_initializations(type); \
             g_once_init_leave(&gonce_data, (gsize) type); \
         } \
