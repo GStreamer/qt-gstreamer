@@ -32,18 +32,30 @@ static gboolean plugin_init(GstPlugin *plugin)
     GST_DEBUG_CATEGORY_INIT(gst_qt_video_sink_debug, QTVIDEOSINK_NAME, 0,
                             "Debug category for GstQtVideoSink");
 
-    gst_element_register(plugin, QTVIDEOSINK_NAME,
-            GST_RANK_NONE, GST_TYPE_QT_VIDEO_SINK);
+    if(!gst_element_register(plugin, QTVIDEOSINK_NAME,
+                GST_RANK_NONE, GST_TYPE_QT_VIDEO_SINK)) {
+        GST_ERROR("Failed to register " QTVIDEOSINK_NAME);
+        return FALSE;
+    }
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    gst_element_register(plugin, QTGLVIDEOSINK_NAME,
-            GST_RANK_NONE, GST_TYPE_QT_GL_VIDEO_SINK);
+    if(!gst_element_register(plugin, QTGLVIDEOSINK_NAME,
+                GST_RANK_NONE, GST_TYPE_QT_GL_VIDEO_SINK)) {
+        GST_ERROR("Failed to register " QTGLVIDEOSINK_NAME);
+        return FALSE;
+    }
 #endif
-    gst_element_register(plugin, QWIDGETVIDEOSINK_NAME,
-            GST_RANK_NONE, GST_TYPE_QWIDGET_VIDEO_SINK);
+    if(!gst_element_register(plugin, QWIDGETVIDEOSINK_NAME,
+                GST_RANK_NONE, GST_TYPE_QWIDGET_VIDEO_SINK)) {
+        GST_ERROR("Failed to register " QWIDGETVIDEOSINK_NAME);
+        return FALSE;
+    }
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-    gst_element_register(plugin, "qtquick2videosink",
-            GST_RANK_NONE, GST_TYPE_QT_QUICK2_VIDEO_SINK);
+    if (!gst_element_register(plugin, "qtquick2videosink",
+                GST_RANK_NONE, GST_TYPE_QT_QUICK2_VIDEO_SINK)) {
+        GST_ERROR("Failed to register qtquick2videosink");
+        return FALSE;
+    }
 #endif
 
     return TRUE;
