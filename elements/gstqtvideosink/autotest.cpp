@@ -998,8 +998,8 @@ void QtVideoSinkTest::imageCompare(const QImage & image1, const QImage & image2,
     // do not compare scaling artifacts - this algorithm depends on videotestsrc's pattern 19
     qreal colorChangePoint = barsArea.width() / 7.0;
 
-    // omit 6% of the pixels before and after the color change
-    int area = qRound(colorChangePoint * 0.06);
+    // omit 9% of the pixels before and after the color change
+    int area = qRound(colorChangePoint * 0.09);
     hStartStopPoints.append(barsArea.left() + 2);
     for (int i = 1; i < 7; i++) {
         hStartStopPoints.append(barsArea.left() + int(colorChangePoint * i) - area);
