@@ -95,6 +95,9 @@ public:
     bool forceAspectRatio() const;
     void setForceAspectRatio(bool force);
 
+    BufferFormat bufferFormat() const;
+    void setBufferFormat(const BufferFormat &format);
+
 protected:
     // internal event handling
     virtual bool event(QEvent *event);
@@ -122,6 +125,7 @@ protected:
 
     // format caching
     bool m_formatDirty;
+    mutable QReadWriteLock m_bufferFormatLock;
     BufferFormat m_bufferFormat;
     PaintAreas m_areas;
 

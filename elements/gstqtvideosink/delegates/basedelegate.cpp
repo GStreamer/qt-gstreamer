@@ -147,6 +147,23 @@ void BaseDelegate::setForceAspectRatio(bool force)
 
 //-------------------------------------
 
+BufferFormat BaseDelegate::bufferFormat() const
+{
+    QReadLocker l(&m_bufferFormatLock);
+    return m_bufferFormat;
+}
+
+void BaseDelegate::setBufferFormat(const BufferFormat &format)
+{
+    QWriteLocker l(&m_bufferFormatLock);
+    if (m_bufferFormat != format) {
+        m_bufferFormat = format;
+        m_formatDirty = true;
+    }
+}
+
+//-------------------------------------
+
 bool BaseDelegate::event(QEvent *event)
 {
     switch((int) event->type()) {
