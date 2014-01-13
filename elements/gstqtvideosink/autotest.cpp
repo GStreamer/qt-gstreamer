@@ -68,16 +68,16 @@ struct ElementDeleter
 typedef QScopedPointer<GstElement, ElementDeleter> GstElementPtr;
 
 
-struct BufferDeleter
+struct SampleDeleter
 {
-    static inline void cleanup(GstBuffer *ptr) {
+    static inline void cleanup(GstSample *ptr) {
         if (ptr) {
-            gst_buffer_unref(ptr);
+            gst_sample_unref(ptr);
         }
     }
 };
 
-typedef QScopedPointer<GstBuffer, BufferDeleter> GstBufferPtr;
+typedef QScopedPointer<GstSample, SampleDeleter> GstSamplePtr;
 
 //------------------------------------
 
