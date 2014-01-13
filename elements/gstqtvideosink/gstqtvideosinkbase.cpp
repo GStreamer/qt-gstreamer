@@ -191,7 +191,7 @@ GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstSt
 
 GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
-    Q_UNUSED(base);
+    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
 
     GstCaps *caps = gst_caps_new_empty();
 
@@ -206,6 +206,7 @@ GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
         caps = intersection;
     }
 
+    GST_LOG_OBJECT(sink, "returned caps %" GST_PTR_FORMAT, caps);
     return caps;
 }
 
