@@ -384,10 +384,10 @@ qint64 SegmentDoneMessage::position() const
 
 //********************************************************
 
-DurationMessagePtr DurationMessage::create(const ObjectPtr & source)
+DurationChangedMessagePtr DurationChangedMessage::create(const ObjectPtr & source)
 {
     GstMessage *m = gst_message_new_duration_changed(source);
-    return DurationMessagePtr::wrap(m, false);
+    return DurationChangedMessagePtr::wrap(m, false);
 }
 
 //********************************************************

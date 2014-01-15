@@ -186,7 +186,7 @@ namespace QGst {
         MessageElement         = (1 << 15),
         MessageSegmentStart    = (1 << 16),
         MessageSegmentDone     = (1 << 17),
-        MessageDuration        = (1 << 18),
+        MessageDurationChanged = (1 << 18),
         MessageLatency         = (1 << 19),
         MessageAsyncStart      = (1 << 20),
         MessageAsyncDone       = (1 << 21),

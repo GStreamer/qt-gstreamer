@@ -38,7 +38,7 @@ private Q_SLOTS:
     void applicationMessageTest();
     void elementMessageTest();
     void segmentDoneMessageTest();
-    void durationMessageTest();
+    void durationChangedMessageTest();
     void latencyMessageTest();
     void asyncDoneMessageTest();
     void requestStateMessageTest();
@@ -236,10 +236,10 @@ void MessageTest::segmentDoneMessageTest()
     QCOMPARE(msg->position(), static_cast<qint64>(4567898));
 }
 
-void MessageTest::durationMessageTest()
+void MessageTest::durationChangedMessageTest()
 {
-    QGst::DurationMessagePtr msg = QGst::DurationMessage::create(QGst::ObjectPtr());
-    QVERIFY(msg->type()==QGst::MessageDuration);
+    QGst::DurationChangedMessagePtr msg = QGst::DurationChangedMessage::create(QGst::ObjectPtr());
+    QVERIFY(msg->type()==QGst::MessageDurationChanged);
     QCOMPARE(msg->typeName(), QString("duration-changed"));
 }
 

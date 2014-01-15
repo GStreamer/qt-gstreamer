@@ -237,11 +237,11 @@ public:
 /*! \headerfile message.h <QGst/Message>
  * \brief Wrapper class for messages of type QGst::MessageDuration
  */
-class QTGSTREAMER_EXPORT DurationMessage : public Message
+class QTGSTREAMER_EXPORT DurationChangedMessage : public Message
 {
-    QGST_WRAPPER_FAKE_SUBCLASS(Duration, Message)
+    QGST_WRAPPER_FAKE_SUBCLASS(DurationChanged, Message)
 public:
-    static DurationMessagePtr create(const ObjectPtr & source);
+    static DurationChangedMessagePtr create(const ObjectPtr & source);
 
 };
 
@@ -340,7 +340,7 @@ QGST_REGISTER_SUBCLASS(Message, StreamStatus)
 QGST_REGISTER_SUBCLASS(Message, Application)
 QGST_REGISTER_SUBCLASS(Message, Element)
 QGST_REGISTER_SUBCLASS(Message, SegmentDone)
-QGST_REGISTER_SUBCLASS(Message, Duration)
+QGST_REGISTER_SUBCLASS(Message, DurationChanged)
 QGST_REGISTER_SUBCLASS(Message, Latency)
 QGST_REGISTER_SUBCLASS(Message, AsyncDone)
 QGST_REGISTER_SUBCLASS(Message, RequestState)
