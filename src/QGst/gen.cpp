@@ -234,8 +234,8 @@ namespace QGst {
     case QGst::MessageSegmentDone:
       cppClass = new QGst::SegmentDoneMessage;
       break;
-    case QGst::MessageDuration:
-      cppClass = new QGst::DurationMessage;
+    case QGst::MessageDurationChanged:
+      cppClass = new QGst::DurationChangedMessage;
       break;
     case QGst::MessageLatency:
       cppClass = new QGst::LatencyMessage;
@@ -558,7 +558,7 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(MessageElement) == static_cast<int>(GST_MESSAGE_ELEMENT));
     BOOST_STATIC_ASSERT(static_cast<int>(MessageSegmentStart) == static_cast<int>(GST_MESSAGE_SEGMENT_START));
     BOOST_STATIC_ASSERT(static_cast<int>(MessageSegmentDone) == static_cast<int>(GST_MESSAGE_SEGMENT_DONE));
-    BOOST_STATIC_ASSERT(static_cast<int>(MessageDuration) == static_cast<int>(GST_MESSAGE_DURATION));
+    BOOST_STATIC_ASSERT(static_cast<int>(MessageDurationChanged) == static_cast<int>(GST_MESSAGE_DURATION_CHANGED));
     BOOST_STATIC_ASSERT(static_cast<int>(MessageLatency) == static_cast<int>(GST_MESSAGE_LATENCY));
     BOOST_STATIC_ASSERT(static_cast<int>(MessageAsyncStart) == static_cast<int>(GST_MESSAGE_ASYNC_START));
     BOOST_STATIC_ASSERT(static_cast<int>(MessageAsyncDone) == static_cast<int>(GST_MESSAGE_ASYNC_DONE));
