@@ -104,7 +104,7 @@ public:
         Q_UNUSED(oldMaterial);
 
         VideoMaterial *material = static_cast<VideoMaterial *>(newMaterial);
-        if (m_id_rgbTexture) {
+        if (m_id_rgbTexture > 0) {
             program()->setUniformValue(m_id_rgbTexture, 0);
         } else {
             program()->setUniformValue(m_id_yTexture, 0);
