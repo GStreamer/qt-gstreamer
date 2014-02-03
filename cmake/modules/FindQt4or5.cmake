@@ -76,7 +76,7 @@ if (${QT_VERSION} STREQUAL "5")
 
   set(_Qt4or5_FOUND ${Qt5Core_FOUND})
 
-  # Set QT_QMAKE_EXECUTABLE and QT_IMPORTS_DIR
+  # Set QT_QMAKE_EXECUTABLE, QT_IMPORTS_DIR and QT_QML_DIR
   if (Qt5Core_FOUND)
     get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
 
@@ -92,6 +92,7 @@ if (${QT_VERSION} STREQUAL "5")
     endfunction()
 
     _qt5_query_qmake(QT_INSTALL_IMPORTS QT_IMPORTS_DIR)
+    _qt5_query_qmake(QT_INSTALL_QML QT_QML_DIR)
   endif()
 
   # Set pkg-config package names
