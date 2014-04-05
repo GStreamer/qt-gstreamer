@@ -76,12 +76,12 @@ void ChildProxyTest::propertiesTest()
     QCOMPARE(bin->add(tee), true);
 
     {
-        QGst::ObjectPtr obj;
+        QGlib::ObjectPtr obj;
         QGlib::ParamSpecPtr param;
         QCOMPARE(bin->findChildProperty("mytee::has-chain", &obj, &param), true);
         QVERIFY(!obj.isNull());
         QVERIFY(!param.isNull());
-        QCOMPARE(obj->name(), QString("mytee"));
+        QCOMPARE(obj->property("name").get<QString>(), QString("mytee"));
         QCOMPARE(param->name(), QString("has-chain"));
     }
 

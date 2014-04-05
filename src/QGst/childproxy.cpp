@@ -35,13 +35,14 @@ QGlib::ObjectPtr ChildProxy::childByIndex(uint index) const
     return QGlib::ObjectPtr::wrap(gst_child_proxy_get_child_by_index(object<GstChildProxy>(), index), false);
 }
 
-bool ChildProxy::findChildProperty(const char *name, ObjectPtr *obj, QGlib::ParamSpecPtr *paramSpec) const
+bool ChildProxy::findChildProperty(const char *name, QGlib::ObjectPtr *obj,
+                                   QGlib::ParamSpecPtr *paramSpec) const
 {
     GObject *op;
     GParamSpec *pp;
     bool result = gst_child_proxy_lookup(object<GstChildProxy>(), name, &op, &pp);
     if (result) {
-        *obj = ObjectPtr::wrap(GST_OBJECT(op), false);
+        *obj = QGlib::ObjectPtr::wrap(op, false);
         *paramSpec = QGlib::ParamSpecPtr::wrap(pp, false);
     }
     return result;
@@ -50,7 +51,7 @@ bool ChildProxy::findChildProperty(const char *name, ObjectPtr *obj, QGlib::Para
 QGlib::Value ChildProxy::childProperty(const char *name) const
 {
     QGlib::ParamSpecPtr param;
-    ObjectPtr object;
+    QGlib::ObjectPtr object;
     if (findChildProperty(name, &object, &param)) {
         return object->property(param->name().toUtf8());
     } else {
