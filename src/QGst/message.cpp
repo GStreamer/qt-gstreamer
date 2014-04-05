@@ -404,7 +404,7 @@ AsyncDoneMessagePtr AsyncDoneMessage::create(const ObjectPtr & source, ClockTime
     return AsyncDoneMessagePtr::wrap(gst_message_new_async_done(source, running_time), false);
 }
 
-ClockTime AsyncDoneMessage::running_time() const
+ClockTime AsyncDoneMessage::runningTime() const
 {
     GstClockTime c;
     gst_message_parse_async_done(object<GstMessage>(), &c);

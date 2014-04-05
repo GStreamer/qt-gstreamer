@@ -258,7 +258,7 @@ void MessageTest::asyncDoneMessageTest()
 
     QVERIFY(msg->type()==QGst::MessageAsyncDone);
     QCOMPARE(msg->typeName(), QString("async-done"));
-    QCOMPARE(msg->running_time().toTime(), QTime(17,0));
+    QCOMPARE(msg->runningTime().toTime(), QTime(17,0));
 }
 
 void MessageTest::requestStateMessageTest()

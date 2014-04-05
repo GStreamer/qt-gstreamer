@@ -266,7 +266,7 @@ class QTGSTREAMER_EXPORT AsyncDoneMessage : public Message
 public:
     static AsyncDoneMessagePtr create(const ObjectPtr & source, ClockTime running_time);
 
-    ClockTime running_time() const;
+    ClockTime runningTime() const;
 };
 
 /*! \headerfile message.h <QGst/Message>
