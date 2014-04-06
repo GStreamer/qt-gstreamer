@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013  Diane Trout <diane@ghic.org
+    Copyright (C) 2013  Diane Trout <diane@ghic.org>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -30,11 +30,13 @@ MemoryPtr Memory::create(size_t size)
     return MemoryPtr::wrap(gst_allocator_alloc(NULL, size, NULL));
 }
 
-MemoryPtr Memory::create(MemoryFlags flags, void *allocator, MemoryPtr parent, size_t maxsize, size_t align, size_t offset, size_t size)
+MemoryPtr Memory::create(MemoryFlags flags, void *allocator, MemoryPtr parent,
+                         size_t maxsize, size_t align, size_t offset, size_t size)
 {
     MemoryPtr mem;
 
-    gst_memory_init(mem, static_cast<GstMemoryFlags>(static_cast<int>(flags)), static_cast<GstAllocator *>(allocator), parent, maxsize, align, offset, size);
+    gst_memory_init(mem, static_cast<GstMemoryFlags>(static_cast<int>(flags)),
+                    static_cast<GstAllocator *>(allocator), parent, maxsize, align, offset, size);
     return mem;
 }
 
@@ -45,7 +47,8 @@ size_t Memory::getSizes(size_t &offset, size_t &maxsize)
 
 bool Memory::map(MapInfo &info, MapFlags flags)
 {
-    return gst_memory_map(object<GstMemory>(), reinterpret_cast<GstMapInfo *>(&info), static_cast<GstMapFlags>(static_cast<int>(flags)));
+    return gst_memory_map(object<GstMemory>(), reinterpret_cast<GstMapInfo *>(&info),
+                          static_cast<GstMapFlags>(static_cast<int>(flags)));
 }
 
 void Memory::unmap(MapInfo &info)

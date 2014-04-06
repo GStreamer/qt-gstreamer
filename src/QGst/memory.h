@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013  Diane Trout <diane@ghic.org
+    Copyright (C) 2013  Diane Trout <diane@ghic.org>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -21,15 +21,6 @@
 #include "miniobject.h"
 
 namespace QGst {
-class Buffer;
-
-    /*! \headerfile memory.h <QGst/Memory>
-     *  \brief Wrapper class for GstMemory
-     *
-     * GstMemory is a lightweight refcounted object that wraps a region
-     * of memory. They are typically used to manage the data of a
-     * GstBuffer.
-     */
 
 struct MapInfo
 {
@@ -40,12 +31,20 @@ struct MapInfo
     size_t maxsize;
 };
 
+/*! \headerfile memory.h <QGst/Memory>
+ *  \brief Wrapper class for GstMemory
+ *
+ * GstMemory is a lightweight refcounted object that wraps a region
+ * of memory. They are typically used to manage the data of a
+ * GstBuffer.
+ */
 class QTGSTREAMER_EXPORT Memory : public MiniObject
 {
     QGST_WRAPPER(Memory)
 public:
     static MemoryPtr create(size_t size);
-    static MemoryPtr create(MemoryFlags flags, void *allocator, MemoryPtr parent, size_t maxsize, size_t align, size_t offset, size_t size);
+    static MemoryPtr create(MemoryFlags flags, void *allocator, MemoryPtr parent,
+                            size_t maxsize, size_t align, size_t offset, size_t size);
 
     size_t getSizes(size_t &offset, size_t &maxsize);
 
