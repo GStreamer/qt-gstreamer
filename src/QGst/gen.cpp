@@ -432,7 +432,7 @@ REGISTER_TYPE_IMPLEMENTATION(QGst::SeekType,GST_TYPE_SEEK_TYPE)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::SegmentFlags,GST_TYPE_SEGMENT_FLAGS)
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::QOSType,GST_TYPE_QOS_TYPE)
+REGISTER_TYPE_IMPLEMENTATION(QGst::QosType,GST_TYPE_QOS_TYPE)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::TagMergeMode,GST_TYPE_TAG_MERGE_MODE)
 
@@ -718,16 +718,16 @@ namespace QGst {
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(None) == static_cast<int>(GST_SEGMENT_FLAG_NONE));
-    BOOST_STATIC_ASSERT(static_cast<int>(Reset) == static_cast<int>(GST_SEGMENT_FLAG_RESET));
-    BOOST_STATIC_ASSERT(static_cast<int>(Skip) == static_cast<int>(GST_SEGMENT_FLAG_SKIP));
-    BOOST_STATIC_ASSERT(static_cast<int>(Segment) == static_cast<int>(GST_SEGMENT_FLAG_SEGMENT));
+    BOOST_STATIC_ASSERT(static_cast<int>(SegmentFlagNone) == static_cast<int>(GST_SEGMENT_FLAG_NONE));
+    BOOST_STATIC_ASSERT(static_cast<int>(SegmentFlagReset) == static_cast<int>(GST_SEGMENT_FLAG_RESET));
+    BOOST_STATIC_ASSERT(static_cast<int>(SegmentFlagSkip) == static_cast<int>(GST_SEGMENT_FLAG_SKIP));
+    BOOST_STATIC_ASSERT(static_cast<int>(SegmentFlagSegment) == static_cast<int>(GST_SEGMENT_FLAG_SEGMENT));
 }
 
 namespace QGst {
-    BOOST_STATIC_ASSERT(static_cast<int>(QosOverflow) == static_cast<int>(GST_QOS_TYPE_OVERFLOW));
-    BOOST_STATIC_ASSERT(static_cast<int>(QosUnderflow) == static_cast<int>(GST_QOS_TYPE_UNDERFLOW));
-    BOOST_STATIC_ASSERT(static_cast<int>(QosThrottle) == static_cast<int>(GST_QOS_TYPE_THROTTLE));
+    BOOST_STATIC_ASSERT(static_cast<int>(QosTypeOverflow) == static_cast<int>(GST_QOS_TYPE_OVERFLOW));
+    BOOST_STATIC_ASSERT(static_cast<int>(QosTypeUnderflow) == static_cast<int>(GST_QOS_TYPE_UNDERFLOW));
+    BOOST_STATIC_ASSERT(static_cast<int>(QosTypeThrottle) == static_cast<int>(GST_QOS_TYPE_THROTTLE));
 }
 
 namespace QGst {

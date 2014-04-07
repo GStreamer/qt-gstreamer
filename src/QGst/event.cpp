@@ -261,17 +261,17 @@ MessagePtr SinkMessageEvent::message() const
 
 //********************************************************
 
-QosEventPtr QosEvent::create(QOSType qos, double proportion, ClockTimeDiff diff, ClockTime timeStamp)
+QosEventPtr QosEvent::create(QosType qos, double proportion, ClockTimeDiff diff, ClockTime timeStamp)
 {
     GstEvent * e = gst_event_new_qos(static_cast<GstQOSType>(qos), proportion, diff, static_cast<GstClockTime>(timeStamp));
     return QosEventPtr::wrap(e, false);
 }
 
-QOSType QosEvent::type() const
+QosType QosEvent::type() const
 {
     GstQOSType t;
     gst_event_parse_qos(object<GstEvent>(), &t, NULL, NULL, NULL);
-    return static_cast<QOSType>(t);
+    return static_cast<QosType>(t);
 }
 
 double QosEvent::proportion() const

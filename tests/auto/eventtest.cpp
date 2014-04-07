@@ -99,13 +99,13 @@ void EventTest::eosTest()
 
 void EventTest::newSegmentTest()
 {
-    QGst::SegmentEventPtr evt = QGst::SegmentEvent::create(QGst::SegmentFlag::Segment,
+    QGst::SegmentEventPtr evt = QGst::SegmentEvent::create(QGst::SegmentFlagSegment,
         100002.0, 0.5, QGst::FormatTime, 1, 2, 12345, 234567, 345678, 456789, 56789);
 
     QVERIFY(evt->type()==QGst::EventSegment);
     QCOMPARE(evt->typeName(), QString("segment"));
 
-    QCOMPARE(evt->flags(), QGst::SegmentFlag::Segment);
+    QCOMPARE(evt->flags(), QGst::SegmentFlagSegment);
     QCOMPARE(evt->rate(), 100002.0);
     QCOMPARE(evt->appliedRate(), 0.5);
     QVERIFY(evt->format() == QGst::FormatTime);
@@ -133,8 +133,8 @@ void EventTest::sinkMessageTest()
 
 void EventTest::qosTest()
 {
-    QGst::QosEventPtr evt = QGst::QosEvent::create(QGst::QOSType::QosUnderflow, 123.4, 23455, 98765432);
-    QVERIFY(evt->type()==QGst::QOSType::QosUnderflow);
+    QGst::QosEventPtr evt = QGst::QosEvent::create(QGst::QosTypeUnderflow, 123.4, 23455, 98765432);
+    QVERIFY(evt->type()==QGst::QosTypeUnderflow);
     QCOMPARE(evt->typeName(), QString("qos"));
 
     QCOMPARE(evt->proportion(), 123.4);

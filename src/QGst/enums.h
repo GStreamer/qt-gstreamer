@@ -329,7 +329,7 @@ namespace QGst {
     Q_DECLARE_FLAGS(BufferFlags, BufferFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(BufferFlags)
 }
-QGST_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAGS
+QGST_REGISTER_TYPE(QGst::BufferFlags)
 
 
 namespace QGst {
@@ -413,11 +413,10 @@ QGST_REGISTER_TYPE(QGst::SeekType)
 
 namespace QGst {
     enum SegmentFlag {
-        //codegen: None=SEGMENT_FLAG_NONE, Reset=SEGMENT_FLAG_RESET, Skip=SEGMENT_FLAG_SKIP, Segment=SEGMENT_FLAG_SEGMENT
-        None = SeekFlagNone,
-        Reset = SeekFlagFlush,
-        Skip = SeekFlagSkip,
-        Segment = SeekFlagSegment
+        SegmentFlagNone = SeekFlagNone,
+        SegmentFlagReset = SeekFlagFlush,
+        SegmentFlagSkip = SeekFlagSkip,
+        SegmentFlagSegment = SeekFlagSegment
     };
     Q_DECLARE_FLAGS(SegmentFlags, SegmentFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(SegmentFlags);
@@ -425,14 +424,13 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::SegmentFlags);
 
 namespace QGst {
-    enum QOSType {
-        //codegen: QosOverflow=QOS_TYPE_OVERFLOW, QosUnderflow=QOS_TYPE_UNDERFLOW, QosThrottle=QOS_TYPE_THROTTLE
-        QosOverflow = 0,
-        QosUnderflow = 1,
-        QosThrottle = 2
+    enum QosType {
+        QosTypeOverflow = 0,
+        QosTypeUnderflow = 1,
+        QosTypeThrottle = 2
     };
 }
-QGST_REGISTER_TYPE(QGst::QOSType); //codegen: GType=GST_TYPE_QOS_TYPE
+QGST_REGISTER_TYPE(QGst::QosType);
 
 namespace QGst {
     enum TagMergeMode {
