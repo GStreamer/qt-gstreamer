@@ -89,10 +89,10 @@ CapsEventPtr CapsEvent::create(const CapsPtr &caps)
 
 //********************************************************
 
-NewSegmentEventPtr NewSegmentEvent::create(SegmentFlags flags, double rate, double appliedRate,
-                                           Format format, quint64 base, quint64 offset,
-                                           quint64 start, quint64 stop, quint64 time,
-                                           quint64 position, quint64 duration)
+SegmentEventPtr SegmentEvent::create(SegmentFlags flags, double rate, double appliedRate,
+                                     Format format, quint64 base, quint64 offset,
+                                     quint64 start, quint64 stop, quint64 time,
+                                     quint64 position, quint64 duration)
 {
     GstSegment s;
     s.flags = static_cast<GstSegmentFlags>(static_cast<int>(flags));
@@ -108,10 +108,10 @@ NewSegmentEventPtr NewSegmentEvent::create(SegmentFlags flags, double rate, doub
     s.duration = duration;
 
     GstEvent * e = gst_event_new_segment(&s);
-    return NewSegmentEventPtr::wrap(e, false);
+    return SegmentEventPtr::wrap(e, false);
 }
 
-SegmentFlags NewSegmentEvent::flags() const
+SegmentFlags SegmentEvent::flags() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
@@ -119,70 +119,70 @@ SegmentFlags NewSegmentEvent::flags() const
     return static_cast<SegmentFlags>(static_cast<int>(s->flags));
 }
 
-double NewSegmentEvent::rate() const
+double SegmentEvent::rate() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->rate;
 }
 
-double NewSegmentEvent::appliedRate() const
+double SegmentEvent::appliedRate() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->applied_rate;
 }
 
-Format NewSegmentEvent::format() const
+Format SegmentEvent::format() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return static_cast<Format>(s->format);
 }
 
-qint64 NewSegmentEvent::base() const
+qint64 SegmentEvent::base() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->base;
 }
 
-qint64 NewSegmentEvent::offset() const
+qint64 SegmentEvent::offset() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->offset;
 }
 
-qint64 NewSegmentEvent::start() const
+qint64 SegmentEvent::start() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->start;
 }
 
-qint64 NewSegmentEvent::stop() const
+qint64 SegmentEvent::stop() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->stop;
 }
 
-qint64 NewSegmentEvent::time() const
+qint64 SegmentEvent::time() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->time;
 }
 
-qint64 NewSegmentEvent::position() const
+qint64 SegmentEvent::position() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
     return s->position;
 }
 
-qint64 NewSegmentEvent::duration() const
+qint64 SegmentEvent::duration() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);

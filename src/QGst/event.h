@@ -110,16 +110,16 @@ public:
  };
 
 /*! \headerfile event.h <QGst/Event>
- * \brief Wrapper class for events of type QGst::NewSegmentEvent
+ * \brief Wrapper class for events of type QGst::SegmentEvent
  */
-class QTGSTREAMER_EXPORT NewSegmentEvent : public Event
+class QTGSTREAMER_EXPORT SegmentEvent : public Event
 {
-    QGST_WRAPPER_FAKE_SUBCLASS(NewSegment, Event)
+    QGST_WRAPPER_FAKE_SUBCLASS(Segment, Event)
 public:
-    static NewSegmentEventPtr create(SegmentFlags flags, double rate, double appliedRate,
-                                     Format format, quint64 base, quint64 offset,
-                                     quint64 start, quint64 stop, quint64 time,
-                                     quint64 position, quint64 duration);
+    static SegmentEventPtr create(SegmentFlags flags, double rate, double appliedRate,
+                                  Format format, quint64 base, quint64 offset,
+                                  quint64 start, quint64 stop, quint64 time,
+                                  quint64 position, quint64 duration);
 
     SegmentFlags flags() const;
     double rate() const;
@@ -253,7 +253,7 @@ QGST_REGISTER_SUBCLASS(Event, FlushStart)
 QGST_REGISTER_SUBCLASS(Event, FlushStop)
 QGST_REGISTER_SUBCLASS(Event, Eos)
 QGST_REGISTER_SUBCLASS(Event, Caps)
-QGST_REGISTER_SUBCLASS(Event, NewSegment)
+QGST_REGISTER_SUBCLASS(Event, Segment)
 QGST_REGISTER_SUBCLASS(Event, Tag)
 QGST_REGISTER_SUBCLASS(Event, BufferSize)
 QGST_REGISTER_SUBCLASS(Event, SinkMessage)

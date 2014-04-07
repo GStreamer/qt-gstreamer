@@ -99,9 +99,10 @@ void EventTest::eosTest()
 
 void EventTest::newSegmentTest()
 {
-    QGst::NewSegmentEventPtr evt = QGst::NewSegmentEvent::create(QGst::SegmentFlag::Segment, 100002.0, 0.5, QGst::FormatTime, 1, 2, 12345, 234567, 345678, 456789, 56789);
+    QGst::SegmentEventPtr evt = QGst::SegmentEvent::create(QGst::SegmentFlag::Segment,
+        100002.0, 0.5, QGst::FormatTime, 1, 2, 12345, 234567, 345678, 456789, 56789);
 
-    QVERIFY(evt->type()==QGst::EventNewSegment);
+    QVERIFY(evt->type()==QGst::EventSegment);
     QCOMPARE(evt->typeName(), QString("segment"));
 
     QCOMPARE(evt->flags(), QGst::SegmentFlag::Segment);

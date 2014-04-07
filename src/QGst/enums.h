@@ -349,7 +349,7 @@ QGST_REGISTER_TYPE(QGst::EventTypeFlags)
 namespace QGst {
     static const int GstEventNumShift = 8;
     enum EventType {
-        //codegen: EventBufferSize=EVENT_BUFFERSIZE, EventNewSegment=EVENT_SEGMENT
+        //codegen: EventBufferSize=EVENT_BUFFERSIZE
         EventUnknown = (0 << GstEventNumShift),
         EventFlushStart = (10 << GstEventNumShift) | EventTypeBoth,
         EventFlushStop = (20 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
@@ -357,7 +357,7 @@ namespace QGst {
         /* downstream */
         EventStreamStart = (40 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
         EventCaps = (50 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
-        EventNewSegment = (70 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventSegment = (70 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
         EventTag = (80 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
         EventBufferSize = (90 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
         EventSinkMessage = (100 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,

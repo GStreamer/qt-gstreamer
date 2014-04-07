@@ -308,8 +308,8 @@ namespace QGst {
     case QGst::EventCaps:
       cppClass = new QGst::CapsEvent;
       break;
-    case QGst::EventNewSegment:
-      cppClass = new QGst::NewSegmentEvent;
+    case QGst::EventSegment:
+      cppClass = new QGst::SegmentEvent;
       break;
     case QGst::EventTag:
       cppClass = new QGst::TagEvent;
@@ -679,7 +679,7 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(EventFlushStop) == static_cast<int>(GST_EVENT_FLUSH_STOP));
     BOOST_STATIC_ASSERT(static_cast<int>(EventStreamStart) == static_cast<int>(GST_EVENT_STREAM_START));
     BOOST_STATIC_ASSERT(static_cast<int>(EventCaps) == static_cast<int>(GST_EVENT_CAPS));
-    BOOST_STATIC_ASSERT(static_cast<int>(EventNewSegment) == static_cast<int>(GST_EVENT_SEGMENT));
+    BOOST_STATIC_ASSERT(static_cast<int>(EventSegment) == static_cast<int>(GST_EVENT_SEGMENT));
     BOOST_STATIC_ASSERT(static_cast<int>(EventTag) == static_cast<int>(GST_EVENT_TAG));
     BOOST_STATIC_ASSERT(static_cast<int>(EventBufferSize) == static_cast<int>(GST_EVENT_BUFFERSIZE));
     BOOST_STATIC_ASSERT(static_cast<int>(EventSinkMessage) == static_cast<int>(GST_EVENT_SINK_MESSAGE));
