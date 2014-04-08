@@ -100,13 +100,15 @@ public:
 };
 
 /*! \headerfile event.h <QGst/Event>
- * \brief Wrapper class for events of type QGst::Caps
+ * \brief Wrapper class for events of type QGst::EventCaps
  */
  class QTGSTREAMER_EXPORT CapsEvent : public Event
  {
      QGST_WRAPPER_FAKE_SUBCLASS(Caps, Event)
 public:
      static CapsEventPtr create(const CapsPtr & caps);
+
+     CapsPtr caps() const;
  };
 
 /*! \headerfile event.h <QGst/Event>

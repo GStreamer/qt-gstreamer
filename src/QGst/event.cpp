@@ -87,6 +87,13 @@ CapsEventPtr CapsEvent::create(const CapsPtr &caps)
     return CapsEventPtr::wrap(gst_event_new_caps(caps), false);
 }
 
+CapsPtr CapsEvent::caps() const
+{
+    GstCaps *c;
+    gst_event_parse_caps (object<GstEvent>(), &c);
+    return CapsPtr::wrap (c);
+}
+
 //********************************************************
 
 SegmentEventPtr SegmentEvent::create(SegmentFlags flags, double rate, double appliedRate,
