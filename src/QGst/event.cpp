@@ -45,6 +45,11 @@ const StructurePtr Event::internalStructure()
     return SharedStructure::fromMiniObject(const_cast<GstStructure *>(structure), MiniObjectPtr(this));
 }
 
+bool Event::hasName(const char *name) const
+{
+    return gst_event_has_name(object<GstEvent>(), name);
+}
+
 quint32 Event::sequenceNumber() const
 {
     return gst_event_get_seqnum(object<GstEvent>());

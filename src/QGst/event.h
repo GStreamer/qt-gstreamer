@@ -62,6 +62,8 @@ public:
 
     const StructurePtr internalStructure();
 
+    bool hasName(const char *name) const;
+
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);
 
