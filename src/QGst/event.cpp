@@ -261,7 +261,7 @@ bool BufferSizeEvent::isAsync() const
 
 SinkMessageEventPtr SinkMessageEvent::create(const QString &name, const MessagePtr & msg)
 {
-    GstEvent * e = gst_event_new_sink_message(qPrintable(name), msg);
+    GstEvent * e = gst_event_new_sink_message(name.toUtf8().constData(), msg);
     return SinkMessageEventPtr::wrap(e, false);
 }
 
