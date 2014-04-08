@@ -36,7 +36,7 @@ EventType Event::type() const
 
 QString Event::typeName() const
 {
-    return QString::fromUtf8(GST_EVENT_TYPE_NAME(object<GstQuery>()));
+    return QString::fromUtf8(GST_EVENT_TYPE_NAME(object<GstEvent>()));
 }
 
 const StructurePtr Event::internalStructure()
