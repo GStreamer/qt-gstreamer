@@ -186,7 +186,7 @@ class QTGSTREAMER_EXPORT QosEvent : public Event
 public:
     static QosEventPtr create(QosType qos, double proportion, ClockTimeDiff diff, ClockTime timestamp);
 
-    QosType type() const;
+    QosType qosType() const;
     double proportion() const;
     ClockTimeDiff diff() const;
     ClockTime timestamp() const;

@@ -281,7 +281,7 @@ QosEventPtr QosEvent::create(QosType qos, double proportion, ClockTimeDiff diff,
     return QosEventPtr::wrap(e, false);
 }
 
-QosType QosEvent::type() const
+QosType QosEvent::qosType() const
 {
     GstQOSType t;
     gst_event_parse_qos(object<GstEvent>(), &t, NULL, NULL, NULL);
