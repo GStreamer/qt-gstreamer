@@ -121,11 +121,7 @@ bool Pad::query(const QueryPtr & query)
 
 bool Pad::sendEvent(const EventPtr &event)
 {
-    if (direction() == PadSrc) {
-        return gst_pad_push_event(object<GstPad>(), static_cast<GstEvent *>(event));
-    } else {
-        return gst_pad_send_event(object<GstPad>(), static_cast<GstEvent *>(event));
-    }
+    return gst_pad_send_event(object<GstPad>(), event);
 }
 
 }
