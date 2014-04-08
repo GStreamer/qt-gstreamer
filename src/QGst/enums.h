@@ -287,27 +287,26 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::QueryTypeFlags)
 
 namespace QGst {
-    static const int GstQueryNumShift = 8;
     enum QueryType {
         QueryUnknown = 0,
-        QueryPosition = (10 << GstQueryNumShift) | QueryTypeBoth,
-        QueryDuration = (20 << GstQueryNumShift) | QueryTypeBoth,
-        QueryLatency = (30 << GstQueryNumShift) | QueryTypeBoth,
-        QueryJitter = (40 << GstQueryNumShift) | QueryTypeBoth,
-        QueryRate = (50 << GstQueryNumShift) | QueryTypeBoth,
-        QuerySeeking = (60 << GstQueryNumShift) | QueryTypeBoth,
-        QuerySegment = (70 << GstQueryNumShift) | QueryTypeBoth,
-        QueryConvert = (80 << GstQueryNumShift) | QueryTypeBoth,
-        QueryFormats = (90 << GstQueryNumShift) | QueryTypeBoth,
-        QueryBuffering = (110 << GstQueryNumShift) | QueryTypeBoth,
-        QueryCustom = (120 << GstQueryNumShift) | QueryTypeBoth,
-        QueryUri = (130 << GstQueryNumShift) | QueryTypeBoth,
-        QueryAllocation = (140 << GstQueryNumShift) | QueryTypeDownstream | QueryTypeSerialized,
-        QueryScheduling = (150 << GstQueryNumShift) | QueryTypeUpstream,
-        QueryAcceptCaps = (160 << GstQueryNumShift) | QueryTypeBoth,
-        QueryCaps = (170 << GstQueryNumShift) | QueryTypeBoth,
-        QueryDrain = (180 << GstQueryNumShift) | QueryTypeDownstream | QueryTypeSerialized,
-        QueryContext = (190 << GstQueryNumShift) | QueryTypeBoth
+        QueryPosition = (10 << 8) | QueryTypeBoth,
+        QueryDuration = (20 << 8) | QueryTypeBoth,
+        QueryLatency = (30 << 8) | QueryTypeBoth,
+        QueryJitter = (40 << 8) | QueryTypeBoth,
+        QueryRate = (50 << 8) | QueryTypeBoth,
+        QuerySeeking = (60 << 8) | QueryTypeBoth,
+        QuerySegment = (70 << 8) | QueryTypeBoth,
+        QueryConvert = (80 << 8) | QueryTypeBoth,
+        QueryFormats = (90 << 8) | QueryTypeBoth,
+        QueryBuffering = (110 << 8) | QueryTypeBoth,
+        QueryCustom = (120 << 8) | QueryTypeBoth,
+        QueryUri = (130 << 8) | QueryTypeBoth,
+        QueryAllocation = (140 << 8) | QueryTypeDownstream | QueryTypeSerialized,
+        QueryScheduling = (150 << 8) | QueryTypeUpstream,
+        QueryAcceptCaps = (160 << 8) | QueryTypeBoth,
+        QueryCaps = (170 << 8) | QueryTypeBoth,
+        QueryDrain = (180 << 8) | QueryTypeDownstream | QueryTypeSerialized,
+        QueryContext = (190 << 8) | QueryTypeBoth
     };
 }
 QGST_REGISTER_TYPE(QGst::QueryType)
@@ -347,43 +346,42 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::EventTypeFlags)
 
 namespace QGst {
-    static const int GstEventNumShift = 8;
     enum EventType {
         //codegen: EventBufferSize=EVENT_BUFFERSIZE
-        EventUnknown = (0 << GstEventNumShift),
-        EventFlushStart = (10 << GstEventNumShift) | EventTypeBoth,
-        EventFlushStop = (20 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
+        EventUnknown = (0 << 8),
+        EventFlushStart = (10 << 8) | EventTypeBoth,
+        EventFlushStop = (20 << 8) | EventTypeBoth | EventTypeSerialized,
 
         /* downstream */
-        EventStreamStart = (40 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
-        EventCaps = (50 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
-        EventSegment = (70 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
-        EventTag = (80 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
-        EventBufferSize = (90 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
-        EventSinkMessage = (100 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
-        EventEos = (110 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
-        EventToc = (120 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventStreamStart = (40 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventCaps = (50 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventSegment = (70 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventTag = (80 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventBufferSize = (90 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventSinkMessage = (100 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventEos = (110 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventToc = (120 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
 
         /* non sticky downstream */
-        EventSegmentDone = (150 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
-        EventGap = (160 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+        EventSegmentDone = (150 << 8) | EventTypeDownstream | EventTypeSerialized,
+        EventGap = (160 << 8) | EventTypeDownstream | EventTypeSerialized,
 
         /* upstream events */
-        EventQos = (190 << GstEventNumShift) | EventTypeUpstream,
-        EventSeek = (200 << GstEventNumShift) | EventTypeUpstream,
-        EventNavigation = (210 << GstEventNumShift) | EventTypeUpstream,
-        EventLatency = (220 << GstEventNumShift) | EventTypeUpstream,
-        EventStep = (230 << GstEventNumShift) | EventTypeUpstream,
-        EventReconfigure = (240 << GstEventNumShift ) | EventTypeUpstream,
-        EventTocSelect = (250 << GstEventNumShift) | EventTypeUpstream,
+        EventQos = (190 << 8) | EventTypeUpstream,
+        EventSeek = (200 << 8) | EventTypeUpstream,
+        EventNavigation = (210 << 8) | EventTypeUpstream,
+        EventLatency = (220 << 8) | EventTypeUpstream,
+        EventStep = (230 << 8) | EventTypeUpstream,
+        EventReconfigure = (240 << 8 ) | EventTypeUpstream,
+        EventTocSelect = (250 << 8) | EventTypeUpstream,
 
         /* custom events */
-        EventCustomUpstream = (270 << GstEventNumShift) | EventTypeUpstream,
-        EventCustomDownstream = (280 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
-        EventCustomDownstreamOob = (290 << GstEventNumShift) | EventTypeDownstream,
-        EventCustomDownstreamSticky = (300 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
-        EventCustomBoth = (310 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
-        EventCustomBothOob = (320 << GstEventNumShift) | EventTypeBoth
+        EventCustomUpstream = (270 << 8) | EventTypeUpstream,
+        EventCustomDownstream = (280 << 8) | EventTypeDownstream | EventTypeSerialized,
+        EventCustomDownstreamOob = (290 << 8) | EventTypeDownstream,
+        EventCustomDownstreamSticky = (300 << 8) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventCustomBoth = (310 << 8) | EventTypeBoth | EventTypeSerialized,
+        EventCustomBothOob = (320 << 8) | EventTypeBoth
     };
 }
 QGST_REGISTER_TYPE(QGst::EventType)
