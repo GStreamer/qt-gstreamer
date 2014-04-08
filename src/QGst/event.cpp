@@ -74,6 +74,13 @@ FlushStopEventPtr FlushStopEvent::create(bool reset_time)
     return FlushStopEventPtr::wrap(gst_event_new_flush_stop(reset_time), false);
 }
 
+bool FlushStopEvent::resetTime() const
+{
+    gboolean r;
+    gst_event_parse_flush_stop(object<GstEvent>(), &r);
+    return r;
+}
+
 //********************************************************
 
 EosEventPtr EosEvent::create()
