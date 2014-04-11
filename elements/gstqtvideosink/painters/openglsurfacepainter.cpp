@@ -37,10 +37,10 @@
 
 #define QRECT_TO_GLMATRIX(rect) \
     { \
-        GLfloat(rect.left())     , GLfloat(rect.bottom() + 1), \
-        GLfloat(rect.right() + 1), GLfloat(rect.bottom() + 1), \
+        GLfloat(rect.left())     , GLfloat(rect.bottom()), \
+        GLfloat(rect.right()), GLfloat(rect.bottom()), \
         GLfloat(rect.left())     , GLfloat(rect.top()), \
-        GLfloat(rect.right() + 1), GLfloat(rect.top()) \
+        GLfloat(rect.right()), GLfloat(rect.top()) \
     }
 
 OpenGLSurfacePainter::OpenGLSurfacePainter()
