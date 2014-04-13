@@ -25,9 +25,13 @@
 namespace QGst {
 
 // FIXME: need a real type for segment
-SamplePtr Sample::create(BufferPtr buffer, CapsPtr caps, void *segment, Structure info)
+SamplePtr Sample::create(const BufferPtr & buffer, const CapsPtr & caps,
+                         void *segment, const Structure & info)
 {
-    return SamplePtr::wrap(gst_sample_new(static_cast<GstBuffer *>(buffer), static_cast<GstCaps *>(caps), static_cast<GstSegment *>(segment), static_cast<GstStructure *>(info)), false);
+    return SamplePtr::wrap(gst_sample_new(static_cast<GstBuffer *>(buffer),
+                                          static_cast<GstCaps *>(caps),
+                                          static_cast<GstSegment *>(segment),
+                                          static_cast<GstStructure *>(info)), false);
 }
 
 BufferPtr Sample::buffer()

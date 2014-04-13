@@ -32,7 +32,8 @@ class QTGSTREAMER_EXPORT Sample : public MiniObject
 {
     QGST_WRAPPER(Sample)
 public:
-    static SamplePtr create(BufferPtr buffer, CapsPtr caps, void *segment, Structure info);
+    static SamplePtr create(const BufferPtr & buffer, const CapsPtr & caps,
+                            void *segment, const Structure & info);
 
     BufferPtr buffer();
     CapsPtr caps();
