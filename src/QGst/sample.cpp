@@ -32,10 +32,7 @@ SamplePtr Sample::create(const BufferPtr & buffer, const CapsPtr & caps,
     if (info.isValid())
         cinfo = gst_structure_copy(info);
 
-    return SamplePtr::wrap(gst_sample_new(static_cast<GstBuffer *>(buffer),
-                                          static_cast<GstCaps *>(caps),
-                                          static_cast<GstSegment *>(segment),
-                                          static_cast<GstStructure *>(cinfo)), false);
+    return SamplePtr::wrap(gst_sample_new(buffer, caps, static_cast<GstSegment *>(segment), cinfo), false);
 }
 
 BufferPtr Sample::buffer()
