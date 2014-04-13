@@ -18,13 +18,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "taglist.h"
+#include "sample.h"
 #include "../QGlib/string_p.h"
 #include <gst/gsttaglist.h>
 #include <gst/gstvalue.h>
-//#include <gst/gstdatetime.h>
 #include <QtCore/QDebug>
 #include <QtCore/QDate>
-#include <QGst/Buffer>
 
 namespace QGst {
 

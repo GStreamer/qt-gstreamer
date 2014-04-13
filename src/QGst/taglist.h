@@ -19,7 +19,6 @@
 #define QGST_TAGLIST_H
 
 #include "global.h"
-#include "sample.h"
 #include "../QGlib/type.h"
 #include "../QGlib/value.h"
 #include <QtCore/QString>
