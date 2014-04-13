@@ -44,15 +44,9 @@ public:
     PadLinkReturn link(const PadPtr & sink);
     bool unlink(const PadPtr & sink);
 
-    /*! Gets the capabilities this pad can produce or consume. Note that this method doesn't
-     * necessarily return the caps set by setCaps(). This method returns all possible caps a
-     * pad can operate with, using the pad's get_caps function; this returns the pad template
-     * caps if not explicitly set.
-     */
-    CapsPtr caps() const;
+    CapsPtr currentCaps() const;
     CapsPtr allowedCaps() const;
-    CapsPtr negotiatedCaps() const;
-    bool setCaps(const CapsPtr & caps);
+    CapsPtr padTemplateCaps() const;
 
     bool isActive() const;
     bool setActive(bool active);

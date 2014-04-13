@@ -242,7 +242,7 @@ void VoipExample::onRtpBinPadAdded(const QGst::PadPtr & pad)
     QGst::ElementPtr bin;
 
     try {
-        if (pad->caps()->internalStructure(0)->value("media").toString() == QLatin1String("audio")) {
+        if (pad->currentCaps()->internalStructure(0)->value("media").toString() == QLatin1String("audio")) {
             bin = QGst::Bin::fromDescription(
                 "rtpspeexdepay ! speexdec ! audioconvert ! autoaudiosink"
             );

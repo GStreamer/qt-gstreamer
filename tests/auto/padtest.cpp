@@ -20,6 +20,7 @@
 #include <QGst/ElementFactory>
 #include <QGst/Pad>
 #include <QGst/Caps>
+#include <QGst/Event>
 
 class PadTest : public QGstTest
 {
@@ -37,9 +38,11 @@ void PadTest::capsTest()
     caps->setValue("height", 240);
 
     queue->setState(QGst::StatePlaying);
-    QVERIFY(pad->setCaps(caps));
 
-    QGst::CapsPtr caps2 = pad->caps();
+    QGst::CapsEventPtr event = QGst::CapsEvent::create(caps);
+    QVERIFY(pad->sendEvent(event));
+
+    QGst::CapsPtr caps2 = pad->currentCaps();
 
     QVERIFY(caps->equals(caps2));
     queue->setState(QGst::StateNull);

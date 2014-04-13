@@ -22,6 +22,7 @@
 #include <QGst/ElementFactory>
 #include <QGst/Caps>
 #include <QGst/Pad>
+#include <QGst/Event>
 
 class StructureTest : public QGstTest
 {
@@ -121,11 +122,12 @@ void StructureTest::sharedStructureTest()
         QCOMPARE(structure->name(), QString("video/x-raw"));
         queue->setState(QGst::StatePlaying);
 
-        QVERIFY(pad->setCaps(caps));
+        QGst::CapsEventPtr event = QGst::CapsEvent::create(caps);
+        QVERIFY(pad->sendEvent(event));
     }
 
-    QCOMPARE(pad->caps()->size(), static_cast<unsigned int>(1));
-    QGst::StructurePtr structure = pad->caps()->internalStructure(0);
+    QCOMPARE(pad->currentCaps()->size(), static_cast<unsigned int>(1));
+    QGst::StructurePtr structure = pad->currentCaps()->internalStructure(0);
     QCOMPARE(structure->name(), QString("video/x-raw"));
     QCOMPARE(structure->value("width").toInt(), 320);
     QCOMPARE(structure->value("height").toInt(), 240);
