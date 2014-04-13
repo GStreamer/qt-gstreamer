@@ -22,7 +22,7 @@
 
 namespace QGst {
 
-    /*! \headerfile buffer.h <QGst/Sample>
+    /*! \headerfile sample.h <QGst/Sample>
      * \brief Wrapper class for GstSample
      *
      * Samples are small objects containg data, a type, timing and extra arbitrary information.
