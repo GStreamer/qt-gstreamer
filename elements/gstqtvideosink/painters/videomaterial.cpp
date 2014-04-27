@@ -411,13 +411,15 @@ void VideoMaterial::bind()
     m_frameMutex.unlock();
 
     if (frame) {
-        const quint8 *data = GST_BUFFER_DATA (frame);
+        GstMapInfo info;
+        gst_buffer_map(frame, &info, GST_MAP_READ);
         functions->glActiveTexture(GL_TEXTURE1);
-        bindTexture(1, data);
+        bindTexture(1, info.data);
         functions->glActiveTexture(GL_TEXTURE2);
-        bindTexture(2, data);
+        bindTexture(2, info.data);
         functions->glActiveTexture(GL_TEXTURE0); // Finish with 0 as default texture unit
-        bindTexture(0, data);
+        bindTexture(0, info.data);
+        gst_buffer_unmap(frame, &info);
         gst_buffer_unref(frame);
     } else {
         functions->glActiveTexture(GL_TEXTURE1);
