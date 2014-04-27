@@ -36,19 +36,6 @@ GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
         "height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
         "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
 
-    // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-    switch (format) {
-    case GST_VIDEO_FORMAT_RGB16:
-    case GST_VIDEO_FORMAT_BGR16:
-    case GST_VIDEO_FORMAT_RGB15:
-    case GST_VIDEO_FORMAT_BGR15:
-        gst_caps_set_simple(caps, "endianness", G_TYPE_INT, G_LITTLE_ENDIAN, NULL);
-        break;
-    default:
-        break;
-    }
-#endif
     return caps;
 }
 
@@ -65,23 +52,7 @@ GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
     videoInfo.par_n = pixelAspectRatio.numerator;
     videoInfo.par_d = pixelAspectRatio.denominator;
 
-    GstCaps *caps = gst_video_info_to_caps(&videoInfo);
-
-    // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-    switch (format) {
-    case GST_VIDEO_FORMAT_RGB16:
-    case GST_VIDEO_FORMAT_BGR16:
-    case GST_VIDEO_FORMAT_RGB15:
-    case GST_VIDEO_FORMAT_BGR15:
-        gst_caps_set_simple(caps, "endianness", G_TYPE_INT, G_LITTLE_ENDIAN, NULL);
-        break;
-    default:
-        break;
-    }
-#endif
-
-    return caps;
+    return gst_video_info_to_caps(&videoInfo);
 }
 
 int BufferFormat::bytesPerLine(int component) const
