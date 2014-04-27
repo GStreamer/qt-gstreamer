@@ -112,15 +112,17 @@ void StructureTest::sharedStructureTest()
 {
     QGst::ElementPtr queue = QGst::ElementFactory::make("queue", NULL);
     QGst::PadPtr pad = queue->getStaticPad("sink");
+    queue->setState(QGst::StatePlaying);
+
     {
         QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
         caps->setValue("width", 320);
         caps->setValue("height", 240);
-        QGst::StructurePtr structure = caps->internalStructure(0);
+
         // verify the Caps was created correctly
+        QGst::StructurePtr structure = caps->internalStructure(0);
         QCOMPARE(caps->size(), static_cast<unsigned int>(1));
         QCOMPARE(structure->name(), QString("video/x-raw"));
-        queue->setState(QGst::StatePlaying);
 
         QGst::CapsEventPtr event = QGst::CapsEvent::create(caps);
         QVERIFY(pad->sendEvent(event));
