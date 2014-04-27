@@ -762,7 +762,7 @@ void QtVideoSinkTest::qtVideoSinkTest()
         QVERIFY(w);
         w->setVideoSink(GST_ELEMENT(g_object_ref(qtvideosink.data())));
     }
-    widget->setWindowTitle(QTVIDEOSINK_NAME);
+    widget->setWindowTitle(G_STRINGIFY(QTVIDEOSINK_NAME));
     widget->resize(widgetSize);
     widget->show();
     widget->raise();
@@ -895,7 +895,8 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     MAKE_ELEMENT(tee, "tee");
 
     MAKE_ELEMENT(queue, "queue");
-    MAKE_ELEMENT(qtvideosink, context ? QTGLVIDEOSINK_NAME : QTVIDEOSINK_NAME);
+    MAKE_ELEMENT(qtvideosink, context ?
+        G_STRINGIFY(QTGLVIDEOSINK_NAME) : G_STRINGIFY(QTVIDEOSINK_NAME));
 
     MAKE_ELEMENT(queue2, "queue");
     MAKE_ELEMENT(colorspace, "ffmpegcolorspace");

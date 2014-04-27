@@ -29,24 +29,25 @@ GST_DEBUG_CATEGORY(gst_qt_video_sink_debug);
 /* entry point to initialize the plug-in */
 static gboolean plugin_init(GstPlugin *plugin)
 {
-    GST_DEBUG_CATEGORY_INIT(gst_qt_video_sink_debug, QTVIDEOSINK_NAME, 0,
+    GST_DEBUG_CATEGORY_INIT(gst_qt_video_sink_debug,
+                            G_STRINGIFY(QTVIDEOSINK_NAME), 0,
                             "Debug category for GstQtVideoSink");
 
-    if(!gst_element_register(plugin, QTVIDEOSINK_NAME,
+    if(!gst_element_register(plugin, G_STRINGIFY(QTVIDEOSINK_NAME),
                 GST_RANK_NONE, GST_TYPE_QT_VIDEO_SINK)) {
-        GST_ERROR("Failed to register " QTVIDEOSINK_NAME);
+        GST_ERROR("Failed to register " G_STRINGIFY(QTVIDEOSINK_NAME));
         return FALSE;
     }
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
-    if(!gst_element_register(plugin, QTGLVIDEOSINK_NAME,
+    if(!gst_element_register(plugin, G_STRINGIFY(QTGLVIDEOSINK_NAME),
                 GST_RANK_NONE, GST_TYPE_QT_GL_VIDEO_SINK)) {
-        GST_ERROR("Failed to register " QTGLVIDEOSINK_NAME);
+        GST_ERROR("Failed to register " G_STRINGIFY(QTGLVIDEOSINK_NAME));
         return FALSE;
     }
 #endif
-    if(!gst_element_register(plugin, QWIDGETVIDEOSINK_NAME,
+    if(!gst_element_register(plugin, G_STRINGIFY(QWIDGETVIDEOSINK_NAME),
                 GST_RANK_NONE, GST_TYPE_QWIDGET_VIDEO_SINK)) {
-        GST_ERROR("Failed to register " QWIDGETVIDEOSINK_NAME);
+        GST_ERROR("Failed to register " G_STRINGIFY(QWIDGETVIDEOSINK_NAME));
         return FALSE;
     }
 
