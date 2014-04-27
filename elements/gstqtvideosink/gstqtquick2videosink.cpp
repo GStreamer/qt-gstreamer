@@ -20,7 +20,7 @@
 #include "gstqtvideosinkmarshal.h"
 #include "delegates/qtquick2videosinkdelegate.h"
 
-#include <gst/interfaces/colorbalance.h>
+#include <gst/video/colorbalance.h>
 
 #include <cstring>
 #include <QCoreApplication>
@@ -35,11 +35,13 @@ struct _GstQtQuick2VideoSinkPrivate
     bool formatDirty;
 };
 
-static void gst_qt_quick2_video_sink_init_interfaces (GType g_define_type_id);
+static void gst_qt_quick2_video_sink_colorbalance_init (GstColorBalanceInterface * iface, gpointer data);
 
-GST_BOILERPLATE_FULL (GstQtQuick2VideoSink, gst_qt_quick2_video_sink,
-        GstVideoSink, GST_TYPE_VIDEO_SINK,
-        gst_qt_quick2_video_sink_init_interfaces);
+#define parent_class gst_qt_quick2_video_sink_parent_class
+G_DEFINE_TYPE_WITH_CODE (GstQtQuick2VideoSink, gst_qt_quick2_video_sink,
+        GST_TYPE_VIDEO_SINK,
+        G_IMPLEMENT_INTERFACE (GST_TYPE_COLOR_BALANCE,
+                gst_qt_quick2_video_sink_colorbalance_init));
 
 enum {
     PROP_0,
@@ -73,10 +75,8 @@ enum {
 };
 
 static void
-gst_qt_quick2_video_sink_init (GstQtQuick2VideoSink *self,
-                               GstQtQuick2VideoSinkClass *klass)
+gst_qt_quick2_video_sink_init (GstQtQuick2VideoSink *self)
 {
-    Q_UNUSED(klass);
     self->priv = GST_QT_QUICK2_VIDEO_SINK_GET_PRIVATE (self);
 
     // delegate
@@ -260,22 +260,6 @@ gst_qt_quick2_video_sink_update_node(GstQtQuick2VideoSink *self, gpointer node,
 
 //------------------------------
 
-static gboolean
-gst_qt_quick2_video_sink_interface_supported(GstImplementsInterface *iface, GType type)
-{
-    Q_UNUSED(iface);
-    return type == GST_TYPE_COLOR_BALANCE;
-}
-
-static void
-gst_qt_quick2_video_sink_implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data)
-{
-    Q_UNUSED(data);
-    klass->supported = gst_qt_quick2_video_sink_interface_supported;
-}
-
-//------------------------------
-
 static const GList *
 gst_qt_quick2_video_sink_colorbalance_list_channels(GstColorBalance *balance)
 {
@@ -322,51 +306,24 @@ gst_qt_quick2_video_sink_colorbalance_get_value(GstColorBalance *balance,
     return 0;
 }
 
+static GstColorBalanceType
+gst_qt_quick2_video_sink_colorbalance_get_balance_type (GstColorBalance * balance)
+{
+    Q_UNUSED(balance);
+    return GST_COLOR_BALANCE_HARDWARE;
+}
+
 static void
-gst_qt_quick2_video_sink_colorbalance_init(GstColorBalanceClass *klass, gpointer data)
+gst_qt_quick2_video_sink_colorbalance_init(GstColorBalanceInterface *iface, gpointer data)
 {
     Q_UNUSED(data);
-    GST_COLOR_BALANCE_TYPE(klass) = GST_COLOR_BALANCE_HARDWARE;
-    klass->list_channels = gst_qt_quick2_video_sink_colorbalance_list_channels;
-    klass->set_value = gst_qt_quick2_video_sink_colorbalance_set_value;
-    klass->get_value = gst_qt_quick2_video_sink_colorbalance_get_value;
+    iface->list_channels = gst_qt_quick2_video_sink_colorbalance_list_channels;
+    iface->set_value = gst_qt_quick2_video_sink_colorbalance_set_value;
+    iface->get_value = gst_qt_quick2_video_sink_colorbalance_get_value;
+    iface->get_balance_type = gst_qt_quick2_video_sink_colorbalance_get_balance_type;
 }
 
 //------------------------------
-
-static void
-gst_qt_quick2_video_sink_base_init (gpointer g_class)
-{
-    GstElementClass *element_class = GST_ELEMENT_CLASS(g_class);
-
-    static GstVideoFormat supportedFormats[] = {
-        GST_VIDEO_FORMAT_BGRA,
-        GST_VIDEO_FORMAT_BGRx,
-        GST_VIDEO_FORMAT_ARGB,
-        GST_VIDEO_FORMAT_xRGB,
-        GST_VIDEO_FORMAT_RGB,
-        GST_VIDEO_FORMAT_RGB16,
-        GST_VIDEO_FORMAT_BGR,
-        GST_VIDEO_FORMAT_v308,
-        GST_VIDEO_FORMAT_AYUV,
-        GST_VIDEO_FORMAT_YV12,
-        GST_VIDEO_FORMAT_I420
-    };
-
-    GstCaps *caps = gst_caps_new_empty();
-    for (uint i = 0; i < sizeof(supportedFormats) / sizeof(GstVideoFormat); i++) {
-        gst_caps_append(caps, BufferFormat::newTemplateCaps(supportedFormats[i]));
-    }
-
-    GstPadTemplate *pad_tmpl = gst_pad_template_new ("sink",
-        GST_PAD_SINK, GST_PAD_ALWAYS, caps);
-    gst_element_class_add_pad_template(element_class, pad_tmpl);
-
-    gst_element_class_set_details_simple(element_class,
-        "QtQuick2 video sink", "Sink/Video",
-        "A video sink that can draw on a QQuickItem",
-        "George Kiagiadakis <george.kiagiadakis@collabora.com>");
-}
 
 static void
 gst_qt_quick2_video_sink_class_init (GstQtQuick2VideoSinkClass *klass)
@@ -472,13 +429,32 @@ gst_qt_quick2_video_sink_class_init (GstQtQuick2VideoSinkClass *klass)
             G_TYPE_NONE, 0);
 
     g_type_class_add_private (klass, sizeof (GstQtQuick2VideoSinkPrivate));
-}
 
-static void
-gst_qt_quick2_video_sink_init_interfaces (GType g_define_type_id)
-{
-    G_IMPLEMENT_INTERFACE (GST_TYPE_IMPLEMENTS_INTERFACE,
-                           gst_qt_quick2_video_sink_implementsiface_init);
-    G_IMPLEMENT_INTERFACE (GST_TYPE_COLOR_BALANCE,
-                           gst_qt_quick2_video_sink_colorbalance_init);
+    static GstVideoFormat supportedFormats[] = {
+        GST_VIDEO_FORMAT_BGRA,
+        GST_VIDEO_FORMAT_BGRx,
+        GST_VIDEO_FORMAT_ARGB,
+        GST_VIDEO_FORMAT_xRGB,
+        GST_VIDEO_FORMAT_RGB,
+        GST_VIDEO_FORMAT_RGB16,
+        GST_VIDEO_FORMAT_BGR,
+        GST_VIDEO_FORMAT_v308,
+        GST_VIDEO_FORMAT_AYUV,
+        GST_VIDEO_FORMAT_YV12,
+        GST_VIDEO_FORMAT_I420
+    };
+
+    GstCaps *caps = gst_caps_new_empty();
+    for (uint i = 0; i < sizeof(supportedFormats) / sizeof(GstVideoFormat); i++) {
+        gst_caps_append(caps, BufferFormat::newTemplateCaps(supportedFormats[i]));
+    }
+
+    GstPadTemplate *pad_tmpl = gst_pad_template_new ("sink",
+        GST_PAD_SINK, GST_PAD_ALWAYS, caps);
+    gst_element_class_add_pad_template(element_class, pad_tmpl);
+
+    gst_element_class_set_details_simple(element_class,
+        "QtQuick2 video sink", "Sink/Video",
+        "A video sink that can draw on a QQuickItem",
+        "George Kiagiadakis <george.kiagiadakis@collabora.com>");
 }
