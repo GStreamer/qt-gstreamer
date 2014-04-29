@@ -29,7 +29,6 @@ class BufferFormat
 {
 public:
     static BufferFormat fromCaps(GstCaps *caps);
-    static GstCaps *newTemplateCaps(GstVideoFormat format);
     static GstCaps *newCaps(GstVideoFormat format, const QSize & size,
             const Fraction & framerate, const Fraction & pixelAspectRatio);
 
