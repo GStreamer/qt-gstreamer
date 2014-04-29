@@ -69,7 +69,6 @@ void GstQtGLVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
 
     GstBaseSinkClass *base_sink_class = GST_BASE_SINK_CLASS(g_class);
     base_sink_class->start = GstQtGLVideoSinkBase::start;
-    base_sink_class->get_caps = GstQtGLVideoSinkBase::get_caps;
 
     g_object_class_install_property(object_class, PROP_CONTRAST,
         g_param_spec_int("contrast", "Contrast", "The contrast of the video",
@@ -247,24 +246,4 @@ gboolean GstQtGLVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
     BufferFormat format = BufferFormat::fromCaps(caps);
     sink->delegate->setBufferFormat(format);
     return TRUE;
-}
-
-GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
-{
-    Q_UNUSED(base);
-
-    GstCaps *caps = gst_caps_new_empty();
-
-    Q_FOREACH(GstVideoFormat format, OpenGLSurfacePainter::supportedPixelFormats()) {
-        gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
-    }
-
-    if (filter) {
-        GstCaps *intersection;
-        intersection = gst_caps_intersect_full(filter, caps, GST_CAPS_INTERSECT_FIRST);
-        gst_caps_unref(caps);
-        caps = intersection;
-    }
-
-    return caps;
 }

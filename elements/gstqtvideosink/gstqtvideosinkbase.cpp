@@ -61,7 +61,6 @@ void GstQtVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
     element_class->change_state = GstQtVideoSinkBase::change_state;
 
     GstBaseSinkClass *base_sink_class = GST_BASE_SINK_CLASS(g_class);
-    base_sink_class->get_caps = GstQtVideoSinkBase::get_caps;
     base_sink_class->set_caps = GstQtVideoSinkBase::set_caps;
 
     GstVideoSinkClass *video_sink_class = GST_VIDEO_SINK_CLASS(g_class);
@@ -187,27 +186,6 @@ GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstSt
 }
 
 //------------------------------
-
-GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
-{
-    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
-
-    GstCaps *caps = gst_caps_new_empty();
-
-    Q_FOREACH(GstVideoFormat format, GenericSurfacePainter::supportedPixelFormats()) {
-        gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
-    }
-
-    if (filter) {
-        GstCaps *intersection;
-        intersection = gst_caps_intersect_full(filter, caps, GST_CAPS_INTERSECT_FIRST);
-        gst_caps_unref(caps);
-        caps = intersection;
-    }
-
-    GST_LOG_OBJECT(sink, "returned caps %" GST_PTR_FORMAT, caps);
-    return caps;
-}
 
 gboolean GstQtVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
 {
