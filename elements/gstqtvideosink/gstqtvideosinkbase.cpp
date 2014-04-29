@@ -21,6 +21,11 @@
 #include <cstring>
 #include <QCoreApplication>
 
+#if Q_BYTE_ORDER == Q_BIG_ENDIAN
+# define CAPS_FORMATS "{ ARGB, xRGB, RGB, RGB16 }"
+#else
+# define CAPS_FORMATS "{ BGRA, BGRx, RGB, RGB16 }"
+#endif
 
 GstVideoSinkClass *GstQtVideoSinkBase::s_parent_class = NULL;
 
@@ -34,13 +39,7 @@ void GstQtVideoSinkBase::base_init(gpointer g_class)
 
     static GstStaticPadTemplate sink_pad_template =
         GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
-            GST_STATIC_CAPS(
-                "video/x-raw,format=(string) rgb, "
-                "framerate = (fraction) [ 0, MAX ], "
-                "width = (int) [ 1, MAX ], "
-                "height = (int) [ 1, MAX ]"
-                "; "
-            )
+            GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE (CAPS_FORMATS))
         );
 
     gst_element_class_add_pad_template(

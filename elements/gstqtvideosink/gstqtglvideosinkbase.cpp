@@ -19,6 +19,8 @@
 #include "painters/openglsurfacepainter.h"
 #include "delegates/qtvideosinkdelegate.h"
 
+#define CAPS_FORMATS "{ BGRA, BGRx, ARGB, xRGB, RGB, RGB16, BGR, v308, AYUV, YV12, I420 }"
+
 const char * const GstQtGLVideoSinkBase::s_colorbalance_labels[] = {
     "contrast", "brightness", "hue", "saturation"
 };
@@ -47,18 +49,7 @@ void GstQtGLVideoSinkBase::base_init(gpointer g_class)
 
     static GstStaticPadTemplate sink_pad_template =
         GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
-            GST_STATIC_CAPS(
-                "video/x-raw, "
-                "framerate = (fraction) [ 0, MAX ], "
-                "width = (int) [ 1, MAX ], "
-                "height = (int) [ 1, MAX ]"
-                "; "
-                "video/x-raw, "
-                "framerate = (fraction) [ 0, MAX ], "
-                "width = (int) [ 1, MAX ], "
-                "height = (int) [ 1, MAX ]"
-                "; "
-            )
+            GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE (CAPS_FORMATS))
         );
 
     gst_element_class_add_pad_template(
