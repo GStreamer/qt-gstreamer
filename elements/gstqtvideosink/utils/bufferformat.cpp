@@ -20,12 +20,11 @@
 BufferFormat BufferFormat::fromCaps(GstCaps *caps)
 {
     BufferFormat result;
-    if (caps) {
-        if (gst_video_info_from_caps(&(result.d->videoInfo), caps)) {
-            // FIXME: Raise some kind of error
-        }
+    if (caps && gst_video_info_from_caps(&(result.d->videoInfo), caps)) {
+        return result;
+    } else {
+        return BufferFormat();
     }
-    return result;
 }
 
 GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,

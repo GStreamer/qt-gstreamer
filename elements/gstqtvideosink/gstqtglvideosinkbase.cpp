@@ -244,6 +244,10 @@ gboolean GstQtGLVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
 
     GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
     BufferFormat format = BufferFormat::fromCaps(caps);
-    sink->delegate->setBufferFormat(format);
-    return TRUE;
+    if (OpenGLSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
+        sink->delegate->setBufferFormat(format);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
