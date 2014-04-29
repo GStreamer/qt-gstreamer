@@ -25,6 +25,8 @@
 #include <cstring>
 #include <QCoreApplication>
 
+#define CAPS_FORMATS "{ BGRA, BGRx, ARGB, xRGB, RGB, RGB16, BGR, v308, AYUV, YV12, I420 }"
+
 #define GST_QT_QUICK2_VIDEO_SINK_GET_PRIVATE(obj) \
     (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GST_TYPE_QT_QUICK2_VIDEO_SINK, GstQtQuick2VideoSinkPrivate))
 
@@ -430,28 +432,13 @@ gst_qt_quick2_video_sink_class_init (GstQtQuick2VideoSinkClass *klass)
 
     g_type_class_add_private (klass, sizeof (GstQtQuick2VideoSinkPrivate));
 
-    static GstVideoFormat supportedFormats[] = {
-        GST_VIDEO_FORMAT_BGRA,
-        GST_VIDEO_FORMAT_BGRx,
-        GST_VIDEO_FORMAT_ARGB,
-        GST_VIDEO_FORMAT_xRGB,
-        GST_VIDEO_FORMAT_RGB,
-        GST_VIDEO_FORMAT_RGB16,
-        GST_VIDEO_FORMAT_BGR,
-        GST_VIDEO_FORMAT_v308,
-        GST_VIDEO_FORMAT_AYUV,
-        GST_VIDEO_FORMAT_YV12,
-        GST_VIDEO_FORMAT_I420
-    };
+    static GstStaticPadTemplate sink_pad_template =
+        GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
+            GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE (CAPS_FORMATS))
+        );
 
-    GstCaps *caps = gst_caps_new_empty();
-    for (uint i = 0; i < sizeof(supportedFormats) / sizeof(GstVideoFormat); i++) {
-        gst_caps_append(caps, BufferFormat::newTemplateCaps(supportedFormats[i]));
-    }
-
-    GstPadTemplate *pad_tmpl = gst_pad_template_new ("sink",
-        GST_PAD_SINK, GST_PAD_ALWAYS, caps);
-    gst_element_class_add_pad_template(element_class, pad_tmpl);
+    gst_element_class_add_pad_template(
+            element_class, gst_static_pad_template_get(&sink_pad_template));
 
     gst_element_class_set_details_simple(element_class,
         "QtQuick2 video sink", "Sink/Video",
