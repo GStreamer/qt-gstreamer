@@ -54,6 +54,8 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
     if (!m_buffer) {
         painter->fillRect(targetArea, Qt::black);
     } else {
+        QReadLocker bufferFormatLocker(&m_bufferFormatLock);
+
         //recalculate the video area if needed
         QReadLocker forceAspectRatioLocker(&m_forceAspectRatioLock);
         if (targetArea != m_areas.targetArea || m_formatDirty

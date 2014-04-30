@@ -44,6 +44,8 @@ QSGNode* QtQuick2VideoSinkDelegate::updateNode(QSGNode *node, const QRectF & tar
             vnode->updateGeometry(m_areas);
         }
     } else {
+        QReadLocker bufferFormatLocker(&m_bufferFormatLock);
+
         //change format before geometry, so that we change QSGGeometry as well
         if (m_formatDirty) {
             vnode->changeFormat(m_bufferFormat);
