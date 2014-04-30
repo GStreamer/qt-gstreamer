@@ -231,8 +231,17 @@ gst_qt_quick2_video_sink_set_caps(GstBaseSink *sink, GstCaps *caps)
     GstQtQuick2VideoSink *self = GST_QT_QUICK2_VIDEO_SINK (sink);
 
     GST_LOG_OBJECT(self, "new caps %" GST_PTR_FORMAT, caps);
-    self->priv->formatDirty = true;
-    return TRUE;
+    BufferFormat format = BufferFormat::fromCaps(caps);
+
+    //too lazy to do proper checks. if the format is not UNKNOWN, then
+    //it should conform to the template caps formats, unless gstreamer
+    //core has a bug.
+    if (format.videoFormat() != GST_VIDEO_FORMAT_UNKNOWN) {
+        self->priv->delegate->setBufferFormat(format);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 static GstFlowReturn
