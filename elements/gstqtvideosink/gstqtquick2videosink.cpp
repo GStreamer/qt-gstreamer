@@ -34,7 +34,6 @@ struct _GstQtQuick2VideoSinkPrivate
 {
     QtQuick2VideoSinkDelegate *delegate;
     GList *channels_list;
-    bool formatDirty;
 };
 
 static void gst_qt_quick2_video_sink_colorbalance_init (GstColorBalanceInterface * iface, gpointer data);
@@ -83,7 +82,6 @@ gst_qt_quick2_video_sink_init (GstQtQuick2VideoSink *self)
 
     // delegate
     self->priv->delegate = new QtQuick2VideoSinkDelegate(GST_ELEMENT(self));
-    self->priv->formatDirty = true;
 
     // colorbalance
     GstColorBalanceChannel *channel;
@@ -237,7 +235,8 @@ gst_qt_quick2_video_sink_set_caps(GstBaseSink *sink, GstCaps *caps)
     //it should conform to the template caps formats, unless gstreamer
     //core has a bug.
     if (format.videoFormat() != GST_VIDEO_FORMAT_UNKNOWN) {
-        self->priv->delegate->setBufferFormat(format);
+        QCoreApplication::postEvent(self->priv->delegate,
+                                    new BaseDelegate::BufferFormatEvent(format));
         return TRUE;
     } else {
         return FALSE;
@@ -249,13 +248,10 @@ gst_qt_quick2_video_sink_show_frame(GstVideoSink *sink, GstBuffer *buffer)
 {
     GstQtQuick2VideoSink *self = GST_QT_QUICK2_VIDEO_SINK (sink);
 
-    GST_TRACE_OBJECT(self, "Posting new buffer (%"GST_PTR_FORMAT") for rendering. "
-                           "Format dirty: %d", buffer, (int)self->priv->formatDirty);
+    GST_TRACE_OBJECT(self, "Posting new buffer (%"GST_PTR_FORMAT") for rendering.", buffer);
 
-    QCoreApplication::postEvent(self->priv->delegate,
-            new BaseDelegate::BufferEvent(buffer, self->priv->formatDirty));
+    QCoreApplication::postEvent(self->priv->delegate, new BaseDelegate::BufferEvent(buffer));
 
-    self->priv->formatDirty = false;
     return GST_FLOW_OK;
 }
 

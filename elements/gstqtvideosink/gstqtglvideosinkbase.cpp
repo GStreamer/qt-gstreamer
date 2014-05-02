@@ -18,6 +18,7 @@
 #include "gstqtglvideosinkbase.h"
 #include "painters/openglsurfacepainter.h"
 #include "delegates/qtvideosinkdelegate.h"
+#include <QCoreApplication>
 
 #define CAPS_FORMATS "{ BGRA, BGRx, ARGB, xRGB, RGB, RGB16, BGR, v308, AYUV, YV12, I420 }"
 
@@ -252,7 +253,8 @@ gboolean GstQtGLVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
     GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
     BufferFormat format = BufferFormat::fromCaps(caps);
     if (OpenGLSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
-        sink->delegate->setBufferFormat(format);
+        QCoreApplication::postEvent(sink->delegate,
+                                    new BaseDelegate::BufferFormatEvent(format));
         return TRUE;
     } else {
         return FALSE;

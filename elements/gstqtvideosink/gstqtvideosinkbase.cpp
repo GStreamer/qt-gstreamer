@@ -92,10 +92,9 @@ void GstQtVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
 
 void GstQtVideoSinkBase::init(GTypeInstance *instance, gpointer g_class)
 {
-    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(instance);
+    Q_UNUSED(instance);
     Q_UNUSED(g_class);
 
-    sink->formatDirty = true;
     /* sink->delegate is initialized in the subclasses */
 }
 
@@ -194,7 +193,8 @@ gboolean GstQtVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
     GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
     BufferFormat format = BufferFormat::fromCaps(caps);
     if (GenericSurfacePainter::supportedPixelFormats().contains(format.videoFormat())) {
-        sink->delegate->setBufferFormat(format);
+        QCoreApplication::postEvent(sink->delegate,
+                                    new BaseDelegate::BufferFormatEvent(format));
         return TRUE;
     } else {
         return FALSE;
@@ -207,12 +207,9 @@ GstFlowReturn GstQtVideoSinkBase::show_frame(GstVideoSink *video_sink, GstBuffer
 {
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(video_sink);
 
-    GST_TRACE_OBJECT(sink, "Posting new buffer (%"GST_PTR_FORMAT") for rendering. "
-                           "Format dirty: %d", buffer, (int)sink->formatDirty);
+    GST_TRACE_OBJECT(sink, "Posting new buffer (%"GST_PTR_FORMAT") for rendering.", buffer);
 
-    QCoreApplication::postEvent(sink->delegate,
-            new QtVideoSinkDelegate::BufferEvent(buffer, sink->formatDirty));
+    QCoreApplication::postEvent(sink->delegate, new BaseDelegate::BufferEvent(buffer));
 
-    sink->formatDirty = false;
     return GST_FLOW_OK;
 }

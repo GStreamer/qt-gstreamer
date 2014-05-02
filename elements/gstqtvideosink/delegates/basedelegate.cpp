@@ -147,23 +147,6 @@ void BaseDelegate::setForceAspectRatio(bool force)
 
 //-------------------------------------
 
-BufferFormat BaseDelegate::bufferFormat() const
-{
-    QReadLocker l(&m_bufferFormatLock);
-    return m_bufferFormat;
-}
-
-void BaseDelegate::setBufferFormat(const BufferFormat &format)
-{
-    QWriteLocker l(&m_bufferFormatLock);
-    if (m_bufferFormat != format) {
-        m_bufferFormat = format;
-        m_formatDirty = true;
-    }
-}
-
-//-------------------------------------
-
 bool BaseDelegate::event(QEvent *event)
 {
     switch((int) event->type()) {
@@ -176,11 +159,21 @@ bool BaseDelegate::event(QEvent *event)
 
         if (isActive()) {
             gst_buffer_replace (&m_buffer, bufEvent->buffer);
-            if (bufEvent->formatDirty) {
-                m_formatDirty = true;
-            }
             update();
         }
+
+        return true;
+    }
+    case BufferFormatEventType:
+    {
+        BufferFormatEvent *bufFmtEvent = dynamic_cast<BufferFormatEvent*>(event);
+        Q_ASSERT(bufFmtEvent);
+
+        GST_TRACE_OBJECT (m_sink, "Received buffer format event. New format: %s",
+                          gst_video_format_to_string(bufFmtEvent->format.videoFormat()));
+
+        m_formatDirty = true;
+        m_bufferFormat = bufFmtEvent->format;
 
         return true;
     }

@@ -66,8 +66,6 @@ public:
     QtVideoSinkDelegate *delegate;
 
 private:
-    bool formatDirty;
-
     static GstVideoSinkClass *s_parent_class;
 };
 

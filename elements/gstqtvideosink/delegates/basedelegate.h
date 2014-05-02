@@ -34,6 +34,7 @@ class BaseDelegate : public QObject
 public:
     enum EventType {
         BufferEventType = QEvent::User,
+        BufferFormatEventType,
         DeactivateEventType
     };
 
@@ -42,10 +43,9 @@ public:
     class BufferEvent : public QEvent
     {
     public:
-        inline BufferEvent(GstBuffer *buf, bool formatDirty)
+        inline BufferEvent(GstBuffer *buf)
             : QEvent(static_cast<QEvent::Type>(BufferEventType)),
-              buffer(gst_buffer_ref(buf)),
-              formatDirty(formatDirty)
+              buffer(gst_buffer_ref(buf))
         {}
 
         virtual ~BufferEvent() {
@@ -53,7 +53,17 @@ public:
         }
 
         GstBuffer *buffer;
-        bool formatDirty;
+    };
+
+    class BufferFormatEvent : public QEvent
+    {
+    public:
+        inline BufferFormatEvent(const BufferFormat &format)
+            : QEvent(static_cast<QEvent::Type>(BufferFormatEventType)),
+            format(format)
+        {}
+
+        BufferFormat format;
     };
 
     class DeactivateEvent : public QEvent
@@ -95,9 +105,6 @@ public:
     bool forceAspectRatio() const;
     void setForceAspectRatio(bool force);
 
-    BufferFormat bufferFormat() const;
-    void setBufferFormat(const BufferFormat &format);
-
 protected:
     // internal event handling
     virtual bool event(QEvent *event);
@@ -125,7 +132,6 @@ protected:
 
     // format caching
     bool m_formatDirty;
-    mutable QReadWriteLock m_bufferFormatLock;
     BufferFormat m_bufferFormat;
     PaintAreas m_areas;
 
