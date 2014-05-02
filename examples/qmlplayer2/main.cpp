@@ -42,7 +42,10 @@ int main(int argc, char **argv)
 
     Player *player = new Player(&view);
     player->setVideoSink(surface->videoSink());
-    player->setUri(QLatin1Literal("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
+    if (argc > 1)
+        player->setUri(QString::fromLocal8Bit(argv[1]));
+    else
+        player->setUri(QLatin1Literal("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
     view.rootContext()->setContextProperty(QLatin1String("player"), player);
 
 #if defined(UNINSTALLED_IMPORTS_DIR)
