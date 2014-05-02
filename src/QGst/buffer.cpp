@@ -90,8 +90,7 @@ MemoryPtr Buffer::peekMemory(uint index)
 
 bool Buffer::map(MapInfo &info, MapFlags flags)
 {
-    BufferPtr bptr(this);
-    if (!gst_buffer_map(bptr, static_cast<GstMapInfo *>(info.m_object),
+    if (!gst_buffer_map(object<GstBuffer>(), static_cast<GstMapInfo *>(info.m_object),
                         static_cast<GstMapFlags>(static_cast<int>(flags)))) {
         return false;
     }
@@ -100,8 +99,7 @@ bool Buffer::map(MapInfo &info, MapFlags flags)
 
 void Buffer::unmap(MapInfo &info)
 {
-    BufferPtr bptr(this);
-    gst_buffer_unmap(bptr, static_cast<GstMapInfo *>(info.m_object));
+    gst_buffer_unmap(object<GstBuffer>(), static_cast<GstMapInfo *>(info.m_object));
 }
 
 } //namespace QGst
