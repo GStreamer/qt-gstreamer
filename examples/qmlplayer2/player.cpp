@@ -58,7 +58,7 @@ void Player::stop()
 void Player::setUri(const QString & uri)
 {
     if (!m_pipeline) {
-        m_pipeline = QGst::ElementFactory::make("playbin2").dynamicCast<QGst::Pipeline>();
+        m_pipeline = QGst::ElementFactory::make("playbin").dynamicCast<QGst::Pipeline>();
         if (m_pipeline) {
             m_pipeline->setProperty("video-sink", m_videoSink);
 
