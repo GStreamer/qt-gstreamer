@@ -69,6 +69,7 @@ void GstQtGLVideoSinkBase::class_init(gpointer g_class, gpointer class_data)
 
     GstBaseSinkClass *base_sink_class = GST_BASE_SINK_CLASS(g_class);
     base_sink_class->start = GstQtGLVideoSinkBase::start;
+    base_sink_class->set_caps = GstQtGLVideoSinkBase::set_caps;
 
     g_object_class_install_property(object_class, PROP_CONTRAST,
         g_param_spec_int("contrast", "Contrast", "The contrast of the video",
