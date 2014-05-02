@@ -85,22 +85,22 @@
  *
  * \code
  * CONFIG += link_pkgconfig
- * PKGCONFIG += QtGStreamer-0.10
+ * PKGCONFIG += QtGStreamer-1.0
  * \endcode
  *
  * In the PKGCONFIG variable you can set one or more of:
  *
  * \li QtGLib-2.0 - the libraries needed to use QtGLib
- * \li QtGStreamer-0.10 - the libraries needed to use QtGStreamer
- * \li QtGStreamerUi-0.10 - the libraries needed to use QtGStreamerUi
- * \li QtGStreamerUtils-0.10 - the libraries needed to use QtGStreamerUtils
+ * \li QtGStreamer-1.0 - the libraries needed to use QtGStreamer
+ * \li QtGStreamerUi-1.0 - the libraries needed to use QtGStreamerUi
+ * \li QtGStreamerUtils-1.0 - the libraries needed to use QtGStreamerUtils
  *
  * When QtGStreamer is built using Qt5, those packages are called differently:
  *
  * \li Qt5GLib-2.0
- * \li Qt5GStreamer-0.10
- * \li Qt5GStreamerUi-0.10
- * \li Qt5GStreamerUtils-0.10
+ * \li Qt5GStreamer-1.0
+ * \li Qt5GStreamerUi-1.0
+ * \li Qt5GStreamerUtils-1.0
  *
  * \section other_build_systems Other build systems
  *
@@ -204,7 +204,7 @@
  * on a QGraphicsView.
  *
  * If you are using QtQuick1, there is also a "VideoItem" element available when you import
- * "QtGStreamer 0.10". See the qmlplayer example for details.
+ * "QtGStreamer 1.0". See the qmlplayer example for details.
  *
  * \section qt5_support Qt5 support
  *

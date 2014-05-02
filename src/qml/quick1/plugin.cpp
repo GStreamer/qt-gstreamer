@@ -25,15 +25,15 @@
 class QtGStreamerPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.Qt5GStreamerQuick1-0.10")
+    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.Qt5GStreamerQuick1-1.0")
 public:
     void registerTypes(const char *uri);
 };
 
 void QtGStreamerPlugin::registerTypes(const char *uri)
 {
-    qmlRegisterType<VideoItem>(uri, 0, 10, "VideoItem");
-    qmlRegisterUncreatableType<QGst::Ui::GraphicsVideoSurface>(uri, 0, 10, "GraphicsVideoSurface",
+    qmlRegisterType<VideoItem>(uri, 1, 0, "VideoItem");
+    qmlRegisterUncreatableType<QGst::Ui::GraphicsVideoSurface>(uri, 1, 0, "GraphicsVideoSurface",
         QLatin1String("Creating a QGst::Ui::GraphicsVideoSurface from QML is not supported"));
 }
 

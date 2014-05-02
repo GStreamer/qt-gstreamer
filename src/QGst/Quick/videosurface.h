@@ -42,7 +42,7 @@ class VideoSurfacePrivate;
  * view->rootContext()->setContextProperty(QLatin1String("videoSurface"), surface);
  * ...
  * // and in your qml file:
- * import QtGStreamer 0.10
+ * import QtGStreamer 1.0
  * ...
  * VideoItem {
  *      id: video

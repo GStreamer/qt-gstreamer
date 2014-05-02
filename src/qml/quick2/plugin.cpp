@@ -23,7 +23,7 @@
 class QtGStreamerPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.QtGStreamerQuick2-0.10"
+    Q_PLUGIN_METADATA(IID "org.freedesktop.gstreamer.QtGStreamerQuick2-1.0"
                       FILE "QtGStreamerQuick2.json")
 public:
     virtual void registerTypes(const char *uri);
@@ -31,9 +31,9 @@ public:
 
 void QtGStreamerPlugin::registerTypes(const char *uri)
 {
-    // @uri org.freedesktop.gstreamer.QtGStreamerQuick2-0.10
-    qmlRegisterType<QGst::Quick::VideoItem>(uri, 0, 10, "VideoItem");
-    qmlRegisterUncreatableType<QGst::Quick::VideoSurface>(uri, 0, 10, "VideoSurface",
+    // @uri org.freedesktop.gstreamer.QtGStreamerQuick2-1.0
+    qmlRegisterType<QGst::Quick::VideoItem>(uri, 1, 0, "VideoItem");
+    qmlRegisterUncreatableType<QGst::Quick::VideoSurface>(uri, 1, 0, "VideoSurface",
         QLatin1String("Creating a QGst::Quick::VideoSurface from QML is not supported"));
 }
 

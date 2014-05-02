@@ -11,10 +11,10 @@ CONFIG += link_pkgconfig
 
 # Now tell qmake to link to QtGStreamer and also use its include path and Cflags.
 contains(QT_VERSION, ^4\\..*) {
-  PKGCONFIG += QtGStreamer-0.10
+  PKGCONFIG += QtGStreamer-1.0
 }
 contains(QT_VERSION, ^5\\..*) {
-  PKGCONFIG += Qt5GStreamer-0.10
+  PKGCONFIG += Qt5GStreamer-1.0
   QT += widgets
 }
 

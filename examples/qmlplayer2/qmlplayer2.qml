@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 import QtQuick 2.0
-import QtGStreamer 0.10
+import QtGStreamer 1.0
 
 Rectangle {
     id: window
