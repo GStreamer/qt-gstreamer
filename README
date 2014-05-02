@@ -28,10 +28,10 @@ sink element that can draw directly on QWidgets using QPainter.
 
 QtGStreamer requires the following software to be installed in order to build:
  * CMake 2.8.9 or later <http://www.cmake.org/>
- * GStreamer 0.10.36 or later from the 0.10 series <http://gstreamer.freedesktop.org/>
+ * GStreamer 1.0.0 or later <http://gstreamer.freedesktop.org/>
    With its dependencies:
    - Glib / GObject <http://www.gtk.org/>
-   and including gstreamer-plugins-base (0.10.36 or later)
+   and including gstreamer-plugins-base (1.0.0 or later)
  * Qt4 or Qt5 (4.7 or later / 5.0 or later) <http://qt-project.org/>
  * Boost 1.39 or later <http://www.boost.org/>
  * Flex (only if QTGSTREAMER_CODEGEN=ON, see below) <http://flex.sourceforge.net/>
@@ -159,4 +159,4 @@ Bugs, feature requests & patches should be sent at:
 
 --
 George Kiagiadakis <george.kiagiadakis@collabora.com>
-Last updated: Jun 9, 2013
+Last updated: May 3, 2014
