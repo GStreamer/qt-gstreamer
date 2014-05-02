@@ -124,12 +124,6 @@ bool Caps::isFixed() const
     return gst_caps_is_fixed(object<GstCaps>());
 }
 
-bool Caps::isWritable() const
-{
-    GstCaps *caps = object<GstCaps>(); //workaround for bug #653266
-    return (GST_CAPS_REFCOUNT_VALUE(caps) == 1);
-}
-
 bool Caps::equals(const CapsPtr & caps2) const
 {
     return gst_caps_is_equal(object<GstCaps>(), caps2);
@@ -173,38 +167,6 @@ CapsPtr Caps::copy() const
 CapsPtr Caps::copyNth(uint index) const
 {
     return CapsPtr::wrap(gst_caps_copy_nth(object<GstCaps>(), index), false);
-}
-
-void Caps::ref(bool increaseRef)
-{
-    if (Private::ObjectStore::put(this)) {
-        if (increaseRef) {
-            gst_caps_ref(GST_CAPS(m_object));
-        }
-    }
-}
-
-void Caps::unref()
-{
-    if (Private::ObjectStore::take(this)) {
-        gst_caps_unref(GST_CAPS(m_object));
-        delete this;
-    }
-}
-
-CapsPtr Caps::makeWritable() const
-{
-    /*
-     * Calling gst_*_make_writable() below is tempting but wrong.
-     * Since MiniObjects and Caps do not share the same C++ instance in various wrappings, calling
-     * gst_*_make_writable() on an already writable object and wrapping the result is wrong,
-     * since it would just return the same pointer and we would wrap it in a new C++ instance.
-     */
-    if (!isWritable()) {
-        return copy();
-    } else {
-        return CapsPtr(const_cast<Caps*>(this));
-    }
 }
 
 QDebug operator<<(QDebug debug, const CapsPtr & caps)

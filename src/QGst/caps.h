@@ -70,12 +70,7 @@ public:
     CapsPtr copy() const;
     CapsPtr copyNth(uint index) const;
 
-    bool isWritable() const;
-    CapsPtr makeWritable() const;
-
-protected:
-    virtual void ref(bool increaseRef);
-    virtual void unref();
+    inline CapsPtr makeWritable() const;
 };
 
 template <typename T>
@@ -88,6 +83,11 @@ inline void Caps::setValue(const char *field, const T & value)
 inline CapsPtr Caps::fromString(const QString & string)
 {
     return fromString(string.toUtf8().constData());
+}
+
+inline CapsPtr Caps::makeWritable() const
+{
+    return MiniObject::makeWritable().staticCast<Caps>();
 }
 
 /*! \relates QGst::Caps */
