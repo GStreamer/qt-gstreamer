@@ -33,15 +33,15 @@ void MemoryTest::testMap()
     size_t maxalloc;
     size_t size = mem->getSizes(offset, maxalloc);
 
-    QCOMPARE(size, static_cast<unsigned long>(100));
-    QCOMPARE(offset, static_cast<unsigned long>(0));
+    QCOMPARE(size, static_cast<size_t>(100));
+    QCOMPARE(offset, static_cast<size_t>(0));
     QVERIFY(maxalloc >= 100);
 
     QGst::MapInfo info;
     QVERIFY(mem->map(info, QGst::MapRead));
-    QVERIFY(info.data != NULL);
-    QVERIFY(info.size == 100);
-    QVERIFY(info.maxsize == maxalloc);
+    QVERIFY(info.data() != NULL);
+    QCOMPARE(info.size(), static_cast<size_t>(100));
+    QCOMPARE(info.maxSize(), maxalloc);
 
     mem->unmap(info);
 }

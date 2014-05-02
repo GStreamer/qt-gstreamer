@@ -22,13 +22,23 @@
 
 namespace QGst {
 
-struct MapInfo
+class QTGSTREAMER_EXPORT MapInfo
 {
-    void *memory;
-    MapFlags flags;
-    quint8 *data;
-    size_t size;
-    size_t maxsize;
+public:
+    MapInfo();
+    virtual ~MapInfo();
+
+    MapFlags flags() const;
+    quint8 *data() const;
+    size_t size() const;
+    size_t maxSize() const;
+
+private:
+    friend class Buffer;
+    friend class Memory;
+    Q_DISABLE_COPY(MapInfo);
+
+    void *m_object;
 };
 
 /*! \headerfile memory.h <QGst/Memory>

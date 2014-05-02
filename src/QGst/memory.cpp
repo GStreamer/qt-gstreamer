@@ -25,6 +25,38 @@
 
 namespace QGst {
 
+MapInfo::MapInfo()
+{
+    m_object = g_slice_new0(GstMapInfo);
+}
+
+MapInfo::~MapInfo()
+{
+    g_slice_free(GstMapInfo, m_object);
+}
+
+MapFlags MapInfo::flags() const
+{
+    return static_cast<MapFlag>(static_cast<GstMapInfo*>(m_object)->flags);
+}
+
+quint8 *MapInfo::data() const
+{
+    return static_cast<GstMapInfo*>(m_object)->data;
+}
+
+size_t MapInfo::size() const
+{
+    return static_cast<GstMapInfo*>(m_object)->size;
+}
+
+size_t MapInfo::maxSize() const
+{
+    return static_cast<GstMapInfo*>(m_object)->maxsize;
+}
+
+//-----------------------
+
 MemoryPtr Memory::create(size_t size)
 {
     return MemoryPtr::wrap(gst_allocator_alloc(NULL, size, NULL));
@@ -47,13 +79,13 @@ size_t Memory::getSizes(size_t &offset, size_t &maxsize)
 
 bool Memory::map(MapInfo &info, MapFlags flags)
 {
-    return gst_memory_map(object<GstMemory>(), reinterpret_cast<GstMapInfo *>(&info),
+    return gst_memory_map(object<GstMemory>(), static_cast<GstMapInfo*>(info.m_object),
                           static_cast<GstMapFlags>(static_cast<int>(flags)));
 }
 
 void Memory::unmap(MapInfo &info)
 {
-    gst_memory_unmap(object<GstMemory>(), reinterpret_cast<GstMapInfo *>(&info));
+    gst_memory_unmap(object<GstMemory>(), static_cast<GstMapInfo*>(info.m_object));
 }
 
 } // namespace QGst
