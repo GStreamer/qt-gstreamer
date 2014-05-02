@@ -127,7 +127,7 @@ void GstQtGLVideoSinkBase::colorbalance_init(GstColorBalanceInterface *interface
     interface->list_channels = GstQtGLVideoSinkBase::colorbalance_list_channels;
     interface->set_value = GstQtGLVideoSinkBase::colorbalance_set_value;
     interface->get_value = GstQtGLVideoSinkBase::colorbalance_get_value;
-    interface->get_balance_type = NULL; //FIXME: need implementation
+    interface->get_balance_type = GstQtGLVideoSinkBase::colorbalance_get_balance_type;
 }
 
 const GList *GstQtGLVideoSinkBase::colorbalance_list_channels(GstColorBalance *balance)
@@ -171,6 +171,12 @@ gint GstQtGLVideoSinkBase::colorbalance_get_value(GstColorBalance *balance,
     }
 
     return 0;
+}
+
+GstColorBalanceType GstQtGLVideoSinkBase::colorbalance_get_balance_type(GstColorBalance *balance)
+{
+    Q_UNUSED(balance);
+    return GST_COLOR_BALANCE_HARDWARE;
 }
 
 //------------------------------

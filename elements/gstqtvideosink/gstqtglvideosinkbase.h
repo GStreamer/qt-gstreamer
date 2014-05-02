@@ -68,6 +68,7 @@ private:
                                        gint value);
     static gint colorbalance_get_value(GstColorBalance *balance,
                                        GstColorBalanceChannel *channel);
+    static GstColorBalanceType colorbalance_get_balance_type(GstColorBalance *balance);
 
     static void set_property(GObject *object, guint prop_id,
                              const GValue *value, GParamSpec *pspec);
