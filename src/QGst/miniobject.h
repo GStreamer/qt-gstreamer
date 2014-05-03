@@ -28,7 +28,17 @@ namespace QGst {
  */
 class QTGSTREAMER_EXPORT MiniObject : public QGlib::RefCountedObject
 {
-    QGST_WRAPPER(MiniObject)
+// expanded QGST_WRAPPER(MiniObject) but without MiniObject_new()
+// this is to avoid codegen picking it up, since MiniObject has no
+// GType and cannot be handled properly
+public:
+    typedef GstMiniObject CType;
+protected:
+    MiniObject() {}
+    MiniObject(const MiniObject &);
+    MiniObject & operator=(const MiniObject &);
+    ~MiniObject() {}
+
 public:
     MiniObjectPtr copy() const;
     bool isWritable() const;
@@ -47,7 +57,6 @@ QTGSTREAMER_EXPORT QGlib::RefCountedObject *wrapMiniObject(void *miniObject);
 } //namespace Private
 } //namespace QGst
 
-QGST_REGISTER_TYPE(QGst::MiniObject) //codegen: GType=G_TYPE_BOXED
 QGLIB_REGISTER_WRAPIMPL_FOR_SUBCLASSES_OF(QGst::MiniObject, QGst::Private::wrapMiniObject)
 
 #endif

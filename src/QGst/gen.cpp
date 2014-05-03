@@ -821,17 +821,6 @@ namespace QGst {
 
 #include "QGst/miniobject.h"
 
-REGISTER_TYPE_IMPLEMENTATION(QGst::MiniObject,G_TYPE_BOXED)
-
-namespace QGst {
-  QGlib::RefCountedObject *MiniObject_new(void *instance)
-  {
-    QGst::MiniObject *cppClass = new QGst::MiniObject;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGst
-
 #include "QGst/memory.h"
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::Memory,GST_TYPE_MEMORY)
@@ -1047,7 +1036,6 @@ namespace Private {
     QGlib::GetType<ColorBalanceChannel>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalanceChannel_new));
     QGlib::GetType<ColorBalance>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalance_new));
     QGlib::GetType<Clock>().setQuarkData(q, reinterpret_cast<void*>(&Clock_new));
-    QGlib::GetType<MiniObject>().setQuarkData(q, reinterpret_cast<void*>(&MiniObject_new));
     QGlib::GetType<Memory>().setQuarkData(q, reinterpret_cast<void*>(&Memory_new));
     QGlib::GetType<Sample>().setQuarkData(q, reinterpret_cast<void*>(&Sample_new));
     QGlib::GetType<DiscovererStreamInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererStreamInfo_new));
