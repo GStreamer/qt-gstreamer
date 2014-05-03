@@ -35,17 +35,17 @@ SamplePtr Sample::create(const BufferPtr & buffer, const CapsPtr & caps,
     return SamplePtr::wrap(gst_sample_new(buffer, caps, segment, cinfo), false);
 }
 
-BufferPtr Sample::buffer()
+BufferPtr Sample::buffer() const
 {
     return BufferPtr::wrap(gst_sample_get_buffer(object<GstSample>()));
 }
 
-CapsPtr Sample::caps()
+CapsPtr Sample::caps() const
 {
     return CapsPtr::wrap(gst_sample_get_caps(object<GstSample>()));
 }
 
-const Structure Sample::info()
+Structure Sample::info() const
 {
     return Structure(gst_sample_get_info(object<GstSample>()));
 }

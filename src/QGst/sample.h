@@ -35,9 +35,9 @@ public:
     static SamplePtr create(const BufferPtr & buffer, const CapsPtr & caps,
                             const Segment & segment, const Structure & info);
 
-    BufferPtr buffer();
-    CapsPtr caps();
-    const Structure info();
+    BufferPtr buffer() const;
+    CapsPtr caps() const;
+    Structure info() const;
     Segment segment() const;
 };
 } //namespace QGst
