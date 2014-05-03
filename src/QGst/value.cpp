@@ -36,22 +36,6 @@ namespace Private {
 
 void registerValueVTables()
 {
-    struct ValueVTable_MiniObject
-    {
-        static void get(const QGlib::Value & value, void *data)
-        {
-	    *reinterpret_cast<GstMiniObject **>(data) = static_cast<GstMiniObject *>(g_value_get_boxed(value));
-        };
-
-        static void set(QGlib::Value & value, const void *data)
-        {
-            g_value_set_boxed(value, *reinterpret_cast<GstMiniObject * const *>(data));
-        };
-    };
-    QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
-            QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
-
-
     struct ValueVTable_Fraction
     {
         static void get(const QGlib::Value & value, void *data)
