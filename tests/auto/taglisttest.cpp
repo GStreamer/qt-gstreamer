@@ -21,6 +21,7 @@
 #include <QGst/Caps>
 #include <QGst/Sample>
 #include <QGst/Structure>
+#include <QGst/Segment>
 #include <QtCore/QDate>
 
 class TagListTest : public QGstTest
@@ -112,7 +113,7 @@ void TagListTest::copyTest()
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
-    QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, NULL, QGst::Structure());
+    QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, QGst::Segment(), QGst::Structure());
     tl.setImage(sample);
 
     QGst::TagList tl2(tl);
@@ -362,19 +363,19 @@ void TagListTest::sampleTest()
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
-    QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, NULL, QGst::Structure());
+    QGst::SamplePtr sample = QGst::Sample::create(buffer, caps, QGst::Segment(), QGst::Structure());
     tl.setImage(sample);
 
     QGst::BufferPtr bufferb = QGst::Buffer::create(10);
     QGst::CapsPtr capsb = QGst::Caps::createSimple("video/x-raw");
     capsb->setValue("width", 160);
-    QGst::SamplePtr sampleb = QGst::Sample::create(bufferb, capsb, NULL, QGst::Structure());
+    QGst::SamplePtr sampleb = QGst::Sample::create(bufferb, capsb, QGst::Segment(), QGst::Structure());
     tl.setPreviewImage(sampleb);
 
     QGst::BufferPtr bufferc = QGst::Buffer::create(10);
     QGst::CapsPtr capsc = QGst::Caps::createSimple("files");
     capsc->setValue("attachment", QString("avalue"));
-    QGst::SamplePtr samplec = QGst::Sample::create(bufferc, capsc, NULL, QGst::Structure());
+    QGst::SamplePtr samplec = QGst::Sample::create(bufferc, capsc, QGst::Segment(), QGst::Structure());
     tl.setAttachment(samplec);
 
     QGst::SamplePtr sample2 = tl.image();

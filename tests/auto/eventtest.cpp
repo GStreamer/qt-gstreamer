@@ -20,6 +20,7 @@
 #include <QGst/Object>
 #include <QGst/Message>
 #include <QGst/TagList>
+#include <QGst/Segment>
 
 class EventTest : public QGstTest
 {
@@ -99,21 +100,14 @@ void EventTest::eosTest()
 
 void EventTest::newSegmentTest()
 {
-    QGst::SegmentEventPtr evt = QGst::SegmentEvent::create(QGst::SegmentFlagSegment,
-        100002.0, 0.5, QGst::FormatTime, 1, 2, 12345, 234567, 345678, 456789, 56789);
+    QGst::Segment segment(QGst::FormatTime);
+    QGst::SegmentEventPtr evt = QGst::SegmentEvent::create(segment);
 
     QVERIFY(evt->type()==QGst::EventSegment);
     QCOMPARE(evt->typeName(), QString("segment"));
 
-    QCOMPARE(evt->flags(), QGst::SegmentFlagSegment);
-    QCOMPARE(evt->rate(), 100002.0);
-    QCOMPARE(evt->appliedRate(), 0.5);
-    QVERIFY(evt->format() == QGst::FormatTime);
-    QCOMPARE(evt->start(), static_cast<qint64>(12345));
-    QCOMPARE(evt->stop(), static_cast<qint64>(234567));
-    QCOMPARE(evt->time(), static_cast<qint64>(345678));
-    QCOMPARE(evt->position(), static_cast<qint64>(456789));
-    QCOMPARE(evt->duration(), static_cast<qint64>(56789));
+    QGst::Segment segment2 = evt->segment();
+    QCOMPARE(segment2.format(), QGst::FormatTime);
 };
 
 //TODO GST_EVENT_TAG

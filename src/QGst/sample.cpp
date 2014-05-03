@@ -19,20 +19,20 @@
 #include "caps.h"
 #include "sample.h"
 #include "structure.h"
+#include "segment.h"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
 
 namespace QGst {
 
-// FIXME: need a real type for segment
 SamplePtr Sample::create(const BufferPtr & buffer, const CapsPtr & caps,
-                         void *segment, const Structure & info)
+                         const Segment & segment, const Structure & info)
 {
     GstStructure *cinfo = NULL;
     if (info.isValid())
         cinfo = gst_structure_copy(info);
 
-    return SamplePtr::wrap(gst_sample_new(buffer, caps, static_cast<GstSegment *>(segment), cinfo), false);
+    return SamplePtr::wrap(gst_sample_new(buffer, caps, segment, cinfo), false);
 }
 
 BufferPtr Sample::buffer()
@@ -50,5 +50,9 @@ const Structure Sample::info()
     return Structure(gst_sample_get_info(object<GstSample>()));
 }
 
-// FIXME: implement wrapper for gst_sample_get_segment, will need a wrapper for GstSegment
+Segment Sample::segment() const
+{
+    return Segment(gst_sample_get_segment(object<GstSample>()));
+}
+
 } //namespace QGst

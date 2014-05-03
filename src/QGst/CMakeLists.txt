@@ -32,6 +32,7 @@ set(QtGStreamer_SRCS
     sample.cpp
     bufferlist.cpp
     discoverer.cpp
+    segment.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -91,6 +92,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     taglist.h           TagList
     bufferlist.h        BufferList
     discoverer.h        Discoverer
+    segment.h           Segment
 
     Ui/global.h
     Ui/videowidget.h            Ui/VideoWidget

@@ -140,12 +140,13 @@ QGST_WRAPPER_DECLARATION(StreamVolume)
 QGST_WRAPPER_DECLARATION(Sample)
 QGST_WRAPPER_GSTCLASS_DECLARATION(Structure)
 QGST_WRAPPER_GSTCLASS_DECLARATION(TagList)
-
+QGST_WRAPPER_GSTCLASS_DECLARATION(Segment)
 namespace QGst {
     class Structure;
     class SharedStructure;
     typedef QSharedPointer<SharedStructure> StructurePtr;
     class MapInfo;
+    class Segment;
 }
 QGST_WRAPPER_GSTCLASS_DECLARATION(URIHandler)
 QGST_WRAPPER_REFPOINTER_DECLARATION(UriHandler)

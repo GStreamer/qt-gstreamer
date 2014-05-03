@@ -19,6 +19,7 @@
 #include "event.h"
 #include "message.h"
 #include "object.h"
+#include "segment.h"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
 
@@ -108,104 +109,17 @@ CapsPtr CapsEvent::caps() const
 
 //********************************************************
 
-SegmentEventPtr SegmentEvent::create(SegmentFlags flags, double rate, double appliedRate,
-                                     Format format, quint64 base, quint64 offset,
-                                     quint64 start, quint64 stop, quint64 time,
-                                     quint64 position, quint64 duration)
+SegmentEventPtr SegmentEvent::create(const Segment & segment)
 {
-    GstSegment s;
-    s.flags = static_cast<GstSegmentFlags>(static_cast<int>(flags));
-    s.rate = rate;
-    s.applied_rate = appliedRate;
-    s.format = static_cast<GstFormat>(format);
-    s.base = base;
-    s.offset = offset;
-    s.start = start;
-    s.stop = stop;
-    s.time = time;
-    s.position = position;
-    s.duration = duration;
-
-    GstEvent * e = gst_event_new_segment(&s);
-    return SegmentEventPtr::wrap(e, false);
+    return SegmentEventPtr::wrap(gst_event_new_segment(segment), false);
 }
 
-SegmentFlags SegmentEvent::flags() const
+Segment SegmentEvent::segment() const
 {
     const GstSegment *s;
     gst_event_parse_segment(object<GstEvent>(), &s);
 
-    return static_cast<SegmentFlags>(static_cast<int>(s->flags));
-}
-
-double SegmentEvent::rate() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->rate;
-}
-
-double SegmentEvent::appliedRate() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->applied_rate;
-}
-
-Format SegmentEvent::format() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return static_cast<Format>(s->format);
-}
-
-qint64 SegmentEvent::base() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->base;
-}
-
-qint64 SegmentEvent::offset() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->offset;
-}
-
-qint64 SegmentEvent::start() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->start;
-}
-
-qint64 SegmentEvent::stop() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->stop;
-}
-
-qint64 SegmentEvent::time() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->time;
-}
-
-qint64 SegmentEvent::position() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->position;
-}
-
-qint64 SegmentEvent::duration() const
-{
-    const GstSegment *s;
-    gst_event_parse_segment(object<GstEvent>(), &s);
-    return s->duration;
+    return Segment(s);
 }
 
 //********************************************************

@@ -1010,7 +1010,9 @@ namespace QGst {
   }
 } //namespace QGst
 
+#include "QGst/segment.h"
 
+REGISTER_TYPE_IMPLEMENTATION(QGst::Segment,GST_TYPE_SEGMENT)
 
 namespace QGst {
 namespace Private {
