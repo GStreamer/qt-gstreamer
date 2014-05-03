@@ -242,11 +242,12 @@ void VoipExample::onRtpBinPadAdded(const QGst::PadPtr & pad)
     QGst::ElementPtr bin;
 
     try {
-        if (pad->currentCaps()->internalStructure(0)->value("media").toString() == QLatin1String("audio")) {
+        //recv_rtp_src_1_* -> session 1 - audio
+        if (pad->name().startsWith(QLatin1String("recv_rtp_src_1"))) {
             bin = QGst::Bin::fromDescription(
                 "rtpspeexdepay ! speexdec ! audioconvert ! autoaudiosink"
             );
-        } else {
+        } else { //recv_rtp_src_2_* -> session 2 - video
             bin = QGst::Bin::fromDescription(
                 "rtph264depay ! avdec_h264 ! videoconvert ! autovideosink"
             );
