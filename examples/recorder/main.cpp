@@ -27,7 +27,6 @@
 #include <QGst/Init>
 #include <QGst/ElementFactory>
 #include <QGst/ChildProxy>
-#include <QGst/PropertyProbe>
 #include <QGst/Pipeline>
 #include <QGst/Pad>
 #include <QGst/Event>
@@ -47,8 +46,6 @@ public:
 
 private:
     enum Device { AudioSrc, VideoSrc };
-    void findDevices(Device device);
-    void probeForDevices(const QGst::PropertyProbePtr & propertyProbe);
 
     QGst::BinPtr createAudioSrcBin();
     QGst::BinPtr createVideoSrcBin();
@@ -63,8 +60,6 @@ private Q_SLOTS:
 
 private:
     Ui::Recorder m_ui;
-    QGst::PropertyProbePtr m_audioProbe;
-    QGst::PropertyProbePtr m_videoProbe;
     QGst::PipelinePtr m_pipeline;
 };
 
@@ -72,10 +67,6 @@ Recorder::Recorder(QWidget *parent)
     : QDialog(parent)
 {
     m_ui.setupUi(this);
-
-    //setup the device combo boxes
-    findDevices(AudioSrc);
-    findDevices(VideoSrc);
 
     QGst::ElementFactoryPtr ximagesrc = QGst::ElementFactory::find("ximagesrc");
     if (!ximagesrc) {
@@ -92,72 +83,6 @@ Recorder::Recorder(QWidget *parent)
     m_ui.outputFileEdit->setText(QDir::currentPath() + QDir::separator() + "out.ogv");
 }
 
-void Recorder::findDevices(Device device)
-{
-    const char *srcElementName = (device == AudioSrc) ? "autoaudiosrc" : "autovideosrc";
-    QGst::ElementPtr src = QGst::ElementFactory::make(srcElementName);
-
-    if (!src) {
-        QMessageBox::critical(this, tr("Error"),
-                              tr("Failed to create element \"%1\". Make sure you have "
-                                 "gstreamer-plugins-good installed").arg(srcElementName));
-        return;
-    }
-
-    QGst::PropertyProbePtr propertyProbe;
-
-    //autoaudiosrc and autovideosrc implement the child proxy interface
-    //and create the correct child element when they go to the READY state
-    src->setState(QGst::StateReady);
-    QGst::ChildProxyPtr childProxy = src.dynamicCast<QGst::ChildProxy>();
-    if (childProxy && childProxy->childrenCount() > 0) {
-        //the actual source is the first child
-        //this source usually implements the property probe interface
-        propertyProbe = childProxy->childByIndex(0).dynamicCast<QGst::PropertyProbe>();
-    }
-    //we got a reference to the underlying propertyProbe, so we don't need src anymore.
-    src->setState(QGst::StateNull);
-
-    //Most sources and sinks have a "device" property which supports probe
-    //and probing it returns all the available devices on the system.
-    //Here we try to make use of that to list the system's devices
-    //and if it fails, we just leave the source to use its default device.
-    if (propertyProbe && propertyProbe->propertySupportsProbe("device")) {
-        ((device == AudioSrc) ? m_audioProbe : m_videoProbe) = propertyProbe;
-        probeForDevices(propertyProbe);
-
-        //this signal will notify us when devices change
-        QGlib::connect(propertyProbe, "probe-needed",
-                       this, &Recorder::probeForDevices, QGlib::PassSender);
-    } else {
-        QComboBox *box = (device == AudioSrc) ? m_ui.audioDeviceComboBox : m_ui.videoDeviceComboBox;
-        box->addItem(tr("Default"));
-    }
-}
-
-void Recorder::probeForDevices(const QGst::PropertyProbePtr & propertyProbe)
-{
-    QComboBox *box = (propertyProbe == m_audioProbe) ?
-                     m_ui.audioDeviceComboBox : m_ui.videoDeviceComboBox;
-
-    box->clear();
-    box->addItem(tr("Default"));
-
-    //get a list of devices that the element supports
-    QList<QGlib::Value> devices = propertyProbe->probeAndGetValues("device");
-
-    Q_FOREACH(const QGlib::Value & device, devices) {
-        //set the element's device to the current device and retrieve its
-        //human-readable name through the "device-name" property
-        propertyProbe->setProperty("device", device);
-        QString deviceName = propertyProbe->property("device-name").toString();
-
-        //add the device on the combobox
-        box->addItem(QString("%1 (%2)").arg(deviceName, device.toString()),
-                     device.toString());
-    }
-}
-
 QGst::BinPtr Recorder::createAudioSrcBin()
 {
     QGst::BinPtr audioBin;
@@ -170,22 +95,10 @@ QGst::BinPtr Recorder::createAudioSrcBin()
         return QGst::BinPtr();
     }
 
-    //set the source's properties
-    QVariant device = m_ui.audioDeviceComboBox->itemData(m_ui.audioDeviceComboBox->currentIndex());
-    if (device.isValid()) {
-        QGst::ElementPtr src = audioBin->getElementByName("audiosrc");
+    QGst::ElementPtr src = audioBin->getElementByName("audiosrc");
+    //autoaudiosrc creates the actual source in the READY state
 
-        //autoaudiosrc creates the actual source in the READY state
-        src->setState(QGst::StateReady);
-
-        QGst::ChildProxyPtr childProxy = src.dynamicCast<QGst::ChildProxy>();
-        if (childProxy && childProxy->childrenCount() > 0) {
-            //the actual source is the first child
-            QGst::ObjectPtr realSrc = childProxy->childByIndex(0);
-            realSrc->setProperty("device", device.toString());
-        }
-    }
-
+    src->setState(QGst::StateReady);
     return audioBin;
 }
 
@@ -195,11 +108,12 @@ QGst::BinPtr Recorder::createVideoSrcBin()
 
     try {
         if (m_ui.videoSourceComboBox->currentIndex() == 0) { //camera
-            videoBin = QGst::Bin::fromDescription("autovideosrc name=\"videosrc\" ! "
-                                                  "ffmpegcolorspace ! theoraenc ! queue");
+            videoBin = QGst::Bin::fromDescription("autovideosrc name=\"videosrc\" !"
+                                                  "videoconvert ! theoraenc ! queue");
+            return videoBin;
         } else { //screencast
             videoBin = QGst::Bin::fromDescription("ximagesrc name=\"videosrc\" ! "
-                                                  "ffmpegcolorspace ! theoraenc ! queue");
+                                                  "videoconvert ! theoraenc ! queue");
         }
     } catch (const QGlib::Error & error) {
         qCritical() << "Failed to create video source bin:" << error;
@@ -208,20 +122,6 @@ QGst::BinPtr Recorder::createVideoSrcBin()
 
     //set the source's properties
     if (m_ui.videoSourceComboBox->currentIndex() == 0) { //camera
-        QVariant device = m_ui.videoDeviceComboBox->itemData(m_ui.videoDeviceComboBox->currentIndex());
-        if (device.isValid()) {
-            QGst::ElementPtr src = videoBin->getElementByName("videosrc");
-
-            //autovideosrc creates the actual source in the READY state
-            src->setState(QGst::StateReady);
-
-            QGst::ChildProxyPtr childProxy = src.dynamicCast<QGst::ChildProxy>();
-            if (childProxy && childProxy->childrenCount() > 0) {
-                //the actual source is the first child
-                QGst::ObjectPtr realSrc = childProxy->childByIndex(0);
-                realSrc->setProperty("device", device.toString());
-            }
-        }
     } else { //screencast
         videoBin->getElementByName("videosrc")->setProperty("screen-num", m_ui.displayNumSpinBox->value());
     }
@@ -248,10 +148,11 @@ void Recorder::start()
     m_pipeline->add(audioSrcBin, videoSrcBin, mux, sink);
 
     //link elements
-    QGst::PadPtr audioPad = mux->getRequestPad("sink_%d");
+    QGst::PadPtr audioPad = mux->getRequestPad("audio_%u");
+
     audioSrcBin->getStaticPad("src")->link(audioPad);
 
-    QGst::PadPtr videoPad = mux->getRequestPad("sink_%d");
+    QGst::PadPtr videoPad = mux->getRequestPad("video_%u");
     videoSrcBin->getStaticPad("src")->link(videoPad);
 
     mux->link(sink);
