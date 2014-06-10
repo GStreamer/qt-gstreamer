@@ -24,6 +24,7 @@ set(QtGStreamer_SRCS
     colorbalance.cpp
     query.cpp
     clock.cpp
+    allocator.cpp
     memory.cpp
     buffer.cpp
     event.cpp
@@ -86,6 +87,7 @@ set(QtGStreamer_INSTALLED_HEADERS
     clock.h             Clock
     buffer.h            Buffer
     sample.h            Sample
+    allocator.h         Allocator
     memory.h            Memory
     event.h             Event
     clocktime.h         ClockTime

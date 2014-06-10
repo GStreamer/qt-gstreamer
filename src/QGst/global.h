@@ -120,6 +120,7 @@ QGST_WRAPPER_REFPOINTER_DECLARATION(FormatsQuery)
 QGST_WRAPPER_REFPOINTER_DECLARATION(BufferingQuery)
 QGST_WRAPPER_REFPOINTER_DECLARATION(UriQuery)
 QGST_WRAPPER_DECLARATION(Buffer)
+QGST_WRAPPER_DECLARATION(Allocator)
 QGST_WRAPPER_DECLARATION(Memory)
 QGST_WRAPPER_DECLARATION(BufferList)
 QGST_WRAPPER_DECLARATION(Event)
@@ -145,6 +146,8 @@ namespace QGst {
     class Structure;
     class SharedStructure;
     typedef QSharedPointer<SharedStructure> StructurePtr;
+    class AllocationParams;
+    typedef QSharedPointer<AllocationParams> AllocationParamsPtr;
     class MapInfo;
     class Segment;
 }

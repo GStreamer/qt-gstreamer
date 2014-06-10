@@ -14,6 +14,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "allocator.h"
 #include "memory.h"
 #include "buffer.h"
 
@@ -62,13 +63,13 @@ MemoryPtr Memory::create(size_t size)
     return MemoryPtr::wrap(gst_allocator_alloc(NULL, size, NULL));
 }
 
-MemoryPtr Memory::create(MemoryFlags flags, void *allocator, MemoryPtr parent,
+MemoryPtr Memory::create(MemoryFlags flags, AllocatorPtr allocator, MemoryPtr parent,
                          size_t maxsize, size_t align, size_t offset, size_t size)
 {
     MemoryPtr mem;
 
     gst_memory_init(mem, static_cast<GstMemoryFlags>(static_cast<int>(flags)),
-                    static_cast<GstAllocator *>(allocator), parent, maxsize, align, offset, size);
+                    allocator->object<GstAllocator>(), parent, maxsize, align, offset, size);
     return mem;
 }
 
