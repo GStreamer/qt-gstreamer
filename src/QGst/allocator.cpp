@@ -91,25 +91,10 @@ void AllocationParams::setPadding(size_t padding)
     d->padding = padding;
 }
 
-Allocator::Allocator(GstAllocator *g_alloc)
-{
-    m_object = static_cast<void *>(g_alloc);
-}
-
-Allocator::operator GstAllocator *()
-{
-    return static_cast<GstAllocator *>(m_object);
-}
-
-Allocator::operator GstAllocator *() const
-{
-    return static_cast<GstAllocator *>(m_object);
-}
-
 
 AllocatorPtr Allocator::find(const char *name)
 {
-    return AllocatorPtr(new Allocator(gst_allocator_find(name)));
+    return AllocatorPtr::wrap(gst_allocator_find(name), false);
 }
 
 void Allocator::registerAllocator(const char *name)

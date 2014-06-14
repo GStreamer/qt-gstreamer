@@ -60,11 +60,6 @@ class QTGSTREAMER_EXPORT Allocator : public Object
 {
     QGST_WRAPPER(Allocator)
 public:
-    explicit Allocator(GstAllocator *g_alloc);
-
-    operator GstAllocator *();
-    operator GstAllocator *() const;
-
     /*! search for an already registered allocator. */
     static AllocatorPtr find(const char *name);
     /*! this corresponds to gst_allocator_register. */
