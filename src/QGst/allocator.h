@@ -20,13 +20,15 @@
 
 #include "global.h"
 #include "object.h"
-#include "enums.h"
 #include "memory.h"
-#include <qglobal.h>
 
 namespace QGst {
 
 class AllocationParamsPrivate;
+
+/*! \headerfile allocator.h <QGst/Allocator>
+ * \brief Wrapper class for GstAllocationParams
+ */
 class QTGSTREAMER_EXPORT AllocationParams
 {
 public:
@@ -51,7 +53,9 @@ private:
     friend Allocator;
 };
 
-
+/*! \headerfile allocator.h <QGst/Allocator>
+ * \brief Wrapper class for GstAllocator
+ */
 class QTGSTREAMER_EXPORT Allocator : public Object
 {
     QGST_WRAPPER(Allocator)
@@ -61,23 +65,23 @@ public:
     operator GstAllocator *();
     operator GstAllocator *() const;
 
-    // search for an already registered allocator.
+    /*! search for an already registered allocator. */
     static AllocatorPtr find(const char *name);
-    // this corresponds to gst_allocator_register.
+    /*! this corresponds to gst_allocator_register. */
     void registerAllocator(const char *name);
-    // sets this allocator to be the default allocator
+    /*! sets this allocator to be the default allocator */
     void setDefault();
 
-    // using this allocator create a chunk of memory
+    /*! using this allocator create a chunk of memory */
     MemoryPtr alloc(size_t size, AllocationParams &params);
-    // release memory allocated with alloc
+    /*! release memory allocated with alloc() */
     void free(MemoryPtr memory);
-//    MemoryPtr newWrapped(MemoryFlags flags, void *data, size_t maxsize, size_t offset, size_t size, void *user_data, GDestroyNotify);
 
     friend Memory;
 };
 
-} /* QGst */
+} //namespace QGst
 
 QGST_REGISTER_TYPE(QGst::Allocator)
+
 #endif /* QGST_ALLOCATOR_H */
