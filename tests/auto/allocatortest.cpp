@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010  Diane Trout <diane@ghic.org>
+    Copyright (C) 2014  Diane Trout <diane@ghic.org>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -65,7 +65,7 @@ void AllocatorTest::testAllocationParams()
 void AllocatorTest::testAllocator()
 {
     GstAllocator *g_system = gst_allocator_find("SystemMemory");
-    QGst::AllocatorPtr system(QGst::Allocator::find("SystemMemory"));
+    QGst::AllocatorPtr system(QGst::Allocator::getSystemMemory());
     QVERIFY(system);
     QCOMPARE(g_system, static_cast<GstAllocator *>(system));
 
@@ -74,11 +74,9 @@ void AllocatorTest::testAllocator()
 
     QGst::MemoryPtr mem = system->alloc(100, params);
     QVERIFY(mem);
+    QCOMPARE(mem->size(), static_cast<size_t>(100));
 
-    size_t offset;
-    size_t maxsize;
-    mem->getSizes(offset, maxsize);
-    QVERIFY(maxsize >= 100ul);
+    system->free(mem);
 }
 
 QTEST_APPLESS_MAIN(AllocatorTest)

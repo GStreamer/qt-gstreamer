@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2010  Diane Trout <diane@ghic.org>
+    Copyright (C) 2014  Diane Trout <diane@ghic.org>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -18,6 +18,7 @@
 #include "qgsttest.h"
 #include <QGlib/Error>
 #include <QGst/Memory>
+#include <QGst/Allocator>
 
 class MemoryTest : public QGstTest
 {
@@ -28,22 +29,21 @@ private Q_SLOTS:
 
 void MemoryTest::testMap()
 {
-    QGst::MemoryPtr mem = QGst::Memory::create(100);
-    size_t offset;
-    size_t maxalloc;
-    size_t size = mem->getSizes(offset, maxalloc);
+    QGst::AllocatorPtr allocator = QGst::Allocator::getDefault();
+    QGst::MemoryPtr mem = allocator->alloc(100);
 
-    QCOMPARE(size, static_cast<size_t>(100));
-    QCOMPARE(offset, static_cast<size_t>(0));
-    QVERIFY(maxalloc >= 100);
+    QCOMPARE(mem->size(), static_cast<size_t>(100));
+    QCOMPARE(mem->offset(), static_cast<size_t>(0));
+    QVERIFY(mem->maxSize() >= 100);
 
     QGst::MapInfo info;
     QVERIFY(mem->map(info, QGst::MapRead));
     QVERIFY(info.data() != NULL);
     QCOMPARE(info.size(), static_cast<size_t>(100));
-    QCOMPARE(info.maxSize(), maxalloc);
+    QCOMPARE(info.maxSize(), mem->maxSize());
 
     mem->unmap(info);
+    allocator->free(mem);
 }
 
 QTEST_APPLESS_MAIN(MemoryTest)

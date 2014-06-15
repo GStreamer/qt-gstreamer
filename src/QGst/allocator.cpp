@@ -91,30 +91,36 @@ void AllocationParams::setPadding(size_t padding)
     d->padding = padding;
 }
 
-
+//static
 AllocatorPtr Allocator::find(const char *name)
 {
     return AllocatorPtr::wrap(gst_allocator_find(name), false);
 }
 
-void Allocator::registerAllocator(const char *name)
+//static
+AllocatorPtr Allocator::getDefault()
 {
-    gst_allocator_register(name, object<GstAllocator>());
+    return find(NULL);
 }
 
-void Allocator::setDefault()
+//static
+AllocatorPtr Allocator::getSystemMemory()
 {
-    gst_allocator_set_default(object<GstAllocator>());
+    return find(GST_ALLOCATOR_SYSMEM);
 }
 
-MemoryPtr Allocator::alloc(size_t size, AllocationParams &params)
+MemoryPtr Allocator::alloc(size_t size, const AllocationParams & params)
 {
-    return MemoryPtr::wrap(gst_allocator_alloc(object<GstAllocator>(), size, params.d_ptr));
+    return MemoryPtr::wrap(gst_allocator_alloc(object<GstAllocator>(), size,
+            const_cast<GstAllocationParams *>(static_cast<const GstAllocationParams *>(params.d_ptr))), false);
 }
 
-void Allocator::free(MemoryPtr memory)
+void Allocator::free(MemoryPtr & memory)
 {
-    gst_allocator_free(object<GstAllocator>(), memory);
+    GstMemory *mem = memory;
+    gst_memory_ref(mem);
+    memory.clear();
+    gst_allocator_free(object<GstAllocator>(), mem);
 }
 
 } /* QGst */

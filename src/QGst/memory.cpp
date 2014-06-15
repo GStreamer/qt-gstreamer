@@ -58,24 +58,29 @@ size_t MapInfo::maxSize() const
 
 //-----------------------
 
-MemoryPtr Memory::create(size_t size)
+AllocatorPtr Memory::allocator() const
 {
-    return MemoryPtr::wrap(gst_allocator_alloc(NULL, size, NULL));
+    return AllocatorPtr::wrap(object<GstMemory>()->allocator);
 }
 
-MemoryPtr Memory::create(MemoryFlags flags, AllocatorPtr allocator, MemoryPtr parent,
-                         size_t maxsize, size_t align, size_t offset, size_t size)
+size_t Memory::size() const
 {
-    MemoryPtr mem;
-
-    gst_memory_init(mem, static_cast<GstMemoryFlags>(static_cast<int>(flags)),
-                    allocator->object<GstAllocator>(), parent, maxsize, align, offset, size);
-    return mem;
+    return object<GstMemory>()->size;
 }
 
-size_t Memory::getSizes(size_t &offset, size_t &maxsize)
+size_t Memory::offset() const
 {
-    return gst_memory_get_sizes(object<GstMemory>(), &offset, &maxsize);
+    return object<GstMemory>()->offset;
+}
+
+size_t Memory::maxSize() const
+{
+    return object<GstMemory>()->maxsize;
+}
+
+bool Memory::isType(const char *type) const
+{
+    return gst_memory_is_type(object<GstMemory>(), type);
 }
 
 bool Memory::map(MapInfo &info, MapFlags flags)

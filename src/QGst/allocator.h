@@ -62,17 +62,18 @@ class QTGSTREAMER_EXPORT Allocator : public Object
 public:
     /*! search for an already registered allocator. */
     static AllocatorPtr find(const char *name);
-    /*! this corresponds to gst_allocator_register. */
-    void registerAllocator(const char *name);
-    /*! sets this allocator to be the default allocator */
-    void setDefault();
 
-    /*! using this allocator create a chunk of memory */
-    MemoryPtr alloc(size_t size, AllocationParams &params);
-    /*! release memory allocated with alloc() */
-    void free(MemoryPtr memory);
+    /*! get the default allocator */
+    static AllocatorPtr getDefault();
+    /*! get the system memory allocator */
+    static AllocatorPtr getSystemMemory();
 
-    friend Memory;
+    /*! create a chunk of memory using this allocator */
+    MemoryPtr alloc(size_t size, const AllocationParams &params = AllocationParams());
+    /*! release memory allocated with alloc()
+     * \note this takes a reference to the memory pointer and makes
+     * it null after freeing the memory segment */
+    void free(MemoryPtr & memory);
 };
 
 } //namespace QGst

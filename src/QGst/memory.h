@@ -52,11 +52,13 @@ class QTGSTREAMER_EXPORT Memory : public MiniObject
 {
     QGST_WRAPPER(Memory)
 public:
-    static MemoryPtr create(size_t size);
-    static MemoryPtr create(MemoryFlags flags, AllocatorPtr allocator, MemoryPtr parent,
-                            size_t maxsize, size_t align, size_t offset, size_t size);
+    QGst::AllocatorPtr allocator() const;
 
-    size_t getSizes(size_t &offset, size_t &maxsize);
+    size_t size() const;
+    size_t offset() const;
+    size_t maxSize() const;
+
+    bool isType(const char *type) const;
 
     bool map(MapInfo &info, MapFlags flags);
     void unmap(MapInfo &info);
