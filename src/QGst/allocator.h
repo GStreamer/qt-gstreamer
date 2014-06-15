@@ -24,8 +24,6 @@
 
 namespace QGst {
 
-class AllocationParamsPrivate;
-
 /*! \headerfile allocator.h <QGst/Allocator>
  * \brief Wrapper class for GstAllocationParams
  */
@@ -33,24 +31,29 @@ class QTGSTREAMER_EXPORT AllocationParams
 {
 public:
     AllocationParams();
-    AllocationParams(AllocationParams &other);
-    ~AllocationParams();
+    AllocationParams(const AllocationParams & other);
+    virtual ~AllocationParams();
+
+    AllocationParams & operator=(const AllocationParams & other);
 
     MemoryFlags flags() const;
     void setFlags(MemoryFlags flags);
+
     size_t align() const;
     void setAlign(size_t align);
+
     size_t prefix() const;
     void setPrefix(size_t align);
+
     size_t padding() const;
     void setPadding(size_t padding);
 
-protected:
-    AllocationParamsPrivate * const d_ptr;
+    operator GstAllocationParams*();
+    operator const GstAllocationParams*() const;
 
 private:
-    Q_DECLARE_PRIVATE(AllocationParams)
-    friend Allocator;
+    friend class Allocator;
+    GstAllocationParams *d;
 };
 
 /*! \headerfile allocator.h <QGst/Allocator>

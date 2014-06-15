@@ -142,12 +142,12 @@ QGST_WRAPPER_DECLARATION(Sample)
 QGST_WRAPPER_GSTCLASS_DECLARATION(Structure)
 QGST_WRAPPER_GSTCLASS_DECLARATION(TagList)
 QGST_WRAPPER_GSTCLASS_DECLARATION(Segment)
+QGST_WRAPPER_GSTCLASS_DECLARATION(AllocationParams)
 namespace QGst {
     class Structure;
     class SharedStructure;
     typedef QSharedPointer<SharedStructure> StructurePtr;
     class AllocationParams;
-    typedef QSharedPointer<AllocationParams> AllocationParamsPtr;
     class MapInfo;
     class Segment;
 }

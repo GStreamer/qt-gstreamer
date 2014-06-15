@@ -22,73 +22,77 @@
 
 namespace QGst {
 
-struct AllocationParamsPrivate : GstAllocationParams
-{
-};
-
 AllocationParams::AllocationParams()
-  : d_ptr(new AllocationParamsPrivate)
+  : d(g_slice_new0(GstAllocationParams))
 {
-    Q_D(AllocationParams);
     gst_allocation_params_init(d);
 }
 
-AllocationParams::AllocationParams(AllocationParams &other)
-  : d_ptr(static_cast<AllocationParamsPrivate *>(gst_allocation_params_copy(other.d_ptr)))
+AllocationParams::AllocationParams(const AllocationParams & other)
+  : d(gst_allocation_params_copy(other.d))
 {
 }
 
 AllocationParams::~AllocationParams()
 {
-    gst_allocation_params_free(d_ptr);
+    gst_allocation_params_free(d);
+}
+
+AllocationParams & AllocationParams::operator=(const AllocationParams & other)
+{
+    gst_allocation_params_free(d);
+    d = gst_allocation_params_copy(other.d);
+    return *this;
 }
 
 MemoryFlags AllocationParams::flags() const
 {
-    Q_D(const AllocationParams);
     return static_cast<QGst::MemoryFlags>(static_cast<unsigned int>(d->flags));
 }
 
 void AllocationParams::setFlags(MemoryFlags flags)
 {
-    Q_D(AllocationParams);
     d->flags = static_cast<GstMemoryFlags>(static_cast<unsigned int>(flags));
 }
 
 size_t AllocationParams::align() const
 {
-    Q_D(const AllocationParams);
     return d->align;
 }
 
 void AllocationParams::setAlign(size_t align)
 {
-    Q_D(AllocationParams);
     d->align = align;
 }
 
 size_t AllocationParams::prefix() const
 {
-    Q_D(const AllocationParams);
     return d->prefix;
 }
 
 void AllocationParams::setPrefix(size_t align)
 {
-    Q_D(AllocationParams);
     d->prefix = align;
 }
 
 size_t AllocationParams::padding() const
 {
-    Q_D(const AllocationParams);
     return d->padding;
 }
 
 void AllocationParams::setPadding(size_t padding)
 {
-    Q_D(AllocationParams);
     d->padding = padding;
+}
+
+AllocationParams::operator const GstAllocationParams*() const
+{
+    return d;
+}
+
+AllocationParams::operator GstAllocationParams*()
+{
+    return d;
 }
 
 //static
@@ -112,7 +116,7 @@ AllocatorPtr Allocator::getSystemMemory()
 MemoryPtr Allocator::alloc(size_t size, const AllocationParams & params)
 {
     return MemoryPtr::wrap(gst_allocator_alloc(object<GstAllocator>(), size,
-            const_cast<GstAllocationParams *>(static_cast<const GstAllocationParams *>(params.d_ptr))), false);
+            const_cast<GstAllocationParams *>(static_cast<const GstAllocationParams *>(params))), false);
 }
 
 void Allocator::free(MemoryPtr & memory)
