@@ -35,7 +35,7 @@ void BufferTest::simpleTest()
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
 
     QCOMPARE(buffer->size(), (quint32) 10);
-    QVERIFY(buffer->peekMemory(0));
+    QVERIFY(buffer->getMemory(0));
 }
 
 void BufferTest::flagsTest()
@@ -82,7 +82,7 @@ void BufferTest::memoryPeekTest()
     returned_bytes = buffer->extract(0, &bytes, 20);
     QCOMPARE(returned_bytes, static_cast<size_t>(10));
 
-    QGst::MemoryPtr m = buffer->peekMemory(0);
+    QGst::MemoryPtr m = buffer->getMemory(0);
 
     QVERIFY(m);
     QVERIFY(m->isWritable());

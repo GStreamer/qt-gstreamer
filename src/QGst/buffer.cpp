@@ -83,9 +83,14 @@ uint Buffer::extract(uint offset, void *dest, uint size)
     return gst_buffer_extract(object<GstBuffer>(), offset, dest, size);
 }
 
-MemoryPtr Buffer::peekMemory(uint index)
+uint Buffer::memoryCount() const
 {
-    return MemoryPtr::wrap(gst_buffer_peek_memory(object<GstBuffer>(), index));
+    return gst_buffer_n_memory (object<GstBuffer>());
+}
+
+MemoryPtr Buffer::getMemory(uint index) const
+{
+    return MemoryPtr::wrap(gst_buffer_get_memory(object<GstBuffer>(), index), false);
 }
 
 bool Buffer::map(MapInfo &info, MapFlags flags)
