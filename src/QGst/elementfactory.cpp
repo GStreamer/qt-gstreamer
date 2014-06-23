@@ -43,7 +43,7 @@ QGlib::Type ElementFactory::elementType() const
     return gst_element_factory_get_element_type(object<GstElementFactory>());
 }
 
-QString ElementFactory::metadata(const QByteArray &key) const
+QString ElementFactory::metadata(const char *key) const
 {
     return QString::fromUtf8(gst_element_factory_get_metadata(object<GstElementFactory>(), key));
 }
