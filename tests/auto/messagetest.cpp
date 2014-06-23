@@ -26,7 +26,6 @@ class MessageTest : public QGstTest
 {
     Q_OBJECT
 private Q_SLOTS:
-    void baseTest();
     void eosMessageTest();
     void errorMessageTest();
     void warningMessageTest();
@@ -46,29 +45,15 @@ private Q_SLOTS:
     void qosMessageTest();
 };
 
-void MessageTest::baseTest()
-{
-    QGst::Structure s("mystructure");
-    QGlib::Quark q = QGlib::Quark::fromString("test");
-    QGlib::Error err(q, 10, "test error");
-    QGst::ErrorMessagePtr msg = QGst::ErrorMessage::create(QGst::ObjectPtr(), err,
-                                                           "Test suite error");
-
-    QGst::StructurePtr ss = msg->internalStructure();
-    QVERIFY(ss->isValid());
-    ss->setValue("myfield", 365);
-    QCOMPARE(ss->value("myfield").get<int>(), 365);
-
-    msg->setSequenceNumber(1456);
-    QCOMPARE(msg->sequenceNumber(), 1456U);
-}
-
 void MessageTest::eosMessageTest()
 {
     QGst::EosMessagePtr msg = QGst::EosMessage::create(QGst::ObjectPtr());
 
     QVERIFY(msg->type()==QGst::MessageEos);
     QCOMPARE(msg->typeName(), QString("eos"));
+
+    msg->setSequenceNumber(1456);
+    QCOMPARE(msg->sequenceNumber(), 1456U);
 }
 
 void MessageTest::errorMessageTest()

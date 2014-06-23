@@ -57,7 +57,7 @@ public:
     QString typeName() const;
     QueryType type() const;
 
-    const StructurePtr internalStructure();
+    StructureConstPtr internalStructure();
 };
 
 /*! \headerfile query.h <QGst/Query>

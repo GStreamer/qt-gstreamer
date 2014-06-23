@@ -44,15 +44,15 @@ private Q_SLOTS:
 void EventTest::baseTest()
 {
     QGst::Structure s("mystructure");
+    s.setValue("myfield", 365);
+
     QGst::EventPtr evt = QGst::NavigationEvent::create(s);
 
     QVERIFY(evt->type()==QGst::EventNavigation);
     QCOMPARE(evt->typeName(), QString("navigation"));
 
-    QGst::StructurePtr ss = evt->internalStructure();
+    QGst::StructureConstPtr ss = evt->internalStructure();
     QVERIFY(ss->isValid());
-
-    ss->setValue("myfield", 365);
     QCOMPARE(ss->value("myfield").get<int>(), 365);
 
     QVERIFY(evt->timestamp());
@@ -72,7 +72,7 @@ void EventTest::copyTest()
     QCOMPARE(evt->type(), evt2->type());
     QCOMPARE(evt->timestamp(), evt2->timestamp());
 
-    QGst::StructurePtr ss = evt2->internalStructure();
+    QGst::StructureConstPtr ss = evt2->internalStructure();
     QVERIFY(ss->isValid());
     QCOMPARE(ss->value("myfield").get<int>(), 365);
 }
@@ -162,7 +162,7 @@ void EventTest::navigationTest()
     QVERIFY(evt->type()==QGst::EventNavigation);
     QCOMPARE(evt->typeName(), QString("navigation"));
 
-    QGst::StructurePtr ss = evt->internalStructure();
+    QGst::StructureConstPtr ss = evt->internalStructure();
     QVERIFY(ss->isValid());
     QCOMPARE(ss->value("myfield").get<int>(), 365);
 }

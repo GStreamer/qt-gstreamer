@@ -40,7 +40,7 @@ QString Event::typeName() const
     return QString::fromUtf8(GST_EVENT_TYPE_NAME(object<GstEvent>()));
 }
 
-const StructurePtr Event::internalStructure()
+StructureConstPtr Event::internalStructure()
 {
     const GstStructure *structure = gst_event_get_structure(object<GstEvent>());
     return SharedStructure::fromMiniObject(const_cast<GstStructure *>(structure), MiniObjectPtr(this));

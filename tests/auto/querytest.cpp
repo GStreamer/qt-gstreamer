@@ -36,13 +36,9 @@ private Q_SLOTS:
 
 void QueryTest::baseTest()
 {
-    QGst::Structure s("mystructure");
     QGst::PositionQueryPtr query = QGst::PositionQuery::create(QGst::FormatBytes);
-
-    QGst::StructurePtr ss = query->internalStructure();
+    QGst::StructureConstPtr ss = query->internalStructure();
     QVERIFY(ss->isValid());
-    ss->setValue("myfield", 365);
-    QCOMPARE(ss->value("myfield").get<int>(), 365);
 }
 
 void QueryTest::positionTest()

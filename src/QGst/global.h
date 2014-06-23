@@ -147,6 +147,7 @@ namespace QGst {
     class Structure;
     class SharedStructure;
     typedef QSharedPointer<SharedStructure> StructurePtr;
+    typedef QSharedPointer<const SharedStructure> StructureConstPtr;
     class AllocationParams;
     class MapInfo;
     class Segment;

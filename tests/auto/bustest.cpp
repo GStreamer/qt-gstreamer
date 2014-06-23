@@ -67,7 +67,7 @@ void BusTest::messageClosure(const QGst::MessagePtr & msg)
     //check if the message is the same we sent from the other thread
     QVERIFY(!msg.isNull());
     QCOMPARE(msg->type(), QGst::MessageApplication);
-    const QGst::StructurePtr s = msg->internalStructure();
+    QGst::StructureConstPtr s = msg->internalStructure();
     QCOMPARE(s->name(), QString("test"));
     QCOMPARE(s->value("sequence").get<int>(), m_messagesReceived);
 

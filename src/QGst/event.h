@@ -60,7 +60,7 @@ public:
     EventType type() const;
     QString typeName() const;
 
-    const StructurePtr internalStructure();
+    StructureConstPtr internalStructure();
 
     bool hasName(const char *name) const;
 

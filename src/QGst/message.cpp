@@ -43,7 +43,7 @@ MessageType Message::type() const
     return static_cast<MessageType>(GST_MESSAGE_TYPE(object<GstMessage>()));
 }
 
-const StructurePtr Message::internalStructure()
+StructureConstPtr Message::internalStructure()
 {
     const GstStructure *structure = gst_message_get_structure(object<GstMessage>());
     return SharedStructure::fromMiniObject(const_cast<GstStructure *>(structure), MiniObjectPtr(this));
