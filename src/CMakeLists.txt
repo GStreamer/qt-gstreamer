@@ -85,7 +85,10 @@ foreach(pc_in_file ${PC_IN_FILES})
     if (USE_QT5)
         string(REPLACE "Qt" "Qt5" pc_out_file ${pc_out_file})
     endif()
-    configure_file(${pc_in_file} ${CMAKE_CURRENT_BINARY_DIR}/${pc_out_file} @ONLY)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pc_out_file}
-            DESTINATION ${QTGSTREAMER_PC_INSTALL_DIR})
+    # Qt4 version of the QtGStreamerQuick .pc file should not be installed
+    if (NOT ${pc_out_file} MATCHES "QtGStreamerQuick.*")
+        configure_file(${pc_in_file} ${CMAKE_CURRENT_BINARY_DIR}/${pc_out_file} @ONLY)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${pc_out_file}
+                DESTINATION ${QTGSTREAMER_PC_INSTALL_DIR})
+    endif()
 endforeach()
