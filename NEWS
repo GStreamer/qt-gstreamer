@@ -1,6 +1,20 @@
-qt-gstreamer 0.10.3.1 (UNRELEASED)
-==================================
+qt-gstreamer 1.0.0~rc1 (2014-06-24)
+===================================
 
+    * Initial port to the GStreamer 1.0 series (BREAKS API & ABI)
+
+Further additions:
+    * Added QtQuick2 support, which includes:
+      - The qtquick2videosink gstreamer element
+      - The QtGStreamerQuick2 QML plugin
+      - The Qt5GStreamerQuick glue library
+      - The qmlplayer2 example
+
+Packaging changes:
+    * Tarballs are now distributed in .tar.xz format, together
+      with a .tar.xz.sha256sum check file, like the rest of the
+      GStreamer modules.
+    * Package is NOT fully co-installable with QtGStreamer 0.10.3
 
 qt-gstreamer 0.10.3 (2013-10-14)
 ==================================
