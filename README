@@ -9,13 +9,17 @@ Currently, it consists of the following parts:
  * QtGLib           - Library providing C++/Qt bindings for parts of the GLib
                       and GObject APIs, a base on which QtGStreamer is built.
  * QtGStreamer      - Library providing C++/Qt bindings for GStreamer
- * QtGStreamerUi    - Library providing integration with QtGui. Currently,
+ * QtGStreamerUi    - Library providing integration with QtWidgets. Currently,
                       it only provides a video widget that embeds GStreamer's
                       video sinks.
  * QtGStreamerUtils - Library providing some high level utility classes.
+ * QtGStreamerQuick - Library providing integration with QtQuick (Qt5 only).
 
-In addition, it provides a "qwidgetvideosink" GStreamer element, an video
-sink element that can draw directly on QWidgets using QPainter.
+In addition, it provides GStreamer elements for painting video on Qt surfaces:
+ * qwidgetvideosink  - For painting on QWidgets
+ * qtvideosink       - For painting on any surface with QPainter
+ * qtglvideosink     - For painting on any surface with QPainter and OpenGL
+ * qtquick2videosink - For painting on QtQuick2 surfaces (Qt5 only)
 
 [1]. http://gstreamer.freedesktop.org/
 [2]. http://qt-project.org/
@@ -43,6 +47,10 @@ sometimes makes dynamic_cast fail under conditions where it should not.
 
 2.2 Compiler
 ------------
+
+Note: This paragraph is outdated. It was written at a time where C++11 support
+was not very widespread among compilers. Nowadays, any C++11 capable compiler
+should work fine.
 
 A decent compiler with proper support for advanced templates, including features
 such as partial template specialization, is required. QtGStreamer can also make
@@ -119,14 +127,26 @@ Other options that can be passed to cmake include:
   Allows you to specify the url that gst-inspect will show as the "Origin URL"
   for all the element plugins that are build from this source package.
 
-2.4 Generating documentation
+2.4 Parallel installation
+-------------------------
+
+QtGStreamer can be built both with Qt4 and Qt5. Installing both versions in
+parallel is possible, since all the libraries, directories and plugins are
+named differently.
+
+Parallel installation is also possible, to a certain extent, between the
+GStreamer-0.10 based version and the GStreamer-1.0 based version. The libraries
+and the GStreamer plugins are co-installable, however the QML plugins as well
+as the headers are NOT.
+
+2.5 Generating documentation
 ----------------------------
 
 QtGStreamer uses doxygen for documentation. To generate the documentation you need
 to install doxygen and run "make doc" after you have run cmake. This will generate
 the documentation in <builddir>/doc/html/.
 
-2.5 Running tests
+2.6 Running tests
 -----------------
 
 QtGStreamer comes with a suite of automatic unit tests that ensure QtGStreamer
@@ -136,6 +156,25 @@ plus some gstreamer plugins from the base and good sets.
 To run them, simply invoke "make test" or "ctest" in the build directory.
 For advanced usage, refer to the ctest manual page.
 
+2.7 Checking build system integrity
+-----------------------------------
+
+In order to check if the installed build system files (QtGStreamerConfig.cmake,
+pkg-config files, etc) are correct and usable externally, you can run:
+
+$ make examples_distcheck
+
+This checks compilation of the examples with both cmake and qmake.
+
+Note that you should also set your environment accordingly for cmake and qmake
+to be able to find QtGStreamer. For example, on my debian system where I have
+installed the Qt5 version of QtGStreamer in /home/gkiagia/install, I would
+have to do:
+
+$ export QT_SELECT=5            # for debian's qmake wrapper to work with Qt5
+$ export PKG_CONFIG_PATH=/home/gkiagia/install/lib/x86_64-linux-gnu/pkgconfig/
+$ export CMAKE_PREFIX_PATH=/home/gkiagia/install/
+$ make examples_distcheck
 
 3. Links & Contact information
 ------------------------------
@@ -159,4 +198,4 @@ Bugs, feature requests & patches should be sent at:
 
 --
 George Kiagiadakis <george.kiagiadakis@collabora.com>
-Last updated: May 3, 2014
+Last updated: Jun 24, 2014
