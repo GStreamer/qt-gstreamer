@@ -1,4 +1,4 @@
-qt-gstreamer 1.0.0~rc1 (2014-06-24)
+qt-gstreamer 1.2.0~rc1 (2014-06-24)
 ===================================
 
     * Initial port to the GStreamer 1.0 series (BREAKS API & ABI)
@@ -15,6 +15,11 @@ Packaging changes:
       with a .tar.xz.sha256sum check file, like the rest of the
       GStreamer modules.
     * Package is NOT fully co-installable with QtGStreamer 0.10.3
+
+Versioning changes:
+    * Version numbers are now going to be synced to the GStreamer API
+      that qt-gstreamer targets, to avoid confusion. So, this release,
+      instead of being version 1.0.0, it is 1.2.0.
 
 qt-gstreamer 0.10.3 (2013-10-14)
 ==================================
