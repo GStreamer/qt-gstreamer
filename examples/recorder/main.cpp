@@ -121,8 +121,7 @@ QGst::BinPtr Recorder::createVideoSrcBin()
     }
 
     //set the source's properties
-    if (m_ui.videoSourceComboBox->currentIndex() == 0) { //camera
-    } else { //screencast
+    if (m_ui.videoSourceComboBox->currentIndex() == 1) { //screencast
         videoBin->getElementByName("videosrc")->setProperty("screen-num", m_ui.displayNumSpinBox->value());
     }
 

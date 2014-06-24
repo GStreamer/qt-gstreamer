@@ -65,7 +65,6 @@
  * Tasks demonstrated in this example include:
  * \li How to create and link elements manually.
  * \li How to create and link elements using a pipeline description.
- * \li How to use the QGst::PropertyProbe interface.
  * \li How to handle bus messages.
  * \li Others...
  */

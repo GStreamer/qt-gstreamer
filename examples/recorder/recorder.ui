@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>306</width>
-    <height>284</height>
+    <height>291</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,33 +45,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QStackedWidget" name="audioSourcePropertiesWidget">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="microphonePage">
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QLabel" name="audioDeviceLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Device:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="audioDeviceComboBox"/>
-          </item>
-         </layout>
-        </widget>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -121,20 +94,14 @@
         <widget class="QWidget" name="cameraPage">
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QLabel" name="videoDeviceLabel">
+           <widget class="QLabel" name="emptyLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text">
-             <string>Device:</string>
-            </property>
            </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="videoDeviceComboBox"/>
           </item>
          </layout>
         </widget>
@@ -221,22 +188,6 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>audioSourceComboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>audioSourcePropertiesWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>305</x>
-     <y>52</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>231</x>
-     <y>73</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>videoSourceComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
