@@ -7,7 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
-set(QTGSTREAMER_VERSION 1.1.90)
+set(QTGSTREAMER_VERSION 1.2.0)
 
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)

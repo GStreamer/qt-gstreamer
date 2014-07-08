@@ -1,5 +1,5 @@
-qt-gstreamer 1.2.0~rc1 (2014-06-24)
-===================================
+qt-gstreamer 1.2.0 (2014-07-08)
+===============================
 
     * Initial port to the GStreamer 1.0 series (BREAKS API & ABI)
 
