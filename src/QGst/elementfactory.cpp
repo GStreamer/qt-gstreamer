@@ -16,9 +16,7 @@
 */
 #include "elementfactory.h"
 #include "element.h"
-#include <gst/gstelement.h>
-#include <gst/gstelementfactory.h>
-#include <gst/gstutils.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

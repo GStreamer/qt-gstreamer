@@ -22,7 +22,7 @@
 #include "miniobject.h"
 #include "caps.h"
 #include "../QGlib/string_p.h"
-#include <gst/gststructure.h>
+#include <gst/gst.h>
 #include <QtCore/QDebug>
 
 namespace QGst {

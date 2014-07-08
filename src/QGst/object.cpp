@@ -16,7 +16,7 @@
 */
 #include "object.h"
 #include "../QGlib/string_p.h"
-#include <gst/gstobject.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

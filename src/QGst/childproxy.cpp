@@ -15,8 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "childproxy.h"
-#include <gst/gstobject.h>
-#include <gst/gstchildproxy.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

@@ -19,8 +19,7 @@
 #include "../QGlib/string_p.h"
 #include "objectstore_p.h"
 #include <QtCore/QDebug>
-#include <gst/gstcaps.h>
-#include <gst/gstvalue.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

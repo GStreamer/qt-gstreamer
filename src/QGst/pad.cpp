@@ -20,8 +20,7 @@
 #include "query.h"
 #include "event.h"
 #include <QtCore/QDebug>
-#include <gst/gstpad.h>
-#include <gst/gstutils.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

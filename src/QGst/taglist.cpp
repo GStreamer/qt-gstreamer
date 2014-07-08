@@ -20,8 +20,7 @@
 #include "taglist.h"
 #include "sample.h"
 #include "../QGlib/string_p.h"
-#include <gst/gsttaglist.h>
-#include <gst/gstvalue.h>
+#include <gst/gst.h>
 #include <QtCore/QDebug>
 #include <QtCore/QDate>
 

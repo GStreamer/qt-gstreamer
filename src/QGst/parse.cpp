@@ -17,7 +17,7 @@
 #include "parse.h"
 #include "element.h"
 #include "../QGlib/error.h"
-#include <gst/gstparse.h>
+#include <gst/gst.h>
 
 namespace QGst {
 namespace Parse {

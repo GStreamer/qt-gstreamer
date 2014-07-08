@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "bufferlist.h"
-#include <gst/gstbufferlist.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

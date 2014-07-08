@@ -17,12 +17,7 @@
 #include "allocator.h"
 #include "memory.h"
 #include "buffer.h"
-
-#include <gst/gstobject.h>
-#include <gst/gstminiobject.h>
-#include <gst/gstallocator.h>
-#include <gst/gstmemory.h>
-#include <gst/gstbuffer.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

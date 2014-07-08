@@ -17,7 +17,7 @@
 #include "pipeline.h"
 #include "bus.h"
 #include "clock.h"
-#include <gst/gstpipeline.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

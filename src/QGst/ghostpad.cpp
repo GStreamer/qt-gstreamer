@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ghostpad.h"
-#include <gst/gstghostpad.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

@@ -17,8 +17,7 @@
 #include "bin.h"
 #include "pad.h"
 #include "../QGlib/error.h"
-#include <gst/gstbin.h>
-#include <gst/gstutils.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

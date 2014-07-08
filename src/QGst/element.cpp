@@ -19,8 +19,7 @@
 #include "query.h"
 #include "clock.h"
 #include "event.h"
-#include <gst/gstelement.h>
-#include <gst/gstutils.h>
+#include <gst/gst.h>
 
 namespace QGst {
 

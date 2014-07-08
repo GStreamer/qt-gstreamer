@@ -20,9 +20,7 @@
 #include "structure.h"
 #include "../QGlib/value.h"
 #include <cmath>
-#include <gst/gstvalue.h>
-#include <gst/gstminiobject.h>
-#include <gst/gstdatetime.h>
+#include <gst/gst.h>
 
 namespace QGlib {
 
