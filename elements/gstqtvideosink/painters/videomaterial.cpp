@@ -252,6 +252,7 @@ VideoMaterial::~VideoMaterial()
 {
     if (!m_textureSize.isEmpty())
         glDeleteTextures(m_textureCount, m_textureIds);
+    gst_buffer_replace(&m_frame, NULL);
 }
 
 int VideoMaterial::compare(const QSGMaterial *other) const

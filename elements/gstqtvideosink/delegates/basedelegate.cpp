@@ -181,7 +181,7 @@ bool BaseDelegate::event(QEvent *event)
     {
         GST_LOG_OBJECT(m_sink, "Received deactivate event");
 
-        g_clear_pointer(&m_buffer, gst_buffer_unref);
+        gst_buffer_replace (&m_buffer, NULL);
         update();
 
         return true;
