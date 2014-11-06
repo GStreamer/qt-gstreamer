@@ -21,8 +21,10 @@
 #include <QtCore/QHash>
 #include <QtCore/QMutex>
 #include <boost/multi_index_container.hpp>
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#endif
 #include <boost/multi_index/member.hpp>
 
 namespace QGlib {
