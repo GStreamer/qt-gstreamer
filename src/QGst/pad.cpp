@@ -111,6 +111,9 @@ bool Pad::query(const QueryPtr & query)
 
 bool Pad::sendEvent(const EventPtr &event)
 {
+    //Sending an event passes ownership of it, so we need to strong ref() it as we still
+    //hold a pointer to the object, and will release it when the wrapper is cleared.
+    gst_event_ref(event);
     return gst_pad_send_event(object<GstPad>(), event);
 }
 
