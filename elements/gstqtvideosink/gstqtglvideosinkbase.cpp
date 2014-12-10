@@ -122,13 +122,13 @@ void GstQtGLVideoSinkBase::finalize(GObject *object)
 //------------------------------
 
 
-void GstQtGLVideoSinkBase::colorbalance_init(GstColorBalanceInterface *interface, gpointer data)
+void GstQtGLVideoSinkBase::colorbalance_init(GstColorBalanceInterface *balance_interface, gpointer data)
 {
     Q_UNUSED(data);
-    interface->list_channels = GstQtGLVideoSinkBase::colorbalance_list_channels;
-    interface->set_value = GstQtGLVideoSinkBase::colorbalance_set_value;
-    interface->get_value = GstQtGLVideoSinkBase::colorbalance_get_value;
-    interface->get_balance_type = GstQtGLVideoSinkBase::colorbalance_get_balance_type;
+    balance_interface->list_channels = GstQtGLVideoSinkBase::colorbalance_list_channels;
+    balance_interface->set_value = GstQtGLVideoSinkBase::colorbalance_set_value;
+    balance_interface->get_value = GstQtGLVideoSinkBase::colorbalance_get_value;
+    balance_interface->get_balance_type = GstQtGLVideoSinkBase::colorbalance_get_balance_type;
 }
 
 const GList *GstQtGLVideoSinkBase::colorbalance_list_channels(GstColorBalance *balance)

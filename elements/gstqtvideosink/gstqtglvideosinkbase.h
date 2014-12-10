@@ -61,7 +61,7 @@ private:
     static void init(GTypeInstance *instance, gpointer g_class);
     static void finalize(GObject *object);
 
-    static void colorbalance_init(GstColorBalanceInterface *interface, gpointer data);
+    static void colorbalance_init(GstColorBalanceInterface *balance_interface, gpointer data);
     static const GList *colorbalance_list_channels(GstColorBalance *balance);
     static void colorbalance_set_value(GstColorBalance *balance,
                                        GstColorBalanceChannel *channel,
