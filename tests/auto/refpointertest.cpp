@@ -171,7 +171,10 @@ void RefPointerTest::cppWrappersTest()
     }
 
     {
-        QGst::MessagePtr msg = QGst::ApplicationMessage::create(e);
+        QGst::Structure s("mystruct");
+        s.setValue("days", 365);
+        QGst::MessagePtr msg = QGst::ApplicationMessage::create(e, s);
+        QVERIFY(!msg.isNull());
         QGst::MessagePtr msg2 = msg;
         QCOMPARE(static_cast<QGlib::RefCountedObject*>(msg.operator->()),
                  static_cast<QGlib::RefCountedObject*>(msg2.operator->()));
@@ -199,8 +202,10 @@ void RefPointerTest::cppWrappersTest()
 
 void RefPointerTest::messageDynamicCastTest()
 {
+    QGst::Structure s("mystruct");
+    s.setValue("frequency", 123456);
     QGst::BinPtr bin = QGst::Bin::create();
-    QGst::MessagePtr msg = QGst::ApplicationMessage::create(bin);
+    QGst::MessagePtr msg = QGst::ApplicationMessage::create(bin, s);
     QVERIFY(!msg.isNull());
     QVERIFY(!msg.dynamicCast<QGst::ApplicationMessage>().isNull());
     QVERIFY(msg.dynamicCast<QGst::EosMessage>().isNull());

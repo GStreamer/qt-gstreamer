@@ -205,7 +205,7 @@ class QTGSTREAMER_EXPORT ApplicationMessage : public Message
     QGST_WRAPPER_FAKE_SUBCLASS(Application, Message)
 public:
     static ApplicationMessagePtr create(const ObjectPtr & source,
-                                        const Structure & structure = Structure());
+                                        const Structure & structure);
 };
 
 /*! \headerfile message.h <QGst/Message>
@@ -216,7 +216,7 @@ class QTGSTREAMER_EXPORT ElementMessage : public Message
     QGST_WRAPPER_FAKE_SUBCLASS(Element, Message)
 public:
     static ElementMessagePtr create(const ObjectPtr & source,
-                                    const Structure & structure = Structure());
+                                    const Structure & structure);
 };
 
 //maybe do: SEGMENT_START (internal)
