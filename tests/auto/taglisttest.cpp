@@ -396,8 +396,11 @@ void TagListTest::sampleTest()
     QCOMPARE(structure4->name(), QString("files"));
     QCOMPARE(structure4->value("attachment").get<QString>(), QString("avalue"));
 
+    QGst::BufferPtr buffer2 = QGst::Buffer::create(222);
+    QGst::SamplePtr sample5 = QGst::Sample::create(buffer2, caps, QGst::Segment(), QGst::Structure());
+
     //now set multiple samples and verify the count
-    tl.setImage(sample3, QGst::TagMergeAppend);
+    tl.setImage(sample5, QGst::TagMergeAppend);
     QCOMPARE(tl.imageCount(), 2);
 
     tl.setAttachment(sample2, QGst::TagMergePrepend);
