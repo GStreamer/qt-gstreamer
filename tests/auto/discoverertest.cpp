@@ -410,8 +410,10 @@ void DiscovererTest::setupDiscoveryData()
             << QGst::ClockTime(0) << Seekable
             << (StreamInfoList()
                 << StreamInfoPtr((new VideoStreamInfo("image/png", VideoStreamInfo::ManualCaps))
-                                 ->setWidth(160)->setHeight(120)->setInterlaced(false)))
-            << (TagList());
+                                 ->setWidth(160)->setHeight(120)->setInterlaced(false)
+                                 ->addTag("video-codec", "PNG")))
+            << (TagList()
+                << makeTag("video-codec", "PNG"));
     QTest::newRow("numbers07.jpg")
             << baseUrl.resolved(QUrl::fromEncoded("data/numbers07.jpg")) << 0 << QString()
             << QGst::ClockTime(0) << NonSeekable
