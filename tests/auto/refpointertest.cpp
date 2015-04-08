@@ -182,6 +182,19 @@ void RefPointerTest::cppWrappersTest()
                 != static_cast<QGlib::RefCountedObject*>(msg2.operator->()));
         QVERIFY(msg3 == msg2);
     }
+
+    {
+        QGst::MessagePtr msg = QGst::ElementMessage::create(e);
+        QGst::MessagePtr msg2 = msg;
+        QCOMPARE(static_cast<QGlib::RefCountedObject*>(msg.operator->()),
+                 static_cast<QGlib::RefCountedObject*>(msg2.operator->()));
+        QVERIFY(msg2 == msg);
+
+        QGst::MessagePtr msg3 = QGst::MessagePtr::wrap(msg2);
+        QVERIFY(static_cast<QGlib::RefCountedObject*>(msg3.operator->())
+                != static_cast<QGlib::RefCountedObject*>(msg2.operator->()));
+        QVERIFY(msg3 == msg2);
+    }   
 }
 
 void RefPointerTest::messageDynamicCastTest()
