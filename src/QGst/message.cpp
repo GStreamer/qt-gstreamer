@@ -348,7 +348,7 @@ void StreamStatusMessage::setStreamStatusObject(const QGlib::Value & obj)
 
 ApplicationMessagePtr ApplicationMessage::create(const ObjectPtr & source, const Structure & structure)
 {
-    GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : NULL;
+    GstStructure *s = structure.isValid() ? gst_structure_copy(structure) : gst_structure_new_empty("null");
     return ApplicationMessagePtr::wrap(gst_message_new_application(source, s), false);
 }
 
