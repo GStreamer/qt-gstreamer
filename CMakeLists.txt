@@ -106,6 +106,7 @@ find_package(GObject)
 macro_log_feature(GOBJECT_FOUND "GObject" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
 
 set(CMAKE_REQUIRED_INCLUDES ${QTGSTREAMER_INCLUDES})
+add_definitions(${GSTREAMER_DEFINITIONS})
 include(CheckCXXSourceCompiles)
 check_cxx_source_compiles("
 #include <QtCore/QtGlobal>
