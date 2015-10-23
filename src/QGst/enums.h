@@ -193,6 +193,15 @@ namespace QGst {
         MessageRequestState    = (1 << 22),
         MessageStepStart       = (1 << 23),
         MessageQos             = (1 << 24),
+        MessageProgress        = (1 << 25),
+        MessageToc             = (1 << 26),
+        MessageResetTime       = (1 << 27),
+        MessageStreamStart     = (1 << 28),
+        MessageNeedContext     = (1 << 29),
+        MessageHaveContext     = (1 << 30),
+        MessageExtended        = (1 << 31),
+        MessageDeviceAdded   /*= MessageExtended + 1*/,
+        MessageDeviceRemoved /*= MessageExtended + 2*/,
         MessageAny             = ~0
     };
 }

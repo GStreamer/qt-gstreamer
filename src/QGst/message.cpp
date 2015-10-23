@@ -575,4 +575,34 @@ void QosMessage::setStats(Format format, quint64 processed, quint64 dropped)
                               dropped);
 }
 
+//********************************************************
+
+DeviceAddedMessagePtr DeviceAddedMessage::create(const ObjectPtr & source, const DevicePtr & device)
+{
+    GstMessage *m = gst_message_new_device_added(source, device);
+    return DeviceAddedMessagePtr::wrap(m, false);
+}
+
+DevicePtr DeviceAddedMessage::device() const
+{
+    GstDevice *d;
+    gst_message_parse_device_added(object<GstMessage>(), &d);
+    return DevicePtr::wrap(d, false);
+}
+
+//********************************************************
+
+DeviceRemovedMessagePtr DeviceRemovedMessage::create(const ObjectPtr & source, const DevicePtr & device)
+{
+    GstMessage *m = gst_message_new_device_removed(source, device);
+    return DeviceRemovedMessagePtr::wrap(m, false);
+}
+
+DevicePtr DeviceRemovedMessage::device() const
+{
+    GstDevice *d;
+    gst_message_parse_device_removed(object<GstMessage>(), &d);
+    return DevicePtr::wrap(d, false);
+}
+
 } //namespace QGst

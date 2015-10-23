@@ -34,6 +34,8 @@ set(QtGStreamer_SRCS
     bufferlist.cpp
     discoverer.cpp
     segment.cpp
+    device.cpp
+    devicemonitor.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp
 )
 
@@ -95,6 +97,8 @@ set(QtGStreamer_INSTALLED_HEADERS
     bufferlist.h        BufferList
     discoverer.h        Discoverer
     segment.h           Segment
+    device.h            Device
+    devicemonitor.h     DeviceMonitor
 
     Ui/global.h
     Ui/videowidget.h            Ui/VideoWidget

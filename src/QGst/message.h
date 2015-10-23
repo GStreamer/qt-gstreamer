@@ -18,6 +18,7 @@
 #define QGST_MESSAGE_H
 
 #include "clocktime.h"
+#include "device.h"
 #include "miniobject.h"
 #include "structure.h"
 #include "taglist.h"
@@ -325,6 +326,30 @@ public:
     void setStats(Format format, quint64 processed, quint64 dropped);
 };
 
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageDeviceAdded
+ */
+class QTGSTREAMER_EXPORT DeviceAddedMessage : public Message
+{
+    QGST_WRAPPER_FAKE_SUBCLASS(DeviceAdded, Message)
+public:
+    static DeviceAddedMessagePtr create(const ObjectPtr & source, const DevicePtr& device);
+
+    DevicePtr device() const;
+};
+
+/*! \headerfile message.h <QGst/Message>
+ * \brief Wrapper class for messages of type QGst::MessageDeviceRemoved
+ */
+class QTGSTREAMER_EXPORT DeviceRemovedMessage : public Message
+{
+    QGST_WRAPPER_FAKE_SUBCLASS(DeviceRemoved, Message)
+public:
+    static DeviceRemovedMessagePtr create(const ObjectPtr & source, const DevicePtr& device);
+
+    DevicePtr device() const;
+};
+
 } //namespace QGst
 
 QGST_REGISTER_TYPE(QGst::Message)
@@ -346,5 +371,7 @@ QGST_REGISTER_SUBCLASS(Message, AsyncDone)
 QGST_REGISTER_SUBCLASS(Message, RequestState)
 QGST_REGISTER_SUBCLASS(Message, StepStart)
 QGST_REGISTER_SUBCLASS(Message, Qos)
+QGST_REGISTER_SUBCLASS(Message, DeviceAdded)
+QGST_REGISTER_SUBCLASS(Message, DeviceRemoved)
 
 #endif
