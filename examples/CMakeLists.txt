@@ -39,3 +39,6 @@ if (Qt4or5_Quick2_FOUND)
     add_subdirectory(qmlplayer2)
     example_distcheck(qmlplayer2)
 endif()
+
+add_subdirectory(devmon)
+example_distcheck(devmon)
