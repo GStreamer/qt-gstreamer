@@ -36,6 +36,7 @@ if (PKG_CONFIG_FOUND)
     exec_program(${PKG_CONFIG_EXECUTABLE}
                  ARGS --variable pluginsdir gstreamer-${GSTREAMER_ABI_VERSION}
                  OUTPUT_VARIABLE PKG_GSTREAMER_PLUGIN_DIR)
+    set(GSTREAMER_DEFINITIONS ${PKG_GSTREAMER_CFLAGS})
 endif()
 
 find_library(GSTREAMER_LIBRARY
