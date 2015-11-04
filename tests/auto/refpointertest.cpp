@@ -194,7 +194,7 @@ void RefPointerTest::cppWrappersTest()
         QVERIFY(static_cast<QGlib::RefCountedObject*>(msg3.operator->())
                 != static_cast<QGlib::RefCountedObject*>(msg2.operator->()));
         QVERIFY(msg3 == msg2);
-    }   
+    }
 }
 
 void RefPointerTest::messageDynamicCastTest()
