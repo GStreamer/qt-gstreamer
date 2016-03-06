@@ -22,7 +22,7 @@
 #include <QtQuick/QSGFlatColorMaterial>
 
 VideoNode::VideoNode()
-  : QSGGeometryNode()
+  : m_validGeometry(false), QSGGeometryNode()
 {
     setFlags(OwnsGeometry | OwnsMaterial, true);
     setMaterialTypeSolidBlack();
@@ -31,8 +31,8 @@ VideoNode::VideoNode()
 void VideoNode::changeFormat(const BufferFormat & format)
 {
     setMaterial(VideoMaterial::create(format));
-    setGeometry(0);
     m_materialType = MaterialTypeVideo;
+    m_validGeometry = false;
 }
 
 void VideoNode::setMaterialTypeSolidBlack()
@@ -40,8 +40,8 @@ void VideoNode::setMaterialTypeSolidBlack()
     QSGFlatColorMaterial *m = new QSGFlatColorMaterial;
     m->setColor(Qt::black);
     setMaterial(m);
-    setGeometry(0);
     m_materialType = MaterialTypeSolidBlack;
+    m_validGeometry = false;
 }
 
 void VideoNode::setCurrentFrame(GstBuffer* buffer)
@@ -77,7 +77,7 @@ void VideoNode::updateGeometry(const PaintAreas & areas)
     QSGGeometry *g = geometry();
 
     if (m_materialType == MaterialTypeVideo) {
-        if (!g)
+        if (!m_validGeometry)
             g = new QSGGeometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4);
 
         QSGGeometry::TexturedPoint2D *v = g->vertexDataAsTexturedPoint2D();
@@ -94,7 +94,7 @@ void VideoNode::updateGeometry(const PaintAreas & areas)
         setTex(v + 2, areas.sourceRect.topRight());
         setTex(v + 3, areas.sourceRect.bottomRight());
     } else {
-        if (!g)
+        if (!m_validGeometry)
             g = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 4);
 
         QSGGeometry::Point2D *v = g->vertexDataAsPoint2D();
@@ -105,8 +105,10 @@ void VideoNode::updateGeometry(const PaintAreas & areas)
         setGeom(v + 3, areas.videoArea.bottomRight());
     }
 
-    if (!geometry())
+    if (!m_validGeometry) {
         setGeometry(g);
+        m_validGeometry = true;
+    }
 
     markDirty(DirtyGeometry);
 }

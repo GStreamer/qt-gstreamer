@@ -45,6 +45,7 @@ public:
 
 private:
     MaterialType m_materialType;
+    bool m_validGeometry;
 };
 
 #endif // VIDEONODE_H
