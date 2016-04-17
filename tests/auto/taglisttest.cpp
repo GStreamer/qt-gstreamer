@@ -404,7 +404,7 @@ void TagListTest::sampleTest()
     QCOMPARE(tl.imageCount(), 2);
 
     tl.setAttachment(sample2, QGst::TagMergePrepend);
-    QCOMPARE(tl.attachmentCount(), 2);
+    QCOMPARE(tl.attachmentCount(), 1);
 
 }
 
