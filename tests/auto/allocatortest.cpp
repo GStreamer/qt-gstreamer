@@ -18,7 +18,7 @@
 #include "qgsttest.h"
 #include <QGlib/Error>
 #include <QGst/Allocator>
-#include <QGst/Memory>
+#include <QGst/QGstMemory>
 
 class AllocatorTest : public QGstTest
 {

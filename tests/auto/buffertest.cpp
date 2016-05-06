@@ -17,7 +17,7 @@
 */
 #include "qgsttest.h"
 #include <QGst/Buffer>
-#include <QGst/Memory>
+#include <QGst/QGstMemory>
 #include <QGst/Caps>
 
 class BufferTest : public QGstTest

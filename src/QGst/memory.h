@@ -41,7 +41,7 @@ private:
     void *m_object;
 };
 
-/*! \headerfile memory.h <QGst/Memory>
+/*! \headerfile memory.h <QGst/QGstMemory>
  *  \brief Wrapper class for GstMemory
  *
  * GstMemory is a lightweight refcounted object that wraps a region
