@@ -56,7 +56,8 @@ void BaseDelegate::setActive(bool active)
     QWriteLocker l(&m_isActiveLock);
     m_isActive = active;
     if (!active) {
-        QCoreApplication::postEvent(this, new DeactivateEvent());
+        DeactivateEvent event;
+        QCoreApplication::sendEvent(this,(QEvent*)&event);
     }
 }
 
