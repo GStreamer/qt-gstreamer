@@ -32,6 +32,7 @@ QSGNode* QtQuick2VideoSinkDelegate::updateNode(QSGNode *node, const QRectF & tar
     if (!vnode) {
         GST_INFO_OBJECT(m_sink, "creating new VideoNode");
         vnode = new VideoNode;
+        m_formatDirty = true;
     }
 
     if (!m_buffer) {

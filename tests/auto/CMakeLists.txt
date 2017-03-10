@@ -33,3 +33,12 @@ qgst_test(discoverertest)
 qgst_test(allocatortest)
 qgst_test(memorytest)
 qgst_test(padtest)
+
+if(TARGET Qt5GStreamerQuick)
+    add_executable(qtquick2test qtquick2test.cpp)
+    target_link_libraries(qtquick2test Qt5::Qml Qt5GStreamerQuick ${QTGSTREAMER_LIBRARIES})
+    qt4or5_use_modules(qtquick2test Test)
+    add_test(NAME qtquick2test
+             COMMAND cmake -E env QML2_IMPORT_PATH=${CMAKE_BINARY_DIR}/src/qml/quick2/:$ENV{QML2_IMPORT_PATH} GST_PLUGIN_PATH=${CMAKE_BINARY_DIR}/elements/gstqtvideosink/:$ENV{GST_PLUGIN_PATH} ${CMAKE_CURRENT_BINARY_DIR}/qtquick2test
+             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
