@@ -146,9 +146,9 @@ void OpenGLSurfacePainter::updateColors(int brightness, int contrast, int hue, i
 #endif
     case GST_VIDEO_COLOR_MATRIX_BT709:
         m_colorMatrix *= QMatrix4x4(
-                    1.164,  0.000,  1.793, -0.5727,
-                    1.164, -0.534, -0.213,  0.3007,
-                    1.164,  2.115,  0.000, -1.1302,
+                    1.164,  0.000,  1.793, -0.969,
+                    1.164, -0.213, -0.533,  0.300,
+                    1.164,  2.112,  0.000, -1.129,
                     0.0,    0.000,  0.000,  1.0000);
         break;
     case GST_VIDEO_COLOR_MATRIX_BT601:
