@@ -22,7 +22,9 @@
 #include "clocktime.h"
 
 #if !QGLIB_HAVE_CXX0X
+#ifndef Q_MOC_RUN
 # include <boost/preprocessor.hpp>
+#endif
 #endif
 
 namespace QGst {

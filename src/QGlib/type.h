@@ -21,8 +21,9 @@
 
 #include "global.h"
 #include <QtCore/QList>
+#ifndef Q_MOC_RUN
 #include <boost/mpl/if.hpp>
-
+#endif
 /*
  * This is a re-definition of GType inside the QGlib::Private namespace.
  * It is used in the headers to avoid including <glib-object.h>.
