@@ -17,13 +17,11 @@
 #ifndef QGLIB_GLOBAL_H
 #define QGLIB_GLOBAL_H
 
-// workaround for https://bugreports.qt-project.org/browse/QTBUG-22829
-#if defined(Q_MOC_RUN) && !defined(BOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
-#define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
-#endif
-
 #include <QtCore/QtGlobal>
+
+#ifndef Q_MOC_RUN
 #include <boost/config.hpp>
+#endif
 
 /* defined by cmake when building this library */
 #if defined(QtGLib_EXPORTS) || defined(Qt5GLib_EXPORTS)
@@ -84,8 +82,10 @@ typedef RefPointer<Object> ObjectPtr;
 # define QGLIB_STATIC_ASSERT(expr, message) static_assert(expr, message)
 # define QGLIB_HAVE_CXX0X_STATIC_ASSERT 1
 #else
+#ifndef Q_MOC_RUN
 # include <boost/static_assert.hpp>
 # define QGLIB_STATIC_ASSERT(expr, message) BOOST_STATIC_ASSERT(expr)
+#endif
 #endif
 
 //check for the C++0x features that we need

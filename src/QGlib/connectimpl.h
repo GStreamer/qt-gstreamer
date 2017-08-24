@@ -26,7 +26,9 @@
 # include "refpointer.h"
 # include <QtCore/QList>
 # include <stdexcept>
+#ifndef Q_MOC_RUN
 # include <boost/type_traits.hpp>
+#endif
 
 
 namespace QGlib {
