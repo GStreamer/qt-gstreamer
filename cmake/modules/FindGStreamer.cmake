@@ -33,9 +33,11 @@ find_package(PkgConfig)
 
 if (PKG_CONFIG_FOUND)
     pkg_check_modules(PKG_GSTREAMER gstreamer-${GSTREAMER_ABI_VERSION})
-    exec_program(${PKG_CONFIG_EXECUTABLE}
-                 ARGS --variable pluginsdir gstreamer-${GSTREAMER_ABI_VERSION}
-                 OUTPUT_VARIABLE PKG_GSTREAMER_PLUGIN_DIR)
+    if(PKG_GSTREAMER_FOUND)
+        exec_program(${PKG_CONFIG_EXECUTABLE}
+                     ARGS --variable pluginsdir gstreamer-${GSTREAMER_ABI_VERSION}
+                     OUTPUT_VARIABLE PKG_GSTREAMER_PLUGIN_DIR)
+    endif()
     set(GSTREAMER_DEFINITIONS ${PKG_GSTREAMER_CFLAGS})
 endif()
 
