@@ -6,7 +6,7 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-macro(find_gstreamer_library _name _header _abi_version)
+macro(find_gstreamer_library _name _header _abi_version _quiet)
     string(TOLOWER ${_name} _lower_name)
     string(TOUPPER ${_name} _upper_name)
 
@@ -17,7 +17,7 @@ macro(find_gstreamer_library _name _header _abi_version)
     endif()
 
     if (PKG_CONFIG_FOUND)
-        pkg_check_modules(PKG_GSTREAMER_${_upper_name} gstreamer-${_lower_name}-${_abi_version})
+        pkg_check_modules(PKG_GSTREAMER_${_upper_name} QUIET gstreamer-${_lower_name}-${_abi_version})
     endif()
 
     find_library(GSTREAMER_${_upper_name}_LIBRARY
@@ -39,7 +39,7 @@ macro(find_gstreamer_library _name _header _abi_version)
         set(GSTREAMER_${_upper_name}_LIBRARY_FOUND FALSE)
     endif()
 
-    if (NOT _GSTREAMER_${_upper_name}_QUIET)
+    if (NOT _GSTREAMER_${_upper_name}_QUIET AND NOT _quiet)
         if (GSTREAMER_${_upper_name}_LIBRARY)
             message(STATUS "Found GSTREAMER_${_upper_name}_LIBRARY: ${GSTREAMER_${_upper_name}_LIBRARY}")
         else()

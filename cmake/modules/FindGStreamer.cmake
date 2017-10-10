@@ -32,7 +32,7 @@ set(GSTREAMER_ABI_VERSION "1.0")
 find_package(PkgConfig)
 
 if (PKG_CONFIG_FOUND)
-    pkg_check_modules(PKG_GSTREAMER gstreamer-${GSTREAMER_ABI_VERSION})
+    pkg_check_modules(PKG_GSTREAMER QUIET gstreamer-${GSTREAMER_ABI_VERSION})
     if(PKG_GSTREAMER_FOUND)
         exec_program(${PKG_CONFIG_EXECUTABLE}
                      ARGS --variable pluginsdir gstreamer-${GSTREAMER_ABI_VERSION}
@@ -67,7 +67,7 @@ mark_as_advanced(GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR GSTREAMER_PLUGIN_DIR)
 include(MacroFindGStreamerLibrary)
 
 macro(_find_gst_component _name _header)
-    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION})
+    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION} ${GStreamer_FIND_QUIETLY})
     set(_GSTREAMER_EXTRA_VARIABLES ${_GSTREAMER_EXTRA_VARIABLES}
                                     GSTREAMER_${_name}_LIBRARY GSTREAMER_${_name}_INCLUDE_DIR)
 endmacro()
@@ -91,7 +91,9 @@ endforeach()
 if (GStreamer_FIND_VERSION)
     if (PKG_GSTREAMER_FOUND)
         if("${PKG_GSTREAMER_VERSION}" VERSION_LESS "${GStreamer_FIND_VERSION}")
-            message(STATUS "Found GStreamer version ${PKG_GSTREAMER_VERSION}, but at least version ${GStreamer_FIND_VERSION} is required")
+            if(NOT GStreamer_FIND_QUIETLY)
+                message(STATUS "Found GStreamer version ${PKG_GSTREAMER_VERSION}, but at least version ${GStreamer_FIND_VERSION} is required")
+            endif()
             set(GSTREAMER_VERSION_COMPATIBLE FALSE)
         else()
             set(GSTREAMER_VERSION_COMPATIBLE TRUE)
@@ -116,7 +118,7 @@ int main() { return 0; }
 #endif
 " GSTREAMER_VERSION_COMPATIBLE)
 
-        if (NOT GSTREAMER_VERSION_COMPATIBLE)
+        if (NOT GSTREAMER_VERSION_COMPATIBLE AND NOT GStreamer_FIND_QUIETLY)
             message(STATUS "GStreamer ${GStreamer_FIND_VERSION} is required, but the version found is older")
         endif()
     else()

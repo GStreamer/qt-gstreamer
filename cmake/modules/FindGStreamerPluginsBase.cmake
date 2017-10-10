@@ -23,7 +23,7 @@ set(GSTREAMER_ABI_VERSION "1.0")
 find_package(PkgConfig)
 
 if (PKG_CONFIG_FOUND)
-    pkg_check_modules(PKG_GSTREAMER_PLUGINS_BASE gstreamer-plugins-base-${GSTREAMER_ABI_VERSION})
+    pkg_check_modules(PKG_GSTREAMER_PLUGINS_BASE QUIET gstreamer-plugins-base-${GSTREAMER_ABI_VERSION})
 endif()
 
 
@@ -31,7 +31,7 @@ endif()
 include(MacroFindGStreamerLibrary)
 
 macro(_find_gst_plugins_base_component _name _header)
-    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION})
+    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION} ${GStreamerPluginsBase_FIND_QUIETLY})
     set(_GSTREAMER_PLUGINS_BASE_EXTRA_VARIABLES ${_GSTREAMER_PLUGINS_BASE_EXTRA_VARIABLES}
                                         GSTREAMER_${_name}_LIBRARY GSTREAMER_${_name}_INCLUDE_DIR)
 endmacro()
@@ -67,7 +67,9 @@ endforeach()
 if (GStreamerPluginsBase_FIND_VERSION)
     if (PKG_GSTREAMER_PLUGINS_BASE_FOUND)
         if("${PKG_GSTREAMER_PLUGINS_BASE_VERSION}" VERSION_LESS "${GStreamerPluginsBase_FIND_VERSION}")
-            message(STATUS "Found gst-plugins-base version ${PKG_GSTREAMER_PLUGINS_BASE_VERSION}, but at least version ${GStreamerPluginsBase_FIND_VERSION} is required")
+            if (NOT GStreamerPluginsBase_FIND_QUIETLY)
+                message(STATUS "Found gst-plugins-base version ${PKG_GSTREAMER_PLUGINS_BASE_VERSION}, but at least version ${GStreamerPluginsBase_FIND_VERSION} is required")
+            endif()
             set(GSTREAMER_PLUGINS_BASE_VERSION_COMPATIBLE FALSE)
         else()
             set(GSTREAMER_PLUGINS_BASE_VERSION_COMPATIBLE TRUE)
