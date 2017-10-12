@@ -17,8 +17,10 @@ if(GLIB2_INCLUDE_DIR AND GLIB2_LIBRARIES)
 endif(GLIB2_INCLUDE_DIR AND GLIB2_LIBRARIES)
 
 if (NOT WIN32)
-   find_package(PkgConfig REQUIRED)
-   pkg_check_modules(PKG_GLIB REQUIRED glib-2.0)
+  find_package(PkgConfig QUIET)
+  if(PKG_CONFIG_FOUND)
+    pkg_check_modules(PKG_GLIB QUIET glib-2.0)
+  endif()
 endif(NOT WIN32)
 
 find_path(GLIB2_MAIN_INCLUDE_DIR glib.h

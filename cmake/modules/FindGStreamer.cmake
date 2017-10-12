@@ -2,7 +2,8 @@
 # Once done this will define
 #
 #  GSTREAMER_FOUND - system has GStreamer
-#  GSTREAMER_INCLUDE_DIR - the GStreamer include directory
+#  GSTREAMER_INCLUDE_DIR - the GStreamer main include directory
+#  GSTREAMER_INCLUDE_DIRS - the GStreamer include directories
 #  GSTREAMER_LIBRARY - the main GStreamer library
 #  GSTREAMER_PLUGIN_DIR - the GStreamer plugin directory
 #
@@ -32,10 +33,12 @@ set(GSTREAMER_ABI_VERSION "1.0")
 find_package(PkgConfig)
 
 if (PKG_CONFIG_FOUND)
-    pkg_check_modules(PKG_GSTREAMER gstreamer-${GSTREAMER_ABI_VERSION})
-    exec_program(${PKG_CONFIG_EXECUTABLE}
-                 ARGS --variable pluginsdir gstreamer-${GSTREAMER_ABI_VERSION}
-                 OUTPUT_VARIABLE PKG_GSTREAMER_PLUGIN_DIR)
+    pkg_check_modules(PKG_GSTREAMER QUIET gstreamer-${GSTREAMER_ABI_VERSION})
+    if(PKG_GSTREAMER_FOUND)
+        exec_program(${PKG_CONFIG_EXECUTABLE}
+                     ARGS --variable pluginsdir gstreamer-${GSTREAMER_ABI_VERSION}
+                     OUTPUT_VARIABLE PKG_GSTREAMER_PLUGIN_DIR)
+    endif()
     set(GSTREAMER_DEFINITIONS ${PKG_GSTREAMER_CFLAGS})
 endif()
 
@@ -48,6 +51,14 @@ find_path(GSTREAMER_INCLUDE_DIR
           HINTS ${PKG_GSTREAMER_INCLUDE_DIRS} ${PKG_GSTREAMER_INCLUDEDIR}
           PATH_SUFFIXES gstreamer-${GSTREAMER_ABI_VERSION})
 
+find_path(GSTREAMER_gstconfig_INCLUDE_DIR
+          gst/gstconfig.h
+          HINTS ${PKG_GSTREAMER_INCLUDE_DIRS} ${PKG_GSTREAMER_INCLUDEDIR}
+          PATH_SUFFIXES gstreamer-${GSTREAMER_ABI_VERSION})
+
+set(GSTREAMER_INCLUDE_DIRS ${GSTREAMER_INCLUDE_DIR} ${GSTREAMER_gstconfig_INCLUDE_DIR})
+list(REMOVE_DUPLICATES GSTREAMER_INCLUDE_DIRS)
+
 if (PKG_GSTREAMER_PLUGIN_DIR)
     set(_GSTREAMER_PLUGIN_DIR ${PKG_GSTREAMER_PLUGIN_DIR})
 else()
@@ -58,14 +69,17 @@ endif()
 set(GSTREAMER_PLUGIN_DIR ${_GSTREAMER_PLUGIN_DIR}
     CACHE PATH "The path to the gstreamer plugins installation directory")
 
-mark_as_advanced(GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR GSTREAMER_PLUGIN_DIR)
+mark_as_advanced(GSTREAMER_LIBRARY
+                 GSTREAMER_INCLUDE_DIR
+                 GSTREAMER_gstconfig_INCLUDE_DIR
+                 GSTREAMER_PLUGIN_DIR)
 
 
 # Find additional libraries
 include(MacroFindGStreamerLibrary)
 
 macro(_find_gst_component _name _header)
-    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION})
+    find_gstreamer_library(${_name} ${_header} ${GSTREAMER_ABI_VERSION} ${GStreamer_FIND_QUIETLY})
     set(_GSTREAMER_EXTRA_VARIABLES ${_GSTREAMER_EXTRA_VARIABLES}
                                     GSTREAMER_${_name}_LIBRARY GSTREAMER_${_name}_INCLUDE_DIR)
 endmacro()
@@ -89,7 +103,9 @@ endforeach()
 if (GStreamer_FIND_VERSION)
     if (PKG_GSTREAMER_FOUND)
         if("${PKG_GSTREAMER_VERSION}" VERSION_LESS "${GStreamer_FIND_VERSION}")
-            message(STATUS "Found GStreamer version ${PKG_GSTREAMER_VERSION}, but at least version ${GStreamer_FIND_VERSION} is required")
+            if(NOT GStreamer_FIND_QUIETLY)
+                message(STATUS "Found GStreamer version ${PKG_GSTREAMER_VERSION}, but at least version ${GStreamer_FIND_VERSION} is required")
+            endif()
             set(GSTREAMER_VERSION_COMPATIBLE FALSE)
         else()
             set(GSTREAMER_VERSION_COMPATIBLE TRUE)
@@ -114,7 +130,7 @@ int main() { return 0; }
 #endif
 " GSTREAMER_VERSION_COMPATIBLE)
 
-        if (NOT GSTREAMER_VERSION_COMPATIBLE)
+        if (NOT GSTREAMER_VERSION_COMPATIBLE AND NOT GStreamer_FIND_QUIETLY)
             message(STATUS "GStreamer ${GStreamer_FIND_VERSION} is required, but the version found is older")
         endif()
     else()
@@ -129,5 +145,5 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GStreamer DEFAULT_MSG
-                                  GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR
+                                  GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIRS
                                   GSTREAMER_VERSION_COMPATIBLE ${_GSTREAMER_EXTRA_VARIABLES})
