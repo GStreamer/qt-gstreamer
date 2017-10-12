@@ -2,7 +2,8 @@
 # Once done this will define
 #
 #  GSTREAMER_FOUND - system has GStreamer
-#  GSTREAMER_INCLUDE_DIR - the GStreamer include directory
+#  GSTREAMER_INCLUDE_DIR - the GStreamer main include directory
+#  GSTREAMER_INCLUDE_DIRS - the GStreamer include directories
 #  GSTREAMER_LIBRARY - the main GStreamer library
 #  GSTREAMER_PLUGIN_DIR - the GStreamer plugin directory
 #
@@ -50,6 +51,14 @@ find_path(GSTREAMER_INCLUDE_DIR
           HINTS ${PKG_GSTREAMER_INCLUDE_DIRS} ${PKG_GSTREAMER_INCLUDEDIR}
           PATH_SUFFIXES gstreamer-${GSTREAMER_ABI_VERSION})
 
+find_path(GSTREAMER_gstconfig_INCLUDE_DIR
+          gst/gstconfig.h
+          HINTS ${PKG_GSTREAMER_INCLUDE_DIRS} ${PKG_GSTREAMER_INCLUDEDIR}
+          PATH_SUFFIXES gstreamer-${GSTREAMER_ABI_VERSION})
+
+set(GSTREAMER_INCLUDE_DIRS ${GSTREAMER_INCLUDE_DIR} ${GSTREAMER_gstconfig_INCLUDE_DIR})
+list(REMOVE_DUPLICATES GSTREAMER_INCLUDE_DIRS)
+
 if (PKG_GSTREAMER_PLUGIN_DIR)
     set(_GSTREAMER_PLUGIN_DIR ${PKG_GSTREAMER_PLUGIN_DIR})
 else()
@@ -60,7 +69,10 @@ endif()
 set(GSTREAMER_PLUGIN_DIR ${_GSTREAMER_PLUGIN_DIR}
     CACHE PATH "The path to the gstreamer plugins installation directory")
 
-mark_as_advanced(GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR GSTREAMER_PLUGIN_DIR)
+mark_as_advanced(GSTREAMER_LIBRARY
+                 GSTREAMER_INCLUDE_DIR
+                 GSTREAMER_gstconfig_INCLUDE_DIR
+                 GSTREAMER_PLUGIN_DIR)
 
 
 # Find additional libraries
@@ -133,5 +145,5 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GStreamer DEFAULT_MSG
-                                  GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIR
+                                  GSTREAMER_LIBRARY GSTREAMER_INCLUDE_DIRS
                                   GSTREAMER_VERSION_COMPATIBLE ${_GSTREAMER_EXTRA_VARIABLES})
