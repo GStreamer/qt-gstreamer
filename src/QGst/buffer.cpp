@@ -83,6 +83,11 @@ uint Buffer::extract(uint offset, void *dest, uint size)
     return gst_buffer_extract(object<GstBuffer>(), offset, dest, size);
 }
 
+int Buffer::memoryCompare(uint offset, void *dest, uint size)
+{
+	return gst_buffer_memcmp(object<GstBuffer>(), offset, dest, size);
+}
+
 uint Buffer::memoryCount() const
 {
     return gst_buffer_n_memory (object<GstBuffer>());

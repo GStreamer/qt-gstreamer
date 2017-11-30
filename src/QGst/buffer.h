@@ -53,6 +53,7 @@ public:
     void setSize(uint size);
 
     uint extract(uint offset, void *dest, uint size);
+	int memoryCompare(uint offset, void *dest, uint size);
 
     uint memoryCount() const;
     MemoryPtr getMemory(uint index) const;
