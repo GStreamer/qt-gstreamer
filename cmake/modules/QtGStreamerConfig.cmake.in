@@ -67,11 +67,8 @@ endif()
 
 unset(_QTGSTREAMER_FIND_DEPS_ARGS)
 
-# include QtGStreamerConfigCommon.cmake from the same directory
-find_file(_QTGSTREAMER_CONFIG_COMMON_FILE QtGStreamerConfigCommon.cmake
-          PATHS ${_QTGSTREAMER_CONFIG_DIR} NO_DEFAULT_PATH)
-include(${_QTGSTREAMER_CONFIG_COMMON_FILE})
-unset(_QTGSTREAMER_CONFIG_COMMON_FILE)
+include("${CMAKE_CURRENT_LIST_DIR}/QtGStreamerConfigCommon.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/@QTGSTREAMER_PACKAGE_NAME@Targets.cmake")
 
 # compatibility variable
 set(QTGSTREAMER_FOUND ${@QTGSTREAMER_PACKAGE_NAME@_FOUND})
