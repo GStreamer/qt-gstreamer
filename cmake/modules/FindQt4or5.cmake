@@ -49,6 +49,16 @@ macro(_qt4or5_component_names_to_qt_components output_list)
   list(REMOVE_DUPLICATES ${output_list})
 endmacro()
 
+macro(_qt5_component_names_to_target_link_libaries output_list)
+  foreach(module ${ARGN})
+    _qt4or5_component_name_to_qt_component(qt_component ${module})
+    list(APPEND ${output_list} Qt5::${qt_component})
+    unset(qt_component)
+  endforeach()
+
+  list(REMOVE_DUPLICATES ${output_list})
+endmacro()
+
 if (Qt4or5_FIND_QUIETLY)
   set(_Qt4or5_FIND_PACKAGE_ARGS QUIET)
 endif()
@@ -195,13 +205,13 @@ function(qt4or5_use_modules _target _link_type)
     set(modules ${_link_type} ${ARGN})
   endif()
 
-  _qt4or5_component_names_to_qt_components(real_modules ${modules})
-
   # Verify that Qt5 was found before using qt5_* macros,
   # otherwise cmake will bail out if they are undefined.
   if (${QT_VERSION} STREQUAL "5" AND Qt5Core_FOUND)
-    qt5_use_modules(${_target} ${link_type} ${real_modules})
+    _qt5_component_names_to_target_link_libaries(real_modules ${modules})
+    target_link_libraries(${_target} ${link_type} ${real_modules})
   elseif (${QT_VERSION} STREQUAL "4")
+    _qt4or5_component_names_to_qt_components(real_modules ${modules})
     qt4_use_modules(${_target} ${link_type} ${real_modules})
   endif()
 endfunction()
