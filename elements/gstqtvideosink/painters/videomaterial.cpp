@@ -414,19 +414,27 @@ void VideoMaterial::bind()
     if (frame) {
         GstMapInfo info;
         gst_buffer_map(frame, &info, GST_MAP_READ);
-        functions->glActiveTexture(GL_TEXTURE1);
-        bindTexture(1, info.data);
-        functions->glActiveTexture(GL_TEXTURE2);
-        bindTexture(2, info.data);
+        if (m_textureCount > 1) {
+            functions->glActiveTexture(GL_TEXTURE1);
+            bindTexture(1, info.data);
+        }
+        if (m_textureCount > 2) {
+            functions->glActiveTexture(GL_TEXTURE2);
+            bindTexture(2, info.data);
+        }
         functions->glActiveTexture(GL_TEXTURE0); // Finish with 0 as default texture unit
         bindTexture(0, info.data);
         gst_buffer_unmap(frame, &info);
         gst_buffer_unref(frame);
     } else {
-        functions->glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_textureIds[1]);
-        functions->glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, m_textureIds[2]);
+        if (m_textureCount > 1) {
+            functions->glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, m_textureIds[1]);
+        }
+        if (m_textureCount > 2) {
+            functions->glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, m_textureIds[2]);
+        }
         functions->glActiveTexture(GL_TEXTURE0); // Finish with 0 as default texture unit
         glBindTexture(GL_TEXTURE_2D, m_textureIds[0]);
     }
