@@ -1,3 +1,30 @@
+0. Maintenance Notice
+---------------------
+
+This code is unmaintained. You can use it at your own risk.
+
+If you want to integrate video display in your QML-based UI,
+you should consider using 'qmlglsink', from gst-plugins-good.
+This is a well supported video sink that uses the generic
+gstreamer-gl stack and is in many ways superior to 'qtquick2videosink'
+that is provided by qt-gstreamer. You can use this code as an example:
+https://cgit.freedesktop.org/gstreamer/gst-plugins-good/tree/tests/examples/qt/qmlsink
+
+If you are not interested in using QML in your UI, then you
+may use one of the other elements provided by this module
+(see below). If you do that, it would be helpful to let us
+know that this code is still useful to you. We may consider
+adding these elements in one of the core gstreamer modules.
+
+If you are here for the Qt-style bindings, I'm sorry to disappoint you.
+The alternative is to use the C API, or the GStreamermm C++ API.
+Qt-style bindings are cool, but unfortunately they are very hard
+to maintain because they are written by hand. If you are interested
+in continuing this project, you are welcome to implement a
+generator for them, probably based on GObject-Introspection.
+I am happy to provide directions if you want to pursue such a thing.
+
+
 1. About
 --------
 
@@ -188,14 +215,15 @@ Mailing list:
 
 Irc channels:
     irc://irc.freenode.net/gstreamer
-    irc://irc.freenode.net/qtgstreamer
 
 Git repository:
     http://cgit.freedesktop.org/gstreamer/qt-gstreamer/
 
 Bugs, feature requests & patches should be sent at:
     https://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer&component=qt-gstreamer
+  **Note**: This component has been closed as of May 5, 2018.
+            See the maintenance notice at the top of this file
 
 --
 George Kiagiadakis <george.kiagiadakis@collabora.com>
-Last updated: Jun 24, 2014
+Last updated: May 5, 2018
