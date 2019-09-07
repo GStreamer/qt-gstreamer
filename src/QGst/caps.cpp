@@ -54,7 +54,8 @@ QString Caps::toString() const
 
 void Caps::append(const CapsPtr & caps2)
 {
-    gst_caps_append(object<GstCaps>(), gst_caps_copy(caps2));
+    const GstCaps * caps2ptr = caps2;
+    gst_caps_append(object<GstCaps>(), gst_caps_copy(caps2ptr));
 }
 
 CapsPtr Caps::merge(CapsPtr & caps2)
