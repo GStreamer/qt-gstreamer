@@ -46,11 +46,11 @@ class QTGSTREAMERUI_EXPORT GraphicsVideoWidget : public QGraphicsWidget
     Q_DISABLE_COPY(GraphicsVideoWidget)
     Q_PROPERTY(QGst::Ui::GraphicsVideoSurface* surface READ surface WRITE setSurface)
 public:
-    explicit GraphicsVideoWidget(QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0);
+    explicit GraphicsVideoWidget(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = Qt::WindowFlags());
     virtual ~GraphicsVideoWidget();
 
     /*! Reimplemented from QGraphicsWidget. Do not call directly. */
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);
 
     GraphicsVideoSurface *surface() const;
     void setSurface(GraphicsVideoSurface *surface);
