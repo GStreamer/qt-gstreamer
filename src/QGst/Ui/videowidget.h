@@ -70,7 +70,7 @@ class QTGSTREAMERUI_EXPORT VideoWidget : public QWidget
     Q_OBJECT
     Q_DISABLE_COPY(VideoWidget)
 public:
-    explicit VideoWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit VideoWidget(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     virtual ~VideoWidget();
 
 
