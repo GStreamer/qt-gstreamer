@@ -133,7 +133,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(ConnectFlags)
  */
 template <typename T, typename R, typename... Args>
 bool connect(void *instance, const char *detailedSignal,
-             T *receiver, R (T::*slot)(Args...), ConnectFlags flags = 0);
+             T *receiver, R (T::*slot)(Args...), ConnectFlags flags = QGlib::ConnectFlags());
 
 //Fake disconnect() declaration.
 //Doxygen should document a version with optional arguments. In reality we have to use
