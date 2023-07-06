@@ -68,7 +68,7 @@ public:
 
         widget()->installEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, true);
-        widget()->setAttribute(Qt::WA_PaintOnScreen, true);
+        // widget()->setAttribute(Qt::WA_PaintOnScreen, true);
         widget()->update();
     }
 
@@ -79,7 +79,7 @@ public:
         }
         widget()->removeEventFilter(this);
         widget()->setAttribute(Qt::WA_NoSystemBackground, false);
-        widget()->setAttribute(Qt::WA_PaintOnScreen, false);
+        // widget()->setAttribute(Qt::WA_PaintOnScreen, false);
         widget()->update();
     }
 
